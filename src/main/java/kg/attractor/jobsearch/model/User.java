@@ -1,9 +1,12 @@
 package kg.attractor.jobsearch.model;
 
-import org.springframework.stereotype.Component;
+import lombok.Getter;
+import lombok.Setter;
 
-@Component
+@Getter
+@Setter
 public class User {
+    private Long id;
     private String name;
     private String surname;
     private int age;
