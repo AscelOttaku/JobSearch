@@ -1,23 +1,19 @@
 package kg.attractor.jobsearch.model;
 
-import kg.attractor.jobsearch.model.enums.Category;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
-@Component
+@Getter
+@Setter
 public class Resume {
-    private User user;
+    private Long id;
+    private Long userId;
     private String name;
-    private Category category;
+    private Long categoryId;
     private double salary;
     private boolean isActive;
-    private LocalDateTime created;
-    private LocalDateTime updated;
-
-    @Autowired
-    public Resume(User user) {
-        this.user = user;
-    }
+    private LocalDate created;
+    private LocalDate updated;
 }

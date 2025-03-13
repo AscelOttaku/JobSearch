@@ -5,9 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ContactInfo {
+public class ContactType {
     private Long id;
-    private Long contactTypeId;
-    private Long parentId;
-    private String value;
+    private String type;
 }

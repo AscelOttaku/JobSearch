@@ -1,18 +1,15 @@
 package kg.attractor.jobsearch.model;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Component
+@Getter
+@Setter
 public class Message {
-    private RespondedApplications respondedApplications;
+    private Long id;
+    private Long respondedApplicationId;
     private String content;
     private LocalDateTime time;
-
-    @Autowired
-    public Message(RespondedApplications respondedApplications) {
-        this.respondedApplications = respondedApplications;
-    }
 }

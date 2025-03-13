@@ -1,21 +1,18 @@
 package kg.attractor.jobsearch.model;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Component
+@Getter
+@Setter
 public class EducationInfo {
-    private Resume resume;
+    private Long id;
+    private Long resumeId;
     private String institution;
     private String program;
     private LocalDate startDate;
     private LocalDate endDate;
     private String degree;
-
-    @Autowired
-    public EducationInfo(Resume resume) {
-        this.resume = resume;
-    }
 }
