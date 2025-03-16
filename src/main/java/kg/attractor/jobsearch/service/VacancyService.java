@@ -2,6 +2,7 @@ package kg.attractor.jobsearch.service;
 
 import kg.attractor.jobsearch.dto.VacancyDto;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface VacancyService {
@@ -12,4 +13,10 @@ public interface VacancyService {
     boolean updateVacancy(VacancyDto vacancyDto);
 
     boolean deleteVacancy(Long vacancyId);
+
+    List<VacancyDto> findActiveVacancies();
+
+    Optional<List<VacancyDto>> findVacanciesByCategory(String category);
+
+    boolean createRespond(Long vacancyId, Long resumeId);
 }

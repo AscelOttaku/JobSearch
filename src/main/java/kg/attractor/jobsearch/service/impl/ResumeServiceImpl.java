@@ -2,11 +2,13 @@ package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.service.ResumeService;
+import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class ResumeServiceImpl implements ResumeService {
 
     @Override
