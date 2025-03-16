@@ -20,16 +20,9 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("job-seekers")
-    public HttpStatus createJobSeeker(@RequestBody UserDto userDto) {
+    @PostMapping("users")
+    public HttpStatus createUser(@RequestBody UserDto userDto) {
         //ToDo implement creating accaunt job-seeker
-
-        return HttpStatus.CREATED;
-    }
-
-    @PostMapping("employers")
-    public HttpStatus createEmployer(@RequestBody UserDto userDto) {
-        //ToDo implement creating employer account
 
         return HttpStatus.CREATED;
     }
@@ -49,7 +42,7 @@ public class UserController {
     }
 
     @GetMapping("employer/{userId}")
-    public ResponseEntity<UserDto> findEmployer(@PathVariable Long userId) {
+    public ResponseEntity<UserDto> findEmployerById(@PathVariable Long userId) {
         //ToDo implement search employer by id handler
 
         return ResponseEntity.ok(null);

@@ -25,8 +25,8 @@ public class VacancyController {
         return HttpStatus.CREATED;
     }
 
-    @PutMapping("{vacancyId}")
-    public HttpStatus redactorVacancy(@PathVariable Long vacancyId) {
+    @PutMapping()
+    public HttpStatus redactorVacancy(@RequestBody VacancyDto vacancyDto) {
         //ToDo implement redactor vacancy handler
 
         return HttpStatus.OK;
@@ -53,8 +53,8 @@ public class VacancyController {
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
-    @PostMapping("respond/{vacancyId}")
-    public HttpStatus createRespond(@PathVariable Long vacancyId) {
+    @PostMapping("respond/{vacancyId}/{resumeId}")
+    public HttpStatus createRespond(@PathVariable Long vacancyId, @PathVariable Long resumeId) {
         //ToDo implement create new respond handler
 
         return HttpStatus.CREATED;
