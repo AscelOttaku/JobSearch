@@ -20,7 +20,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("users")
+    @PostMapping
     public HttpStatus createUser(@RequestBody UserDto userDto) {
         //ToDo implement creating accaunt job-seeker
 
