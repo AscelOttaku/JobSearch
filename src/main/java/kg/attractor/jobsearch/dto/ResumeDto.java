@@ -1,15 +1,13 @@
-package kg.attractor.jobsearch.model;
+package kg.attractor.jobsearch.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Getter
-@Setter
 @Builder
-public class Resume {
+@Getter
+public class ResumeDto {
     private Long id;
     private Long userId;
     private String name;

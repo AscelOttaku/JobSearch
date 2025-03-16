@@ -1,5 +1,6 @@
 package kg.attractor.jobsearch.model;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,6 +8,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
+@Builder
 public class Vacancy {
     private Long id;
     private String name;
@@ -18,5 +20,4 @@ public class Vacancy {
     private Long userId;
     private LocalDate created;
     private LocalDate updated;
-
 }
