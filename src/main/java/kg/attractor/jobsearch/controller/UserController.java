@@ -30,11 +30,11 @@ public class UserController {
                 HttpStatus.BAD_REQUEST;
     }
 
-    @GetMapping("job-seeker/{userId}")
-    public ResponseEntity<UserDto> findJobSeeker(@PathVariable Long userId) {
+    @GetMapping("job-seeker/{userEmail}")
+    public ResponseEntity<UserDto> findJobSeekerByEmail(@PathVariable String userEmail) {
         //ToDo implement search job seeker by id handler
 
-        Optional<UserDto> userDto = userService.findJobSeeker(userId);
+        Optional<UserDto> userDto = userService.findJobSeeker(userEmail);
 
         return userDto.map(dto -> new ResponseEntity<>(dto, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -49,11 +49,11 @@ public class UserController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping("employer/{userId}")
-    public ResponseEntity<UserDto> findEmployerById(@PathVariable Long userId) {
-        //ToDo implement search employer by id handler
+    @GetMapping("employer/{employerEmail}")
+    public ResponseEntity<UserDto> findEmployerByEmail(@PathVariable String employerEmail) {
+        //ToDo implement search employer by email handler
 
-        return userService.findEmployerById(userId)
+        return userService.findEmployerByEmail(employerEmail)
                 .map(dto -> new ResponseEntity<>(dto, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

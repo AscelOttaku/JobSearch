@@ -28,8 +28,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDto> findJobSeeker(Long userId) {
-        //ToDO find job-seeker by id
+    public Optional<UserDto> findJobSeeker(String userEmail) {
+        //ToDO find job-seeker by email
         //return Optional empty if its not exist or data
 
         return Optional.empty();
@@ -43,8 +43,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDto> findEmployerById(Long employerId) {
-        //ToDo find employer by id
+    public Optional<UserDto> findEmployerByEmail(String employerEmail) {
+        //ToDo find employer by email
 
         return Optional.empty();
     }
