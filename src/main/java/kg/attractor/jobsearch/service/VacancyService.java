@@ -8,9 +8,9 @@ import java.util.Optional;
 public interface VacancyService {
     Optional<VacancyDto> findVacancyById(Long vacancyId);
 
-    boolean createVacancy(VacancyDto vacancyDto);
+    Long createVacancy(VacancyDto vacancyDto);
 
-    boolean updateVacancy(VacancyDto vacancyDto);
+    Long updateVacancy(VacancyDto vacancyDto);
 
     boolean deleteVacancy(Long vacancyId);
 
@@ -18,5 +18,5 @@ public interface VacancyService {
 
     Optional<List<VacancyDto>> findVacanciesByCategory(String category);
 
-    boolean createRespond(Long vacancyId, Long resumeId);
+    Long createRespond(Long vacancyId, Long resumeId);
 }

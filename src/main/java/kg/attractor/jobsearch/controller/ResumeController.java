@@ -39,21 +39,25 @@ public class ResumeController {
     }
 
     @PostMapping
-    public HttpStatus createResume(@RequestBody ResumeDto resumeDto) {
+    public ResponseEntity<Long> createResume(@RequestBody ResumeDto resumeDto) {
         //ToDO implement handler for creating resume
 
-        return  resumeService.createResume(resumeDto) ?
-                HttpStatus.CREATED :
-                HttpStatus.BAD_REQUEST;
+        Long res = resumeService.createResume(resumeDto);
+
+        return res != -1 ?
+                new ResponseEntity<>(res, HttpStatus.CREATED) :
+                new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @PutMapping()
-    public HttpStatus redactorResume(@RequestBody ResumeDto resumeDto) {
+    public ResponseEntity<Long> redactorResume(@RequestBody ResumeDto resumeDto) {
         //ToDo implement handler for redacting remume
 
-        return resumeService.updateResume(resumeDto) ?
-                HttpStatus.OK :
-                HttpStatus.BAD_REQUEST;
+        Long res = resumeService.updateResume(resumeDto);
+
+        return res != -1 ?
+                new ResponseEntity<>(res, HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @DeleteMapping("{resumeId}")
@@ -62,6 +66,6 @@ public class ResumeController {
 
         return resumeService.deleteResume(resumeId) ?
                 HttpStatus.NO_CONTENT :
-                HttpStatus.BAD_REQUEST;
+                HttpStatus.NOT_FOUND;
     }
 }
