@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @RestController
@@ -24,7 +25,7 @@ public class UserController {
     public HttpStatus createUser(@RequestBody UserDto userDto) {
         //ToDo implement creating accaunt job-seeker
 
-        return userService.createUser(userDto) ?
+        return userService.createUser(userDto) != 1 ?
                 HttpStatus.CREATED :
                 HttpStatus.BAD_REQUEST;
     }
@@ -58,9 +59,9 @@ public class UserController {
     }
 
     @PostMapping("upload/avatars")
-    public ResponseEntity<String> uploadAvatar(MultipartFile file) {
+    public ResponseEntity<String> uploadAvatar(MultipartFile file) throws IOException {
         //ToDO logic for storing avatar and user
 
-        return userService.uploadAvatar(file);
+        return new ResponseEntity<>(userService.uploadAvatar(file), HttpStatus.OK);
     }
 }

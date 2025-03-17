@@ -3,8 +3,6 @@ package kg.attractor.jobsearch.service.impl;
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.service.UserService;
 import kg.attractor.jobsearch.util.FileUtil;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,26 +13,18 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     @Override
-    public ResponseEntity<String> uploadAvatar(MultipartFile file) {
+    public String uploadAvatar(MultipartFile file) throws IOException {
         //ToDO save user avatar logic should be implemented
 
-        try {
-            String result = FileUtil.uploadFile(file);
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-
-        } catch (IOException e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(e.getMessage());
-        }
+        return FileUtil.uploadFile(file);
     }
 
     @Override
-    public boolean createUser(UserDto userDto) {
+    public Long createUser(UserDto userDto) {
         //ToDo create and store user logic would take dto and return true
-        // if operation is succeed or false if it fails
+        //return id of created object
 
-        return true;
+        return -1L;
     }
 
     @Override

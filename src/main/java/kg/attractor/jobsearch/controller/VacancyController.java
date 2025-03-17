@@ -32,7 +32,8 @@ public class VacancyController {
     public HttpStatus createVacancy(@RequestBody VacancyDto vacancyDto) {
         //ToDO implement create vacancy handler
 
-        return vacancyService.createVacancy(vacancyDto) ? HttpStatus.CREATED :
+        return vacancyService.createVacancy(vacancyDto) != 1 ?
+                HttpStatus.CREATED :
                 HttpStatus.BAD_REQUEST;
     }
 
@@ -40,7 +41,8 @@ public class VacancyController {
     public HttpStatus redactorVacancy(@RequestBody VacancyDto vacancyDto) {
         //ToDo implement redactor vacancy handler
 
-        return vacancyService.updateVacancy(vacancyDto) ? HttpStatus.NO_CONTENT :
+        return vacancyService.updateVacancy(vacancyDto) != 1 ?
+                HttpStatus.NO_CONTENT :
                 HttpStatus.BAD_REQUEST;
     }
 
@@ -48,8 +50,9 @@ public class VacancyController {
     public HttpStatus deleteVacancy(@PathVariable Long vacancyId) {
         //ToDO implement delete vacancy handler
 
-        return vacancyService.deleteVacancy(vacancyId) ? HttpStatus.NO_CONTENT :
-                HttpStatus.BAD_REQUEST;
+        return vacancyService.deleteVacancy(vacancyId) ?
+                HttpStatus.NO_CONTENT :
+                HttpStatus.NOT_FOUND;
     }
 
     @GetMapping("actives")
@@ -74,7 +77,7 @@ public class VacancyController {
     public HttpStatus createRespond(@PathVariable Long vacancyId, @PathVariable Long resumeId) {
         //ToDo implement create new respond handler
 
-        return vacancyService.createRespond(vacancyId, resumeId) ?
+        return vacancyService.createRespond(vacancyId, resumeId) != 1 ?
                 HttpStatus.NO_CONTENT :
                 HttpStatus.BAD_REQUEST;
     }

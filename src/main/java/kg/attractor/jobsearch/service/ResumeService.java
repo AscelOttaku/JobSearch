@@ -10,9 +10,9 @@ public interface ResumeService {
 
     Optional<ResumeDto> findResumeByCategory(String resumeCategory);
 
-    boolean createResume(ResumeDto resumeDto);
+    Long createResume(ResumeDto resumeDto);
 
-    boolean updateResume(ResumeDto resumeDto);
+    Long updateResume(ResumeDto resumeDto);
 
     boolean deleteResume(Long resumeId);
 }

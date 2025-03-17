@@ -19,22 +19,25 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public boolean createVacancy(VacancyDto vacancyDto) {
+    public Long createVacancy(VacancyDto vacancyDto) {
         //ToDo create vacancy logic
+        //return id of created object
 
-        return true;
+        return -1L;
     }
 
     @Override
-    public boolean updateVacancy(VacancyDto vacancyDto) {
+    public Long updateVacancy(VacancyDto vacancyDto) {
         //ToDo update vacancy logic
+        //return id of created object
 
-        return true;
+        return -1L;
     }
 
     @Override
     public boolean deleteVacancy(Long vacancyId) {
         //ToDo delete vacancy logic
+        //return id of created object
 
         return true;
     }
@@ -54,9 +57,10 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public boolean createRespond(Long vacancyId, Long resumeId) {
+    public Long createRespond(Long vacancyId, Long resumeId) {
         //ToDo create respond by taking vacancy id and resume id
+        //return id of created object
 
-        return true;
+        return -1L;
     }
 }
