@@ -26,22 +26,25 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public boolean createResume(ResumeDto resumeDto) {
+    public Long createResume(ResumeDto resumeDto) {
         //ToDO create resume logic
+        //return id of created object
 
-        return true;
+        return -1L;
     }
 
     @Override
-    public boolean updateResume(ResumeDto resumeDto) {
+    public Long updateResume(ResumeDto resumeDto) {
         //ToDo update resume logic
+        //return id of created object
 
-        return true;
+        return -1L;
     }
 
     @Override
     public boolean deleteResume(Long resumeId) {
         //ToDo delete resume by id
+        //return id of created object
 
         return true;
     }
