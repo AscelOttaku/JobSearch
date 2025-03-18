@@ -3,7 +3,9 @@ package kg.attractor.jobsearch.dto.mapper.impl;
 import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.model.Resume;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ResumeMapper implements Mapper<ResumeDto, Resume> {
     @Override
     public ResumeDto mapToDto(Resume resume) {

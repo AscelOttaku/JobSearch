@@ -1,8 +1,11 @@
 package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dto.UserDto;
+import kg.attractor.jobsearch.dto.mapper.Mapper;
+import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.service.UserService;
 import kg.attractor.jobsearch.util.FileUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,6 +14,12 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
+    private final Mapper<UserDto, User> userMapper;
+
+    @Autowired
+    public UserServiceImpl(Mapper<UserDto, User> userMapper) {
+        this.userMapper = userMapper;
+    }
 
     @Override
     public String uploadAvatar(MultipartFile file) throws IOException {

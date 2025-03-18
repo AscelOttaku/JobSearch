@@ -3,7 +3,9 @@ package kg.attractor.jobsearch.dto.mapper.impl;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.model.Vacancy;
+import org.springframework.stereotype.Service;
 
+@Service
 public class VacancyMapper implements Mapper<VacancyDto, Vacancy> {
     @Override
     public VacancyDto mapToDto(Vacancy entity) {

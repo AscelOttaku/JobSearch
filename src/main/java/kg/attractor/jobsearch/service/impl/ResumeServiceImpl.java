@@ -1,7 +1,10 @@
 package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dto.ResumeDto;
+import kg.attractor.jobsearch.dto.mapper.Mapper;
+import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.service.ResumeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -10,6 +13,12 @@ import java.util.Optional;
 
 @Service
 public class ResumeServiceImpl implements ResumeService {
+    private final Mapper<ResumeDto, Resume> resumeMapper;
+
+    @Autowired
+    public ResumeServiceImpl(Mapper<ResumeDto, Resume> resumeMapper) {
+        this.resumeMapper = resumeMapper;
+    }
 
     @Override
     public List<ResumeDto> findAllResumes() {

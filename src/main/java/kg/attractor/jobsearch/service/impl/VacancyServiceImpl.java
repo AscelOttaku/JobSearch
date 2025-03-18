@@ -1,7 +1,10 @@
 package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dto.VacancyDto;
+import kg.attractor.jobsearch.dto.mapper.Mapper;
+import kg.attractor.jobsearch.model.Vacancy;
 import kg.attractor.jobsearch.service.VacancyService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -10,6 +13,12 @@ import java.util.Optional;
 
 @Service
 public class VacancyServiceImpl implements VacancyService {
+    private final Mapper<VacancyDto, Vacancy> vacancyMapper;
+
+    @Autowired
+    public VacancyServiceImpl(Mapper<VacancyDto, Vacancy> vacancyMapper) {
+        this.vacancyMapper = vacancyMapper;
+    }
 
     @Override
     public Optional<VacancyDto> findVacancyById(Long vacancyId) {
