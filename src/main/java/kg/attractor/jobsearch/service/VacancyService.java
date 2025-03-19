@@ -1,6 +1,8 @@
 package kg.attractor.jobsearch.service;
 
 import kg.attractor.jobsearch.dto.VacancyDto;
+import kg.attractor.jobsearch.model.Category;
+import kg.attractor.jobsearch.model.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +18,11 @@ public interface VacancyService {
 
     List<VacancyDto> findActiveVacancies();
 
-    Optional<List<VacancyDto>> findVacanciesByCategory(String category);
+    List<VacancyDto> findVacanciesByCategory(Category category);
 
     Long createRespond(Long vacancyId, Long resumeId);
+
+    List<VacancyDto> findUserRespondedVacancies(User user);
+
+    List<VacancyDto> findAllVacancies();
 }

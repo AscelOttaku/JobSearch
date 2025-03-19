@@ -2,12 +2,15 @@ package kg.attractor.jobsearch.dao;
 
 import kg.attractor.jobsearch.model.User;
 
+import java.util.List;
 import java.util.Optional;
 
-public interface Dao {
+public interface UserDao {
     Optional<User> findUserByEmail(String email);
 
     Optional<User> findUserByPhoneNumber(String phoneNumber);
 
-    Optional<User> findUserByName(String name);
+    List<User> findUsersByName(String name);
+
+    List<User> findRespondedToVacancyUsersByVacancy(Long vacancyId);
 }

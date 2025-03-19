@@ -4,6 +4,7 @@ import kg.attractor.jobsearch.dto.UserDto;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
@@ -16,4 +17,14 @@ public interface UserService {
     Optional<UserDto> findJobSeekerByVacancyId(Long vacancyId);
 
     Optional<UserDto> findEmployerByEmail(String employerEmail);
+
+    List<UserDto> findUserByName(String userName);
+
+    UserDto findUserByEmail(String email);
+
+    UserDto findUserByPhoneNumber(String phoneNumber);
+
+    boolean isUserExist(String email);
+
+    List<UserDto> findRespondedToVacancyUsersByVacancy(Long vacancyId);
 }

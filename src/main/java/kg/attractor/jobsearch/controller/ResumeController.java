@@ -32,7 +32,7 @@ public class ResumeController {
     public ResponseEntity<ResumeDto> findByResumeByCategory(@PathVariable String resumeCategory) {
         //ToDo implement handler for finding resume by category
 
-        Optional<ResumeDto> resumeDto = resumeService.findResumeByCategory(resumeCategory);
+        Optional<ResumeDto> resumeDto = resumeService.findResumesByCategory(resumeCategory);
 
         return resumeDto.map(dto -> new ResponseEntity<>(dto, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NO_CONTENT));

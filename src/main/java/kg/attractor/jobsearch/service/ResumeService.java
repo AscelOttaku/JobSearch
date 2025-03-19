@@ -1,18 +1,21 @@
 package kg.attractor.jobsearch.service;
 
 import kg.attractor.jobsearch.dto.ResumeDto;
+import kg.attractor.jobsearch.model.Category;
+import kg.attractor.jobsearch.model.User;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ResumeService {
     List<ResumeDto> findAllResumes();
 
-    Optional<ResumeDto> findResumeByCategory(String resumeCategory);
+    List<ResumeDto> findResumesByCategory(Category category);
 
     Long createResume(ResumeDto resumeDto);
 
     Long updateResume(ResumeDto resumeDto);
 
     boolean deleteResume(Long resumeId);
+
+    List<ResumeDto> findUserCreatedResumes(User user);
 }
