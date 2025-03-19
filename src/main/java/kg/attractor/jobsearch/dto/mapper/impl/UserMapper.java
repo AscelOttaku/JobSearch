@@ -24,16 +24,16 @@ public class UserMapper implements Mapper<UserDto, User> {
 
     @Override
     public User mapToEntity(UserDto userDto) {
-        return User.builder()
-                .id(userDto.getId())
-                .name(userDto.getName())
-                .surname(userDto.getSurname())
-                .age(userDto.getAge())
-                .email(userDto.getEmail())
-                .password(userDto.getPassword())
-                .phoneNumber(userDto.getPhoneNumber())
-                .avatar(userDto.getAvatar())
-                .accountType(userDto.getAccountType())
-                .build();
+        User user = new User();
+        user.setId(userDto.getId());
+        user.setName(userDto.getName());
+        user.setSurname(userDto.getSurname());
+        user.setAge(userDto.getAge());
+        user.setEmail(userDto.getEmail());
+        user.setPassword(userDto.getPassword());
+        user.setPhoneNumber(userDto.getPhoneNumber());
+        user.setAvatar(userDto.getAvatar());
+        user.setAccountType(userDto.getAccountType());
+        return user;
     }
 }

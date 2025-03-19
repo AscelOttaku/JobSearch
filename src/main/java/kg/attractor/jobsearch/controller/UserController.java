@@ -34,7 +34,7 @@ public class UserController {
     public ResponseEntity<UserDto> findJobSeekerByEmail(@PathVariable String userEmail) {
         //ToDo implement search job seeker by id handler
 
-        Optional<UserDto> userDto = userService.findJobSeeker(userEmail);
+        Optional<UserDto> userDto = userService.findJobSeekerByEmail(userEmail);
 
         return userDto.map(dto -> new ResponseEntity<>(dto, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));

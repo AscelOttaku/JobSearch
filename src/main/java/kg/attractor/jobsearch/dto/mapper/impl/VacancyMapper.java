@@ -16,7 +16,7 @@ public class VacancyMapper implements Mapper<VacancyDto, Vacancy> {
                 .salary(entity.getSalary())
                 .expFrom(entity.getExpFrom())
                 .expTo(entity.getExpTo())
-                .isActive(entity.isActive())
+                .isActive(entity.getIsActive())
                 .userId(entity.getUserId())
                 .created(entity.getCreated())
                 .updated(entity.getUpdated())
@@ -25,17 +25,17 @@ public class VacancyMapper implements Mapper<VacancyDto, Vacancy> {
 
     @Override
     public Vacancy mapToEntity(VacancyDto vacancyDto) {
-        return Vacancy.builder()
-                .id(vacancyDto.getId())
-                .name(vacancyDto.getName())
-                .description(vacancyDto.getDescription())
-                .salary(vacancyDto.getSalary())
-                .expFrom(vacancyDto.getExpFrom())
-                .expTo(vacancyDto.getExpTo())
-                .isActive(vacancyDto.isActive())
-                .userId(vacancyDto.getUserId())
-                .created(vacancyDto.getCreated())
-                .updated(vacancyDto.getUpdated())
-                .build();
+        Vacancy vacancy = new Vacancy();
+        vacancy.setId(vacancyDto.getId());
+        vacancy.setName(vacancyDto.getName());
+        vacancy.setDescription(vacancyDto.getDescription());
+        vacancy.setSalary(vacancyDto.getSalary());
+        vacancy.setExpFrom(vacancyDto.getExpFrom());
+        vacancy.setExpTo(vacancyDto.getExpTo());
+        vacancy.setIsActive(vacancyDto.isActive());
+        vacancy.setUserId(vacancyDto.getUserId());
+        vacancy.setCreated(vacancyDto.getCreated());
+        vacancy.setUpdated(vacancyDto.getUpdated());
+        return vacancy;
     }
 }

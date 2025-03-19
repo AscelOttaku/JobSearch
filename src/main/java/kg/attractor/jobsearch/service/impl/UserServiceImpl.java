@@ -37,9 +37,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDto> findJobSeeker(String userEmail) {
-        //ToDO find job-seeker by email
-        //return Optional empty if its not exist or data
+    public Optional<UserDto> findJobSeekerByEmail(String userEmail) {
 
         return Optional.empty();
     }

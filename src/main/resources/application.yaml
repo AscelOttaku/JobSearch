@@ -1,0 +1,15 @@
+
+server:
+    port: 8080
+
+spring:
+   application:
+      name: JobSearch
+   datasource:
+      url: jdbc:h2:./db/job_seeker;AUTO_SERVER=TRUE
+      username: Kanybek
+      password: Kanybek12345
+      driver-class-name: org.h2.Driver
+   sql:
+     init:
+       mode: always

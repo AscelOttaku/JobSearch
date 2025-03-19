@@ -3,7 +3,7 @@ package kg.attractor.jobsearch.dto;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Builder
 @Getter
@@ -16,6 +16,6 @@ public class VacancyDto {
     private Integer expTo;
     private boolean isActive;
     private Long userId;
-    private LocalDate created;
-    private LocalDate updated;
+    private LocalDateTime created;
+    private LocalDateTime updated;
 }

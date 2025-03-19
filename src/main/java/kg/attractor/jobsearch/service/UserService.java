@@ -11,7 +11,7 @@ public interface UserService {
 
     Long createUser(UserDto userDto);
 
-    Optional<UserDto> findJobSeeker(String userEmail);
+    Optional<UserDto> findJobSeekerByEmail(String userEmail);
 
     Optional<UserDto> findJobSeekerByVacancyId(Long vacancyId);
 
