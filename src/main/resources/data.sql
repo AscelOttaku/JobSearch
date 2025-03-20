@@ -124,7 +124,8 @@ create table if not exists education_info(
 
 insert into users(name, surname, age, email, password, phone_number, avatar, account_type)
 values ( 'Sam', 'Maximovich', 23, 'Simon@gmail.com', 'Simon12345', '12345', null, 'JobSeeker'),
-       ('Tom', 'jerry', 30, 'Tom@gmail.com', 'Tom12345', '134', null, 'Employer');
+       ('Tom', 'jerry', 30, 'Tom@gmail.com', 'Tom12345', '134', null, 'Employer'),
+    ('Timothy', 'Timothy', 34, 'Tima@gmail.com', 'Timothy12345', '100', null, 'JobSeeker');
 
 insert into categories(name)
 values ( 'It' ),
@@ -132,7 +133,8 @@ values ( 'It' ),
 
 insert into resumes(user_id, name, category_id, salary, is_active, created, updated)
 values ( 1, 'java developer', 1, 90000,true, CURRENT_TIMESTAMP(), null),
-       (1, 'java backend dev', 1, 100000, true, CURRENT_TIMESTAMP(), null);
+       (1, 'java backend dev', 1, 100000, true, CURRENT_TIMESTAMP(), null),
+    (3, 'timothy resume', 1, 130000, true, CURRENT_TIMESTAMP(), null);
 
 insert into vacancies(name, description, category_id, salary, exp_from, exp_to, is_active, user_id, created)
 values ( 'Junior Java Dev', 'java Junior dev with 1 year experience', 1, 9000, 10, 100, true, 2, CURRENT_TIMESTAMP()),
@@ -140,7 +142,9 @@ values ( 'Junior Java Dev', 'java Junior dev with 1 year experience', 1, 9000, 1
 
 insert into responded_application(resume_id, vacancy_id, confirmation)
 values ( 1, 1, true),
-       (2, 2, true);
+       (2, 2, true),
+    (3, 1, true),
+    (3, 2, true);
 
 insert into work_experience_info(resume_id, years, company_name, position, responsibilities)
 values ( 1, 1, 'Giv', 'middle', 'dev' ),

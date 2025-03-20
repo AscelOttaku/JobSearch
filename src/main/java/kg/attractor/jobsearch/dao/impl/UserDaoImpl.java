@@ -40,11 +40,22 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public List<User> findRespondedToVacancyUsersByVacancy(Long vacancyId) {
-        String query = "select * from USERS " +
+        String query = "SELECT \n" +
+                "    USERS.ID AS id," +
+                "    USERS.NAME AS NAME,"+
+                "    USERS.SURNAME AS SURNAME,"+
+                "    USERS.AGE,"+
+                "    USERS.EMAIL AS EMAIL," +
+                "    USERS.PASSWORD AS PASSWORD, " +
+                "    USERS.PHONE_NUMBER, " +
+                "    USERS.AVATAR, " +
+                "    USERS.ACCOUNT_TYPE " +
+                "FROM USERS " +
                 "INNER JOIN RESUMES AS R ON R.USER_ID = USERS.ID " +
                 "INNER JOIN RESPONDED_APPLICATION AS RA ON RA.RESUME_ID = R.ID " +
                 "INNER JOIN VACANCIES AS V ON V.ID = RA.VACANCY_ID " +
-                "WHERE V.ID = ? AND USERS.ACCOUNT_TYPE LIKE 'JobSeeker'";
+                "WHERE V.ID = ? AND USERS.ACCOUNT_TYPE LIKE 'JobSeeker'" +
+                "AND RA.CONFIRMATION = TRUE";
 
         return jdbcTemplate.query(query, userRowMapper, vacancyId);
     }
