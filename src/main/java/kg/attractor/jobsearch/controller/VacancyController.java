@@ -1,6 +1,8 @@
 package kg.attractor.jobsearch.controller;
 
+import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.VacancyDto;
+import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.service.VacancyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,8 +11,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static kg.attractor.jobsearch.util.ExceptionHandler.handleIllegalArgumentException;
+import static kg.attractor.jobsearch.util.ExceptionHandler.handleVacancyNotFoundException;
+
 @RestController
-@RequestMapping("vacancies")
+@RequestMapping("/vacancies")
 public class VacancyController {
     private final VacancyService vacancyService;
 
@@ -21,64 +26,45 @@ public class VacancyController {
 
     @GetMapping("{vacancyId}")
     public ResponseEntity<VacancyDto> findVacancyById(@PathVariable Long vacancyId) {
-        //ToDo implement handler for searching vacancy by Id
-
-        return vacancyService.findVacancyById(vacancyId)
-                .map(dto -> new ResponseEntity<>(dto, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return handleVacancyNotFoundException(() -> vacancyService.findVacancyById(vacancyId));
     }
 
-    @PostMapping
-    public HttpStatus createVacancy(@RequestBody VacancyDto vacancyDto) {
-        //ToDO implement create vacancy handler
-
-        return vacancyService.createVacancy(vacancyDto) != 1 ?
-                HttpStatus.CREATED :
-                HttpStatus.BAD_REQUEST;
+    @PostMapping("new-vacancies")
+    public ResponseEntity<Long> createVacancy(@RequestBody VacancyDto vacancyDto) {
+        return handleIllegalArgumentException(() -> vacancyService.createVacancy(vacancyDto));
     }
 
-    @PutMapping()
-    public HttpStatus redactorVacancy(@RequestBody VacancyDto vacancyDto) {
-        //ToDo implement redactor vacancy handler
-
-        return vacancyService.updateVacancy(vacancyDto) != 1 ?
-                HttpStatus.NO_CONTENT :
-                HttpStatus.BAD_REQUEST;
+    @PutMapping
+    public ResponseEntity<Long> redactorVacancy(@RequestBody VacancyDto vacancyDto) {
+        return handleIllegalArgumentException(() -> vacancyService.updateVacancy(vacancyDto));
     }
 
     @DeleteMapping("{vacancyId}")
-    public HttpStatus deleteVacancy(@PathVariable Long vacancyId) {
-        //ToDO implement delete vacancy handler
-
+    public ResponseEntity<Void> deleteVacancy(@PathVariable Long vacancyId) {
         return vacancyService.deleteVacancy(vacancyId) ?
-                HttpStatus.NO_CONTENT :
-                HttpStatus.NOT_FOUND;
+                new ResponseEntity<>(HttpStatus.NO_CONTENT) :
+                new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("actives")
-    public ResponseEntity<List<VacancyDto>> findActiveVacancies() {
-        //ToDO implement find all active vacancies handler
-
-        return vacancyService.findActiveVacancies().isEmpty() ?
+    public ResponseEntity<List<VacancyDto>> findAllActiveVacancies() {
+        return vacancyService.findAllActiveVacancies().isEmpty() ?
                 new ResponseEntity<>(HttpStatus.NO_CONTENT) :
-                new ResponseEntity<>(vacancyService.findActiveVacancies(), HttpStatus.OK);
+                new ResponseEntity<>(vacancyService.findAllActiveVacancies(), HttpStatus.OK);
     }
 
-    @GetMapping("categories/{category}")
-    public ResponseEntity<List<VacancyDto>> findVacanciesByCategory(@PathVariable String category) {
-        //ToDo implement find all vacancies by category
-
-        return vacancyService.findVacanciesByCategory(category)
-                .map(dto -> new ResponseEntity<>(dto, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NO_CONTENT));
+    @GetMapping("categories")
+    public ResponseEntity<List<VacancyDto>> findVacanciesByCategory(@RequestBody Category category) {
+        return new ResponseEntity<>(vacancyService.findVacanciesByCategory(category), HttpStatus.OK);
     }
 
-    @PostMapping("respond/{vacancyId}/{resumeId}")
-    public HttpStatus createRespond(@PathVariable Long vacancyId, @PathVariable Long resumeId) {
-        //ToDo implement create new respond handler
+    @GetMapping("users")
+    public ResponseEntity<List<VacancyDto>> findUserRespondedVacancies(@RequestBody UserDto userDto) {
+        return handleIllegalArgumentException(() -> vacancyService.findUserRespondedVacancies(userDto));
+    }
 
-        return vacancyService.createRespond(vacancyId, resumeId) != 1 ?
-                HttpStatus.NO_CONTENT :
-                HttpStatus.BAD_REQUEST;
+    @GetMapping
+    public ResponseEntity<List<VacancyDto>> findAllVacancies() {
+        return new ResponseEntity<>(vacancyService.findAllVacancies(), HttpStatus.OK);
     }
 }

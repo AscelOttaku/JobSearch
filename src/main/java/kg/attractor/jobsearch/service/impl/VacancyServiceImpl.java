@@ -1,75 +1,96 @@
 package kg.attractor.jobsearch.service.impl;
 
+import kg.attractor.jobsearch.dao.VacancyDao;
+import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
+import kg.attractor.jobsearch.exceptions.VacancyNotFoundException;
+import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.model.Vacancy;
 import kg.attractor.jobsearch.service.VacancyService;
-import org.springframework.beans.factory.annotation.Autowired;
+import kg.attractor.jobsearch.util.validater.Validator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+
+import static kg.attractor.jobsearch.util.validater.Validator.isValidVacancy;
 
 @Service
+@RequiredArgsConstructor
 public class VacancyServiceImpl implements VacancyService {
     private final Mapper<VacancyDto, Vacancy> vacancyMapper;
+    private final VacancyDao vacancyDao;
 
-    @Autowired
-    public VacancyServiceImpl(Mapper<VacancyDto, Vacancy> vacancyMapper) {
-        this.vacancyMapper = vacancyMapper;
+    @Override
+    public VacancyDto findVacancyById(Long vacancyId) {
+        return vacancyDao.findVacancyById(vacancyId)
+                .map(vacancyMapper::mapToDto)
+                .orElseThrow(() -> new VacancyNotFoundException("vacancy by id " + vacancyId + " not found"));
     }
 
     @Override
-    public Optional<VacancyDto> findVacancyById(Long vacancyId) {
-        //ToDO find vacancy by id logic
-
-        return Optional.empty();
+    public boolean isVacancyExist(Long vacancyId) {
+        try {
+            return findVacancyById(vacancyId) != null;
+        } catch (VacancyNotFoundException e) {
+            return false;
+        }
     }
 
     @Override
     public Long createVacancy(VacancyDto vacancyDto) {
-        //ToDo create vacancy logic
-        //return id of created object
+        if (!isValidVacancy(vacancyDto))
+            throw new IllegalArgumentException("vacancy dto invalid");
 
-        return -1L;
+        return vacancyDao.createVacancy(vacancyMapper.mapToEntity(vacancyDto));
     }
 
     @Override
     public Long updateVacancy(VacancyDto vacancyDto) {
-        //ToDo update vacancy logic
-        //return id of created object
+        if (!isValidVacancy(vacancyDto))
+            throw new IllegalArgumentException("vacancy dto invalid");
 
-        return -1L;
+        Vacancy vacancy = vacancyMapper.mapToEntity(vacancyDto);
+        return vacancyDao.updateVacancy(vacancy);
     }
 
     @Override
     public boolean deleteVacancy(Long vacancyId) {
-        //ToDo delete vacancy logic
-        //return id of created object
-
-        return true;
+        return vacancyDao.deleteVacancyById(vacancyId);
     }
 
     @Override
-    public List<VacancyDto> findActiveVacancies() {
-        //ToDo find all active vacancies
-
-        return Collections.emptyList();
+    public List<VacancyDto> findAllActiveVacancies() {
+        return vacancyDao.findAllActiveVacancies().stream()
+                .map(vacancyMapper::mapToDto)
+                .toList();
     }
 
     @Override
-    public Optional<List<VacancyDto>> findVacanciesByCategory(String category) {
-        //ToDo find vacancy by category
+    public List<VacancyDto> findVacanciesByCategory(Category category) {
+        if (Validator.isNotValid(category))
+            throw new IllegalArgumentException("Category is empty");
 
-        return Optional.empty();
+       return vacancyDao.findVacancyByCategory(category.getId()).stream()
+               .map(vacancyMapper::mapToDto)
+               .toList();
     }
 
     @Override
-    public Long createRespond(Long vacancyId, Long resumeId) {
-        //ToDo create respond by taking vacancy id and resume id
-        //return id of created object
+    public List<VacancyDto> findUserRespondedVacancies(UserDto userDto) {
+        if (Validator.isNotValidUser(userDto))
+            throw new IllegalArgumentException("Not a JobSeeker");
 
-        return -1L;
+        return vacancyDao.findVacanciesByUserEmail(userDto.getEmail()).stream()
+                .map(vacancyMapper::mapToDto)
+                .toList();
+    }
+
+    @Override
+    public List<VacancyDto> findAllVacancies() {
+        return vacancyDao.findAllVacancies().stream()
+                .map(vacancyMapper::mapToDto)
+                .toList();
     }
 }

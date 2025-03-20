@@ -10,28 +10,20 @@ public class ResumeMapper implements Mapper<ResumeDto, Resume> {
     @Override
     public ResumeDto mapToDto(Resume resume) {
         return ResumeDto.builder()
-                .id(resume.getId())
-                .userId(resume.getUserId())
                 .name(resume.getName())
                 .categoryId(resume.getCategoryId())
                 .salary(resume.getSalary())
-                .isActive(resume.isActive())
-                .created(resume.getCreated())
-                .updated(resume.getUpdated())
+                .isActive(resume.getIsActive())
                 .build();
     }
 
     @Override
     public Resume mapToEntity(ResumeDto resumeDto) {
-        return Resume.builder()
-                .id(resumeDto.getId())
-                .userId(resumeDto.getUserId())
-                .name(resumeDto.getName())
-                .categoryId(resumeDto.getCategoryId())
-                .salary(resumeDto.getSalary())
-                .isActive(resumeDto.isActive())
-                .created(resumeDto.getCreated())
-                .updated(resumeDto.getUpdated())
-                .build();
+        Resume resume = new Resume();
+        resume.setName(resumeDto.getName());
+        resume.setCategoryId(resumeDto.getCategoryId());
+        resume.setSalary(resumeDto.getSalary());
+        resume.setIsActive(resumeDto.isActive());
+        return resume;
     }
 }

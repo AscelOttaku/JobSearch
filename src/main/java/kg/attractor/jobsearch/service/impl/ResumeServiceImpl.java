@@ -1,60 +1,86 @@
 package kg.attractor.jobsearch.service.impl;
 
+import kg.attractor.jobsearch.dao.ResumeDao;
+import kg.attractor.jobsearch.dao.UserDao;
 import kg.attractor.jobsearch.dto.ResumeDto;
+import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
+import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.service.ResumeService;
-import org.springframework.beans.factory.annotation.Autowired;
+import kg.attractor.jobsearch.util.validater.Validator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+
+import static kg.attractor.jobsearch.util.validater.Validator.isValidResume;
 
 @Service
+@RequiredArgsConstructor
 public class ResumeServiceImpl implements ResumeService {
     private final Mapper<ResumeDto, Resume> resumeMapper;
-
-    @Autowired
-    public ResumeServiceImpl(Mapper<ResumeDto, Resume> resumeMapper) {
-        this.resumeMapper = resumeMapper;
-    }
+    private final ResumeDao resumeDao;
+    private final UserDao userDao;
 
     @Override
     public List<ResumeDto> findAllResumes() {
-        //ToDO implement find all logic
-
-        return Collections.emptyList();
+        return resumeDao.findAllResumes().stream()
+                .map(resumeMapper::mapToDto)
+                .toList();
     }
 
     @Override
-    public Optional<ResumeDto> findResumeByCategory(String resumeCategory) {
-        //ToDo find resume by category logic
+    public List<ResumeDto> findResumesByCategory(Category resumeCategory) {
+        if (Validator.isNotValid(resumeCategory))
+            throw new IllegalArgumentException("resume category or category id is null");
 
-        return Optional.empty();
+        var optionalResume = resumeDao.findResumesByCategory(resumeCategory.getId());
+
+        return optionalResume.stream()
+                .map(resumeMapper::mapToDto)
+                .toList();
     }
 
     @Override
     public Long createResume(ResumeDto resumeDto) {
-        //ToDO create resume logic
-        //return id of created object
+        if (!isValidResume(resumeDto))
+            throw new IllegalArgumentException("resume dto invalid");
 
-        return -1L;
+        return resumeDao.createResume(resumeMapper.mapToEntity(resumeDto))
+                .orElse(-1L);
     }
 
     @Override
     public Long updateResume(ResumeDto resumeDto) {
-        //ToDo update resume logic
-        //return id of created object
+        if (!isValidResume(resumeDto))
+            throw new IllegalArgumentException("resume dto invalid");
 
-        return -1L;
+        return resumeDao.updateResume(resumeMapper.mapToEntity(resumeDto))
+                .orElse(-1L);
     }
 
     @Override
     public boolean deleteResume(Long resumeId) {
-        //ToDo delete resume by id
-        //return id of created object
+        return resumeDao.deleteResumeById(resumeId);
+    }
 
-        return true;
+    @Override
+    public List<ResumeDto> findUserCreatedResumes(UserDto userDto) {
+        if (Validator.isNotValidUser(userDto))
+            throw new IllegalArgumentException("User account type is not jobSeeker");
+
+        var optionalUser = userDao.findUserByEmail(userDto.getEmail());
+
+        return optionalUser.map(user ->
+                resumeDao.findUserCreatedResumes(user.getId()).stream()
+                        .map(resumeMapper::mapToDto)
+                        .toList()).orElse(Collections.emptyList());
+    }
+
+    @Override
+    public boolean isResumeExist(Long resumeId) {
+        return resumeDao.findResumeById(resumeId).isPresent();
     }
 }

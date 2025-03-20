@@ -8,6 +8,6 @@ import lombok.Setter;
 public class ContactInfo {
     private Long id;
     private Long contactTypeId;
-    private Long parentId;
+    private Long resumeId;
     private String value;
 }
