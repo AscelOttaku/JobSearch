@@ -26,9 +26,7 @@ public class UserController {
 
     @PostMapping
     public HttpStatus createUser(@RequestBody UserDto userDto) {
-        //ToDo implement creating accaunt job-seeker
-
-        return userService.createUser(userDto) != 1 ?
+        return userService.createUser(userDto) != -1 ?
                 HttpStatus.CREATED :
                 HttpStatus.BAD_REQUEST;
     }
@@ -42,7 +40,7 @@ public class UserController {
     public ResponseEntity<UserDto> findJobSeekersByVacancy(@PathVariable Long vacancyId) {
         //ToDO implement search for job seeker that responded to the vacancy;
 
-        return userService.findJobSeekerByVacancyId(vacancyId)
+        return userService.findJobSeekersByVacancyId(vacancyId)
                 .map(dto -> new ResponseEntity<>(dto, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

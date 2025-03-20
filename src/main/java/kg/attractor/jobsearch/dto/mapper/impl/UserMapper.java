@@ -10,7 +10,6 @@ public class UserMapper implements Mapper<UserDto, User> {
     @Override
     public UserDto mapToDto(User user) {
         return UserDto.builder()
-                .id(user.getId())
                 .name(user.getName())
                 .surname(user.getSurname())
                 .age(user.getAge())
@@ -25,7 +24,6 @@ public class UserMapper implements Mapper<UserDto, User> {
     @Override
     public User mapToEntity(UserDto userDto) {
         User user = new User();
-        user.setId(userDto.getId());
         user.setName(userDto.getName());
         user.setSurname(userDto.getSurname());
         user.setAge(userDto.getAge());

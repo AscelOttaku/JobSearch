@@ -1,6 +1,6 @@
 create table if not exists users(
-    id bigint auto_increment primary key,
-    name varchar(45) not null,
+    userId bigint auto_increment primary key,
+    firstName varchar(45) not null,
     surname varchar(45) not null,
     age int,
     email varchar(65) not null unique,
@@ -22,7 +22,7 @@ create table if not exists categories(
 create table if not exists resumes(
     id bigint auto_increment primary key,
     user_id bigint not null,
-    foreign key (user_id) references users(id)
+    foreign key (user_id) references users(userId)
     on delete restrict
     on update cascade,
     name varchar(45) not null,
@@ -49,7 +49,7 @@ create table if not exists vacancies(
     exp_to int,
     is_active boolean,
     user_id bigint not null,
-    foreign key (user_id) references users(id)
+    foreign key (user_id) references users(userId)
     on delete restrict
     on update cascade,
     created timestamp,
@@ -122,7 +122,7 @@ create table if not exists education_info(
     degree varchar(45)
 );
 
-insert into users(name, surname, age, email, password, phone_number, avatar, account_type)
+insert into users(firstName, surname, age, email, password, phone_number, avatar, account_type)
 values ( 'Sam', 'Maximovich', 23, 'Simon@gmail.com', 'Simon12345', '12345', null, 'JobSeeker'),
        ('Tom', 'jerry', 30, 'Tom@gmail.com', 'Tom12345', '134', null, 'Employer'),
     ('Timothy', 'Timothy', 34, 'Tima@gmail.com', 'Timothy12345', '100', null, 'JobSeeker');

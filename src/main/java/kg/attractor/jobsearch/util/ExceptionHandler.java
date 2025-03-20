@@ -31,9 +31,17 @@ public class ExceptionHandler {
 
     public static <T> ResponseEntity<T> handleVacancyNotFoundException(Supplier<T> supplier) {
         try {
-            return new ResponseEntity<>(supplier.get(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(supplier.get(), HttpStatus.OK);
         } catch (VacancyNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public static <T> ResponseEntity<T> handleIllegalArgumentException(Supplier<T> supplier) {
+        try {
+            return new ResponseEntity<>(supplier.get(), HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 }

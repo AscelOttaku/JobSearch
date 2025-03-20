@@ -7,6 +7,7 @@ import kg.attractor.jobsearch.exceptions.UserNotFoundException;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.service.UserService;
 import kg.attractor.jobsearch.util.FileUtil;
+import kg.attractor.jobsearch.util.validater.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,10 +33,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Long createUser(UserDto userDto) {
-        //ToDo create and store user logic would take dto and return true
-        //return id of created object
+        if (Validator.isNotValidUser(userDto))
+            return -1L;
 
-        return -1L;
+        return userDao.createUser(userMapper.mapToEntity(userDto));
     }
 
     @Override
@@ -46,7 +47,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDto> findJobSeekerByVacancyId(Long vacancyId) {
+    public Optional<UserDto> findJobSeekersByVacancyId(Long vacancyId) {
         //ToDO find job seeker by vacancy id
 
         return Optional.empty();

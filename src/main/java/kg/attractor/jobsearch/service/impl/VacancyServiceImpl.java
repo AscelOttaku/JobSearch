@@ -1,18 +1,20 @@
 package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dao.VacancyDao;
+import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.exceptions.VacancyNotFoundException;
 import kg.attractor.jobsearch.model.Category;
-import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.model.Vacancy;
 import kg.attractor.jobsearch.service.VacancyService;
+import kg.attractor.jobsearch.util.validater.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
+
+import static kg.attractor.jobsearch.util.validater.Validator.isValidVacancy;
 
 @Service
 @RequiredArgsConstructor
@@ -28,19 +30,29 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public Long createVacancy(VacancyDto vacancyDto) {
-        //ToDo create vacancy logic
-        //return id of created object
+    public boolean isVacancyExist(Long vacancyId) {
+        try {
+            return findVacancyById(vacancyId) != null;
+        } catch (VacancyNotFoundException e) {
+            return false;
+        }
+    }
 
-        return -1L;
+    @Override
+    public Long createVacancy(VacancyDto vacancyDto) {
+        if (!isValidVacancy(vacancyDto))
+            throw new IllegalArgumentException("vacancy dto invalid");
+
+        return vacancyDao.createVacancy(vacancyMapper.mapToEntity(vacancyDto));
     }
 
     @Override
     public Long updateVacancy(VacancyDto vacancyDto) {
-        //ToDo update vacancy logic
-        //return id of created object
+        if (!isValidVacancy(vacancyDto))
+            throw new IllegalArgumentException("vacancy dto invalid");
 
-        return -1L;
+        Vacancy vacancy = vacancyMapper.mapToEntity(vacancyDto);
+        return vacancyDao.updateVacancy(vacancy);
     }
 
     @Override
@@ -57,7 +69,7 @@ public class VacancyServiceImpl implements VacancyService {
 
     @Override
     public List<VacancyDto> findVacanciesByCategory(Category category) {
-        if (category == null || category.getId() == null)
+        if (Validator.isNotValid(category))
             throw new IllegalArgumentException("Category is empty");
 
        return vacancyDao.findVacancyByCategory(category.getId()).stream()
@@ -66,19 +78,11 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public Long createRespond(Long vacancyId, Long resumeId) {
-        //ToDo create respond by taking vacancy id and resume id
-        //return id of created object
-
-        return -1L;
-    }
-
-    @Override
-    public List<VacancyDto> findUserRespondedVacancies(User user) {
-        if (user == null || !user.getAccountType().equalsIgnoreCase("JobSeeker"))
+    public List<VacancyDto> findUserRespondedVacancies(UserDto userDto) {
+        if (Validator.isNotValidUser(userDto))
             throw new IllegalArgumentException("Not a JobSeeker");
 
-        return vacancyDao.findVacanciesByUserid(user.getId()).stream()
+        return vacancyDao.findVacanciesByUserEmail(userDto.getEmail()).stream()
                 .map(vacancyMapper::mapToDto)
                 .toList();
     }

@@ -15,7 +15,7 @@ public interface UserService {
 
     UserDto findJobSeekerByEmail(String userEmail);
 
-    Optional<UserDto> findJobSeekerByVacancyId(Long vacancyId);
+    Optional<UserDto> findJobSeekersByVacancyId(Long vacancyId);
 
     UserDto findEmployerByEmail(String employerEmail);
 

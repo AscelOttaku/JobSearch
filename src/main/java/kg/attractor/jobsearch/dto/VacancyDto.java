@@ -2,20 +2,19 @@ package kg.attractor.jobsearch.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
+import lombok.Setter;
 
 @Builder
 @Getter
+@Setter
 public class VacancyDto {
     private Long id;
     private String name;
     private String description;
-    private double salary;
+    private Long categoryId;
+    private Double salary;
     private Integer expFrom;
     private Integer expTo;
     private boolean isActive;
     private Long userId;
-    private LocalDateTime created;
-    private LocalDateTime updated;
 }
