@@ -5,10 +5,9 @@ import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.model.User;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface VacancyService {
-    Optional<VacancyDto> findVacancyById(Long vacancyId);
+    VacancyDto findVacancyById(Long vacancyId);
 
     Long createVacancy(VacancyDto vacancyDto);
 
@@ -16,7 +15,7 @@ public interface VacancyService {
 
     boolean deleteVacancy(Long vacancyId);
 
-    List<VacancyDto> findActiveVacancies();
+    List<VacancyDto> findAllActiveVacancies();
 
     List<VacancyDto> findVacanciesByCategory(Category category);
 

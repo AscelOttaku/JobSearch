@@ -1,9 +1,7 @@
 package kg.attractor.jobsearch.dao.impl;
 
 import kg.attractor.jobsearch.dao.ResumeDao;
-import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.model.Resume;
-import kg.attractor.jobsearch.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,10 +16,10 @@ public class ResumeDaoImpl implements ResumeDao {
     private final BeanPropertyRowMapper<Resume> resumeMapper = new BeanPropertyRowMapper<>(Resume.class);
 
     @Override
-    public List<Resume> findResumesByCategory(Category category) {
+    public List<Resume> findResumesByCategory(Long categoryId) {
         String query = "select * from RESUMES where CATEGORY_ID = ?";
 
-        return jdbcTemplate.query(query, resumeMapper, category.getId());
+        return jdbcTemplate.query(query, resumeMapper, categoryId);
     }
 
     @Override
@@ -29,5 +27,12 @@ public class ResumeDaoImpl implements ResumeDao {
         String query = "select * from RESUMES where USER_ID = ?";
 
         return jdbcTemplate.query(query, resumeMapper, userid);
+    }
+
+    @Override
+    public List<Resume> findAllResumes() {
+        String query = "select * from RESUMES";
+
+        return jdbcTemplate.query(query, resumeMapper);
     }
 }

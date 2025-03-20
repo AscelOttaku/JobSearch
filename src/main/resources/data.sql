@@ -48,7 +48,7 @@ create table if not exists vacancies(
     exp_from int,
     exp_to int,
     is_active boolean,
-    user_id int not null,
+    user_id bigint not null,
     foreign key (user_id) references users(id)
     on delete restrict
     on update cascade,
@@ -127,7 +127,8 @@ values ( 'Sam', 'Maximovich', 23, 'Simon@gmail.com', 'Simon12345', '12345', null
        ('Tom', 'jerry', 30, 'Tom@gmail.com', 'Tom12345', '134', null, 'Employer');
 
 insert into categories(name)
-values ( 'It' );
+values ( 'It' ),
+       ('UUI Designer');
 
 insert into resumes(user_id, name, category_id, salary, is_active, created, updated)
 values ( 1, 'java developer', 1, 90000,true, CURRENT_TIMESTAMP(), null),

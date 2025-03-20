@@ -1,6 +1,8 @@
 package kg.attractor.jobsearch.controller;
 
 import kg.attractor.jobsearch.dto.ResumeDto;
+import kg.attractor.jobsearch.model.Category;
+import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.service.ResumeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("resumes")
@@ -22,20 +23,17 @@ public class ResumeController {
 
     @GetMapping
     public ResponseEntity<List<ResumeDto>> findAll() {
-        //ToDo implement handler for finding all resumes
-
         return resumeService.findAllResumes().isEmpty() ? ResponseEntity.noContent().build() :
                 ResponseEntity.ok(resumeService.findAllResumes());
     }
 
-    @GetMapping("category/{resumeCategory}")
-    public ResponseEntity<ResumeDto> findByResumeByCategory(@PathVariable String resumeCategory) {
-        //ToDo implement handler for finding resume by category
-
-        Optional<ResumeDto> resumeDto = resumeService.findResumesByCategory(resumeCategory);
-
-        return resumeDto.map(dto -> new ResponseEntity<>(dto, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NO_CONTENT));
+    @GetMapping("category")
+    public ResponseEntity<List<ResumeDto>> findByResumeByCategory(@RequestBody Category category) {
+        try {
+            return ResponseEntity.ok().body(resumeService.findResumesByCategory(category));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PostMapping
@@ -67,5 +65,10 @@ public class ResumeController {
         return resumeService.deleteResume(resumeId) ?
                 HttpStatus.NO_CONTENT :
                 HttpStatus.NOT_FOUND;
+    }
+
+    @GetMapping("users")
+    public ResponseEntity<List<ResumeDto>> findUserCreatedResumes(@RequestBody User user) {
+        return new ResponseEntity<>(resumeService.findUserCreatedResumes(user), HttpStatus.OK);
     }
 }

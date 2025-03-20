@@ -3,28 +3,25 @@ package kg.attractor.jobsearch.service.impl;
 import kg.attractor.jobsearch.dao.UserDao;
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
-import kg.attractor.jobsearch.exceptions.UserNotFound;
+import kg.attractor.jobsearch.exceptions.UserNotFoundException;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.service.UserService;
 import kg.attractor.jobsearch.util.FileUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final Mapper<UserDto, User> userMapper;
     private final UserDao userDao;
-
-    @Autowired
-    public UserServiceImpl(Mapper<UserDto, User> userMapper, UserDao userDao) {
-        this.userMapper = userMapper;
-        this.userDao = userDao;
-    }
 
     @Override
     public String uploadAvatar(MultipartFile file) throws IOException {
@@ -42,9 +39,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDto> findJobSeekerByEmail(String userEmail) {
-
-        return Optional.empty();
+    public UserDto findJobSeekerByEmail(String userEmail) {
+        var optionalUser = userDao.findJobSeekerByEmail(userEmail);
+        return optionalUser.map(userMapper::mapToDto)
+                .orElseThrow(() -> new UserNotFoundException("Job Seeker not found By Email: " + userEmail));
     }
 
     @Override
@@ -55,17 +53,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDto> findEmployerByEmail(String employerEmail) {
-        //ToDo find employer by email
-
-        return Optional.empty();
+    public UserDto findEmployerByEmail(String employerEmail) {
+        var optionalUser = userDao.findEmployerByEmail(employerEmail);
+        return optionalUser.map(userMapper::mapToDto).orElseThrow(() ->
+                new UserNotFoundException("Employer not found By email: " + employerEmail));
     }
 
     @Override
-    public List<UserDto> findUserByName(String userName) {
+    public Set<UserDto> findUsersByName(String userName) {
         return userDao.findUsersByName(userName).stream()
                 .map(userMapper::mapToDto)
-                .toList();
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -73,7 +71,7 @@ public class UserServiceImpl implements UserService {
         var optionalUser = userDao.findUserByEmail(email);
 
         return optionalUser.map(userMapper::mapToDto)
-                .orElseThrow(() -> new UserNotFound("User not found by Email: " + email));
+                .orElseThrow(() -> new UserNotFoundException("User not found by Email: " + email));
     }
 
     @Override
@@ -81,7 +79,7 @@ public class UserServiceImpl implements UserService {
         var optionalUser = userDao.findUserByPhoneNumber(phoneNumber);
 
         return optionalUser.map(userMapper::mapToDto)
-                .orElseThrow(() -> new UserNotFound("User not found by PhoneNumber: " + phoneNumber));
+                .orElseThrow(() -> new UserNotFoundException("User not found by PhoneNumber: " + phoneNumber));
     }
 
     @Override
@@ -92,6 +90,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> findRespondedToVacancyUsersByVacancy(Long vacancyId) {
         return userDao.findRespondedToVacancyUsersByVacancy(vacancyId).stream()
+                .filter(user -> user.getAccountType().equalsIgnoreCase("jobSeeker"))
                 .map(userMapper::mapToDto)
                 .toList();
     }

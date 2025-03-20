@@ -13,4 +13,8 @@ public interface UserDao {
     List<User> findUsersByName(String name);
 
     List<User> findRespondedToVacancyUsersByVacancy(Long vacancyId);
+
+    Optional<User> findJobSeekerByEmail(String email);
+
+    Optional<User> findEmployerByEmail(String email);
 }

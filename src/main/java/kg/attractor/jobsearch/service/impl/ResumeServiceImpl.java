@@ -7,33 +7,30 @@ import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.service.ResumeService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ResumeServiceImpl implements ResumeService {
     private final Mapper<ResumeDto, Resume> resumeMapper;
     private final ResumeDao resumeDao;
 
-    @Autowired
-    public ResumeServiceImpl(Mapper<ResumeDto, Resume> resumeMapper, ResumeDao resumeDao) {
-        this.resumeMapper = resumeMapper;
-        this.resumeDao = resumeDao;
-    }
-
     @Override
     public List<ResumeDto> findAllResumes() {
-        //ToDO implement find all logic
-
-        return Collections.emptyList();
+        return resumeDao.findAllResumes().stream()
+                .map(resumeMapper::mapToDto)
+                .toList();
     }
 
     @Override
     public List<ResumeDto> findResumesByCategory(Category resumeCategory) {
-        var optionalResume = resumeDao.findResumesByCategory(resumeCategory);
+        if (resumeCategory == null || resumeCategory.getId() == null)
+            throw new IllegalArgumentException("resume category or category id is null");
+
+        var optionalResume = resumeDao.findResumesByCategory(resumeCategory.getId());
 
         return optionalResume.stream()
                 .map(resumeMapper::mapToDto)
@@ -66,7 +63,7 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public List<ResumeDto> findUserCreatedResumes(User user) {
-        if (user.getAccountType().equalsIgnoreCase("jobSeeker"))
+        if (user == null || user.getId() == null || !user.getAccountType().equalsIgnoreCase("jobSeeker"))
             throw new IllegalArgumentException("User account type is not jobSeeker");
 
         return resumeDao.findUserCreatedResumes(user.getId()).stream()

@@ -8,6 +8,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
+
+import static kg.attractor.jobsearch.util.ExceptionHandler.handleDataAccessException;
 
 @Component
 @RequiredArgsConstructor
@@ -38,5 +41,26 @@ public class VacancyDaoImpl implements VacancyDao {
         String query = "SELECT * FROM VACANCIES WHERE CATEGORY_ID = ?";
 
         return jdbcTemplate.query(query, vacancyRowMapper, categoryId);
+    }
+
+    @Override
+    public Optional<Vacancy> findVacancyById(Long vacancyId) {
+        String query = "SELECT * FROM VACANCIES WHERE ID = ?";
+
+        return handleDataAccessException(() -> jdbcTemplate.queryForObject(query, vacancyRowMapper, vacancyId));
+    }
+
+    @Override
+    public boolean deleteVacancyById(Long vacancyId) {
+        String query = "DELETE FROM VACANCIES WHERE ID = ?";
+
+        return jdbcTemplate.update(query, vacancyId) > 0;
+    }
+
+    @Override
+    public List<Vacancy> findAllActiveVacancies() {
+        String query = "select * from VACANCIES WHERE IS_ACTIVE = TRUE";
+
+        return jdbcTemplate.query(query, vacancyRowMapper);
     }
 }
