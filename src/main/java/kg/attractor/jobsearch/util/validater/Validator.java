@@ -15,7 +15,8 @@ public class Validator {
     public static boolean isValidResume(ResumeDto resumeDto) {
         return resumeDto != null &&
                 isNotNullAndIsNotBlank(resumeDto.getName()) &&
-                resumeDto.getCategoryId() != null;
+                isValidNumber(resumeDto.getCategoryId()) &&
+                isValidNumber(resumeDto.getUserId());
     }
 
     public static boolean isNotValidUser(UserDto userDto) {
@@ -41,7 +42,8 @@ public class Validator {
     public static boolean isValidVacancy(VacancyDto vacancyDto) {
         return vacancyDto != null
                 && (isNotNullAndIsNotBlank(vacancyDto.getName()))
-                && (vacancyDto.getUserId() != null && vacancyDto.getUserId() > 0);
+                && (isValidNumber(vacancyDto.getUserId()))
+                && (isValidNumber(vacancyDto.getCategoryId()));
     }
 
     public static boolean isNotValid(Category category) {
@@ -50,11 +52,11 @@ public class Validator {
 
     public static boolean isValidRespondApplication(RespondApplicationDto respondApplicationDto) {
         return respondApplicationDto != null &&
-                isValidNumberForRespond(respondApplicationDto.getResumeId()) &&
-                isValidNumberForRespond(respondApplicationDto.getVacancyId());
+                isValidNumber(respondApplicationDto.getResumeId()) &&
+                isValidNumber(respondApplicationDto.getVacancyId());
     }
 
-    private static boolean isValidNumberForRespond(Long number) {
+    private static boolean isValidNumber(Long number) {
         return number != null && number > 0;
     }
 }

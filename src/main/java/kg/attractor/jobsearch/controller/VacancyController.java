@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static kg.attractor.jobsearch.util.ExceptionHandler.handleIllegalArgumentException;
-import static kg.attractor.jobsearch.util.ExceptionHandler.handleVacancyNotFoundException;
+import static kg.attractor.jobsearch.util.ExceptionHandler.handleVacancyNotFoundAndIllegalArgException;
 
 @RestController
 @RequestMapping("/vacancies")
@@ -26,17 +26,17 @@ public class VacancyController {
 
     @GetMapping("{vacancyId}")
     public ResponseEntity<VacancyDto> findVacancyById(@PathVariable Long vacancyId) {
-        return handleVacancyNotFoundException(() -> vacancyService.findVacancyById(vacancyId));
+        return handleVacancyNotFoundAndIllegalArgException(() -> vacancyService.findVacancyById(vacancyId));
     }
 
     @PostMapping("new-vacancies")
-    public ResponseEntity<Long> createVacancy(@RequestBody VacancyDto vacancyDto) {
-        return handleIllegalArgumentException(() -> vacancyService.createVacancy(vacancyDto));
+    public ResponseEntity<VacancyDto> createVacancy(@RequestBody VacancyDto vacancyDto) {
+        return handleVacancyNotFoundAndIllegalArgException(() -> vacancyService.createdVacancy(vacancyDto));
     }
 
     @PutMapping
-    public ResponseEntity<Long> redactorVacancy(@RequestBody VacancyDto vacancyDto) {
-        return handleIllegalArgumentException(() -> vacancyService.updateVacancy(vacancyDto));
+    public ResponseEntity<VacancyDto> redactorVacancy(@RequestBody VacancyDto vacancyDto) {
+        return handleVacancyNotFoundAndIllegalArgException(() -> vacancyService.updateVacancy(vacancyDto));
     }
 
     @DeleteMapping("{vacancyId}")

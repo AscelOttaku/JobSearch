@@ -1,11 +1,11 @@
 package kg.attractor.jobsearch.service;
 
 import kg.attractor.jobsearch.dto.UserDto;
+import kg.attractor.jobsearch.model.User;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 public interface UserService {
@@ -23,7 +23,11 @@ public interface UserService {
 
     UserDto findUserByPhoneNumber(String phoneNumber);
 
-    boolean isUserExist(String email);
+    boolean isUserExistByEmail(String email);
 
     List<UserDto> findRespondedToVacancyUsersByVacancy(Long vacancyId);
+
+    User findUserById(Long userId);
+
+    boolean checkIfUserExistById(Long userId);
 }

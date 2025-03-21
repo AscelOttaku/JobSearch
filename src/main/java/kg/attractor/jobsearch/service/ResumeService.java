@@ -11,9 +11,9 @@ public interface ResumeService {
 
     List<ResumeDto> findResumesByCategory(Category category);
 
-    Long createResume(ResumeDto resumeDto);
+    ResumeDto createResume(ResumeDto resumeDto);
 
-    Long updateResume(ResumeDto resumeDto);
+    ResumeDto updateResume(ResumeDto resumeDto);
 
     boolean deleteResume(Long resumeId);
 

@@ -7,6 +7,7 @@ import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.exceptions.VacancyNotFoundException;
 import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.model.Vacancy;
+import kg.attractor.jobsearch.service.UserService;
 import kg.attractor.jobsearch.service.VacancyService;
 import kg.attractor.jobsearch.util.validater.Validator;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,8 @@ import static kg.attractor.jobsearch.util.validater.Validator.isValidVacancy;
 public class VacancyServiceImpl implements VacancyService {
     private final Mapper<VacancyDto, Vacancy> vacancyMapper;
     private final VacancyDao vacancyDao;
+    private final CategoryService categoryService;
+    private final UserService userService;
 
     @Override
     public VacancyDto findVacancyById(Long vacancyId) {
@@ -39,20 +42,31 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public Long createVacancy(VacancyDto vacancyDto) {
+    public VacancyDto createdVacancy(VacancyDto vacancyDto) {
         if (!isValidVacancy(vacancyDto))
             throw new IllegalArgumentException("vacancy dto invalid");
 
-        return vacancyDao.createVacancy(vacancyMapper.mapToEntity(vacancyDto));
+        var getCategory = categoryService.checkIfCategoryExistsById(vacancyDto.getCategoryId());
+        var getUserId = userService.checkIfUserExistById(vacancyDto.getUserId());
+
+        if (getCategory || getUserId) {
+            var vacancyId = vacancyDao.createVacancy(vacancyMapper.mapToEntity(vacancyDto));
+
+            return findVacancyById(vacancyId);
+        }
+
+        throw new IllegalArgumentException("Vacancy params are not valid");
     }
 
     @Override
-    public Long updateVacancy(VacancyDto vacancyDto) {
+    public VacancyDto updateVacancy(VacancyDto vacancyDto) {
         if (!isValidVacancy(vacancyDto))
             throw new IllegalArgumentException("vacancy dto invalid");
 
         Vacancy vacancy = vacancyMapper.mapToEntity(vacancyDto);
-        return vacancyDao.updateVacancy(vacancy);
+
+        var updatedVacancyId = vacancyDao.updateVacancy(vacancy);
+        return findVacancyById(updatedVacancyId);
     }
 
     @Override
@@ -72,9 +86,9 @@ public class VacancyServiceImpl implements VacancyService {
         if (Validator.isNotValid(category))
             throw new IllegalArgumentException("Category is empty");
 
-       return vacancyDao.findVacancyByCategory(category.getId()).stream()
-               .map(vacancyMapper::mapToDto)
-               .toList();
+        return vacancyDao.findVacancyByCategory(category.getId()).stream()
+                .map(vacancyMapper::mapToDto)
+                .toList();
     }
 
     @Override

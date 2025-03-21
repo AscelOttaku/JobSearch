@@ -97,4 +97,10 @@ public class UserDao {
         Number number = keyHolder.getKey();
         return number != null ? number.longValue() : -1;
     }
+
+    public Optional<User> findUserById(Long userId) {
+        String query = "select * from USERS where USERID = ?";
+
+        return handleDataAccessException(() -> jdbcTemplate.queryForObject(query, userRowMapper, userId));
+    }
 }

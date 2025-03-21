@@ -43,7 +43,7 @@ public class ResumeDao {
     public Optional<Long> createResume(Resume resume) {
         String query = "insert into RESUMES(USER_ID, NAME, CATEGORY_ID, SALARY, IS_ACTIVE) values(?,?,?,?,?)";
 
-        executeUpdateQuery(resume, query);
+        executeCreateQuery(resume, query);
 
         Number number = keyHolder.getKey();
         return number != null ? Optional.of(number.longValue()) : Optional.empty();
@@ -66,13 +66,19 @@ public class ResumeDao {
         return handleDataAccessException(() -> jdbcTemplate.queryForObject(query, resumeMapper, resumeId));
     }
 
+    public boolean isResumeExistById(Long resumeId) {
+        return findResumeById(resumeId).isPresent();
+    }
+
     public boolean deleteResumeById(Long resumeId) {
         String query = "delete from RESUMES where ID = ?";
 
         return jdbcTemplate.update(query, resumeId) > 0;
     }
 
-    private void executeUpdateQuery(Resume resume, String query) {
+    public void executeCreateQuery(
+            Resume resume, String query
+    ) {
         jdbcTemplate.update(connection -> {
             PreparedStatement pr = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             pr.setLong(1, resume.getUserId());
@@ -80,6 +86,25 @@ public class ResumeDao {
             pr.setObject(3, resume.getCategoryId());
             pr.setDouble(4, resume.getSalary());
             pr.setBoolean(5, resume.getIsActive());
+
+            return pr;
+        }, keyHolder);
+    }
+
+    private void executeUpdateQuery(
+            Resume resume, String query
+    ) {
+        jdbcTemplate.update(connection -> {
+            PreparedStatement pr = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            pr.setLong(1, resume.getId());
+            pr.setLong(2, resume.getUserId());
+            pr.setString(3, resume.getName());
+            pr.setObject(4, resume.getCategoryId());
+            pr.setDouble(5, resume.getSalary());
+            pr.setBoolean(6, resume.getIsActive());
+
+            pr.setLong(7, resume.getId());
+
             return pr;
         }, keyHolder);
     }

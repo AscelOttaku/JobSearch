@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @GetMapping("job-seeker/{userEmail}")
-    public ResponseEntity<Object> findJobSeekerByEmail(@PathVariable String userEmail) {
+    public ResponseEntity<UserDto> findJobSeekerByEmail(@PathVariable String userEmail) {
         return handleInCaseUserNotFoundException(() -> userService.findJobSeekerByEmail(userEmail));
     }
 
@@ -65,7 +65,7 @@ public class UserController {
 
     @GetMapping("exist/{userEmail}")
     public HttpStatus isUserExist(@PathVariable String userEmail) {
-        return userService.isUserExist(userEmail) ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+        return userService.isUserExistByEmail(userEmail) ? HttpStatus.OK : HttpStatus.NOT_FOUND;
     }
 
     @GetMapping("responded/vacancies/{vacancyId}")
