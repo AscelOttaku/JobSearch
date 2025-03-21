@@ -1,8 +1,8 @@
 package kg.attractor.jobsearch.dao;
 
+import kg.attractor.jobsearch.dao.mapper.CustomerRowMapper;
 import kg.attractor.jobsearch.model.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -18,7 +18,7 @@ import static kg.attractor.jobsearch.util.ExceptionHandler.handleDataAccessExcep
 @RequiredArgsConstructor
 public class UserDao {
     private final JdbcTemplate jdbcTemplate;
-    private final BeanPropertyRowMapper<User> userRowMapper = new BeanPropertyRowMapper<>(User.class);
+    private final CustomerRowMapper userRowMapper;
 
     public Optional<User> findUserByEmail(String email) {
         String query = "select * from USERS where LOWER(EMAIL) = LOWER(?) limit 1";
@@ -39,10 +39,20 @@ public class UserDao {
 
     public List<User> findRespondedToVacancyUsersByVacancy(Long vacancyId) {
         String query = """
-                select * from USERS U
-                                INNER JOIN RESUMES AS R ON R.USER_ID = U.USERID
-                                INNER JOIN RESPONDED_APPLICATION AS RA ON RA.RESUME_ID = R.ID\s
-                RIGHT JOIN VACANCIES AS V ON V.ID = RA.
+                select\s
+                    U.USERID,
+                    U.FIRSTNAME,
+                    U.SURNAME,
+                    U.AGE,
+                    U.EMAIL,
+                    U.PASSWORD,
+                    U.PHONE_NUMBER,
+                    U.AVATAR,
+                    U.ACCOUNT_TYPE
+                    from USERS U
+                                LEFT JOIN RESUMES AS R ON R.USER_ID = U.USERID
+                                LEFT JOIN RESPONDED_APPLICATION AS RA ON RA.RESUME_ID = R.ID\s
+                LEFT JOIN VACANCIES AS V ON V.ID = RA.
                         VACANCY_ID\s
                 WHERE V.ID = ? AND U.ACCOUNT_TYPE LIKE 'JobSeeker';
                \s""";
@@ -60,6 +70,7 @@ public class UserDao {
     public Optional<User> findEmployerByEmail(String email) {
         String query = "select * from USERS where LOWER(EMAIL) LIKE LOWER(?) " +
                 "AND USERS.ACCOUNT_TYPE LIKE 'Employer' LIMIT 1";
+
 
         return handleDataAccessException(() -> jdbcTemplate.queryForObject(query, userRowMapper, email));
     }

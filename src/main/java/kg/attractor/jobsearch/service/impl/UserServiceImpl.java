@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -44,13 +43,6 @@ public class UserServiceImpl implements UserService {
         var optionalUser = userDao.findJobSeekerByEmail(userEmail);
         return optionalUser.map(userMapper::mapToDto)
                 .orElseThrow(() -> new UserNotFoundException("Job Seeker not found By Email: " + userEmail));
-    }
-
-    @Override
-    public Optional<UserDto> findJobSeekersByVacancyId(Long vacancyId) {
-        //ToDO find job seeker by vacancy id
-
-        return Optional.empty();
     }
 
     @Override
