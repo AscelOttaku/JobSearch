@@ -36,15 +36,6 @@ public class UserController {
         return handleInCaseUserNotFoundException(() -> userService.findJobSeekerByEmail(userEmail));
     }
 
-    @GetMapping("vacancies/{vacancyId}")
-    public ResponseEntity<UserDto> findJobSeekersByVacancy(@PathVariable Long vacancyId) {
-        //ToDO implement search for job seeker that responded to the vacancy;
-
-        return userService.findJobSeekersByVacancyId(vacancyId)
-                .map(dto -> new ResponseEntity<>(dto, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
     @GetMapping("employer/{employerEmail}")
     public ResponseEntity<UserDto> findEmployerByEmail(@PathVariable String employerEmail) {
         return handleInCaseUserNotFoundException(() -> userService.findEmployerByEmail(employerEmail));
