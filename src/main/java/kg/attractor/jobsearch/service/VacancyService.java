@@ -11,9 +11,9 @@ public interface VacancyService {
 
     boolean isVacancyExist(Long vacancyId);
 
-    Long createVacancy(VacancyDto vacancyDto);
+    VacancyDto createdVacancy(VacancyDto vacancyDto);
 
-    Long updateVacancy(VacancyDto vacancyDto);
+    VacancyDto updateVacancy(VacancyDto vacancyDto);
 
     boolean deleteVacancy(Long vacancyId);
 

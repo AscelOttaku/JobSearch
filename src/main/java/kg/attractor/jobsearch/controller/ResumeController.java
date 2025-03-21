@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static kg.attractor.jobsearch.util.ExceptionHandler.handleIllegalArgumentException;
+import static kg.attractor.jobsearch.util.ExceptionHandler.handleResumeNotFoundAndIllegalArgException;
 
 @RestController
 @RequestMapping("/resumes")
@@ -35,13 +36,13 @@ public class ResumeController {
     }
 
     @PostMapping
-    public ResponseEntity<Long> createResume(@RequestBody ResumeDto resumeDto) {
-        return handleIllegalArgumentException(() -> resumeService.createResume(resumeDto));
+    public ResponseEntity<ResumeDto> createResume(@RequestBody ResumeDto resumeDto) {
+        return handleResumeNotFoundAndIllegalArgException(() -> resumeService.createResume(resumeDto));
     }
 
     @PutMapping()
-    public ResponseEntity<Long> redactorResume(@RequestBody ResumeDto resumeDto) {
-        return handleIllegalArgumentException(() -> resumeService.updateResume(resumeDto));
+    public ResponseEntity<ResumeDto> redactorResume(@RequestBody ResumeDto resumeDto) {
+        return handleResumeNotFoundAndIllegalArgException(() -> resumeService.updateResume(resumeDto));
     }
 
     @DeleteMapping("{resumeId}")

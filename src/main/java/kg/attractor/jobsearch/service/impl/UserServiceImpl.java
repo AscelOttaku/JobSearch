@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isUserExist(String email) {
+    public boolean isUserExistByEmail(String email) {
         return userDao.findUserByEmail(email).isPresent();
     }
 
@@ -86,5 +86,16 @@ public class UserServiceImpl implements UserService {
                 .filter(user -> user.getAccountType().equalsIgnoreCase("jobSeeker"))
                 .map(userMapper::mapToDto)
                 .toList();
+    }
+
+    @Override
+    public User findUserById(Long userId) {
+        return userDao.findUserById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found by Id: " + userId));
+    }
+
+    @Override
+    public boolean checkIfUserExistById(Long userId) {
+        return userDao.findUserById(userId).isPresent();
     }
 }

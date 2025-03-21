@@ -5,11 +5,8 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class ResumeDto {
+public class CategoryDto {
     private Long id;
     private String name;
-    private Long userId;
-    private Long categoryId;
-    private double salary;
-    private boolean isActive;
+    private Long parentId;
 }

@@ -10,8 +10,10 @@ public class ResumeMapper implements Mapper<ResumeDto, Resume> {
     @Override
     public ResumeDto mapToDto(Resume resume) {
         return ResumeDto.builder()
+                .id(resume.getUserId())
                 .name(resume.getName())
                 .categoryId(resume.getCategoryId())
+                .userId(resume.getUserId())
                 .salary(resume.getSalary())
                 .isActive(resume.getIsActive())
                 .build();
@@ -20,8 +22,10 @@ public class ResumeMapper implements Mapper<ResumeDto, Resume> {
     @Override
     public Resume mapToEntity(ResumeDto resumeDto) {
         Resume resume = new Resume();
+        resume.setId(resumeDto.getUserId());
         resume.setName(resumeDto.getName());
         resume.setCategoryId(resumeDto.getCategoryId());
+        resume.setUserId(resumeDto.getUserId());
         resume.setSalary(resumeDto.getSalary());
         resume.setIsActive(resumeDto.isActive());
         return resume;

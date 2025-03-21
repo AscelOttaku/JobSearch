@@ -1,5 +1,6 @@
 package kg.attractor.jobsearch.util;
 
+import kg.attractor.jobsearch.exceptions.ResumeNotFoundException;
 import kg.attractor.jobsearch.exceptions.UserNotFoundException;
 import kg.attractor.jobsearch.exceptions.VacancyNotFoundException;
 import lombok.experimental.UtilityClass;
@@ -29,11 +30,23 @@ public class ExceptionHandler {
         }
     }
 
-    public static <T> ResponseEntity<T> handleVacancyNotFoundException(Supplier<T> supplier) {
+    public static <T> ResponseEntity<T> handleVacancyNotFoundAndIllegalArgException(Supplier<T> supplier) {
         try {
             return new ResponseEntity<>(supplier.get(), HttpStatus.OK);
-        } catch (VacancyNotFoundException e) {
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (VacancyNotFoundException nfe) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public static <T> ResponseEntity<T> handleResumeNotFoundAndIllegalArgException(Supplier<T> supplier) {
+        try {
+            return new ResponseEntity<>(supplier.get(), HttpStatus.OK);
+        } catch (ResumeNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
