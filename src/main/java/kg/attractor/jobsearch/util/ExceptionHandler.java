@@ -1,5 +1,6 @@
 package kg.attractor.jobsearch.util;
 
+import kg.attractor.jobsearch.exceptions.RespondApplicationNotFoundException;
 import kg.attractor.jobsearch.exceptions.ResumeNotFoundException;
 import kg.attractor.jobsearch.exceptions.UserNotFoundException;
 import kg.attractor.jobsearch.exceptions.VacancyNotFoundException;
@@ -54,6 +55,16 @@ public class ExceptionHandler {
         try {
             return new ResponseEntity<>(supplier.get(), HttpStatus.CREATED);
         } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    public static <T> ResponseEntity<T> handleInCaseRespondApplicationNoFoundAndIllegalArgException(Supplier<T> supplier) {
+        try {
+            return new ResponseEntity<>(supplier.get(), HttpStatus.OK);
+        } catch (RespondApplicationNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }

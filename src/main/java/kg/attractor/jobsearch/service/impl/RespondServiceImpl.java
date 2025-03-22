@@ -3,6 +3,7 @@ package kg.attractor.jobsearch.service.impl;
 import kg.attractor.jobsearch.dao.RespondApplicationDao;
 import kg.attractor.jobsearch.dto.RespondApplicationDto;
 import kg.attractor.jobsearch.dto.mapper.impl.RespondApplicationMapper;
+import kg.attractor.jobsearch.exceptions.RespondApplicationNotFoundException;
 import kg.attractor.jobsearch.model.RespondedApplication;
 import kg.attractor.jobsearch.service.RespondService;
 import kg.attractor.jobsearch.service.ResumeService;
@@ -20,18 +21,29 @@ public class RespondServiceImpl implements RespondService {
     private final VacancyService vacancyService;
 
     @Override
-    public boolean createRespond(RespondApplicationDto respondApplicationDto) {
-        if (!Validator.isValidRespondApplication(respondApplicationDto))
-            return false;
+    public RespondApplicationDto createRespond(RespondApplicationDto respondApplicationDto) {
+        if (Validator.isValidRespondApplication(respondApplicationDto) && checkIsRespondApplicationExist(respondApplicationDto)) {
 
-        boolean isResumeByIdExist = resumeService.isResumeExist(respondApplicationDto.getResumeId());
-        boolean isVacancyByIdExist = vacancyService.isVacancyExist(respondApplicationDto.getVacancyId());
+            boolean isResumeByIdExist = resumeService.isResumeExist(respondApplicationDto.getResumeId());
+            boolean isVacancyByIdExist = vacancyService.isVacancyExist(respondApplicationDto.getVacancyId());
 
-        if (isResumeByIdExist && isVacancyByIdExist) {
-            RespondedApplication respondedApplication = respondApplicationMapper.mapToEntity(respondApplicationDto);
-            return respondApplicationDao.createRespond(respondedApplication).isPresent();
+            if (isResumeByIdExist && isVacancyByIdExist) {
+                RespondedApplication respondedApplication = respondApplicationMapper.mapToEntity(respondApplicationDto);
+                return respondApplicationDao.createRespond(respondedApplication)
+                        .flatMap(id -> respondApplicationDao.findRespondApplicationById(id)
+                                .map(respondApplicationMapper::mapToDto))
+                        .orElseThrow(() -> new RespondApplicationNotFoundException("RespondApplication not found"));
+            }
         }
 
-        return false;
+        throw new IllegalArgumentException("Invalid respondApplicationDto");
+    }
+
+    public boolean checkIsRespondApplicationExist(RespondApplicationDto respondApplicationDto) {
+        RespondedApplication respondApplication = respondApplicationMapper.mapToEntity(respondApplicationDto);
+        var allData = respondApplicationDao.findAll();
+
+        return allData.stream()
+                .noneMatch(data -> data.equals(respondApplication));
     }
 }

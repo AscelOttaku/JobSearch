@@ -12,6 +12,7 @@ public class RespondApplicationMapper implements Mapper<RespondApplicationDto, R
         return RespondApplicationDto.builder()
                 .resumeId(entity.getResumeId())
                 .vacancyId(entity.getVacancyId())
+                .confirmation(entity.getConfirmation())
                 .build();
     }
 
@@ -20,6 +21,7 @@ public class RespondApplicationMapper implements Mapper<RespondApplicationDto, R
         RespondedApplication entity = new RespondedApplication();
         entity.setResumeId(dto.getResumeId());
         entity.setVacancyId(dto.getVacancyId());
+        entity.setConfirmation(dto.isConfirmation());
         return entity;
     }
 }
