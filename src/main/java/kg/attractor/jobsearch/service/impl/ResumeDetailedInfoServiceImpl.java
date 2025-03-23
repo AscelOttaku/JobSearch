@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 import static kg.attractor.jobsearch.util.validater.Validator.isValidResume;
@@ -43,12 +44,10 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
             throw new IllegalArgumentException("resume data is invalid");
 
         checkResumeCategoryAndParams(resumeDetailedInfoDto.getResumeDto());
-        checkEducationInfoDto(resumeDetailedInfoDto.getEducationInfoDto());
-        checkWorkExperienceParam(resumeDetailedInfoDto.getWorkExperienceInfoDto());
+        checkEducationInfoDto(resumeDetailedInfoDto.getEducationInfoDtos());
+        checkWorkExperienceParam(resumeDetailedInfoDto.getWorkExperienceInfoDtos());
 
         Resume resume = mapper.mapToEntity(resumeDetailedInfoDto.getResumeDto());
-        EducationInfo educationInfo = educationInfoMapperDto.mapToEntity(resumeDetailedInfoDto.getEducationInfoDto());
-        WorkExperienceInfo workExperienceInfo = workExperienceInfoMapperDto.mapToEntity(resumeDetailedInfoDto.getWorkExperienceInfoDto());
 
         Optional<Long> resumeOptionalId = resumeDao.create(resume);
 
@@ -57,13 +56,26 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
             throw new ResumeNotFoundException("resume id is empty");
         });
 
-        educationInfo.setResumeId(resumeId);
-        workExperienceInfo.setResumeId(resumeId);
+        List<EducationInfo> educationInfos = resumeDetailedInfoDto.getEducationInfoDtos().stream()
+                .map(educationInfoMapperDto::mapToEntity)
+                .toList();
 
-        Optional<Long> educationInfoDto = educationInfoDao.create(educationInfo);
-        Optional<Long> workExperienceDto = workExperienceDao.create(workExperienceInfo);
+        List<WorkExperienceInfo> workExperienceInfos = resumeDetailedInfoDto.getWorkExperienceInfoDtos().stream()
+                .map(workExperienceInfoMapperDto::mapToEntity)
+                .toList();
 
-        return findAndMapToResumeOrThrowResumeNotFoundException(resumeOptionalId, educationInfoDto, workExperienceDto);
+        educationInfos.forEach(educationInfo -> educationInfo.setResumeId(resumeId));
+        workExperienceInfos.forEach(workExperienceInfo -> workExperienceInfo.setResumeId(resumeId));
+
+        List<Optional<Long>> educationInfoIds = educationInfos.stream()
+                .map(educationInfoDao::create)
+                .toList();
+
+        List<Optional<Long>> workExperienceIds = workExperienceInfos.stream()
+                .map(workExperienceDao::create)
+                .toList();
+
+        return findAndMapToResumeOrThrowResumeNotFoundException(resumeOptionalId, educationInfoIds, workExperienceIds);
     }
 
     private void checkResumeCategoryAndParams(CreateResumeDto resumeDto) {
@@ -77,27 +89,32 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
             throw new IllegalArgumentException("category does not exist");
     }
 
-    private void checkEducationInfoDto(EducationInfoDto educationInfoDto) {
+    private void checkEducationInfoDto(List<EducationInfoDto> educationInfoDto) {
         if (Validator.isNotValidData(educationInfoDto))
             throw new IllegalArgumentException("invalid education info");
     }
 
-    private void checkWorkExperienceParam(WorkExperienceInfoDto workExperienceInfoDto) {
+    private void checkWorkExperienceParam(List<WorkExperienceInfoDto> workExperienceInfoDto) {
         if (Validator.isNotValidData(workExperienceInfoDto))
             throw new IllegalArgumentException("Work experience info is invalid");
     }
 
     private ResumeDetailedInfoDto findAndMapToResumeOrThrowResumeNotFoundException(
-            Optional<Long> resumeOpId, Optional<Long> educationOpId, Optional<Long> workExperienceOpId
+            Optional<Long> resumeOpId, List<Optional<Long>> educationOpIds, List<Optional<Long>> workExperienceOpIds
     ) {
         CreateResumeDto resumeDto = findAndMapToResumeOrThrowResumeNotFoundException(resumeOpId);
-        EducationInfoDto educationInfoDto = findEducationInfoOrThrowEducationInfoNotFoundException(educationOpId);
-        WorkExperienceInfoDto workExperienceInfoDto = findWorkExperienceOrThrowWorkExperienceInfoNotFoundException(workExperienceOpId);
+        List<EducationInfoDto> educationInfoDto = educationOpIds.stream()
+                .map(this::findEducationInfoOrThrowEducationInfoNotFoundException)
+                .toList();
+
+        List<WorkExperienceInfoDto> workExperienceInfoDto = workExperienceOpIds.stream()
+                .map(this::findWorkExperienceOrThrowWorkExperienceInfoNotFoundException)
+                .toList();
 
         return ResumeDetailedInfoDto.builder()
                 .resumeDto(resumeDto)
-                .educationInfoDto(educationInfoDto)
-                .workExperienceInfoDto(workExperienceInfoDto)
+                .educationInfoDtos(educationInfoDto)
+                .workExperienceInfoDtos(workExperienceInfoDto)
                 .build();
     }
 
