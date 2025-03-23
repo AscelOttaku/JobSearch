@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002_create_table_categories.yaml
+      author: Kanybek Zhanybekov
+      changes:
+        - createTable:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(45)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: parent_id
+                  type: bigint
+        - addForeignKeyConstraint:
+            baseColumnNames: parent_id
+            baseTableName: categories
+            constraintName: fk_parent_id_categories_id
+            onDelete: restrict
+            onUpdate: CASCADE
+            referencedColumnNames: id
+            referencedTableName: categories
+            referencedTableSchemaName: public

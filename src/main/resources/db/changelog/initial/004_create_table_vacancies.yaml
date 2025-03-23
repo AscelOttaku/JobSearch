@@ -1,0 +1,71 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004_create_table_vacancies.yaml
+      author: Kanybek Zhanybekov
+      changes:
+        - createTable:
+            tableName: vacancies
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(45)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+              - column:
+                  name: category_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: salary
+                  type: double
+              - column:
+                  name: exp_from
+                  type: int
+              - column:
+                  name: exp_to
+                  type: int
+              - column:
+                  name: is_active
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: vacancy_user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created
+                  type: timestamp
+              - column:
+                  name: update
+                  type: timestamp
+        - addForeignKeyConstraint:
+            baseTableName: vacancies
+            baseColumnNames: category_id
+            constraintName: fk_vacancies_category_id
+            onUpdate: cascade
+            onDelete: restrict
+            referencedTableName: CATEGORIES
+            referencedColumnNames: id
+            referencedTableSchemaName: public
+        - addForeignKeyConstraint:
+            baseColumnNames: vacancy_user_id
+            baseTableName: vacancies
+            constraintName: fk_vacancies_user_id
+            onDelete: restrict
+            onUpdate: cascade
+            referencedTableSchemaName: public
+            referencedTableName: users
+            referencedColumnNames: user_id

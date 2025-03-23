@@ -1,0 +1,36 @@
+databaseChangeLog:
+  - changeSet:
+      id: 009_create_table_messages.yaml
+      author: Kanybek Zhanybekov
+      changes:
+        - createTable:
+            tableName: messages
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: responded_application_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: content
+                  type: varchar(45)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: time
+                  type: timestamp
+        - addForeignKeyConstraint:
+            baseTableName: messages
+            baseColumnNames: responded_application_id
+            constraintName: fk_messages_responded_application_id
+            onDelete: restrict
+            onUpdate: cascade
+            referencedColumnNames: id
+            referencedTableName: RESPONDED_APPLICATION

@@ -1,0 +1,46 @@
+databaseChangeLog:
+  - changeSet:
+      id: 008_create_table_contact_info.yaml
+      author: Kanybek Zhanybekov
+      changes:
+        - createTable:
+            tableName: contact_info
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: contact_type_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: resume_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "value"
+                  type: varchar(45)
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: contact_info
+            baseColumnNames: contact_type_id
+            constraintName: fk_contact_info_contact_type_id
+            onDelete: restrict
+            onUpdate: cascade
+            referencedColumnNames: id
+            referencedTableName: contact_type
+        - addForeignKeyConstraint:
+            baseColumnNames: resume_id
+            baseTableName: contact_info
+            constraintName: fk_contact_info_resume_id
+            onDelete: restrict
+            onUpdate: cascade
+            referencedTableName: resumes
+            referencedColumnNames: id
