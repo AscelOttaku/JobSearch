@@ -15,11 +15,13 @@ import java.util.function.Supplier;
 @UtilityClass
 public class ExceptionHandler {
 
-    public static <T> ResponseEntity<T> handleInCaseUserNotFoundException(Supplier<T> supplier) {
+    public static <T> ResponseEntity<T> handleInCaseUserNotFoundAndIllegalArgException(Supplier<T> supplier) {
         try {
             return new ResponseEntity<>(supplier.get(), HttpStatus.OK);
         } catch (UserNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -48,6 +50,14 @@ public class ExceptionHandler {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    public static <T> ResponseEntity<T> handleResumeNotFoundException(Supplier<T> supplier) {
+        try {
+            return new ResponseEntity<>(supplier.get(), HttpStatus.OK);
+        } catch (ResumeNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 

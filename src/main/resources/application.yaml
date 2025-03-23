@@ -12,6 +12,6 @@ spring:
   liquibase:
     change-log: classpath://db/changelog/master.yaml
 
-  sql:
-   init:
-    mode: always
+#  sql:
+#   init:
+#    mode: always

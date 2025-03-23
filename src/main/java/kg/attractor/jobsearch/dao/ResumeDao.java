@@ -40,7 +40,7 @@ public class ResumeDao {
         return jdbcTemplate.query(query, resumeMapper);
     }
 
-    public Optional<Long> createResume(Resume resume) {
+    public Optional<Long> create(Resume resume) {
         String query = "insert into RESUMES(USER_ID, NAME, CATEGORY_ID, SALARY, IS_ACTIVE) values(?,?,?,?,?)";
 
         executeCreateQuery(resume, query);

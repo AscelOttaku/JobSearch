@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import static kg.attractor.jobsearch.util.ExceptionHandler.handleInCaseUserNotFoundException;
+import static kg.attractor.jobsearch.util.ExceptionHandler.handleInCaseUserNotFoundAndIllegalArgException;
 
 @RestController
 @RequestMapping("users")
@@ -33,12 +33,12 @@ public class UserController {
 
     @GetMapping("job-seeker/{userEmail}")
     public ResponseEntity<UserDto> findJobSeekerByEmail(@PathVariable String userEmail) {
-        return handleInCaseUserNotFoundException(() -> userService.findJobSeekerByEmail(userEmail));
+        return handleInCaseUserNotFoundAndIllegalArgException(() -> userService.findJobSeekerByEmail(userEmail));
     }
 
     @GetMapping("employer/{employerEmail}")
     public ResponseEntity<UserDto> findEmployerByEmail(@PathVariable String employerEmail) {
-        return handleInCaseUserNotFoundException(() -> userService.findEmployerByEmail(employerEmail));
+        return handleInCaseUserNotFoundAndIllegalArgException(() -> userService.findEmployerByEmail(employerEmail));
     }
 
     @PostMapping("upload/avatars")
@@ -55,12 +55,12 @@ public class UserController {
 
     @GetMapping("emails/{userEmail}")
     public ResponseEntity<UserDto> findUserByEmail(@PathVariable String userEmail) {
-        return handleInCaseUserNotFoundException(() -> userService.findUserByEmail(userEmail));
+        return handleInCaseUserNotFoundAndIllegalArgException(() -> userService.findUserByEmail(userEmail));
     }
 
     @GetMapping("phones/{userPhoneNumber}")
     public ResponseEntity<UserDto> findUserByPhoneNumber(@PathVariable String userPhoneNumber) {
-        return handleInCaseUserNotFoundException(() -> userService.findUserByPhoneNumber(userPhoneNumber));
+        return handleInCaseUserNotFoundAndIllegalArgException(() -> userService.findUserByPhoneNumber(userPhoneNumber));
     }
 
     @GetMapping("exist/{userEmail}")

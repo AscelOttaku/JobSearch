@@ -2,7 +2,6 @@ package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dao.CategoryDao;
 import kg.attractor.jobsearch.dto.CategoryDto;
-import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.dto.mapper.impl.CategoryMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
