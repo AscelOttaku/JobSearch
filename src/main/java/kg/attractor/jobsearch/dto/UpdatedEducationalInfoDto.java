@@ -2,12 +2,15 @@ package kg.attractor.jobsearch.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Builder
 @Getter
-public class EducationInfoDto {
+@Setter
+public class UpdatedEducationalInfoDto {
+    private Long id;
     private String institution;
     private String program;
     private LocalDateTime startDate;

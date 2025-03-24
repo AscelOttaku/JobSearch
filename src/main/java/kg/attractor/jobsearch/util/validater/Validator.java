@@ -5,23 +5,21 @@ import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.model.User;
 import lombok.experimental.UtilityClass;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 @UtilityClass
 public class Validator {
 
-    public static boolean isValidResume(UpdateResumeDto resumeDto) {
+    public static boolean isValidResume(ResumeDto resumeDto) {
         return resumeDto != null &&
                 isNotNullAndIsNotBlank(resumeDto.getName()) &&
                 isValidNumber(resumeDto.getCategoryId()) &&
                 isValidNumber(resumeDto.getUserId());
     }
 
-    public static boolean isValidResume(CreateResumeDto resumeDto) {
-        return resumeDto != null &&
-                isNotNullAndIsNotBlank(resumeDto.getName()) &&
-                isValidNumber(resumeDto.getCategoryId()) &&
-                isValidNumber(resumeDto.getUserId());
+    public static <T> boolean isListValid(List<T> resumeDtos) {
+        return resumeDtos != null && !resumeDtos.isEmpty();
     }
 
     public static boolean isNotValidUser(UserDto userDto) {

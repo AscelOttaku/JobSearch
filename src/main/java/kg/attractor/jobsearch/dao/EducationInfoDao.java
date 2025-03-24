@@ -1,7 +1,6 @@
 package kg.attractor.jobsearch.dao;
 
 import kg.attractor.jobsearch.model.EducationInfo;
-import kg.attractor.jobsearch.util.ExceptionHandler;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,5 +66,30 @@ public class EducationInfoDao {
         String query = "select * from EDUCATION_INFO where id = ?";
 
         return handleDataAccessException(() -> jdbcTemplate.queryForObject(query, educationInfoRowMapper, id));
+    }
+
+    public Optional<EducationInfo> findEducationalInfoByResumeId(Long resumeId) {
+        String query = "select * from EDUCATION_INFO where resume_id = ?";
+
+        return handleDataAccessException(() -> jdbcTemplate.queryForObject(query, educationInfoRowMapper, resumeId));
+    }
+
+    public boolean isEducationInfoExist(long id) {
+        return findEducationalInfoByResumeId(id).isPresent();
+    }
+
+    public void updateEducationInfo(EducationInfo educationInfo) {
+        String query = "update EDUCATION_INFO " +
+                "set institution = ?, program = ?, START_DATE = ?, END_DATE = ?, DEGREE = ? " +
+                "where ID = ?";
+
+        jdbcTemplate.update(
+                query, educationInfo.getInstitution(),
+                educationInfo.getProgram(),
+                educationInfo.getStartDate(),
+                educationInfo.getEndDate(),
+                educationInfo.getDegree(),
+                educationInfo.getId()
+        );
     }
 }

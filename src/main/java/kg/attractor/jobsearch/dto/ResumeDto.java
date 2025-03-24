@@ -2,10 +2,12 @@ package kg.attractor.jobsearch.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Builder
 @Getter
-public class CreateResumeDto {
+@Setter
+public class ResumeDto {
     private String name;
     private Long userId;
     private Long categoryId;

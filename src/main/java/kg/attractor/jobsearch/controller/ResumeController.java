@@ -1,7 +1,8 @@
 package kg.attractor.jobsearch.controller;
 
-import kg.attractor.jobsearch.dto.ResumeDetailedInfoDto;
-import kg.attractor.jobsearch.dto.UpdateResumeDto;
+import kg.attractor.jobsearch.dto.CreateResumeDetailedInfoDto;
+import kg.attractor.jobsearch.dto.ResumeDto;
+import kg.attractor.jobsearch.dto.UpdateResumeDetailedInfoDto;
 import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.service.ResumeDetailedInfoService;
 import kg.attractor.jobsearch.service.ResumeService;
@@ -27,24 +28,24 @@ public class ResumeController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UpdateResumeDto>> findAll() {
+    public ResponseEntity<List<ResumeDto>> findAll() {
         return resumeService.findAllResumes().isEmpty() ? ResponseEntity.noContent().build() :
                 ResponseEntity.ok(resumeService.findAllResumes());
     }
 
     @GetMapping("category")
-    public ResponseEntity<List<UpdateResumeDto>> findByResumeByCategory(@RequestBody Category category) {
+    public ResponseEntity<List<ResumeDto>> findByResumeByCategory(@RequestBody Category category) {
         return handleIllegalArgumentException(() -> resumeService.findResumesByCategory(category));
     }
 
     @PostMapping
-    public ResponseEntity<ResumeDetailedInfoDto> createResume(@RequestBody ResumeDetailedInfoDto resumeDto) {
+    public ResponseEntity<CreateResumeDetailedInfoDto> createResume(@RequestBody CreateResumeDetailedInfoDto resumeDto) {
         return handleResumeNotFoundAndIllegalArgException(() -> resumeDetailedInfoService.createResume(resumeDto));
     }
 
-    @PutMapping()
-    public ResponseEntity<UpdateResumeDto> redactorResume(@RequestBody UpdateResumeDto resumeDto) {
-        return handleResumeNotFoundAndIllegalArgException(() -> resumeService.updateResume(resumeDto));
+    @PutMapping("{resumeId}")
+    public ResponseEntity<Void> redactorResume(@PathVariable Long resumeId, @RequestBody UpdateResumeDetailedInfoDto resumeDto) {
+        return handleResumeNotFoundAndIllegalArgException(() -> resumeDetailedInfoService.updateResumeDetailedInfo(resumeId, resumeDto));
     }
 
     @DeleteMapping("{resumeId}")
@@ -55,12 +56,12 @@ public class ResumeController {
     }
 
     @GetMapping("users")
-    public ResponseEntity<List<UpdateResumeDto>> findUserCreatedResumes(@RequestParam(name = "email") String userEmail) {
+    public ResponseEntity<List<ResumeDto>> findUserCreatedResumes(@RequestParam(name = "email") String userEmail) {
         return handleInCaseUserNotFoundAndIllegalArgException(() -> resumeService.findUserCreatedResumes(userEmail));
     }
 
     @GetMapping("{resumeId}")
-    public ResponseEntity<UpdateResumeDto> findResumeById(@PathVariable Long resumeId) {
+    public ResponseEntity<ResumeDto> findResumeById(@PathVariable Long resumeId) {
         return handleResumeNotFoundException(() -> resumeService.findResumeById(resumeId));
     }
 }

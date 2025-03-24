@@ -1,15 +1,15 @@
 package kg.attractor.jobsearch.dto.mapper.impl;
 
-import kg.attractor.jobsearch.dto.EducationInfoDto;
+import kg.attractor.jobsearch.dto.CreateEducationInfoDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.model.EducationInfo;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EducationInfoMapper implements Mapper<EducationInfoDto, EducationInfo> {
+public class CreateEducationInfoMapper implements Mapper<CreateEducationInfoDto, EducationInfo> {
     @Override
-    public EducationInfoDto mapToDto(EducationInfo entity) {
-        return EducationInfoDto.builder()
+    public CreateEducationInfoDto mapToDto(EducationInfo entity) {
+        return CreateEducationInfoDto.builder()
                 .institution(entity.getInstitution())
                 .program(entity.getProgram())
                 .startDate(entity.getStartDate())
@@ -19,7 +19,7 @@ public class EducationInfoMapper implements Mapper<EducationInfoDto, EducationIn
     }
 
     @Override
-    public EducationInfo mapToEntity(EducationInfoDto dto) {
+    public EducationInfo mapToEntity(CreateEducationInfoDto dto) {
         EducationInfo educationInfo = new EducationInfo();
         educationInfo.setInstitution(dto.getInstitution());
         educationInfo.setProgram(dto.getProgram());

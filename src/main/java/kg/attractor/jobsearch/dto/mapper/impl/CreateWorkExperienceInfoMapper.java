@@ -1,15 +1,15 @@
 package kg.attractor.jobsearch.dto.mapper.impl;
 
-import kg.attractor.jobsearch.dto.WorkExperienceInfoDto;
+import kg.attractor.jobsearch.dto.CreateWorkExperienceInfoDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.model.WorkExperienceInfo;
 import org.springframework.stereotype.Service;
 
 @Service
-public class WorkExperienceInfoMapper implements Mapper<WorkExperienceInfoDto, WorkExperienceInfo> {
+public class CreateWorkExperienceInfoMapper implements Mapper<CreateWorkExperienceInfoDto, WorkExperienceInfo> {
     @Override
-    public WorkExperienceInfoDto mapToDto(WorkExperienceInfo entity) {
-        return WorkExperienceInfoDto.builder()
+    public CreateWorkExperienceInfoDto mapToDto(WorkExperienceInfo entity) {
+        return CreateWorkExperienceInfoDto.builder()
                 .years(entity.getYears())
                 .companyName(entity.getCompanyName())
                 .position(entity.getPosition())
@@ -18,7 +18,7 @@ public class WorkExperienceInfoMapper implements Mapper<WorkExperienceInfoDto, W
     }
 
     @Override
-    public WorkExperienceInfo mapToEntity(WorkExperienceInfoDto dto) {
+    public WorkExperienceInfo mapToEntity(CreateWorkExperienceInfoDto dto) {
         WorkExperienceInfo entity = new WorkExperienceInfo();
         entity.setYears(dto.getYears());
         entity.setCompanyName(dto.getCompanyName());

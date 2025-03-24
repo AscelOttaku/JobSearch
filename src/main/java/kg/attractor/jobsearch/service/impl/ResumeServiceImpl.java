@@ -1,14 +1,10 @@
 package kg.attractor.jobsearch.service.impl;
 
-import kg.attractor.jobsearch.dao.EducationInfoDao;
 import kg.attractor.jobsearch.dao.ResumeDao;
 import kg.attractor.jobsearch.dao.UserDao;
-import kg.attractor.jobsearch.dao.WorkExperienceDao;
-import kg.attractor.jobsearch.dto.UpdateResumeDto;
+import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
-import kg.attractor.jobsearch.dto.mapper.impl.EducationInfoMapper;
-import kg.attractor.jobsearch.dto.mapper.impl.UpdateResumeMapper;
-import kg.attractor.jobsearch.dto.mapper.impl.WorkExperienceInfoMapper;
+import kg.attractor.jobsearch.dto.mapper.impl.ResumeMapper;
 import kg.attractor.jobsearch.exceptions.ResumeNotFoundException;
 import kg.attractor.jobsearch.exceptions.UserNotFoundException;
 import kg.attractor.jobsearch.model.Category;
@@ -21,40 +17,35 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 import static kg.attractor.jobsearch.util.validater.Validator.isValidResume;
 
 @Service
 @RequiredArgsConstructor
 public class ResumeServiceImpl implements ResumeService {
-    private final Mapper<UpdateResumeDto, Resume> mapper;
+    private final Mapper<ResumeDto, Resume> mapper;
     private final ResumeDao resumeDao;
     private final CategoryService categoryService;
     private final UserDao userDao;
     private final UserService userService;
-    private final UpdateResumeMapper resumeMapper;
-    private final EducationInfoDao educationInfoDao;
-    private final EducationInfoMapper educationInfoMapperDto;
-    private final WorkExperienceDao workExperienceDao;
-    private final WorkExperienceInfoMapper workExperienceInfoMapperDto;
+    private final ResumeMapper resumeMapper;
 
     @Override
-    public List<UpdateResumeDto> findAllResumes() {
+    public List<ResumeDto> findAllResumes() {
         return resumeDao.findAllResumes().stream()
                 .map(mapper::mapToDto)
                 .toList();
     }
 
     @Override
-    public UpdateResumeDto findResumeById(Long id) {
+    public ResumeDto findResumeById(Long id) {
         return resumeDao.findResumeById(id)
                 .map(mapper::mapToDto)
                 .orElseThrow(() -> new ResumeNotFoundException("Resume by id is not found " + id));
     }
 
     @Override
-    public List<UpdateResumeDto> findResumesByCategory(Category resumeCategory) {
+    public List<ResumeDto> findResumesByCategory(Category resumeCategory) {
         if (Validator.isNotValid(resumeCategory))
             throw new IllegalArgumentException("resume category or category id is null");
 
@@ -66,20 +57,19 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public UpdateResumeDto updateResume(UpdateResumeDto resumeDto) {
+    public boolean updateResume(ResumeDto resumeDto, Long resumeId) {
         checkCategoryAndParams(resumeDto);
 
-        Optional<Long> optionalId = resumeDao.updateResume(mapper.mapToEntity(resumeDto));
-
-        return findAndMapToResumeOrThrowResumeNotFoundException(optionalId);
+        return resumeDao.updateResume(mapper.mapToEntity(resumeDto), resumeId);
     }
 
-    private UpdateResumeDto findAndMapToResumeOrThrowResumeNotFoundException(Optional<Long> optionalId) {
-        return optionalId.flatMap(resumeDao::findResumeById).map(mapper::mapToDto)
-                .orElseThrow(() -> new ResumeNotFoundException("resume not found"));
+    @Override
+    public Long createResume(Resume resume) {
+        return resumeDao.create(resume).orElse(-1L);
     }
 
-    private void checkCategoryAndParams(UpdateResumeDto resumeDto) {
+    @Override
+    public void checkCategoryAndParams(ResumeDto resumeDto) {
         if (!isValidResume(resumeDto))
             throw new IllegalArgumentException("resume dto invalid");
 
@@ -96,7 +86,7 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public List<UpdateResumeDto> findUserCreatedResumes(String userEmail) {
+    public List<ResumeDto> findUserCreatedResumes(String userEmail) {
         var optionalUser = userDao.findUserByEmail(userEmail);
 
         User user = optionalUser.orElseThrow(() ->

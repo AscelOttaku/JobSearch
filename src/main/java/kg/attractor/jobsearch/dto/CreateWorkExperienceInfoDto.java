@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class WorkExperienceInfoDto {
+public class CreateWorkExperienceInfoDto {
     private Integer years;
     private String companyName;
     private String position;

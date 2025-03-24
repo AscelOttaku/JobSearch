@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @UtilityClass
@@ -46,6 +47,17 @@ public class ExceptionHandler {
     public static <T> ResponseEntity<T> handleResumeNotFoundAndIllegalArgException(Supplier<T> supplier) {
         try {
             return new ResponseEntity<>(supplier.get(), HttpStatus.OK);
+        } catch (ResumeNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    public static ResponseEntity<Void> handleResumeNotFoundAndIllegalArgException(Runnable runnable) {
+        try {
+            runnable.run();
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (ResumeNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (IllegalArgumentException e) {
