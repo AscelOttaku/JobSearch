@@ -35,7 +35,7 @@ databaseChangeLog:
             baseColumnNames: resume_id
             constraintName: fk_work_experience_info_resume_id
             onUpdate: cascade
-            onDelete: restrict
+            onDelete: cascade
             referencedTableName: resumes
             referencedColumnNames: id
             referencedTableSchemaName: public

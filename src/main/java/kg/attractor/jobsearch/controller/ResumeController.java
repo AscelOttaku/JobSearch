@@ -49,10 +49,10 @@ public class ResumeController {
     }
 
     @DeleteMapping("{resumeId}")
-    public HttpStatus deleteResume(@PathVariable Long resumeId) {
+    public ResponseEntity<Void> deleteResume(@PathVariable Long resumeId) {
         return resumeService.deleteResume(resumeId) ?
-                HttpStatus.OK :
-                HttpStatus.NOT_FOUND;
+                ResponseEntity.ok().build() :
+                ResponseEntity.notFound().build();
     }
 
     @GetMapping("users")

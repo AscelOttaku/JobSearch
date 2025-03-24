@@ -42,9 +42,16 @@ public class ResumeDao {
     }
 
     public Optional<Long> create(Resume resume) {
-        String query = "insert into RESUMES(USER_ID, NAME, CATEGORY_ID, SALARY, IS_ACTIVE) values(?,?,?,?,?)";
+        String query = "insert into RESUMES(USER_ID, NAME, CATEGORY_ID, SALARY) values(?,?,?,?)";
 
-        executeCreateQuery(resume, query);
+        jdbcTemplate.update(connection -> {
+            PreparedStatement pr = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            pr.setLong(1, resume.getUserId());
+            pr.setString(2, resume.getName());
+            pr.setObject(3, resume.getCategoryId());
+            pr.setDouble(4, resume.getSalary());
+            return pr;
+        }, keyHolder);
 
         Number number = keyHolder.getKey();
         return number != null ? Optional.of(number.longValue()) : Optional.empty();
@@ -80,23 +87,5 @@ public class ResumeDao {
         String query = "delete from RESUMES where ID = ?";
 
         return jdbcTemplate.update(query, resumeId) > 0;
-    }
-
-    public void executeCreateQuery(
-            Resume resume, String query
-    ) {
-        jdbcTemplate.update(connection -> {
-            PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            return setBaseParams(resume, preparedStatement);
-        }, keyHolder);
-    }
-
-    private PreparedStatement setBaseParams(Resume resume, PreparedStatement pr) throws SQLException {
-        pr.setLong(1, resume.getUserId());
-        pr.setString(2, resume.getName());
-        pr.setObject(3, resume.getCategoryId());
-        pr.setDouble(4, resume.getSalary());
-        pr.setBoolean(5, resume.getIsActive());
-        return pr;
     }
 }

@@ -75,7 +75,7 @@ public class ExceptionHandler {
 
     public static <T> ResponseEntity<T> handleIllegalArgumentException(Supplier<T> supplier) {
         try {
-            return new ResponseEntity<>(supplier.get(), HttpStatus.CREATED);
+            return new ResponseEntity<>(supplier.get(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -89,13 +90,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findUserById(Long userId) {
-        return userDao.findUserById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found by Id: " + userId));
+    public boolean checkIfUserExistById(Long userId) {
+        return userDao.findUserById(userId).isPresent();
     }
 
     @Override
-    public boolean checkIfUserExistById(Long userId) {
-        return userDao.findUserById(userId).isPresent();
+    public boolean checkIfJobSeekerExistById(Long jobSeekerId) {
+        Optional<User> optionalUser = userDao.findUserById(jobSeekerId);
+
+        return optionalUser.isPresent() && optionalUser.get().getAccountType().equalsIgnoreCase("jobSeeker");
     }
 }

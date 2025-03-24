@@ -74,10 +74,10 @@ public class ResumeServiceImpl implements ResumeService {
             throw new IllegalArgumentException("resume dto invalid");
 
         boolean isCategoryExist = categoryService.checkIfCategoryExistsById(resumeDto.getCategoryId());
-        boolean isUserExist = userService.checkIfUserExistById(resumeDto.getUserId());
+        boolean jobSeekerId = userService.checkIfJobSeekerExistById(resumeDto.getUserId());
 
-        if (!isCategoryExist || !isUserExist)
-            throw new IllegalArgumentException("category does not exist");
+        if (!isCategoryExist || !jobSeekerId)
+            throw new IllegalArgumentException("category or jobSeeker id is invalid");
     }
 
     @Override

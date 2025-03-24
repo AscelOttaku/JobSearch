@@ -30,7 +30,7 @@ databaseChangeLog:
             baseTableName: messages
             baseColumnNames: responded_application_id
             constraintName: fk_messages_responded_application_id
-            onDelete: restrict
+            onDelete: cascade
             onUpdate: cascade
             referencedColumnNames: id
             referencedTableName: RESPONDED_APPLICATION

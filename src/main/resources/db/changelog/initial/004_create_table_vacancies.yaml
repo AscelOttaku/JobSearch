@@ -38,6 +38,7 @@ databaseChangeLog:
               - column:
                   name: is_active
                   type: boolean
+                  defaultValue: "true"
                   constraints:
                     nullable: false
               - column:
@@ -56,7 +57,7 @@ databaseChangeLog:
             baseColumnNames: category_id
             constraintName: fk_vacancies_category_id
             onUpdate: cascade
-            onDelete: restrict
+            onDelete: cascade
             referencedTableName: CATEGORIES
             referencedColumnNames: id
             referencedTableSchemaName: public
@@ -64,7 +65,7 @@ databaseChangeLog:
             baseColumnNames: vacancy_user_id
             baseTableName: vacancies
             constraintName: fk_vacancies_user_id
-            onDelete: restrict
+            onDelete: cascade
             onUpdate: cascade
             referencedTableSchemaName: public
             referencedTableName: users

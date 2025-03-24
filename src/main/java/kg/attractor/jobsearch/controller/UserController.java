@@ -25,10 +25,12 @@ public class UserController {
     }
 
     @PostMapping
-    public HttpStatus createUser(@RequestBody UserDto userDto) {
-        return userService.createUser(userDto) != -1 ?
-                HttpStatus.CREATED :
-                HttpStatus.BAD_REQUEST;
+    public ResponseEntity<Long> createUser(@RequestBody UserDto userDto) {
+        Long userId = userService.createUser(userDto);
+
+        return userId != -1 ?
+                new ResponseEntity<>(userId, HttpStatus.CREATED) :
+                ResponseEntity.badRequest().build();
     }
 
     @GetMapping("job-seeker/{userEmail}")

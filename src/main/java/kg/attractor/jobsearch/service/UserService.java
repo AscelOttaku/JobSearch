@@ -27,7 +27,7 @@ public interface UserService {
 
     List<UserDto> findRespondedToVacancyUsersByVacancy(Long vacancyId);
 
-    User findUserById(Long userId);
-
     boolean checkIfUserExistById(Long userId);
+
+    boolean checkIfJobSeekerExistById(Long jobSeekerId);
 }

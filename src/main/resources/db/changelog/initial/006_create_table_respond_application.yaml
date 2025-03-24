@@ -32,7 +32,7 @@ databaseChangeLog:
             baseTableName: responded_application
             baseColumnNames: resume_id
             constraintName: fk_respond_application_resume_id
-            onDelete: restrict
+            onDelete: cascade
             onUpdate: cascade
             referencedTableSchemaName: public
             referencedTableName: resumes
@@ -42,6 +42,6 @@ databaseChangeLog:
             baseTableName: responded_application
             constraintName: fk_responded_application_vacancies
             onUpdate: cascade
-            onDelete: restrict
+            onDelete: cascade
             referencedTableName: vacancies
             referencedColumnNames: id

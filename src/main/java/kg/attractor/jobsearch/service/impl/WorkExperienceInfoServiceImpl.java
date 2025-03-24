@@ -30,7 +30,7 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
     @Override
     public void updateWorkExperienceInfo(List<WorkExperienceInfo> workExperienceInfos, Long resumeId) {
         for (WorkExperienceInfo workExperienceInfo : workExperienceInfos) {
-            if (workExperienceDao.isWorkExperienceExist(workExperienceInfo.getResumeId())) {
+            if (workExperienceDao.isWorkExperienceExist(workExperienceInfo.getId())) {
                 workExperienceDao.updateWorkExperience(workExperienceInfo);
                 continue;
             }

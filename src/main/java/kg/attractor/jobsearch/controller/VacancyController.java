@@ -35,8 +35,8 @@ public class VacancyController {
     }
 
     @PutMapping
-    public ResponseEntity<VacancyDto> redactorVacancy(@RequestBody VacancyDto vacancyDto) {
-        return handleVacancyNotFoundAndIllegalArgException(() -> vacancyService.updateVacancy(vacancyDto));
+    public ResponseEntity<VacancyDto> redactorVacancy(@RequestParam Long vacancyId, @RequestBody VacancyDto vacancyDto) {
+        return handleVacancyNotFoundAndIllegalArgException(() -> vacancyService.updateVacancy(vacancyId, vacancyDto));
     }
 
     @DeleteMapping("{vacancyId}")
