@@ -59,11 +59,12 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public VacancyDto updateVacancy(VacancyDto vacancyDto) {
+    public VacancyDto updateVacancy(Long vacancyId, VacancyDto vacancyDto) {
         if (!isValidVacancy(vacancyDto))
             throw new IllegalArgumentException("vacancy dto invalid");
 
         Vacancy vacancy = vacancyMapper.mapToEntity(vacancyDto);
+        vacancy.setId(vacancyId);
 
         var updatedVacancyId = vacancyDao.updateVacancy(vacancy);
         return findVacancyById(updatedVacancyId);

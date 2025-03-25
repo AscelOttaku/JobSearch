@@ -8,7 +8,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class VacancyDto {
-    private Long id;
     private String name;
     private String description;
     private Long categoryId;

@@ -1,0 +1,47 @@
+databaseChangeLog:
+  - changeSet:
+      id: 006_create_table_respond_application.yaml
+      author: Kanybek Zhanybekov
+      changes:
+        - createTable:
+            tableName: responded_application
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: resume_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: vacancy_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: confirmation
+                  type: boolean
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: responded_application
+            baseColumnNames: resume_id
+            constraintName: fk_respond_application_resume_id
+            onDelete: cascade
+            onUpdate: cascade
+            referencedTableSchemaName: public
+            referencedTableName: resumes
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseColumnNames: vacancy_id
+            baseTableName: responded_application
+            constraintName: fk_responded_application_vacancies
+            onUpdate: cascade
+            onDelete: cascade
+            referencedTableName: vacancies
+            referencedColumnNames: id

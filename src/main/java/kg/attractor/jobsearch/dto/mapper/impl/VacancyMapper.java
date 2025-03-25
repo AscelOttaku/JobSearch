@@ -10,7 +10,6 @@ public class VacancyMapper implements Mapper<VacancyDto, Vacancy> {
     @Override
     public VacancyDto mapToDto(Vacancy entity) {
         return VacancyDto.builder()
-                .id(entity.getId())
                 .name(entity.getName())
                 .description(entity.getDescription())
                 .categoryId(entity.getCategoryId())
@@ -25,7 +24,6 @@ public class VacancyMapper implements Mapper<VacancyDto, Vacancy> {
     @Override
     public Vacancy mapToEntity(VacancyDto vacancyDto) {
         Vacancy vacancy = new Vacancy();
-        vacancy.setId(vacancyDto.getId());
         vacancy.setName(vacancyDto.getName());
         vacancy.setDescription(vacancyDto.getDescription());
         vacancy.setCategoryId(vacancyDto.getCategoryId());

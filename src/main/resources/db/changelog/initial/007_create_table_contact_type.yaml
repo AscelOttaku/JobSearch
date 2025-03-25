@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: 007_create_table_contact_type.yaml
+      author: Kanybek Zhanybekov
+      changes:
+        - createTable:
+            tableName: contact_type
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: type
+                  type: varchar(45)
+                  constraints:
+                    nullable: false

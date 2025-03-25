@@ -3,22 +3,22 @@ package kg.attractor.jobsearch.service.impl;
 import kg.attractor.jobsearch.dao.ResumeDao;
 import kg.attractor.jobsearch.dao.UserDao;
 import kg.attractor.jobsearch.dto.ResumeDto;
-import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
+import kg.attractor.jobsearch.dto.mapper.impl.ResumeMapper;
 import kg.attractor.jobsearch.exceptions.ResumeNotFoundException;
-import kg.attractor.jobsearch.model.Category;
+import kg.attractor.jobsearch.exceptions.UserNotFoundException;
 import kg.attractor.jobsearch.model.Resume;
+import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.service.ResumeService;
 import kg.attractor.jobsearch.service.UserService;
 import kg.attractor.jobsearch.util.validater.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
-import static kg.attractor.jobsearch.util.validater.Validator.isValidResume;
+import static kg.attractor.jobsearch.util.validater.Validator.isValidCreateResume;
+import static kg.attractor.jobsearch.util.validater.Validator.isValidUpdateResume;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +28,7 @@ public class ResumeServiceImpl implements ResumeService {
     private final CategoryService categoryService;
     private final UserDao userDao;
     private final UserService userService;
+    private final ResumeMapper resumeMapper;
 
     @Override
     public List<ResumeDto> findAllResumes() {
@@ -37,11 +38,15 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public List<ResumeDto> findResumesByCategory(Category resumeCategory) {
-        if (Validator.isNotValid(resumeCategory))
-            throw new IllegalArgumentException("resume category or category id is null");
+    public ResumeDto findResumeById(Long id) {
+        return resumeDao.findResumeById(id)
+                .map(mapper::mapToDto)
+                .orElseThrow(() -> new ResumeNotFoundException("Resume by id is not found " + id));
+    }
 
-        var optionalResume = resumeDao.findResumesByCategory(resumeCategory.getId());
+    @Override
+    public List<ResumeDto> findResumesByCategory(Long resumeCategory) {
+        var optionalResume = resumeDao.findResumesByCategory(resumeCategory);
 
         return optionalResume.stream()
                 .map(mapper::mapToDto)
@@ -49,37 +54,37 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public ResumeDto createResume(ResumeDto resumeDto) {
-        checkCategoryAndParams(resumeDto);
-
-        Optional<Long> optionId = resumeDao.createResume(mapper.mapToEntity(resumeDto));
-
-        return findAndMapToResumeOrThrowResumeNotFoundException(optionId);
+    public boolean updateResume(ResumeDto resumeDto, Long resumeId) {
+        return resumeDao.updateResume(mapper.mapToEntity(resumeDto), resumeId);
     }
 
     @Override
-    public ResumeDto updateResume(ResumeDto resumeDto) {
-        checkCategoryAndParams(resumeDto);
-
-        Optional<Long> optionalId = resumeDao.updateResume(mapper.mapToEntity(resumeDto));
-
-        return findAndMapToResumeOrThrowResumeNotFoundException(optionalId);
+    public Long createResume(ResumeDto resumeDto) {
+        Resume resume = resumeMapper.mapToEntity(resumeDto);
+        return resumeDao.create(resume).orElse(-1L);
     }
 
-    private ResumeDto findAndMapToResumeOrThrowResumeNotFoundException(Optional<Long> optionalId) {
-        return optionalId.flatMap(resumeDao::findResumeById).map(mapper::mapToDto)
-                .orElseThrow(() -> new ResumeNotFoundException("resume not found"));
-    }
-
-    private void checkCategoryAndParams(ResumeDto resumeDto) {
-        if (!isValidResume(resumeDto))
+    @Override
+    public void checkCreateResumeParams(ResumeDto resumeDto) {
+        if (!isValidCreateResume(resumeDto))
             throw new IllegalArgumentException("resume dto invalid");
 
         boolean isCategoryExist = categoryService.checkIfCategoryExistsById(resumeDto.getCategoryId());
-        boolean isUserExist = userService.checkIfUserExistById(resumeDto.getUserId());
+        boolean jobSeekerId = userService.checkIfJobSeekerExistById(resumeDto.getUserId());
 
-        if (!isCategoryExist || !isUserExist)
-            throw new IllegalArgumentException("category does not exist");
+        if (!isCategoryExist || !jobSeekerId)
+            throw new IllegalArgumentException("category or jobSeeker id is invalid");
+    }
+
+    @Override
+    public void checkUpdateResumeParams(ResumeDto resumeDto) {
+        if (!isValidUpdateResume(resumeDto))
+            throw new IllegalArgumentException("resume dto invalid");
+
+        boolean isCategoryExist = categoryService.checkIfCategoryExistsById(resumeDto.getCategoryId());
+
+        if (!isCategoryExist)
+            throw new IllegalArgumentException("category or jobSeeker id is invalid");
     }
 
     @Override
@@ -88,16 +93,18 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public List<ResumeDto> findUserCreatedResumes(UserDto userDto) {
-        if (Validator.isNotValidUser(userDto))
-            throw new IllegalArgumentException("User account type is not jobSeeker");
+    public List<ResumeDto> findUserCreatedResumes(String userEmail) {
+        var optionalUser = userDao.findUserByEmail(userEmail);
 
-        var optionalUser = userDao.findUserByEmail(userDto.getEmail());
+        User user = optionalUser.orElseThrow(() ->
+                new UserNotFoundException("User not found by email " + userEmail));
 
-        return optionalUser.map(user ->
-                resumeDao.findUserCreatedResumes(user.getId()).stream()
-                        .map(mapper::mapToDto)
-                        .toList()).orElse(Collections.emptyList());
+        if (!Validator.isValidUserAccountType(user))
+            throw new IllegalArgumentException("User account type is not valid");
+
+        return resumeDao.findUserCreatedResumes(user.getUserId()).stream()
+                .map(resumeMapper::mapToDto)
+                .toList();
     }
 
     @Override

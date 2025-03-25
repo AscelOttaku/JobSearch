@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CategoryMapper implements Mapper<CategoryDto, Category> {
+
     @Override
     public CategoryDto mapToDto(Category entity) {
         return CategoryDto.builder()

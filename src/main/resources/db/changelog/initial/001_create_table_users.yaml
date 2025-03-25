@@ -1,0 +1,59 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001_create_table_users
+      author: Kanybek Zhanybekov
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: user_id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: varchar(45)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: surname
+                  type: varchar(45)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: age
+                  type: int
+              - column:
+                  name: email
+                  type: varchar(65)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: phone_number
+                  type: varchar(45)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: avatar
+                  type: varchar(45)
+              - column:
+                  name: account_type
+                  type: varchar(45)
+                  constraints:
+                    nullable: false
+
+
+
+
+
+

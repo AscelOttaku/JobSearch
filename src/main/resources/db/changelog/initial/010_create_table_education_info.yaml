@@ -1,0 +1,43 @@
+databaseChangeLog:
+  - changeSet:
+      id: 010_create_table_education_info.yaml
+      author: Kanybek Zhanybekov
+      changes:
+        - createTable:
+            tableName: education_info
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: resume_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: institution
+                  type: varchar(45)
+              - column:
+                  name: program
+                  type: varchar(45)
+              - column:
+                  name: start_date
+                  type: timestamp
+              - column:
+                  name: end_date
+                  type: timestamp
+              - column:
+                  name: degree
+                  type: varchar(45)
+        - addForeignKeyConstraint:
+            baseColumnNames: resume_id
+            baseTableName: education_info
+            constraintName: fk_education_info_resume_id
+            onUpdate: cascade
+            onDelete: cascade
+            referencedTableName: resumes
+            referencedColumnNames: id

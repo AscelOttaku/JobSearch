@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -36,6 +37,31 @@ public class UserServiceImpl implements UserService {
             return -1L;
 
         return userDao.createUser(userMapper.mapToEntity(userDto));
+    }
+
+    @Override
+    public void updateUser(Long userId, UserDto userDto) {
+        if (Validator.isNotValidUpdateUser(userDto))
+            throw new IllegalArgumentException("data is illegal");
+
+        Optional<User> optionalUserFoundByEmail = userDao.findUserByEmail(userDto.getEmail());
+
+        boolean isUserByEmailExist = optionalUserFoundByEmail
+                .map(value -> !value.getEmail().equalsIgnoreCase(userDto.getEmail()))
+                .orElse(true);
+
+        Optional<User> optionalUserFoundByPhoneNumber = userDao.findUserByPhoneNumber(userDto.getPhoneNumber());
+
+        boolean isUserExistByPhoneNumber = optionalUserFoundByPhoneNumber
+                .map(value -> !value.getPhoneNumber().equals(userDto.getPhoneNumber()))
+                .orElse(true);
+
+        if (isUserByEmailExist && isUserExistByPhoneNumber)
+            throw new IllegalArgumentException("param email or phoneNumber are already exists in data");
+
+        User user = userMapper.mapToEntity(userDto);
+        user.setUserId(userId);
+        userDao.updateUser(user);
     }
 
     @Override
@@ -89,13 +115,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findUserById(Long userId) {
-        return userDao.findUserById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found by Id: " + userId));
+    public boolean checkIfUserExistById(Long userId) {
+        return userDao.findUserById(userId).isPresent();
     }
 
     @Override
-    public boolean checkIfUserExistById(Long userId) {
-        return userDao.findUserById(userId).isPresent();
+    public boolean checkIfJobSeekerExistById(Long jobSeekerId) {
+        Optional<User> optionalUser = userDao.findUserById(jobSeekerId);
+
+        return optionalUser.isPresent() && optionalUser.get().getAccountType().equalsIgnoreCase("jobSeeker");
     }
 }

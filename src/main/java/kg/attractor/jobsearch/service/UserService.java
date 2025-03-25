@@ -1,7 +1,6 @@
 package kg.attractor.jobsearch.service;
 
 import kg.attractor.jobsearch.dto.UserDto;
-import kg.attractor.jobsearch.model.User;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -12,6 +11,8 @@ public interface UserService {
     String uploadAvatar(MultipartFile file) throws IOException;
 
     Long createUser(UserDto userDto);
+
+    void updateUser(Long userId, UserDto userDto);
 
     UserDto findJobSeekerByEmail(String userEmail);
 
@@ -27,7 +28,7 @@ public interface UserService {
 
     List<UserDto> findRespondedToVacancyUsersByVacancy(Long vacancyId);
 
-    User findUserById(Long userId);
-
     boolean checkIfUserExistById(Long userId);
+
+    boolean checkIfJobSeekerExistById(Long jobSeekerId);
 }

@@ -15,11 +15,13 @@ import java.util.function.Supplier;
 @UtilityClass
 public class ExceptionHandler {
 
-    public static <T> ResponseEntity<T> handleInCaseUserNotFoundException(Supplier<T> supplier) {
+    public static <T> ResponseEntity<T> handleInCaseUserNotFoundAndIllegalArgException(Supplier<T> supplier) {
         try {
             return new ResponseEntity<>(supplier.get(), HttpStatus.OK);
         } catch (UserNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -51,11 +53,39 @@ public class ExceptionHandler {
         }
     }
 
-    public static <T> ResponseEntity<T> handleIllegalArgumentException(Supplier<T> supplier) {
+    public static ResponseEntity<Void> handleResumeNotFoundAndIllegalArgException(Runnable runnable) {
         try {
-            return new ResponseEntity<>(supplier.get(), HttpStatus.CREATED);
+            runnable.run();
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (ResumeNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    public static <T> ResponseEntity<T> handleResumeNotFoundException(Supplier<T> supplier) {
+        try {
+            return new ResponseEntity<>(supplier.get(), HttpStatus.OK);
+        } catch (ResumeNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public static <T> ResponseEntity<T> handleIException(Supplier<T> supplier) {
+        try {
+            return new ResponseEntity<>(supplier.get(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    public static ResponseEntity<Void> handleException(Runnable runnable) {
+        try {
+            runnable.run();
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
         }
     }
 

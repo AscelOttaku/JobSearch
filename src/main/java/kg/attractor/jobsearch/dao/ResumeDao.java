@@ -9,6 +9,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
@@ -40,24 +41,35 @@ public class ResumeDao {
         return jdbcTemplate.query(query, resumeMapper);
     }
 
-    public Optional<Long> createResume(Resume resume) {
-        String query = "insert into RESUMES(USER_ID, NAME, CATEGORY_ID, SALARY, IS_ACTIVE) values(?,?,?,?,?)";
+    public Optional<Long> create(Resume resume) {
+        String query = "insert into RESUMES(USER_ID, NAME, CATEGORY_ID, SALARY) values(?,?,?,?)";
 
-        executeCreateQuery(resume, query);
+        jdbcTemplate.update(connection -> {
+            PreparedStatement pr = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            pr.setLong(1, resume.getUserId());
+            pr.setString(2, resume.getName());
+            pr.setObject(3, resume.getCategoryId());
+            pr.setDouble(4, resume.getSalary());
+            return pr;
+        }, keyHolder);
 
         Number number = keyHolder.getKey();
         return number != null ? Optional.of(number.longValue()) : Optional.empty();
     }
 
-    public Optional<Long> updateResume(Resume resume) {
+    public boolean updateResume(Resume resume, Long resumeId) {
         String query = "UPDATE RESUMES " +
-                "SET ID = ?, USER_ID = ?, NAME = ?, CATEGORY_ID = ?, SALARY = ?, IS_ACTIVE = ?" +
+                "set NAME = ?, CATEGORY_ID = ?, SALARY = ?, IS_ACTIVE = ?" +
                 "WHERE ID = ?";
 
-        executeUpdateQuery(resume, query);
-
-        Number number = keyHolder.getKey();
-        return number != null ? Optional.of(number.longValue()) : Optional.empty();
+        return jdbcTemplate.update(
+                query,
+                resume.getName(),
+                resume.getCategoryId(),
+                resume.getSalary(),
+                resume.getIsActive(),
+                resumeId
+                ) > 0;
     }
 
     public Optional<Resume> findResumeById(Long resumeId) {
@@ -74,38 +86,5 @@ public class ResumeDao {
         String query = "delete from RESUMES where ID = ?";
 
         return jdbcTemplate.update(query, resumeId) > 0;
-    }
-
-    public void executeCreateQuery(
-            Resume resume, String query
-    ) {
-        jdbcTemplate.update(connection -> {
-            PreparedStatement pr = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            pr.setLong(1, resume.getUserId());
-            pr.setString(2, resume.getName());
-            pr.setObject(3, resume.getCategoryId());
-            pr.setDouble(4, resume.getSalary());
-            pr.setBoolean(5, resume.getIsActive());
-
-            return pr;
-        }, keyHolder);
-    }
-
-    private void executeUpdateQuery(
-            Resume resume, String query
-    ) {
-        jdbcTemplate.update(connection -> {
-            PreparedStatement pr = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            pr.setLong(1, resume.getId());
-            pr.setLong(2, resume.getUserId());
-            pr.setString(3, resume.getName());
-            pr.setObject(4, resume.getCategoryId());
-            pr.setDouble(5, resume.getSalary());
-            pr.setBoolean(6, resume.getIsActive());
-
-            pr.setLong(7, resume.getId());
-
-            return pr;
-        }, keyHolder);
     }
 }

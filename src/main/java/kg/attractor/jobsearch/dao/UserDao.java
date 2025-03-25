@@ -9,6 +9,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,15 +34,15 @@ public class UserDao {
     }
 
     public List<User> findUsersByName(String name) {
-        String query = "select * from USERS where LOWER(FIRSTNAME) LIKE LOWER(?)";
+        String query = "select * from USERS where LOWER(FIRST_NAME) LIKE LOWER(?)";
         return jdbcTemplate.query(query, userRowMapper, name.concat("%"));
     }
 
     public List<User> findRespondedToVacancyUsersByVacancy(Long vacancyId) {
         String query = """
                 select\s
-                    U.USERID,
-                    U.FIRSTNAME,
+                    U.USER_ID,
+                    U.FIRST_NAME,
                     U.SURNAME,
                     U.AGE,
                     U.EMAIL,
@@ -50,7 +51,7 @@ public class UserDao {
                     U.AVATAR,
                     U.ACCOUNT_TYPE
                     from USERS U
-                                LEFT JOIN RESUMES AS R ON R.USER_ID = U.USERID
+                                LEFT JOIN RESUMES AS R ON R.USER_ID = U.USER_ID
                                 LEFT JOIN RESPONDED_APPLICATION AS RA ON RA.RESUME_ID = R.ID\s
                 LEFT JOIN VACANCIES AS V ON V.ID = RA.
                         VACANCY_ID\s
@@ -76,13 +77,13 @@ public class UserDao {
     }
 
     public Long createUser(User user) {
-        String query = "insert into USERS (FIRSTNAME, SURNAME, AGE, EMAIL, PASSWORD, PHONE_NUMBER, AVATAR, ACCOUNT_TYPE)" +
+        String query = "insert into USERS (FIRST_NAME, SURNAME, AGE, EMAIL, PASSWORD, PHONE_NUMBER, AVATAR, ACCOUNT_TYPE)" +
                 "values ( ?,?,?,?,?,?,?,? ) ";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(query);
+            PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, user.getName());
             ps.setString(2, user.getSurname());
             ps.setInt(3, user.getAge());
@@ -99,8 +100,32 @@ public class UserDao {
     }
 
     public Optional<User> findUserById(Long userId) {
-        String query = "select * from USERS where USERID = ?";
+        String query = "select * from USERS where USER_ID = ?";
 
         return handleDataAccessException(() -> jdbcTemplate.queryForObject(query, userRowMapper, userId));
+    }
+
+    public boolean updateUser(User user) {
+        String query = "update USERS AS U " +
+                "SET U.FIRST_NAME = ?, " +
+                "U.SURNAME = ?," +
+                "U.EMAIL = ?," +
+                "U.AGE = ?," +
+                "U.AVATAR = ?," +
+                "U.PASSWORD = ?," +
+                "U.PHONE_NUMBER = ? " +
+                "WHERE USER_ID = ?";
+
+        return jdbcTemplate.update(
+                query,
+                user.getName(),
+                user.getSurname(),
+                user.getEmail(),
+                user.getAge(),
+                user.getAvatar(),
+                user.getPassword(),
+                user.getPhoneNumber(),
+                user.getUserId()
+                ) > 0;
     }
 }

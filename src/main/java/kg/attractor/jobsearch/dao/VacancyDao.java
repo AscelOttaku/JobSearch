@@ -32,13 +32,13 @@ public class VacancyDao {
                 "VACANCIES.EXP_FROM," +
                 "VACANCIES.EXP_TO," +
                 "VACANCIES.IS_ACTIVE," +
-                "VACANCIES.USER_ID," +
+                "VACANCIES.VACANCY_USER_ID," +
                 "VACANCIES.CREATED," +
-                "VACANCIES.UPDATED " +
+                "VACANCIES.UPDATE " +
                 "from VACANCIES " +
                 "INNER JOIN RESPONDED_APPLICATION AS RA ON VACANCIES.ID = RA.VACANCY_ID " +
                 "INNER JOIN RESUMES R ON R.ID = RA.RESUME_ID " +
-                "INNER JOIN USERS U ON U.USERID = R.USER_ID " +
+                "INNER JOIN USERS U ON U.USER_ID = R.USER_ID " +
                 "WHERE U.EMAIL = ?";
 
         return jdbcTemplate.query(query, vacancyRowMapper, userEmail);
@@ -76,8 +76,8 @@ public class VacancyDao {
 
     public Long createVacancy(Vacancy vacancy) {
         String query = """
-                INSERT INTO VACANCIES(NAME, DESCRIPTION, CATEGORY_ID, SALARY, EXP_FROM, EXP_TO, IS_ACTIVE, USER_ID)
-                values ( ?,?,?,?,?,?,?,?)
+                INSERT INTO VACANCIES(NAME, DESCRIPTION, CATEGORY_ID, SALARY, EXP_FROM, VACANCY_USER_ID, EXP_TO)
+                values ( ?,?,?,?,?,?,?)
                 """;
 
         KeyHolder keyHolder = createData(vacancy, query);
@@ -89,7 +89,7 @@ public class VacancyDao {
     public Long updateVacancy(Vacancy vacancy) {
         String query = """
                 UPDATE VACANCIES
-                SET NAME = ?, DESCRIPTION = ?, CATEGORY_ID = ?, SALARY = ?, EXP_FROM = ?, EXP_TO = ?, IS_ACTIVE = ?, USER_ID = ?
+                SET NAME = ?, DESCRIPTION = ?, CATEGORY_ID = ?, SALARY = ?, EXP_FROM = ?, EXP_TO = ?, VACANCY_USER_ID = ?, IS_ACTIVE = ?
                 WHERE ID = ?""";
 
         KeyHolder keyHolder = updateData(vacancy, query);
@@ -101,7 +101,7 @@ public class VacancyDao {
     private KeyHolder createData(Vacancy vacancy, String query) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
-        jdbcTemplate.update(connection ->{
+        jdbcTemplate.update(connection -> {
             PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             return setPreparedStatement(vacancy, preparedStatement, false);
         }, keyHolder);
@@ -129,11 +129,12 @@ public class VacancyDao {
         pr.setDouble(4, vacancy.getSalary());
         pr.setDouble(5, vacancy.getExpFrom());
         pr.setDouble(6, vacancy.getExpTo());
-        pr.setBoolean(7, vacancy.getIsActive());
-        pr.setLong(8, vacancy.getUserId());
+        pr.setLong(7, vacancy.getUserId());
 
-        if (isUpdate)
+        if (isUpdate) {
             pr.setLong(9, vacancy.getId());
+            pr.setBoolean(8, vacancy.getIsActive());
+        }
 
         return pr;
     }
