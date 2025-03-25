@@ -3,7 +3,6 @@ package kg.attractor.jobsearch.controller;
 import kg.attractor.jobsearch.dto.CreateResumeDetailedInfoDto;
 import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.dto.UpdateResumeDetailedInfoDto;
-import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.service.ResumeDetailedInfoService;
 import kg.attractor.jobsearch.service.ResumeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,7 @@ public class ResumeController {
     }
 
     @GetMapping("category")
-    public ResponseEntity<List<ResumeDto>> findByResumeByCategory(@RequestBody Category category) {
+    public ResponseEntity<List<ResumeDto>> findByResumeByCategory(@RequestParam Long category) {
         return handleIException(() -> resumeService.findResumesByCategory(category));
     }
 

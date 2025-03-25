@@ -7,7 +7,6 @@ import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.dto.mapper.impl.ResumeMapper;
 import kg.attractor.jobsearch.exceptions.ResumeNotFoundException;
 import kg.attractor.jobsearch.exceptions.UserNotFoundException;
-import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.service.ResumeService;
@@ -46,11 +45,8 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public List<ResumeDto> findResumesByCategory(Category resumeCategory) {
-        if (Validator.isNotValid(resumeCategory))
-            throw new IllegalArgumentException("resume category or category id is null");
-
-        var optionalResume = resumeDao.findResumesByCategory(resumeCategory.getId());
+    public List<ResumeDto> findResumesByCategory(Long resumeCategory) {
+        var optionalResume = resumeDao.findResumesByCategory(resumeCategory);
 
         return optionalResume.stream()
                 .map(mapper::mapToDto)

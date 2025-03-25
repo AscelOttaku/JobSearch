@@ -1,7 +1,6 @@
 package kg.attractor.jobsearch.service;
 
 import kg.attractor.jobsearch.dto.ResumeDto;
-import kg.attractor.jobsearch.model.Category;
 
 import java.util.List;
 
@@ -10,7 +9,7 @@ public interface ResumeService {
 
     ResumeDto findResumeById(Long id);
 
-    List<ResumeDto> findResumesByCategory(Category category);
+    List<ResumeDto> findResumesByCategory(Long categoryId);
 
     boolean updateResume(ResumeDto resumeDto, Long resumeId);
 
