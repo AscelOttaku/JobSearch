@@ -11,11 +11,17 @@ import java.util.stream.Stream;
 @UtilityClass
 public class Validator {
 
-    public static boolean isValidResume(ResumeDto resumeDto) {
+    public static boolean isValidCreateResume(ResumeDto resumeDto) {
         return resumeDto != null &&
                 isNotNullAndIsNotBlank(resumeDto.getName()) &&
                 isValidNumber(resumeDto.getCategoryId()) &&
                 isValidNumber(resumeDto.getUserId());
+    }
+
+    public static boolean isValidUpdateResume(ResumeDto resumeDto) {
+        return resumeDto != null &&
+                isNotNullAndIsNotBlank(resumeDto.getName()) &&
+                isValidNumber(resumeDto.getCategoryId());
     }
 
     public static <T> boolean isListValid(List<T> resumeDtos) {
@@ -33,6 +39,21 @@ public class Validator {
                 userDto.getPassword(),
                 userDto.getPhoneNumber(),
                 userDto.getAccountType()
+        );
+
+        return !stream.allMatch(Validator::isNotNullAndIsNotBlank);
+    }
+
+    public static boolean isNotValidUpdateUser(UserDto userDto) {
+        if (isNotValidData(userDto))
+            return true;
+
+        Stream<String> stream = Stream.of(
+                userDto.getName(),
+                userDto.getSurname(),
+                userDto.getEmail(),
+                userDto.getPassword(),
+                userDto.getPhoneNumber()
         );
 
         return !stream.allMatch(Validator::isNotNullAndIsNotBlank);

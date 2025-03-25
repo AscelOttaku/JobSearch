@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static kg.attractor.jobsearch.util.ExceptionHandler.handleIllegalArgumentException;
+import static kg.attractor.jobsearch.util.ExceptionHandler.handleIException;
 import static kg.attractor.jobsearch.util.ExceptionHandler.handleVacancyNotFoundAndIllegalArgException;
 
 @RestController
@@ -60,7 +60,7 @@ public class VacancyController {
 
     @GetMapping("users")
     public ResponseEntity<List<VacancyDto>> findUserRespondedVacancies(@RequestBody UserDto userDto) {
-        return handleIllegalArgumentException(() -> vacancyService.findUserRespondedVacancies(userDto));
+        return handleIException(() -> vacancyService.findUserRespondedVacancies(userDto));
     }
 
     @GetMapping

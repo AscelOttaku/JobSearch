@@ -8,7 +8,6 @@ import lombok.Setter;
 @Builder
 @Getter
 @Setter
-//@JsonIgnoreProperties(ignoreUnknown = true)
 public class ResumeDto {
     private String name;
     private Long userId;

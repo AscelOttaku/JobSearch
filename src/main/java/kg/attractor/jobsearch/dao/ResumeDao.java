@@ -59,12 +59,11 @@ public class ResumeDao {
 
     public boolean updateResume(Resume resume, Long resumeId) {
         String query = "UPDATE RESUMES " +
-                "set USER_ID = ?, NAME = ?, CATEGORY_ID = ?, SALARY = ?, IS_ACTIVE = ?" +
+                "set NAME = ?, CATEGORY_ID = ?, SALARY = ?, IS_ACTIVE = ?" +
                 "WHERE ID = ?";
 
         return jdbcTemplate.update(
                 query,
-                resume.getUserId(),
                 resume.getName(),
                 resume.getCategoryId(),
                 resume.getSalary(),

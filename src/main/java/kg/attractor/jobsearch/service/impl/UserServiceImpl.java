@@ -40,6 +40,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void updateUser(Long userId, UserDto userDto) {
+        if (Validator.isNotValidUpdateUser(userDto))
+            throw new IllegalArgumentException("data is illegal");
+
+        Optional<User> optionalUserFoundByEmail = userDao.findUserByEmail(userDto.getEmail());
+
+        boolean isUserByEmailExist = optionalUserFoundByEmail
+                .map(value -> !value.getEmail().equalsIgnoreCase(userDto.getEmail()))
+                .orElse(true);
+
+        Optional<User> optionalUserFoundByPhoneNumber = userDao.findUserByPhoneNumber(userDto.getPhoneNumber());
+
+        boolean isUserExistByPhoneNumber = optionalUserFoundByPhoneNumber
+                .map(value -> !value.getPhoneNumber().equals(userDto.getPhoneNumber()))
+                .orElse(true);
+
+        if (isUserByEmailExist && isUserExistByPhoneNumber)
+            throw new IllegalArgumentException("param email or phoneNumber are already exists in data");
+
+        User user = userMapper.mapToEntity(userDto);
+        user.setUserId(userId);
+        userDao.updateUser(user);
+    }
+
+    @Override
     public UserDto findJobSeekerByEmail(String userEmail) {
         var optionalUser = userDao.findJobSeekerByEmail(userEmail);
         return optionalUser.map(userMapper::mapToDto)

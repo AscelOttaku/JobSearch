@@ -104,4 +104,28 @@ public class UserDao {
 
         return handleDataAccessException(() -> jdbcTemplate.queryForObject(query, userRowMapper, userId));
     }
+
+    public boolean updateUser(User user) {
+        String query = "update USERS AS U " +
+                "SET U.FIRST_NAME = ?, " +
+                "U.SURNAME = ?," +
+                "U.EMAIL = ?," +
+                "U.AGE = ?," +
+                "U.AVATAR = ?," +
+                "U.PASSWORD = ?," +
+                "U.PHONE_NUMBER = ? " +
+                "WHERE USER_ID = ?";
+
+        return jdbcTemplate.update(
+                query,
+                user.getName(),
+                user.getSurname(),
+                user.getEmail(),
+                user.getAge(),
+                user.getAvatar(),
+                user.getPassword(),
+                user.getPhoneNumber(),
+                user.getUserId()
+                ) > 0;
+    }
 }

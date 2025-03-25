@@ -18,7 +18,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static kg.attractor.jobsearch.util.validater.Validator.isValidResume;
+import static kg.attractor.jobsearch.util.validater.Validator.isValidCreateResume;
+import static kg.attractor.jobsearch.util.validater.Validator.isValidUpdateResume;
 
 @Service
 @RequiredArgsConstructor
@@ -58,25 +59,35 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public boolean updateResume(ResumeDto resumeDto, Long resumeId) {
-        checkCategoryAndParams(resumeDto);
-
         return resumeDao.updateResume(mapper.mapToEntity(resumeDto), resumeId);
     }
 
     @Override
-    public Long createResume(Resume resume) {
+    public Long createResume(ResumeDto resumeDto) {
+        Resume resume = resumeMapper.mapToEntity(resumeDto);
         return resumeDao.create(resume).orElse(-1L);
     }
 
     @Override
-    public void checkCategoryAndParams(ResumeDto resumeDto) {
-        if (!isValidResume(resumeDto))
+    public void checkCreateResumeParams(ResumeDto resumeDto) {
+        if (!isValidCreateResume(resumeDto))
             throw new IllegalArgumentException("resume dto invalid");
 
         boolean isCategoryExist = categoryService.checkIfCategoryExistsById(resumeDto.getCategoryId());
         boolean jobSeekerId = userService.checkIfJobSeekerExistById(resumeDto.getUserId());
 
         if (!isCategoryExist || !jobSeekerId)
+            throw new IllegalArgumentException("category or jobSeeker id is invalid");
+    }
+
+    @Override
+    public void checkUpdateResumeParams(ResumeDto resumeDto) {
+        if (!isValidUpdateResume(resumeDto))
+            throw new IllegalArgumentException("resume dto invalid");
+
+        boolean isCategoryExist = categoryService.checkIfCategoryExistsById(resumeDto.getCategoryId());
+
+        if (!isCategoryExist)
             throw new IllegalArgumentException("category or jobSeeker id is invalid");
     }
 

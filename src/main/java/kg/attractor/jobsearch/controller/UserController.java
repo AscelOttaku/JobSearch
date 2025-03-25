@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import static kg.attractor.jobsearch.util.ExceptionHandler.handleInCaseUserNotFoundAndIllegalArgException;
+import static kg.attractor.jobsearch.util.ExceptionHandler.*;
 
 @RestController
 @RequestMapping("users")
@@ -73,5 +73,10 @@ public class UserController {
     @GetMapping("responded/vacancies/{vacancyId}")
     public List<UserDto> findRespondedToVacancyUsersByVacancy(@PathVariable Long vacancyId) {
         return userService.findRespondedToVacancyUsersByVacancy(vacancyId);
+    }
+
+    @PutMapping
+    public ResponseEntity<Void> updateUser(@RequestParam Long userId, @RequestBody UserDto userDto) {
+        return handleException(() -> userService.updateUser(userId, userDto));
     }
 }

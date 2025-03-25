@@ -2,7 +2,6 @@ package kg.attractor.jobsearch.service;
 
 import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.model.Category;
-import kg.attractor.jobsearch.model.Resume;
 
 import java.util.List;
 
@@ -15,9 +14,11 @@ public interface ResumeService {
 
     boolean updateResume(ResumeDto resumeDto, Long resumeId);
 
-    Long createResume(Resume resume);
+    Long createResume(ResumeDto resumeDto);
 
-    void checkCategoryAndParams(ResumeDto resumeDto);
+    void checkCreateResumeParams(ResumeDto resumeDto);
+
+    void checkUpdateResumeParams(ResumeDto resumeDto);
 
     boolean deleteResume(Long resumeId);
 

@@ -7,7 +7,6 @@ import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.service.ResumeDetailedInfoService;
 import kg.attractor.jobsearch.service.ResumeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +34,7 @@ public class ResumeController {
 
     @GetMapping("category")
     public ResponseEntity<List<ResumeDto>> findByResumeByCategory(@RequestBody Category category) {
-        return handleIllegalArgumentException(() -> resumeService.findResumesByCategory(category));
+        return handleIException(() -> resumeService.findResumesByCategory(category));
     }
 
     @PostMapping

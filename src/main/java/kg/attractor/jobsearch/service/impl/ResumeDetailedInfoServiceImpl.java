@@ -1,14 +1,14 @@
 package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dto.*;
-import kg.attractor.jobsearch.dto.mapper.Mapper;
-import kg.attractor.jobsearch.dto.mapper.impl.ResumeMapper;
 import kg.attractor.jobsearch.dto.mapper.impl.UpdateEducationInfoMapper;
 import kg.attractor.jobsearch.dto.mapper.impl.UpdateWokExperienceMapper;
 import kg.attractor.jobsearch.model.EducationInfo;
-import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.model.WorkExperienceInfo;
-import kg.attractor.jobsearch.service.*;
+import kg.attractor.jobsearch.service.EducationInfoService;
+import kg.attractor.jobsearch.service.ResumeDetailedInfoService;
+import kg.attractor.jobsearch.service.ResumeService;
+import kg.attractor.jobsearch.service.WorkExperienceInfoService;
 import kg.attractor.jobsearch.util.validater.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,24 +21,17 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService {
-    private final Mapper<ResumeDto, Resume> mapper;
     private final WorkExperienceInfoService workExperienceInfoService;
     private final ResumeService resumeService;
     private final EducationInfoService educationInfoService;
     private final UpdateWokExperienceMapper updateWorkExperienceInfoMapper;
     private final UpdateEducationInfoMapper updatedEducationalInfoDto;
-    private final ResumeMapper resumeMapper;
 
     @Override
     public CreateResumeDetailedInfoDto createResume(CreateResumeDetailedInfoDto resumeDetailedInfoDto) {
-        if (Validator.isNotValidData(resumeDetailedInfoDto))
-            throw new IllegalArgumentException("resume data is invalid");
+        resumeService.checkCreateResumeParams(resumeDetailedInfoDto.getResumeDto());
 
-        resumeService.checkCategoryAndParams(resumeDetailedInfoDto.getResumeDto());
-
-        Resume resume = mapper.mapToEntity(resumeDetailedInfoDto.getResumeDto());
-
-        Long resumeId = resumeService.createResume(resume);
+        Long resumeId = resumeService.createResume(resumeDetailedInfoDto.getResumeDto());
 
         List<Long> educationInfosIds = educationInfoService
                 .createEducationInfos(
@@ -77,8 +70,7 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
 
     @Override
     public void updateResumeDetailedInfo(Long resumeId, UpdateResumeDetailedInfoDto resumeDetailedInfoDto) {
-        if (!Validator.isValidResume(resumeDetailedInfoDto.getResumeDto()))
-            throw new IllegalArgumentException("invalid resume dto");
+        resumeService.checkUpdateResumeParams(resumeDetailedInfoDto.getResumeDto());
 
         boolean res = resumeService.updateResume(resumeDetailedInfoDto.getResumeDto(), resumeId);
 
