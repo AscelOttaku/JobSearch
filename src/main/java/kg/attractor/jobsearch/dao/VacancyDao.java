@@ -9,7 +9,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +19,6 @@ import static kg.attractor.jobsearch.util.ExceptionHandler.handleDataAccessExcep
 @RequiredArgsConstructor
 public class VacancyDao {
     private final JdbcTemplate jdbcTemplate;
-    private final BeanPropertyRowMapper<Vacancy> vacancyRowMapper = new BeanPropertyRowMapper<>(Vacancy.class);
 
     public List<Vacancy> findVacanciesByUserEmail(String userEmail) {
         String query = "select DISTINCT " +
@@ -34,32 +32,32 @@ public class VacancyDao {
                 "VACANCIES.IS_ACTIVE," +
                 "VACANCIES.VACANCY_USER_ID," +
                 "VACANCIES.CREATED," +
-                "VACANCIES.UPDATE " +
+                "VACANCIES.UPDATED " +
                 "from VACANCIES " +
                 "INNER JOIN RESPONDED_APPLICATION AS RA ON VACANCIES.ID = RA.VACANCY_ID " +
                 "INNER JOIN RESUMES R ON R.ID = RA.RESUME_ID " +
                 "INNER JOIN USERS U ON U.USER_ID = R.USER_ID " +
                 "WHERE U.EMAIL = ?";
 
-        return jdbcTemplate.query(query, vacancyRowMapper, userEmail);
+        return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Vacancy.class), userEmail);
     }
 
     public List<Vacancy> findAllVacancies() {
         String query = "select * from VACANCIES";
 
-        return jdbcTemplate.query(query, vacancyRowMapper);
+        return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Vacancy.class));
     }
 
     public List<Vacancy> findVacancyByCategory(Long categoryId) {
         String query = "SELECT * FROM VACANCIES WHERE CATEGORY_ID = ?";
 
-        return jdbcTemplate.query(query, vacancyRowMapper, categoryId);
+        return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Vacancy.class), categoryId);
     }
 
     public Optional<Vacancy> findVacancyById(Long vacancyId) {
         String query = "SELECT * FROM VACANCIES WHERE ID = ?";
 
-        return handleDataAccessException(() -> jdbcTemplate.queryForObject(query, vacancyRowMapper, vacancyId));
+        return handleDataAccessException(() -> jdbcTemplate.queryForObject(query, new BeanPropertyRowMapper<>(Vacancy.class), vacancyId));
     }
 
     public boolean deleteVacancyById(Long vacancyId) {
@@ -71,71 +69,49 @@ public class VacancyDao {
     public List<Vacancy> findAllActiveVacancies() {
         String query = "select * from VACANCIES WHERE IS_ACTIVE = TRUE";
 
-        return jdbcTemplate.query(query, vacancyRowMapper);
+        return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Vacancy.class));
     }
 
     public Long createVacancy(Vacancy vacancy) {
         String query = """
-                INSERT INTO VACANCIES(NAME, DESCRIPTION, CATEGORY_ID, SALARY, EXP_FROM, VACANCY_USER_ID, EXP_TO)
+                INSERT INTO VACANCIES(NAME, DESCRIPTION, CATEGORY_ID, SALARY, EXP_FROM, EXP_TO, VACANCY_USER_ID)
                 values ( ?,?,?,?,?,?,?)
                 """;
 
-        KeyHolder keyHolder = createData(vacancy, query);
+        KeyHolder keyHolder = new GeneratedKeyHolder();
 
-        Number number = keyHolder.getKey();
-        return number != null ? number.longValue() : -1;
+        jdbcTemplate.update(connection -> {
+            PreparedStatement pr = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            pr.setString(1, vacancy.getName());
+            pr.setString(2, vacancy.getDescription());
+            pr.setLong(3, vacancy.getCategoryId());
+            pr.setDouble(4, vacancy.getSalary());
+            pr.setDouble(5, vacancy.getExpFrom());
+            pr.setDouble(6, vacancy.getExpTo());
+            pr.setLong(7, vacancy.getUserId());
+            return pr;
+        }, keyHolder);
+
+        Number key = keyHolder.getKey();
+        return key != null ? key.longValue() : null;
     }
 
     public Long updateVacancy(Vacancy vacancy) {
         String query = """
                 UPDATE VACANCIES
-                SET NAME = ?, DESCRIPTION = ?, CATEGORY_ID = ?, SALARY = ?, EXP_FROM = ?, EXP_TO = ?, VACANCY_USER_ID = ?, IS_ACTIVE = ?
+                SET NAME = ?, DESCRIPTION = ?, CATEGORY_ID = ?, SALARY = ?, EXP_FROM = ?, EXP_TO = ?, IS_ACTIVE = ?
                 WHERE ID = ?""";
 
-        KeyHolder keyHolder = updateData(vacancy, query);
-
-        Number number = keyHolder.getKey();
-        return number != null ? number.longValue() : -1;
-    }
-
-    private KeyHolder createData(Vacancy vacancy, String query) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-
-        jdbcTemplate.update(connection -> {
-            PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            return setPreparedStatement(vacancy, preparedStatement, false);
-        }, keyHolder);
-        return keyHolder;
-    }
-
-    private KeyHolder updateData(Vacancy vacancy, String query) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-
-        jdbcTemplate.update(connection -> {
-            PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            return setPreparedStatement(vacancy, preparedStatement, true);
-        }, keyHolder);
-
-        return keyHolder;
-    }
-
-    private static PreparedStatement setPreparedStatement(
-            Vacancy vacancy, PreparedStatement pr, boolean isUpdate
-    ) throws SQLException {
-
-        pr.setString(1, vacancy.getName());
-        pr.setString(2, vacancy.getDescription());
-        pr.setLong(3, vacancy.getCategoryId());
-        pr.setDouble(4, vacancy.getSalary());
-        pr.setDouble(5, vacancy.getExpFrom());
-        pr.setDouble(6, vacancy.getExpTo());
-        pr.setLong(7, vacancy.getUserId());
-
-        if (isUpdate) {
-            pr.setLong(9, vacancy.getId());
-            pr.setBoolean(8, vacancy.getIsActive());
-        }
-
-        return pr;
+        return jdbcTemplate.update(
+                query,
+                vacancy.getName(),
+                vacancy.getDescription(),
+                vacancy.getCategoryId(),
+                vacancy.getSalary(),
+                vacancy.getExpFrom(),
+                vacancy.getExpTo(),
+                vacancy.getIsActive(),
+                vacancy.getId()
+        ) > 0 ? vacancy.getId() : -1L;
     }
 }

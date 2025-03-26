@@ -1,8 +1,8 @@
 package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dao.EducationInfoDao;
-import kg.attractor.jobsearch.dto.CreateEducationInfoDto;
-import kg.attractor.jobsearch.dto.mapper.impl.CreateEducationInfoMapper;
+import kg.attractor.jobsearch.dto.EducationalInfoDto;
+import kg.attractor.jobsearch.dto.mapper.impl.EducationInfoMapper;
 import kg.attractor.jobsearch.exceptions.EducationInfoNotFoundException;
 import kg.attractor.jobsearch.model.EducationInfo;
 import kg.attractor.jobsearch.service.EducationInfoService;
@@ -17,13 +17,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class EducationInfoServiceImpl implements EducationInfoService {
     private final EducationInfoDao educationInfoDao;
-    private final CreateEducationInfoMapper educationInfoMapper;
-    private final CreateEducationInfoMapper educationInfoMapperDto;
+    private final EducationInfoMapper educationInfoMapperDto;
 
     @Override
-    public CreateEducationInfoDto findEducationInfo(Long educationInfoOptionalId) {
+    public EducationalInfoDto findEducationInfo(Long educationInfoOptionalId) {
         return educationInfoDao.findEducationInfoById(educationInfoOptionalId)
-                .map(educationInfoMapper::mapToDto)
+                .map(educationInfoMapperDto::mapToDto)
                 .orElseThrow(() -> new EducationInfoNotFoundException("education info not found"));
     }
 
@@ -46,7 +45,7 @@ public class EducationInfoServiceImpl implements EducationInfoService {
     }
 
     @Override
-    public List<Long> createEducationInfos(List<CreateEducationInfoDto> educationalInfosDtos, Long resumeId) {
+    public List<Long> createEducationInfos(List<EducationalInfoDto> educationalInfosDtos, Long resumeId) {
 
         if (educationalInfosDtos == null || educationalInfosDtos.isEmpty())
             return Collections.emptyList();
@@ -63,7 +62,7 @@ public class EducationInfoServiceImpl implements EducationInfoService {
     }
 
     @Override
-    public List<CreateEducationInfoDto> findEducationInfoDtosByIds(List<Long> educationOpIds) {
+    public List<EducationalInfoDto> findEducationInfoDtosByIds(List<Long> educationOpIds) {
         return educationOpIds.stream()
                 .filter(id -> id != -1)
                 .map(this::findEducationInfo)

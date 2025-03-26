@@ -17,9 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static kg.attractor.jobsearch.util.validater.Validator.isValidCreateResume;
-import static kg.attractor.jobsearch.util.validater.Validator.isValidUpdateResume;
-
 @Service
 @RequiredArgsConstructor
 public class ResumeServiceImpl implements ResumeService {
@@ -66,9 +63,6 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public void checkCreateResumeParams(ResumeDto resumeDto) {
-        if (!isValidCreateResume(resumeDto))
-            throw new IllegalArgumentException("resume dto invalid");
-
         boolean isCategoryExist = categoryService.checkIfCategoryExistsById(resumeDto.getCategoryId());
         boolean jobSeekerId = userService.checkIfJobSeekerExistById(resumeDto.getUserId());
 
@@ -78,9 +72,6 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public void checkUpdateResumeParams(ResumeDto resumeDto) {
-        if (!isValidUpdateResume(resumeDto))
-            throw new IllegalArgumentException("resume dto invalid");
-
         boolean isCategoryExist = categoryService.checkIfCategoryExistsById(resumeDto.getCategoryId());
 
         if (!isCategoryExist)

@@ -50,7 +50,7 @@ databaseChangeLog:
                   name: created
                   type: timestamp
               - column:
-                  name: update
+                  name: updated
                   type: timestamp
         - addForeignKeyConstraint:
             baseTableName: vacancies
@@ -67,6 +67,5 @@ databaseChangeLog:
             constraintName: fk_vacancies_user_id
             onDelete: cascade
             onUpdate: cascade
-            referencedTableSchemaName: public
             referencedTableName: users
             referencedColumnNames: user_id

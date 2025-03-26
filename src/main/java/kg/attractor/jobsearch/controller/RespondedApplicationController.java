@@ -1,5 +1,6 @@
 package kg.attractor.jobsearch.controller;
 
+import jakarta.validation.Valid;
 import kg.attractor.jobsearch.dto.RespondApplicationDto;
 import kg.attractor.jobsearch.service.RespondService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class RespondedApplicationController {
     }
 
     @PostMapping()
-    public ResponseEntity<RespondApplicationDto> createRespond(@RequestBody RespondApplicationDto respondApplicationDto) {
+    public ResponseEntity<RespondApplicationDto> createRespond(@RequestBody @Valid RespondApplicationDto respondApplicationDto) {
         return handleInCaseRespondApplicationNoFoundAndIllegalArgException(() -> respondService.createRespond(respondApplicationDto));
     }
 }

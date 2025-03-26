@@ -1,8 +1,8 @@
 package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dao.WorkExperienceDao;
-import kg.attractor.jobsearch.dto.CreateWorkExperienceInfoDto;
-import kg.attractor.jobsearch.dto.mapper.impl.CreateWorkExperienceInfoMapper;
+import kg.attractor.jobsearch.dto.WorkExperienceInfoDto;
+import kg.attractor.jobsearch.dto.mapper.impl.WokExperienceMapper;
 import kg.attractor.jobsearch.exceptions.WorkExperienceNotFoundException;
 import kg.attractor.jobsearch.model.WorkExperienceInfo;
 import kg.attractor.jobsearch.service.WorkExperienceInfoService;
@@ -17,13 +17,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService {
     private final WorkExperienceDao workExperienceDao;
-    private final CreateWorkExperienceInfoMapper createWorkExperienceInfoMapper;
-    private final CreateWorkExperienceInfoMapper workExperienceInfoMapperDto;
+    private final WokExperienceMapper workExperienceInfoMapperDto;
 
     @Override
-    public CreateWorkExperienceInfoDto findWorkExperience(Long id) {
+    public WorkExperienceInfoDto findWorkExperience(Long id) {
         return workExperienceDao.findWorkExperienceById(id)
-                .map(createWorkExperienceInfoMapper::mapToDto)
+                .map(workExperienceInfoMapperDto::mapToDto)
                 .orElseThrow(() -> new WorkExperienceNotFoundException("work experience info not found"));
     }
 
@@ -46,7 +45,7 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
     }
 
     @Override
-    public List<Long> createWorkExperienceInfos(List<CreateWorkExperienceInfoDto> workExperienceInfosDtos, Long resumeId) {
+    public List<Long> createWorkExperienceInfos(List<WorkExperienceInfoDto> workExperienceInfosDtos, Long resumeId) {
 
         if (workExperienceInfosDtos == null || workExperienceInfosDtos.isEmpty())
             return Collections.emptyList();
@@ -63,7 +62,7 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
     }
 
     @Override
-    public List<CreateWorkExperienceInfoDto> findWorkExperienceByIds(List<Long> workExperienceOpIds) {
+    public List<WorkExperienceInfoDto> findWorkExperienceByIds(List<Long> workExperienceOpIds) {
         return workExperienceOpIds.stream()
                 .filter(id -> id != -1)
                 .map(this::findWorkExperience)

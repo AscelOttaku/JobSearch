@@ -1,6 +1,7 @@
 package kg.attractor.jobsearch.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.validation.constraints.*;
+import kg.attractor.jobsearch.util.marks.CreateOn;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,9 +10,22 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ResumeDto {
+
+    @NotNull(message = "{null_message}")
+    @NotBlank(message = "{blank_message}")
+    @Size(min = 3, max = 40, message = "{3_30_size_message}")
     private String name;
+
+    @NotNull(message = "{null_message}", groups = CreateOn.class)
+    @Positive(message = "{user_id_positive_message}", groups = CreateOn.class)
     private Long userId;
+
+    @NotNull(message = "{null_message}", groups = CreateOn.class)
+    @Positive(message = "{category_id_positive_message}", groups = CreateOn.class)
     private Long categoryId;
+
+    @PositiveOrZero(message = "{non_negative_message}")
     private double salary;
+
     private boolean isActive;
 }

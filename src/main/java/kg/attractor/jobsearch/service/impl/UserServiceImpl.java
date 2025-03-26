@@ -41,9 +41,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUser(Long userId, UserDto userDto) {
-        if (Validator.isNotValidUpdateUser(userDto))
-            throw new IllegalArgumentException("data is illegal");
-
         Optional<User> optionalUserFoundByEmail = userDao.findUserByEmail(userDto.getEmail());
 
         boolean isUserByEmailExist = optionalUserFoundByEmail
@@ -117,6 +114,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean checkIfUserExistById(Long userId) {
         return userDao.findUserById(userId).isPresent();
+    }
+
+    @Override
+    public boolean checkIfEmployerExistByEmail(Long employerId) {
+        Optional<User> user = userDao.findUserById(employerId);
+
+        return user.isPresent() && user.get().getAccountType().equalsIgnoreCase("employer");
     }
 
     @Override

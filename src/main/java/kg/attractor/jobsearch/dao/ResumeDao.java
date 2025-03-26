@@ -78,10 +78,6 @@ public class ResumeDao {
         return handleDataAccessException(() -> jdbcTemplate.queryForObject(query, resumeMapper, resumeId));
     }
 
-    public boolean isResumeExistById(Long resumeId) {
-        return findResumeById(resumeId).isPresent();
-    }
-
     public boolean deleteResumeById(Long resumeId) {
         String query = "delete from RESUMES where ID = ?";
 

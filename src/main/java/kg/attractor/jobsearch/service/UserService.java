@@ -30,5 +30,7 @@ public interface UserService {
 
     boolean checkIfUserExistById(Long userId);
 
+    boolean checkIfEmployerExistByEmail(Long employerId);
+
     boolean checkIfJobSeekerExistById(Long jobSeekerId);
 }

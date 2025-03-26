@@ -1,6 +1,5 @@
 package kg.attractor.jobsearch.dao;
 
-import jdk.dynalink.linker.LinkerServices;
 import kg.attractor.jobsearch.model.RespondedApplication;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -26,30 +25,24 @@ public class RespondApplicationDao {
         String query = "insert into RESPONDED_APPLICATION(RESUME_ID, VACANCY_ID, CONFIRMATION) " +
                 "VALUES ( ?,?,? )";
 
-        return setPreparedStatementParams(query, respondApplication);
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setLong(1, respondApplication.getResumeId());
+            preparedStatement.setLong(2, respondApplication.getVacancyId());
+            preparedStatement.setBoolean(3, respondApplication.getConfirmation());
+            return preparedStatement;
+        }, keyHolder);
+
+        Number number = keyHolder.getKey();
+        return number != null ? Optional.of(number.longValue()) : Optional.empty();
     }
 
     public Optional<RespondedApplication> findRespondApplicationById(long id) {
         String query = "select * from RESPONDED_APPLICATION where ID = ?";
 
         return handleDataAccessException(() -> jdbcTemplate.queryForObject(query, respondApplicationRowMapper, id));
-    }
-
-    private Optional<Long> setPreparedStatementParams(
-            String query, RespondedApplication respondedApplication
-    ) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-
-        jdbcTemplate.update(connection -> {
-            PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setLong(1, respondedApplication.getResumeId());
-            preparedStatement.setLong(2, respondedApplication.getVacancyId());
-            preparedStatement.setBoolean(3, respondedApplication.getConfirmation());
-            return preparedStatement;
-        }, keyHolder);
-
-        Number number = keyHolder.getKey();
-        return number != null ? Optional.of(number.longValue()) : Optional.empty();
     }
 
     public List<RespondedApplication> findAll() {

@@ -8,7 +8,6 @@ import kg.attractor.jobsearch.model.RespondedApplication;
 import kg.attractor.jobsearch.service.RespondService;
 import kg.attractor.jobsearch.service.ResumeService;
 import kg.attractor.jobsearch.service.VacancyService;
-import kg.attractor.jobsearch.util.validater.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +21,7 @@ public class RespondServiceImpl implements RespondService {
 
     @Override
     public RespondApplicationDto createRespond(RespondApplicationDto respondApplicationDto) {
-        if (Validator.isValidRespondApplication(respondApplicationDto) && checkIsRespondApplicationExist(respondApplicationDto)) {
+        if (checkIsRespondApplicationExist(respondApplicationDto)) {
 
             boolean isResumeByIdExist = resumeService.isResumeExist(respondApplicationDto.getResumeId());
             boolean isVacancyByIdExist = vacancyService.isVacancyExist(respondApplicationDto.getVacancyId());

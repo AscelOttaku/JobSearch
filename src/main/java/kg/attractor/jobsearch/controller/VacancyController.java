@@ -1,8 +1,8 @@
 package kg.attractor.jobsearch.controller;
 
-import kg.attractor.jobsearch.dto.UserDto;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import kg.attractor.jobsearch.dto.VacancyDto;
-import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.service.VacancyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,22 +25,29 @@ public class VacancyController {
     }
 
     @GetMapping("{vacancyId}")
-    public ResponseEntity<VacancyDto> findVacancyById(@PathVariable Long vacancyId) {
+    public ResponseEntity<VacancyDto> findVacancyById(
+            @PathVariable @NotNull @Positive Long vacancyId
+    ) {
         return handleVacancyNotFoundAndIllegalArgException(() -> vacancyService.findVacancyById(vacancyId));
     }
 
     @PostMapping("new-vacancies")
-    public ResponseEntity<VacancyDto> createVacancy(@RequestBody VacancyDto vacancyDto) {
+    public ResponseEntity<VacancyDto> createVacancy(@RequestBody @Valid VacancyDto vacancyDto) {
         return handleVacancyNotFoundAndIllegalArgException(() -> vacancyService.createdVacancy(vacancyDto));
     }
 
     @PutMapping
-    public ResponseEntity<VacancyDto> redactorVacancy(@RequestParam Long vacancyId, @RequestBody VacancyDto vacancyDto) {
+    public ResponseEntity<VacancyDto> redactorVacancy(
+            @RequestParam @NotNull @Positive Long vacancyId,
+            @RequestBody @Valid VacancyDto vacancyDto
+    ) {
         return handleVacancyNotFoundAndIllegalArgException(() -> vacancyService.updateVacancy(vacancyId, vacancyDto));
     }
 
     @DeleteMapping("{vacancyId}")
-    public ResponseEntity<Void> deleteVacancy(@PathVariable Long vacancyId) {
+    public ResponseEntity<Void> deleteVacancy(
+            @PathVariable @Positive Long vacancyId
+    ) {
         return vacancyService.deleteVacancy(vacancyId) ?
                 new ResponseEntity<>(HttpStatus.NO_CONTENT) :
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -54,13 +61,17 @@ public class VacancyController {
     }
 
     @GetMapping("categories")
-    public ResponseEntity<List<VacancyDto>> findVacanciesByCategory(@RequestBody Category category) {
-        return new ResponseEntity<>(vacancyService.findVacanciesByCategory(category), HttpStatus.OK);
+    public ResponseEntity<List<VacancyDto>> findVacanciesByCategory(
+            @RequestBody @Positive Long categoryId
+    ) {
+        return new ResponseEntity<>(vacancyService.findVacanciesByCategory(categoryId), HttpStatus.OK);
     }
 
-    @GetMapping("users")
-    public ResponseEntity<List<VacancyDto>> findUserRespondedVacancies(@RequestBody UserDto userDto) {
-        return handleIException(() -> vacancyService.findUserRespondedVacancies(userDto));
+    @GetMapping("users/{userEmail}")
+    public ResponseEntity<List<VacancyDto>> findUserRespondedVacancies(
+            @PathVariable @NotNull @NotBlank @Email String userEmail
+    ) {
+        return handleIException(() -> vacancyService.findUserRespondedVacancies(userEmail));
     }
 
     @GetMapping
