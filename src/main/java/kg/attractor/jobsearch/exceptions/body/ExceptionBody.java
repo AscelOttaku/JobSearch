@@ -4,14 +4,20 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Builder
 @Getter
 public class ExceptionBody {
-    private final LocalDateTime timestamp = LocalDateTime.now();
-    private Integer statusCode;
+    private final String timestamp = DateTimeFormatter
+            .ofPattern("yyyy-MM-dd HH:mm:ss")
+            .format(LocalDateTime.now());
+
+    private int statusCode;
     private String cause;
     private String message;
-    private ErrorBody error;
+    private String exception;
+    private List<ErrorBody> errors;
     private String path;
 }
