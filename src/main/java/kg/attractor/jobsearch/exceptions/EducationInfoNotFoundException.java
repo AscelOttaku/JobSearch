@@ -1,7 +1,9 @@
 package kg.attractor.jobsearch.exceptions;
 
-public class EducationInfoNotFoundException extends RuntimeException {
-    public EducationInfoNotFoundException(String message) {
-        super(message);
+import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
+
+public class EducationInfoNotFoundException extends EntityNotFoundException {
+    public EducationInfoNotFoundException(String message, CustomBindingResult bindingResult) {
+        super(message, bindingResult);
     }
 }

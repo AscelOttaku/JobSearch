@@ -3,7 +3,9 @@ package kg.attractor.jobsearch.service.impl;
 import kg.attractor.jobsearch.dao.VacancyDao;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
+import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
 import kg.attractor.jobsearch.exceptions.VacancyNotFoundException;
+import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.Vacancy;
 import kg.attractor.jobsearch.service.UserService;
 import kg.attractor.jobsearch.service.VacancyService;
@@ -24,7 +26,14 @@ public class VacancyServiceImpl implements VacancyService {
     public VacancyDto findVacancyById(Long vacancyId) {
         return vacancyDao.findVacancyById(vacancyId)
                 .map(vacancyMapper::mapToDto)
-                .orElseThrow(() -> new VacancyNotFoundException("vacancy by id " + vacancyId + " not found"));
+                .orElseThrow(() -> new VacancyNotFoundException(
+                        "vacancy by id " + vacancyId + " not found",
+                        CustomBindingResult.builder()
+                                .className(Vacancy.class.getSimpleName())
+                                .fieldName("vacancyId")
+                                .rejectedValue(vacancyId)
+                                .build()
+                ));
     }
 
     @Override
@@ -48,7 +57,14 @@ public class VacancyServiceImpl implements VacancyService {
             return findVacancyById(vacancyId);
         }
 
-        throw new IllegalArgumentException("Vacancy params are not valid");
+        throw new CustomIllegalArgException(
+                "Vacancy params are not valid",
+                CustomBindingResult.builder()
+                        .className(Vacancy.class.getSimpleName())
+                        .fieldName("no field name")
+                        .rejectedValue(vacancyDto)
+                        .build()
+        );
     }
 
     @Override
@@ -61,8 +77,18 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public boolean deleteVacancy(Long vacancyId) {
-        return vacancyDao.deleteVacancyById(vacancyId);
+    public void deleteVacancy(Long vacancyId) {
+        boolean res = vacancyDao.deleteVacancyById(vacancyId);
+
+        if(!res)
+            throw new VacancyNotFoundException(
+                    "vacancy by id " + vacancyId + " not found",
+                    CustomBindingResult.builder()
+                            .className(Vacancy.class.getSimpleName())
+                            .fieldName("id")
+                            .rejectedValue(vacancyId)
+                            .build()
+            );
     }
 
     @Override

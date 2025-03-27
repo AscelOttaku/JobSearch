@@ -1,7 +1,9 @@
 package kg.attractor.jobsearch.exceptions;
 
-public class RespondApplicationNotFoundException extends RuntimeException {
-    public RespondApplicationNotFoundException(String message) {
-        super(message);
+import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
+
+public class RespondApplicationNotFoundException extends EntityNotFoundException {
+    public RespondApplicationNotFoundException(String message, CustomBindingResult bindingResult) {
+        super(message, bindingResult);
     }
 }

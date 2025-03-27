@@ -4,6 +4,7 @@ import kg.attractor.jobsearch.dao.EducationInfoDao;
 import kg.attractor.jobsearch.dto.EducationalInfoDto;
 import kg.attractor.jobsearch.dto.mapper.impl.EducationInfoMapper;
 import kg.attractor.jobsearch.exceptions.EducationInfoNotFoundException;
+import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.EducationInfo;
 import kg.attractor.jobsearch.service.EducationInfoService;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,14 @@ public class EducationInfoServiceImpl implements EducationInfoService {
     public EducationalInfoDto findEducationInfo(Long educationInfoOptionalId) {
         return educationInfoDao.findEducationInfoById(educationInfoOptionalId)
                 .map(educationInfoMapperDto::mapToDto)
-                .orElseThrow(() -> new EducationInfoNotFoundException("education info not found"));
+                .orElseThrow(() -> new EducationInfoNotFoundException(
+                        "education info not found",
+                        CustomBindingResult.builder()
+                                .className(EducationInfo.class.getName())
+                                .fieldName("id")
+                                .rejectedValue(educationInfoOptionalId)
+                                .build()
+                        ));
     }
 
     @Override

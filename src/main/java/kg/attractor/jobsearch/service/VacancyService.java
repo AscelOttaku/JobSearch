@@ -13,7 +13,7 @@ public interface VacancyService {
 
     VacancyDto updateVacancy(Long vacancyId, VacancyDto vacancyDto);
 
-    boolean deleteVacancy(Long vacancyId);
+    void deleteVacancy(Long vacancyId);
 
     List<VacancyDto> findAllActiveVacancies();
 

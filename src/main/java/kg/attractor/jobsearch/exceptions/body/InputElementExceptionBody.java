@@ -5,19 +5,18 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 @Builder
 @Getter
-public class ExceptionBody {
+public class InputElementExceptionBody {
     private final String timestamp = DateTimeFormatter
             .ofPattern("yyyy-MM-dd HH:mm:ss")
             .format(LocalDateTime.now());
 
-    private int statusCode;
-    private String cause;
+    private int status;
+    private String error;
+    private String method;
     private String message;
-    private String exception;
-    private List<ErrorBody> errors;
+    private CustomBindingResult bindingResult;
     private String path;
 }

@@ -24,7 +24,7 @@ public interface UserService {
 
     UserDto findUserByPhoneNumber(String phoneNumber);
 
-    boolean isUserExistByEmail(String email);
+    void isUserExistByEmail(String email);
 
     List<UserDto> findRespondedToVacancyUsersByVacancy(Long vacancyId);
 

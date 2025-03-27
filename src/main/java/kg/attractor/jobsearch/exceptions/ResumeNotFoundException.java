@@ -1,7 +1,9 @@
 package kg.attractor.jobsearch.exceptions;
 
-public class ResumeNotFoundException extends RuntimeException {
-    public ResumeNotFoundException(String message) {
-        super(message);
+import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
+
+public class ResumeNotFoundException extends EntityNotFoundException {
+    public ResumeNotFoundException(String message, CustomBindingResult bindingResult) {
+        super(message, bindingResult);
     }
 }

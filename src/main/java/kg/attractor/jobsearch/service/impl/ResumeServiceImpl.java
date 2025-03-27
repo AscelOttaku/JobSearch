@@ -5,8 +5,11 @@ import kg.attractor.jobsearch.dao.UserDao;
 import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.dto.mapper.impl.ResumeMapper;
+import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
 import kg.attractor.jobsearch.exceptions.ResumeNotFoundException;
 import kg.attractor.jobsearch.exceptions.UserNotFoundException;
+import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
+import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.service.ResumeService;
@@ -14,6 +17,7 @@ import kg.attractor.jobsearch.service.UserService;
 import kg.attractor.jobsearch.util.validater.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 
 import java.util.List;
 
@@ -38,7 +42,14 @@ public class ResumeServiceImpl implements ResumeService {
     public ResumeDto findResumeById(Long id) {
         return resumeDao.findResumeById(id)
                 .map(mapper::mapToDto)
-                .orElseThrow(() -> new ResumeNotFoundException("Resume by id is not found " + id));
+                .orElseThrow(() -> new ResumeNotFoundException(
+                        "Resume by id is not found ",
+                        CustomBindingResult.builder()
+                                .className(Resume.class.getCanonicalName())
+                                .fieldName("id")
+                                .rejectedValue(id)
+                                .build()
+                ));
     }
 
     @Override
@@ -66,8 +77,25 @@ public class ResumeServiceImpl implements ResumeService {
         boolean isCategoryExist = categoryService.checkIfCategoryExistsById(resumeDto.getCategoryId());
         boolean jobSeekerId = userService.checkIfJobSeekerExistById(resumeDto.getUserId());
 
-        if (!isCategoryExist || !jobSeekerId)
-            throw new IllegalArgumentException("category or jobSeeker id is invalid");
+        if (!isCategoryExist)
+            throw new CustomIllegalArgException(
+                    "category doesn't exist",
+                    CustomBindingResult.builder()
+                            .className(Category.class.getSimpleName())
+                            .fieldName("id")
+                            .rejectedValue(resumeDto.getCategoryId())
+                            .build()
+            );
+
+        if (jobSeekerId)
+            throw new CustomIllegalArgException(
+                    "jobSeeker don't exist",
+                    CustomBindingResult.builder()
+                            .className(User.class.getSimpleName())
+                            .fieldName("id")
+                            .rejectedValue(resumeDto.getUserId())
+                            .build()
+            );
     }
 
     @Override
@@ -75,12 +103,29 @@ public class ResumeServiceImpl implements ResumeService {
         boolean isCategoryExist = categoryService.checkIfCategoryExistsById(resumeDto.getCategoryId());
 
         if (!isCategoryExist)
-            throw new IllegalArgumentException("category or jobSeeker id is invalid");
+            throw new CustomIllegalArgException(
+                    "category is not exist",
+                    CustomBindingResult.builder()
+                            .className(Category.class.getSimpleName())
+                            .fieldName("id")
+                            .rejectedValue(resumeDto.getCategoryId())
+                            .build()
+            );
     }
 
     @Override
-    public boolean deleteResume(Long resumeId) {
-        return resumeDao.deleteResumeById(resumeId);
+    public void deleteResume(Long resumeId) {
+        boolean res = resumeDao.deleteResumeById(resumeId);
+
+        if (!res)
+            throw new ResumeNotFoundException(
+                    "Resume by id is not found " + resumeId,
+                    CustomBindingResult.builder()
+                            .className(Resume.class.getCanonicalName())
+                            .fieldName("id")
+                            .rejectedValue(resumeId)
+                            .build()
+            );
     }
 
     @Override
@@ -88,10 +133,24 @@ public class ResumeServiceImpl implements ResumeService {
         var optionalUser = userDao.findUserByEmail(userEmail);
 
         User user = optionalUser.orElseThrow(() ->
-                new UserNotFoundException("User not found by email " + userEmail));
+                new UserNotFoundException(
+                        "User not found by email " + userEmail,
+                        CustomBindingResult.builder()
+                                .className(User.class.getCanonicalName())
+                                .fieldName("email")
+                                .rejectedValue(userEmail)
+                                .build()
+                ));
 
         if (!Validator.isValidUserAccountType(user))
-            throw new IllegalArgumentException("User account type is not valid");
+            throw new CustomIllegalArgException(
+                    "User account type is not valid",
+                    CustomBindingResult.builder()
+                            .className(User.class.getCanonicalName())
+                            .fieldName("accountType")
+                            .rejectedValue(user.getAccountType())
+                            .build()
+            );
 
         return resumeDao.findUserCreatedResumes(user.getUserId()).stream()
                 .map(resumeMapper::mapToDto)

@@ -5,9 +5,8 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class ErrorBody {
-    private String objectName;
-    private Object rejectedValue;
+public class CustomBindingResult {
+    private String className;
     private String fieldName;
-    private String message;
+    private Object rejectedValue;
 }

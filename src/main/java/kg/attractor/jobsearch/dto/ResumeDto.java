@@ -1,7 +1,6 @@
 package kg.attractor.jobsearch.dto;
 
 import jakarta.validation.constraints.*;
-import kg.attractor.jobsearch.util.marks.CreateOn;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,12 +15,12 @@ public class ResumeDto {
     @Size(min = 3, max = 40, message = "{3_30_size_message}")
     private String name;
 
-    @NotNull(message = "{null_message}", groups = CreateOn.class)
-    @Positive(message = "{user_id_positive_message}", groups = CreateOn.class)
+    @NotNull(message = "{null_message}")
+    @Positive(message = "{user_id_positive_message}")
     private Long userId;
 
-    @NotNull(message = "{null_message}", groups = CreateOn.class)
-    @Positive(message = "{category_id_positive_message}", groups = CreateOn.class)
+    @NotNull(message = "{null_message}")
+    @Positive(message = "{category_id_positive_message}")
     private Long categoryId;
 
     @PositiveOrZero(message = "{non_negative_message}")

@@ -1,7 +1,9 @@
 package kg.attractor.jobsearch.exceptions;
 
-public class VacancyNotFoundException extends RuntimeException {
-    public VacancyNotFoundException(String message) {
-        super(message);
+import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
+
+public class VacancyNotFoundException extends EntityNotFoundException {
+    public VacancyNotFoundException(String message, CustomBindingResult bindingResult) {
+        super(message, bindingResult);
     }
 }

@@ -1,18 +1,19 @@
 package kg.attractor.jobsearch.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.service.VacancyService;
+import kg.attractor.jobsearch.util.marks.CreateOn;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-import static kg.attractor.jobsearch.util.ExceptionHandler.handleIException;
-import static kg.attractor.jobsearch.util.ExceptionHandler.handleVacancyNotFoundAndIllegalArgException;
 
 @RestController
 @RequestMapping("/vacancies")
@@ -25,57 +26,63 @@ public class VacancyController {
     }
 
     @GetMapping("{vacancyId}")
-    public ResponseEntity<VacancyDto> findVacancyById(
+    @ResponseStatus(HttpStatus.OK)
+    public VacancyDto findVacancyById(
             @PathVariable @NotNull @Positive Long vacancyId
     ) {
-        return handleVacancyNotFoundAndIllegalArgException(() -> vacancyService.findVacancyById(vacancyId));
+        return vacancyService.findVacancyById(vacancyId);
     }
 
     @PostMapping("new-vacancies")
-    public ResponseEntity<VacancyDto> createVacancy(@RequestBody @Valid VacancyDto vacancyDto) {
-        return handleVacancyNotFoundAndIllegalArgException(() -> vacancyService.createdVacancy(vacancyDto));
+    @ResponseStatus(HttpStatus.CREATED)
+    public VacancyDto createVacancy(
+            @RequestBody @Validated(CreateOn.class) VacancyDto vacancyDto
+    ) {
+        return vacancyService.createdVacancy(vacancyDto);
     }
 
     @PutMapping
-    public ResponseEntity<VacancyDto> redactorVacancy(
+    @ResponseStatus(HttpStatus.OK)
+    public VacancyDto redactorVacancy(
             @RequestParam @NotNull @Positive Long vacancyId,
             @RequestBody @Valid VacancyDto vacancyDto
     ) {
-        return handleVacancyNotFoundAndIllegalArgException(() -> vacancyService.updateVacancy(vacancyId, vacancyDto));
+        return vacancyService.updateVacancy(vacancyId, vacancyDto);
     }
 
     @DeleteMapping("{vacancyId}")
-    public ResponseEntity<Void> deleteVacancy(
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteVacancy(
             @PathVariable @Positive Long vacancyId
     ) {
-        return vacancyService.deleteVacancy(vacancyId) ?
-                new ResponseEntity<>(HttpStatus.NO_CONTENT) :
-                new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        vacancyService.deleteVacancy(vacancyId);
     }
 
     @GetMapping("actives")
-    public ResponseEntity<List<VacancyDto>> findAllActiveVacancies() {
-        return vacancyService.findAllActiveVacancies().isEmpty() ?
-                new ResponseEntity<>(HttpStatus.NO_CONTENT) :
-                new ResponseEntity<>(vacancyService.findAllActiveVacancies(), HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public List<VacancyDto> findAllActiveVacancies() {
+        return vacancyService.findAllActiveVacancies();
     }
 
     @GetMapping("categories")
-    public ResponseEntity<List<VacancyDto>> findVacanciesByCategory(
+    @ResponseStatus(HttpStatus.OK)
+    public List<VacancyDto> findVacanciesByCategory(
             @RequestBody @Positive Long categoryId
     ) {
-        return new ResponseEntity<>(vacancyService.findVacanciesByCategory(categoryId), HttpStatus.OK);
+        return vacancyService.findVacanciesByCategory(categoryId);
     }
 
     @GetMapping("users/{userEmail}")
-    public ResponseEntity<List<VacancyDto>> findUserRespondedVacancies(
+    @ResponseStatus(HttpStatus.OK)
+    public List<VacancyDto> findUserRespondedVacancies(
             @PathVariable @NotNull @NotBlank @Email String userEmail
     ) {
-        return handleIException(() -> vacancyService.findUserRespondedVacancies(userEmail));
+        return vacancyService.findUserRespondedVacancies(userEmail);
     }
 
     @GetMapping
-    public ResponseEntity<List<VacancyDto>> findAllVacancies() {
-        return new ResponseEntity<>(vacancyService.findAllVacancies(), HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public List<VacancyDto> findAllVacancies() {
+        return vacancyService.findAllVacancies();
     }
 }

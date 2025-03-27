@@ -3,11 +3,12 @@ package kg.attractor.jobsearch.service.impl;
 import kg.attractor.jobsearch.dao.UserDao;
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
+import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
 import kg.attractor.jobsearch.exceptions.UserNotFoundException;
+import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.service.UserService;
 import kg.attractor.jobsearch.util.FileUtil;
-import kg.attractor.jobsearch.util.validater.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,9 +34,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Long createUser(UserDto userDto) {
-        if (Validator.isNotValidUser(userDto))
-            return -1L;
-
         return userDao.createUser(userMapper.mapToEntity(userDto));
     }
 
@@ -53,8 +51,25 @@ public class UserServiceImpl implements UserService {
                 .map(value -> !value.getPhoneNumber().equals(userDto.getPhoneNumber()))
                 .orElse(true);
 
-        if (isUserByEmailExist && isUserExistByPhoneNumber)
-            throw new IllegalArgumentException("param email or phoneNumber are already exists in data");
+        if (isUserByEmailExist)
+            throw new CustomIllegalArgException(
+                    "param email is already exists in data",
+                    CustomBindingResult.builder()
+                            .className(User.class.getSimpleName())
+                            .fieldName("email")
+                            .rejectedValue(userDto.getEmail())
+                            .build()
+            );
+
+        if (isUserExistByPhoneNumber)
+            throw new CustomIllegalArgException(
+                    "param phoneNumber is already exists in data",
+                    CustomBindingResult.builder()
+                            .className(User.class.getSimpleName())
+                            .fieldName("phoneNumber")
+                            .rejectedValue(userDto.getPhoneNumber())
+                            .build()
+            );
 
         User user = userMapper.mapToEntity(userDto);
         user.setUserId(userId);
@@ -65,14 +80,28 @@ public class UserServiceImpl implements UserService {
     public UserDto findJobSeekerByEmail(String userEmail) {
         var optionalUser = userDao.findJobSeekerByEmail(userEmail);
         return optionalUser.map(userMapper::mapToDto)
-                .orElseThrow(() -> new UserNotFoundException("Job Seeker not found By Email: " + userEmail));
+                .orElseThrow(() -> new UserNotFoundException(
+                        "Job Seeker not found By Email: " + userEmail,
+                        CustomBindingResult.builder()
+                                .className(User.class.getSimpleName())
+                                .fieldName("email")
+                                .rejectedValue(userEmail)
+                                .build()
+                ));
     }
 
     @Override
     public UserDto findEmployerByEmail(String employerEmail) {
         var optionalUser = userDao.findEmployerByEmail(employerEmail);
         return optionalUser.map(userMapper::mapToDto).orElseThrow(() ->
-                new UserNotFoundException("Employer not found By email: " + employerEmail));
+                new UserNotFoundException(
+                        "Employer not found By email: " + employerEmail,
+                        CustomBindingResult.builder()
+                                .className(User.class.getSimpleName())
+                                .fieldName("email")
+                                .rejectedValue(employerEmail)
+                                .build()
+                ));
     }
 
     @Override
@@ -87,7 +116,14 @@ public class UserServiceImpl implements UserService {
         var optionalUser = userDao.findUserByEmail(email);
 
         return optionalUser.map(userMapper::mapToDto)
-                .orElseThrow(() -> new UserNotFoundException("User not found by Email: " + email));
+                .orElseThrow(() -> new UserNotFoundException(
+                        "User not found by Email: " + email,
+                        CustomBindingResult.builder()
+                                .className(User.class.getSimpleName())
+                                .fieldName("email")
+                                .rejectedValue(email)
+                                .build()
+                ));
     }
 
     @Override
@@ -95,12 +131,29 @@ public class UserServiceImpl implements UserService {
         var optionalUser = userDao.findUserByPhoneNumber(phoneNumber);
 
         return optionalUser.map(userMapper::mapToDto)
-                .orElseThrow(() -> new UserNotFoundException("User not found by PhoneNumber: " + phoneNumber));
+                .orElseThrow(() -> new UserNotFoundException(
+                        "User not found by PhoneNumber: " + phoneNumber,
+                        CustomBindingResult.builder()
+                                .className(User.class.getSimpleName())
+                                .fieldName("phoneNumber")
+                                .rejectedValue(phoneNumber)
+                                .build()
+                ));
     }
 
     @Override
-    public boolean isUserExistByEmail(String email) {
-        return userDao.findUserByEmail(email).isPresent();
+    public void isUserExistByEmail(String email) {
+        boolean res = userDao.findUserByEmail(email).isPresent();
+
+        if (!res)
+            throw new UserNotFoundException(
+                    "User not found by Email: " + email,
+                    CustomBindingResult.builder()
+                            .className(User.class.getSimpleName())
+                            .fieldName("email")
+                            .rejectedValue(email)
+                            .build()
+            );
     }
 
     @Override

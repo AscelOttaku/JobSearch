@@ -4,6 +4,7 @@ import kg.attractor.jobsearch.dao.WorkExperienceDao;
 import kg.attractor.jobsearch.dto.WorkExperienceInfoDto;
 import kg.attractor.jobsearch.dto.mapper.impl.WokExperienceMapper;
 import kg.attractor.jobsearch.exceptions.WorkExperienceNotFoundException;
+import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.WorkExperienceInfo;
 import kg.attractor.jobsearch.service.WorkExperienceInfoService;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,14 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
     public WorkExperienceInfoDto findWorkExperience(Long id) {
         return workExperienceDao.findWorkExperienceById(id)
                 .map(workExperienceInfoMapperDto::mapToDto)
-                .orElseThrow(() -> new WorkExperienceNotFoundException("work experience info not found"));
+                .orElseThrow(() -> new WorkExperienceNotFoundException(
+                        "work experience info not found by id " + id,
+                        CustomBindingResult.builder()
+                                .className(WorkExperienceInfo.class.getSimpleName())
+                                .fieldName("id")
+                                .rejectedValue(id)
+                                .build())
+                );
     }
 
     @Override

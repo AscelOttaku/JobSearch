@@ -19,7 +19,7 @@ public interface ResumeService {
 
     void checkUpdateResumeParams(ResumeDto resumeDto);
 
-    boolean deleteResume(Long resumeId);
+    void deleteResume(Long resumeId);
 
     List<ResumeDto> findUserCreatedResumes(String userEmail);
 
