@@ -1,7 +1,5 @@
 package kg.attractor.jobsearch.service.impl;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import kg.attractor.jobsearch.dto.EducationalInfoDto;
 import kg.attractor.jobsearch.dto.ResumeDetailedInfoDto;
 import kg.attractor.jobsearch.dto.ResumeDto;
@@ -14,6 +12,7 @@ import kg.attractor.jobsearch.service.EducationInfoService;
 import kg.attractor.jobsearch.service.ResumeDetailedInfoService;
 import kg.attractor.jobsearch.service.ResumeService;
 import kg.attractor.jobsearch.service.WorkExperienceInfoService;
+import kg.attractor.jobsearch.util.validater.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -74,6 +73,8 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
 
     @Override
     public void updateResumeDetailedInfo(Long resumeId, ResumeDetailedInfoDto resumeDetailedInfoDto) {
+        Validator.isValidId(resumeId);
+
         resumeService.checkUpdateResumeParams(resumeDetailedInfoDto.getResumeDto());
 
         boolean res = resumeService.updateResume(resumeDetailedInfoDto.getResumeDto(), resumeId);
@@ -81,18 +82,15 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
         if (!res)
             log.info("Update Resume Operation stopped there is no changes");
 
-        updateWorkExperienceInfo(resumeId, resumeDetailedInfoDto);
-        updateEducationalInfo(resumeId, resumeDetailedInfoDto);
+        updateWorkExperienceInfo(resumeId, resumeDetailedInfoDto.getWorkExperienceInfoDtos());
+        updateEducationalInfo(resumeId, resumeDetailedInfoDto.getEducationInfoDtos());
     }
 
-    private void updateEducationalInfo(
-            @NotNull(message = "{not_null}") Long resumeId,
-            @NotNull(message = "{not_null}")
-            @NotEmpty(message = "value is empty") ResumeDetailedInfoDto resumeDetailedInfoDto
-    ) {
-        var educationInfoDtos = resumeDetailedInfoDto.getEducationInfoDtos();
+    private void updateEducationalInfo(Long resumeId, List<EducationalInfoDto> educationalInfoDtos) {
+        if (educationalInfoDtos == null || educationalInfoDtos.isEmpty())
+            return;
 
-        List<EducationInfo> educationInfos = educationInfoDtos.stream()
+        List<EducationInfo> educationInfos = educationalInfoDtos.stream()
                 .map(updatedEducationalInfoDto::mapToEntity)
                 .toList();
 
@@ -101,11 +99,9 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
         educationInfoService.updateEducationInfo(educationInfos);
     }
 
-    private void updateWorkExperienceInfo(
-            @NotNull(message = "{not_null}") Long resumeId,
-            @NotNull(message = "{not_null}")
-            @NotEmpty(message = "value is empty") ResumeDetailedInfoDto resumeDetailedInfoDto) {
-        var workExperienceInfoDtos = resumeDetailedInfoDto.getWorkExperienceInfoDtos();
+    private void updateWorkExperienceInfo(Long resumeId, List<WorkExperienceInfoDto> workExperienceInfoDtos) {
+        if (workExperienceInfoDtos == null || workExperienceInfoDtos.isEmpty())
+            return;
 
         List<WorkExperienceInfo> workExperienceInfos = workExperienceInfoDtos.stream()
                 .map(updateWorkExperienceInfoMapper::mapToEntity)

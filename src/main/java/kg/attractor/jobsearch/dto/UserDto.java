@@ -1,7 +1,6 @@
 package kg.attractor.jobsearch.dto;
 
 import jakarta.validation.constraints.*;
-import kg.attractor.jobsearch.util.marks.CreateOn;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -55,7 +54,5 @@ public class UserDto {
 
     private String avatar;
 
-    @NotNull(message = "{null_message}", groups = CreateOn.class)
-    @NotBlank(message = "{blank_message}", groups = CreateOn.class)
     private String accountType;
 }

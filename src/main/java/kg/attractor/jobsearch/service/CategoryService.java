@@ -1,0 +1,11 @@
+package kg.attractor.jobsearch.service;
+
+import kg.attractor.jobsearch.dto.CategoryDto;
+
+import java.util.Optional;
+
+public interface CategoryService {
+    boolean checkIfCategoryExistsById(Long categoryId);
+
+    Optional<CategoryDto> findCategoryById(Long categoryId);
+}

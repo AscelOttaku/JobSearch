@@ -9,6 +9,7 @@ import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.service.UserService;
 import kg.attractor.jobsearch.util.FileUtil;
+import kg.attractor.jobsearch.util.validater.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,11 +35,60 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Long createUser(UserDto userDto) {
+
+        String accountType = userDto.getAccountType();
+        if (accountType == null || accountType.isBlank())
+            throw new CustomIllegalArgException(
+                    "account type is null or blank",
+                    CustomBindingResult.builder()
+                            .className(User.class.getSimpleName())
+                            .fieldName("accountType")
+                            .rejectedValue(accountType)
+                            .build()
+
+            );
+
+        if (!userDto.getAccountType().equalsIgnoreCase("jobSeeker") &&
+                !userDto.getAccountType().equalsIgnoreCase("employer"))
+            throw new CustomIllegalArgException(
+                    "Field name account type is not employer or user",
+                    CustomBindingResult.builder()
+                            .className(User.class.getSimpleName())
+                            .fieldName("accountType")
+                            .rejectedValue(userDto.getAccountType())
+                            .build()
+            );
+
+        boolean isEmailAlreadyExists = userDao.findUserByEmail(userDto.getEmail()).isPresent();
+        boolean isPhoneNumberAlreadyExists = userDao.findUserByPhoneNumber(userDto.getPhoneNumber()).isPresent();
+
+        if (isEmailAlreadyExists)
+            throw new CustomIllegalArgException(
+                    "email is already exists",
+                    CustomBindingResult.builder()
+                            .className(User.class.getSimpleName())
+                            .fieldName("email")
+                            .rejectedValue(userDto.getEmail())
+                            .build()
+            );
+
+        if (isPhoneNumberAlreadyExists)
+            throw new CustomIllegalArgException(
+                    "phone number is already exists",
+                    CustomBindingResult.builder()
+                            .className(User.class.getSimpleName())
+                            .fieldName("phoneNumber")
+                            .rejectedValue(userDto.getPhoneNumber())
+                            .build()
+            );
+
         return userDao.createUser(userMapper.mapToEntity(userDto));
     }
 
     @Override
     public void updateUser(Long userId, UserDto userDto) {
+        Validator.isValidId(userId);
+
         Optional<User> optionalUserFoundByEmail = userDao.findUserByEmail(userDto.getEmail());
 
         boolean isUserByEmailExist = optionalUserFoundByEmail
@@ -158,6 +208,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> findRespondedToVacancyUsersByVacancy(Long vacancyId) {
+        Validator.isValidId(vacancyId);
+
         return userDao.findRespondedToVacancyUsersByVacancy(vacancyId).stream()
                 .filter(user -> user.getAccountType().equalsIgnoreCase("jobSeeker"))
                 .map(userMapper::mapToDto)

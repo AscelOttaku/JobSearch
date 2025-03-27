@@ -1,10 +1,6 @@
 package kg.attractor.jobsearch.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.service.VacancyService;
 import kg.attractor.jobsearch.util.marks.CreateOn;
@@ -17,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/vacancies")
+@Validated
 public class VacancyController {
     private final VacancyService vacancyService;
 
@@ -27,9 +24,7 @@ public class VacancyController {
 
     @GetMapping("{vacancyId}")
     @ResponseStatus(HttpStatus.OK)
-    public VacancyDto findVacancyById(
-            @PathVariable @NotNull @Positive Long vacancyId
-    ) {
+    public VacancyDto findVacancyById(@PathVariable Long vacancyId) {
         return vacancyService.findVacancyById(vacancyId);
     }
 
@@ -44,7 +39,7 @@ public class VacancyController {
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
     public VacancyDto redactorVacancy(
-            @RequestParam @NotNull @Positive Long vacancyId,
+            @RequestParam Long vacancyId,
             @RequestBody @Valid VacancyDto vacancyDto
     ) {
         return vacancyService.updateVacancy(vacancyId, vacancyDto);
@@ -53,7 +48,7 @@ public class VacancyController {
     @DeleteMapping("{vacancyId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteVacancy(
-            @PathVariable @Positive Long vacancyId
+            @PathVariable Long vacancyId
     ) {
         vacancyService.deleteVacancy(vacancyId);
     }
@@ -67,7 +62,7 @@ public class VacancyController {
     @GetMapping("categories")
     @ResponseStatus(HttpStatus.OK)
     public List<VacancyDto> findVacanciesByCategory(
-            @RequestBody @Positive Long categoryId
+            @RequestBody Long categoryId
     ) {
         return vacancyService.findVacanciesByCategory(categoryId);
     }
@@ -75,7 +70,7 @@ public class VacancyController {
     @GetMapping("users/{userEmail}")
     @ResponseStatus(HttpStatus.OK)
     public List<VacancyDto> findUserRespondedVacancies(
-            @PathVariable @NotNull @NotBlank @Email String userEmail
+            @PathVariable String userEmail
     ) {
         return vacancyService.findUserRespondedVacancies(userEmail);
     }

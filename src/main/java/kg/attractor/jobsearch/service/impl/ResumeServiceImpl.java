@@ -17,7 +17,6 @@ import kg.attractor.jobsearch.service.UserService;
 import kg.attractor.jobsearch.util.validater.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
 
 import java.util.List;
 
@@ -26,7 +25,7 @@ import java.util.List;
 public class ResumeServiceImpl implements ResumeService {
     private final Mapper<ResumeDto, Resume> mapper;
     private final ResumeDao resumeDao;
-    private final CategoryService categoryService;
+    private final CategoryServiceImpl categoryService;
     private final UserDao userDao;
     private final UserService userService;
     private final ResumeMapper resumeMapper;
@@ -54,6 +53,8 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public List<ResumeDto> findResumesByCategory(Long resumeCategory) {
+        Validator.isValidId(resumeCategory);
+
         var optionalResume = resumeDao.findResumesByCategory(resumeCategory);
 
         return optionalResume.stream()
@@ -74,6 +75,9 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public void checkCreateResumeParams(ResumeDto resumeDto) {
+        Validator.isValidId(resumeDto.getCategoryId());
+        Validator.isValidId(resumeDto.getUserId());
+
         boolean isCategoryExist = categoryService.checkIfCategoryExistsById(resumeDto.getCategoryId());
         boolean jobSeekerId = userService.checkIfJobSeekerExistById(resumeDto.getUserId());
 
@@ -87,7 +91,7 @@ public class ResumeServiceImpl implements ResumeService {
                             .build()
             );
 
-        if (jobSeekerId)
+        if (!jobSeekerId)
             throw new CustomIllegalArgException(
                     "jobSeeker don't exist",
                     CustomBindingResult.builder()
@@ -115,6 +119,8 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public void deleteResume(Long resumeId) {
+        Validator.isValidId(resumeId);
+
         boolean res = resumeDao.deleteResumeById(resumeId);
 
         if (!res)

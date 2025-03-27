@@ -5,20 +5,28 @@ import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
 import kg.attractor.jobsearch.exceptions.EntityNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.InputElementExceptionBody;
 import kg.attractor.jobsearch.exceptions.body.ValidationErrorBody;
+import kg.attractor.jobsearch.exceptions.body.ValidationExceptionBody;
 import kg.attractor.jobsearch.service.ErrorService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ErrorServiceImpl implements ErrorService {
 
     @Override
-    public List<ValidationErrorBody> handleValidationException(MethodArgumentNotValidException ex) {
+    public ValidationExceptionBody handleValidationException(
+            MethodArgumentNotValidException ex, HttpServletRequest httpServletRequest
+    ) {
         List<ValidationErrorBody> errors = new ArrayList<>();
 
         ex.getBindingResult().getAllErrors().forEach(error -> {
@@ -30,14 +38,23 @@ public class ErrorServiceImpl implements ErrorService {
 
             errors.add(ValidationErrorBody
                     .builder()
-                            .objectName(objectName)
-                            .rejectedValue(rejectedValue)
-                            .fieldName(fieldName)
-                            .message(message)
+                    .objectName(objectName)
+                    .rejectedValue(rejectedValue)
+                    .fieldName(fieldName)
+                    .message(message)
                     .build());
         });
 
-        return errors;
+        return ValidationExceptionBody.builder()
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .message(httpServletRequest.getMethod())
+                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .cause("Validation Error")
+                .message("Exception " + ex.getClass().getSimpleName() + "is happened, check errors field for more details")
+                .exception(ex.getClass().getSimpleName())
+                .errors(errors)
+                .path(httpServletRequest.getRequestURL().toString())
+                .build();
     }
 
     @Override
@@ -66,5 +83,27 @@ public class ErrorServiceImpl implements ErrorService {
                 .bindingResult(e.getBindingResult())
                 .path(servletRequest.getRequestURI())
                 .build();
+    }
+
+    @Override
+    public Map<String, Object> handleMethodValidationException(
+            HandlerMethodValidationException ex, HttpServletRequest request
+    ) {
+        Map<String, Object> errors = new HashMap<>();
+
+        ex.getAllErrors().forEach(error -> {
+            String errorMessage = error.getDefaultMessage();
+            Object arguments = error.getArguments();
+
+            errors.put("timestamp", DateTimeFormatter
+                    .ofPattern("dd:MM:yyyy HH:mm:ss")
+                    .format(LocalDateTime.now()));
+
+            errors.put("message", errorMessage);
+            errors.put("arguments", arguments);
+            errors.put("path", request.getRequestURI());
+        });
+
+        return errors;
     }
 }
