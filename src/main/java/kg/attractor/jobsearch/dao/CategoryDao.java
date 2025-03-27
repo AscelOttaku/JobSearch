@@ -15,9 +15,9 @@ public class CategoryDao {
     private final JdbcTemplate jdbcTemplate;
     private final BeanPropertyRowMapper<Category> rowMapper = new BeanPropertyRowMapper<>(Category.class);
 
-    public Optional<Category> findCategoryById(Long vacancyId) {
-        String query = "select * from VACANCIES where VACANCIES.ID = ?";
+    public Category findCategoryById(Long vacancyId) {
+        String query = "select * from CATEGORIES where ID = ?";
 
-        return ExceptionHandler.handleDataAccessException(() -> jdbcTemplate.queryForObject(query, rowMapper, vacancyId));
+        return jdbcTemplate.queryForObject(query, rowMapper, vacancyId);
     }
 }

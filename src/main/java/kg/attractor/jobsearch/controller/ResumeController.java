@@ -34,7 +34,7 @@ public class ResumeController {
 
     @GetMapping("category")
     @ResponseStatus(HttpStatus.OK)
-    public List<ResumeDto> findByResumeByCategory(@RequestParam @Positive Long category) {
+    public List<ResumeDto> findByResumeByCategory(@RequestParam Long category) {
         return resumeService.findResumesByCategory(category);
     }
 
@@ -49,14 +49,14 @@ public class ResumeController {
     @PutMapping("{resumeId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void redactorResume(
-            @PathVariable @Positive Long resumeId, @RequestBody @Valid ResumeDetailedInfoDto resumeDto
+            @PathVariable Long resumeId, @RequestBody @Valid ResumeDetailedInfoDto resumeDto
     ) {
         resumeDetailedInfoService.updateResumeDetailedInfo(resumeId, resumeDto);
     }
 
     @DeleteMapping("{resumeId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteResume(@PathVariable @Positive Long resumeId) {
+    public void deleteResume(@PathVariable Long resumeId) {
         resumeService.deleteResume(resumeId);
     }
 

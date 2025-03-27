@@ -14,6 +14,10 @@ public class VacancyDto {
     @NotNull(message = "{null_message}")
     @NotBlank(message = "{blank_message}")
     @Size(min = 3, max = 30, message = "{3_30_size_message}")
+    @Pattern(
+            regexp = "^\\p{L}+$",
+            message = "{symbol_numbers_pattern_message}"
+    )
     private String name;
 
     private String description;
