@@ -2,8 +2,6 @@ package kg.attractor.jobsearch.controller;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
 import kg.attractor.jobsearch.dto.ResumeDetailedInfoDto;
 import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.service.ResumeDetailedInfoService;
@@ -63,14 +61,16 @@ public class ResumeController {
     @GetMapping("users")
     @ResponseStatus(HttpStatus.OK)
     public List<ResumeDto> findUserCreatedResumes(
-            @RequestParam(name = "email") @NotBlank @Email String userEmail
+            @RequestParam(name = "email")
+            @Email(message = "{email_message}")
+            String userEmail
     ) {
         return resumeService.findUserCreatedResumes(userEmail);
     }
 
     @GetMapping("{resumeId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResumeDto findResumeById(@PathVariable @Positive Long resumeId) {
+    public ResumeDto findResumeById(@PathVariable Long resumeId) {
         return resumeService.findResumeById(resumeId);
     }
 }

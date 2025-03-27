@@ -39,6 +39,8 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public ResumeDto findResumeById(Long id) {
+        Validator.isValidId(id);
+
         return resumeDao.findResumeById(id)
                 .map(mapper::mapToDto)
                 .orElseThrow(() -> new ResumeNotFoundException(
@@ -148,7 +150,7 @@ public class ResumeServiceImpl implements ResumeService {
                                 .build()
                 ));
 
-        if (!Validator.isValidUserAccountType(user))
+        if (!user.getAccountType().equalsIgnoreCase("jobSeeker"))
             throw new CustomIllegalArgException(
                     "User account type is not valid",
                     CustomBindingResult.builder()
