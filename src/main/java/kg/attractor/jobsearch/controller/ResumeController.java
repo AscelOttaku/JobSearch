@@ -30,6 +30,12 @@ public class ResumeController {
         return resumeService.findAllResumes();
     }
 
+    @GetMapping("infos")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ResumeDetailedInfoDto> findAllDetailedInfos() {
+        return resumeDetailedInfoService.findAllResumesWithDetailedInfo();
+    }
+
     @GetMapping("category")
     @ResponseStatus(HttpStatus.OK)
     public List<ResumeDto> findByResumeByCategory(@RequestParam Long category) {

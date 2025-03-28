@@ -169,4 +169,18 @@ public class ResumeServiceImpl implements ResumeService {
     public boolean isResumeExist(Long resumeId) {
         return resumeDao.findResumeById(resumeId).isPresent();
     }
+
+    @Override
+    public List<ResumeDto> findResumeByUserId(Long userId) {
+        return resumeDao.findResumeByUserId(userId).stream()
+                .map(resumeMapper::mapToDto)
+                .toList();
+    }
+
+    @Override
+    public List<Long> findAllResumesIds() {
+        return resumeDao.findAllResumes().stream()
+                .map(Resume::getId)
+                .toList();
+    }
 }

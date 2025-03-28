@@ -76,4 +76,18 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
                 .map(this::findWorkExperience)
                 .toList();
     }
+
+    @Override
+    public List<WorkExperienceInfoDto> findAll() {
+        return workExperienceDao.findAllWorkExperienceInfos().stream()
+                .map(workExperienceInfoMapperDto::mapToDto)
+                .toList();
+    }
+
+    @Override
+    public List<WorkExperienceInfoDto> findWorkExperienceByResumeId(Long resumeId) {
+        return workExperienceDao.findWorkExperienceByResumeId(resumeId).stream()
+                .map(workExperienceInfoMapperDto::mapToDto)
+                .toList();
+    }
 }

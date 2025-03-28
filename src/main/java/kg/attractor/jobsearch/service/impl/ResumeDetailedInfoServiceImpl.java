@@ -8,15 +8,13 @@ import kg.attractor.jobsearch.dto.mapper.impl.EducationInfoMapper;
 import kg.attractor.jobsearch.dto.mapper.impl.WokExperienceMapper;
 import kg.attractor.jobsearch.model.EducationInfo;
 import kg.attractor.jobsearch.model.WorkExperienceInfo;
-import kg.attractor.jobsearch.service.EducationInfoService;
-import kg.attractor.jobsearch.service.ResumeDetailedInfoService;
-import kg.attractor.jobsearch.service.ResumeService;
-import kg.attractor.jobsearch.service.WorkExperienceInfoService;
+import kg.attractor.jobsearch.service.*;
 import kg.attractor.jobsearch.util.validater.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,6 +24,7 @@ import java.util.List;
 public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService {
     private final WorkExperienceInfoService workExperienceInfoService;
     private final ResumeService resumeService;
+    private final UserService userService;
     private final EducationInfoService educationInfoService;
     private final WokExperienceMapper updateWorkExperienceInfoMapper;
     private final EducationInfoMapper updatedEducationalInfoDto;
@@ -84,6 +83,18 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
 
         updateWorkExperienceInfo(resumeId, resumeDetailedInfoDto.getWorkExperienceInfoDtos());
         updateEducationalInfo(resumeId, resumeDetailedInfoDto.getEducationInfoDtos());
+    }
+
+    @Override
+    public List<ResumeDetailedInfoDto> findAllResumesWithDetailedInfo() {
+
+        return resumeService.findAllResumesIds().stream()
+                .map(id -> ResumeDetailedInfoDto.builder()
+                        .resumeDto(resumeService.findResumeById(id))
+                        .workExperienceInfoDtos(workExperienceInfoService.findWorkExperienceByResumeId(id))
+                        .educationInfoDtos(educationInfoService.findEducationInfosByResumeId(id))
+                        .build())
+                .toList();
     }
 
     private void updateEducationalInfo(Long resumeId, List<EducationalInfoDto> educationalInfoDtos) {

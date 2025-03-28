@@ -76,4 +76,18 @@ public class EducationInfoServiceImpl implements EducationInfoService {
                 .map(this::findEducationInfo)
                 .toList();
     }
+
+    @Override
+    public List<EducationalInfoDto> findAll() {
+        return educationInfoDao.findAllEducationInfos().stream()
+                .map(educationInfoMapperDto::mapToDto)
+                .toList();
+    }
+
+    @Override
+    public List<EducationalInfoDto> findEducationInfosByResumeId(Long resumeId) {
+        return educationInfoDao.findEducationalInfoByResumeId(resumeId).stream()
+                .map(educationInfoMapperDto::mapToDto)
+                .toList();
+    }
 }

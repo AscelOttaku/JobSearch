@@ -14,8 +14,8 @@ public class ResumeDto {
     @NotBlank(message = "{blank_message}")
     @Size(min = 3, max = 40, message = "{3_30_size_message}")
     @Pattern(
-            regexp = "^\\p{L}+$",
-            message = "{symbol_numbers_pattern_message}"
+            regexp = "^[a-zA-Zа-яА-ЯёЁ ]+$",
+            message = "{resume_name}"
     )
     private String name;
 

@@ -128,4 +128,10 @@ public class UserDao {
                 user.getUserId()
         );
     }
+
+    public List<User> findAllUsers() {
+        String query = "select * from USERS";
+
+        return jdbcTemplate.query(query, userRowMapper);
+    }
 }

@@ -15,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static kg.attractor.jobsearch.util.ExceptionHandler.handleDataAccessException;
@@ -91,5 +92,11 @@ public class EducationInfoDao {
                 educationInfo.getDegree(),
                 educationInfo.getId()
         );
+    }
+
+    public List<EducationInfo> findAllEducationInfos() {
+        String query = "select * from EDUCATION_INFO";
+
+        return jdbcTemplate.query(query, educationInfoRowMapper);
     }
 }

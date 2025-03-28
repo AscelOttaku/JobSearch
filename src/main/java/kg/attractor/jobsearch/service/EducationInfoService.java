@@ -15,4 +15,8 @@ public interface EducationInfoService {
     List<Long> createEducationInfos(List<EducationalInfoDto> educationalInfosDtos, Long resumeId);
 
     List<EducationalInfoDto> findEducationInfoDtosByIds(List<Long> educationOpIds);
+
+    List<EducationalInfoDto> findAll();
+
+    List<EducationalInfoDto> findEducationInfosByResumeId(Long resumeId);
 }

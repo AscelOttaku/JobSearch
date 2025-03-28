@@ -82,4 +82,10 @@ public class ResumeDao {
 
         return jdbcTemplate.update(query, resumeId) > 0;
     }
+
+    public List<Resume> findResumeByUserId(Long userId) {
+        String query = "select * from RESUMES where USER_ID = ?";
+
+        return jdbcTemplate.query(query, resumeMapper, userId);
+    }
 }

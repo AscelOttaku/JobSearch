@@ -15,4 +15,8 @@ public interface WorkExperienceInfoService {
     List<Long> createWorkExperienceInfos(List<WorkExperienceInfoDto> workExperienceInfosDtos, Long resumeId);
 
     List<WorkExperienceInfoDto> findWorkExperienceByIds(List<Long> workExperienceOpIds);
+
+    List<WorkExperienceInfoDto> findAll();
+
+    List<WorkExperienceInfoDto> findWorkExperienceByResumeId(Long resumeId);
 }
