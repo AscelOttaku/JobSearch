@@ -1,8 +1,6 @@
 package kg.attractor.jobsearch.service.impl;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import kg.attractor.jobsearch.dao.VacancyDao;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
@@ -10,6 +8,7 @@ import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
 import kg.attractor.jobsearch.exceptions.EntityNotFoundException;
 import kg.attractor.jobsearch.exceptions.VacancyNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
+import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.model.Vacancy;
 import kg.attractor.jobsearch.service.CategoryService;
 import kg.attractor.jobsearch.service.UserService;
@@ -59,7 +58,7 @@ public class VacancyServiceImpl implements VacancyService {
     @Override
     public VacancyDto createdVacancy(VacancyDto vacancyDto) {
         var getCategory = categoryService.checkIfCategoryExistsById(vacancyDto.getCategoryId());
-        var getUserId = userService.checkIfEmployerExistByEmail(vacancyDto.getUserId());
+        var getUserId = userService.checkIfEmployerExistById(vacancyDto.getUserId());
 
         if (!getCategory)
             throw new CustomIllegalArgException(
@@ -138,17 +137,37 @@ public class VacancyServiceImpl implements VacancyService {
     public List<VacancyDto> findVacanciesByCategory(Long id) {
         Validator.isValidId(id);
 
+        boolean isCategoryExists = categoryService.checkIfCategoryExistsById(id);
+
+        if (!isCategoryExists)
+            throw new EntityNotFoundException(
+                    "Category doesn't exists",
+                    CustomBindingResult.builder()
+                            .className(Vacancy.class.getSimpleName())
+                            .fieldName("categoryId")
+                            .rejectedValue(id)
+                            .build()
+            );
+
         return vacancyDao.findVacancyByCategory(id).stream()
                 .map(vacancyMapper::mapToDto)
                 .toList();
     }
 
     @Override
-    public List<VacancyDto> findUserRespondedVacancies(
-            @NotNull(message = "{null_message}")
-            @NotBlank(message = "{blank_message}")
-            @Email(message = "{email_message}") String userEmail
-    ) {
+    public List<VacancyDto> findUserRespondedVacancies(@Email(message = "{email_message}") String userEmail) {
+        boolean isUserExistsByEmail = userService.checkIfJobSeekerExistByEmail(userEmail);
+
+        if (isUserExistsByEmail)
+            throw new EntityNotFoundException(
+                    "User not found by email",
+                    CustomBindingResult.builder()
+                            .className(User.class.getSimpleName())
+                            .fieldName("email")
+                            .rejectedValue(userEmail)
+                            .build()
+            );
+
         return vacancyDao.findVacanciesByUserEmail(userEmail).stream()
                 .map(vacancyMapper::mapToDto)
                 .toList();

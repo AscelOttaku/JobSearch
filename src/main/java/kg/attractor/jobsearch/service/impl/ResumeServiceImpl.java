@@ -1,13 +1,11 @@
 package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dao.ResumeDao;
-import kg.attractor.jobsearch.dao.UserDao;
 import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.dto.mapper.impl.ResumeMapper;
 import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
 import kg.attractor.jobsearch.exceptions.ResumeNotFoundException;
-import kg.attractor.jobsearch.exceptions.UserNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.model.Resume;
@@ -20,13 +18,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+
 @Service
 @RequiredArgsConstructor
 public class ResumeServiceImpl implements ResumeService {
     private final Mapper<ResumeDto, Resume> mapper;
     private final ResumeDao resumeDao;
     private final CategoryServiceImpl categoryService;
-    private final UserDao userDao;
     private final UserService userService;
     private final ResumeMapper resumeMapper;
 
@@ -56,6 +54,18 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public List<ResumeDto> findResumesByCategory(Long resumeCategory) {
         Validator.isValidId(resumeCategory);
+
+        boolean isCategoryExists = categoryService.findCategoryById(resumeCategory).isPresent();
+
+        if (!isCategoryExists)
+            throw new CustomIllegalArgException(
+                    "Category is not exists",
+                    CustomBindingResult.builder()
+                            .className(Category.class.getCanonicalName())
+                            .fieldName("categoryId")
+                            .rejectedValue(resumeCategory)
+                            .build()
+            );
 
         var optionalResume = resumeDao.findResumesByCategory(resumeCategory);
 
@@ -138,29 +148,19 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public List<ResumeDto> findUserCreatedResumes(String userEmail) {
-        var optionalUser = userDao.findUserByEmail(userEmail);
+        var getUser = userService.findUserByEmail(userEmail);
 
-        User user = optionalUser.orElseThrow(() ->
-                new UserNotFoundException(
-                        "User not found by email " + userEmail,
-                        CustomBindingResult.builder()
-                                .className(User.class.getCanonicalName())
-                                .fieldName("email")
-                                .rejectedValue(userEmail)
-                                .build()
-                ));
-
-        if (!user.getAccountType().equalsIgnoreCase("jobSeeker"))
+        if (!getUser.getAccountType().equalsIgnoreCase("jobSeeker"))
             throw new CustomIllegalArgException(
                     "User account type is not valid",
                     CustomBindingResult.builder()
                             .className(User.class.getCanonicalName())
                             .fieldName("accountType")
-                            .rejectedValue(user.getAccountType())
+                            .rejectedValue(getUser.getAccountType())
                             .build()
             );
 
-        return resumeDao.findUserCreatedResumes(user.getUserId()).stream()
+        return resumeDao.findUserCreatedResumes(getUser.getUserId()).stream()
                 .map(resumeMapper::mapToDto)
                 .toList();
     }

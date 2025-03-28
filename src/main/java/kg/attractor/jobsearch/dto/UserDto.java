@@ -8,6 +8,8 @@ import lombok.Getter;
 @Getter
 public class UserDto {
 
+    private Long userId;
+
     @NotNull(message = "{null_message}")
     @NotBlank(message = "{blank_message}")
     @Size(min = 3, max = 30, message = "{3_30_size_message}")

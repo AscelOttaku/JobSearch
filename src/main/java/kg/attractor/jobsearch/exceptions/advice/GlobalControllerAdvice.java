@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
-import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
@@ -55,21 +53,5 @@ public class GlobalControllerAdvice {
             HandlerMethodValidationException ex, HttpServletRequest request
     ) {
         return errorService.handleMethodValidationException(ex, request);
-    }
-
-    @ExceptionHandler(NoResourceFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, Object> handleNoResourceFoundException(
-            NoResourceFoundException ex, HttpServletRequest request
-    ) {
-        Map<String, Object> map = new HashMap<>();
-
-        map.put("status", HttpStatus.NOT_FOUND.value());
-        map.put("method", ex.getHttpMethod());
-        map.put("error", HttpStatus.NOT_FOUND.getReasonPhrase());
-        map.put("message", ex.getMessage());
-        map.put("path", request.getRequestURI());
-
-        return map;
     }
 }

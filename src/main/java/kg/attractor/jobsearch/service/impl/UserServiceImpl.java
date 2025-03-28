@@ -222,10 +222,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean checkIfEmployerExistByEmail(Long employerId) {
+    public boolean checkIfEmployerExistById(Long employerId) {
         Optional<User> user = userDao.findUserById(employerId);
 
         return user.isPresent() && user.get().getAccountType().equalsIgnoreCase("employer");
+    }
+
+    @Override
+    public boolean checkIfJobSeekerExistByEmail(String userEmail) {
+        Optional<User> user = userDao.findUserByEmail(userEmail);
+
+        return user.isPresent() && user.get().getAccountType().equalsIgnoreCase("JobSeeker");
     }
 
     @Override

@@ -61,17 +61,13 @@ public class VacancyController {
 
     @GetMapping("categories")
     @ResponseStatus(HttpStatus.OK)
-    public List<VacancyDto> findVacanciesByCategory(
-            @RequestBody Long categoryId
-    ) {
+    public List<VacancyDto> findVacanciesByCategory(@RequestBody Long categoryId) {
         return vacancyService.findVacanciesByCategory(categoryId);
     }
 
     @GetMapping("users/{userEmail}")
     @ResponseStatus(HttpStatus.OK)
-    public List<VacancyDto> findUserRespondedVacancies(
-            @PathVariable String userEmail
-    ) {
+    public List<VacancyDto> findUserRespondedVacancies(@PathVariable String userEmail) {
         return vacancyService.findUserRespondedVacancies(userEmail);
     }
 

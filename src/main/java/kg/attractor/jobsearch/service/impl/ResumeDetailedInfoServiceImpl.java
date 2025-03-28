@@ -24,7 +24,6 @@ import java.util.List;
 public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService {
     private final WorkExperienceInfoService workExperienceInfoService;
     private final ResumeService resumeService;
-    private final UserService userService;
     private final EducationInfoService educationInfoService;
     private final WokExperienceMapper updateWorkExperienceInfoMapper;
     private final EducationInfoMapper updatedEducationalInfoDto;
