@@ -1,7 +1,6 @@
 package kg.attractor.jobsearch.dto;
 
 import jakarta.validation.constraints.*;
-import kg.attractor.jobsearch.util.marks.CreateOn;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,8 +40,5 @@ public class VacancyDto {
     private Integer expTo;
 
     private boolean isActive;
-
-    @NotNull(message = "{null_message}", groups = CreateOn.class)
-    @Positive(message = "{user_id_positive_message}", groups = CreateOn.class)
     private Long userId;
 }

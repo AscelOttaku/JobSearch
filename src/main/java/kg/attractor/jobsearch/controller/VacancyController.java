@@ -1,19 +1,17 @@
 package kg.attractor.jobsearch.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.service.VacancyService;
-import kg.attractor.jobsearch.util.marks.CreateOn;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/vacancies")
-@Validated
 public class VacancyController {
     private final VacancyService vacancyService;
 
@@ -31,7 +29,7 @@ public class VacancyController {
     @PostMapping("new-vacancies")
     @ResponseStatus(HttpStatus.CREATED)
     public VacancyDto createVacancy(
-            @RequestBody @Validated(CreateOn.class) VacancyDto vacancyDto
+            @RequestBody @Valid VacancyDto vacancyDto
     ) {
         return vacancyService.createdVacancy(vacancyDto);
     }
@@ -67,7 +65,10 @@ public class VacancyController {
 
     @GetMapping("users/{userEmail}")
     @ResponseStatus(HttpStatus.OK)
-    public List<VacancyDto> findUserRespondedVacancies(@PathVariable String userEmail) {
+    public List<VacancyDto> findUserRespondedVacancies(
+            @PathVariable @Email(message = "{email_message}")
+            String userEmail
+    ) {
         return vacancyService.findUserRespondedVacancies(userEmail);
     }
 

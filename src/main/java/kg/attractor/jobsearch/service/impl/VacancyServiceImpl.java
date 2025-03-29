@@ -72,7 +72,7 @@ public class VacancyServiceImpl implements VacancyService {
 
         if (!getUserId)
             throw new CustomIllegalArgException(
-                    "Field userId is not exists or equals to jobSeeker",
+                    "Field userId is illegal argument",
                     CustomBindingResult.builder()
                             .className(Vacancy.class.getSimpleName())
                             .fieldName("user_id")
@@ -155,7 +155,7 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public List<VacancyDto> findUserRespondedVacancies(@Email(message = "{email_message}") String userEmail) {
+    public List<VacancyDto> findUserRespondedVacancies(String userEmail) {
         boolean isUserExistsByEmail = userService.checkIfJobSeekerExistByEmail(userEmail);
 
         if (isUserExistsByEmail)
