@@ -86,7 +86,7 @@ public class VacancyServiceImpl implements VacancyService {
             );
 
         Vacancy vacancy = vacancyMapper.mapToEntity(vacancyDto);
-        vacancy.setUserId(authorizedUser.getUserId());
+        vacancy.setVacancyUserId(authorizedUser.getUserId());
 
         var vacancyId = vacancyDao.createVacancy(vacancy);
 
@@ -123,7 +123,7 @@ public class VacancyServiceImpl implements VacancyService {
 
         Vacancy vacancy = vacancyMapper.mapToEntity(vacancyDto);
         vacancy.setId(vacancyId);
-        vacancy.setUserId(user.getUserId());
+        vacancy.setVacancyUserId(user.getUserId());
 
         var updatedVacancyId = vacancyDao.updateVacancy(vacancy);
         return findVacancyById(updatedVacancyId);
@@ -212,7 +212,7 @@ public class VacancyServiceImpl implements VacancyService {
         Optional<Vacancy> vacancy = vacancyDao.findVacancyById(vacancyId);
 
         return vacancy
-                .map(Vacancy::getUserId)
+                .map(Vacancy::getVacancyUserId)
                 .orElse(-1L);
     }
 }

@@ -9,6 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ResumeDto {
+    private Long id;
 
     @NotNull(message = "{null_message}")
     @NotBlank(message = "{blank_message}")

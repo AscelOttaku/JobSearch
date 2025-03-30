@@ -17,7 +17,7 @@ public class VacancyMapper implements Mapper<VacancyDto, Vacancy> {
                 .expFrom(entity.getExpFrom())
                 .expTo(entity.getExpTo())
                 .isActive(entity.getIsActive())
-                .userId(entity.getUserId())
+                .userId(entity.getVacancyUserId())
                 .build();
     }
 
@@ -31,7 +31,7 @@ public class VacancyMapper implements Mapper<VacancyDto, Vacancy> {
         vacancy.setExpFrom(vacancyDto.getExpFrom());
         vacancy.setExpTo(vacancyDto.getExpTo());
         vacancy.setIsActive(vacancyDto.isActive());
-        vacancy.setUserId(vacancyDto.getUserId());
+        vacancy.setVacancyUserId(vacancyDto.getUserId());
         return vacancy;
     }
 }

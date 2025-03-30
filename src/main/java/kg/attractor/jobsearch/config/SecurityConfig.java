@@ -58,7 +58,7 @@ public class SecurityConfig {
                                 .requestMatchers("/vacancies/redactor-vacancies")
                                 .hasAuthority("EMPLOYER")
 
-                                .requestMatchers("/vacancies/delete_vacancies/")
+                                .requestMatchers("/vacancies/delete_vacancies")
                                 .hasAuthority("EMPLOYER")
 
                                 .requestMatchers("/vacancies/users/responded_vacancies")
@@ -67,21 +67,23 @@ public class SecurityConfig {
                                 .requestMatchers("/users/updates")
                                 .fullyAuthenticated()
 
-                                .requestMatchers("users/responded/vacancies/")
+                                .requestMatchers("/users/responded/vacancies")
                                 .hasAuthority("EMPLOYER")
 
-                                .requestMatchers("users/exist/*")
+                                .requestMatchers("/users/exist/*")
                                 .anonymous()
 
                                 .requestMatchers("/users/employer")
                                 .hasAuthority("JOB_SEEKER")
 
-                                .requestMatchers("users/job-seeker")
+                                .requestMatchers("/users/job-seeker")
                                 .hasAuthority("EMPLOYER")
 
-                                .requestMatchers("users/**")
-                                .fullyAuthenticated()
+                                .requestMatchers("/users/**")
+                                .hasAuthority("EMPLOYER")
 
+                                .requestMatchers("/responds")
+                                .hasAuthority("JOB_SEEKER")
                                 .anyRequest().permitAll());
 
         return http.build();

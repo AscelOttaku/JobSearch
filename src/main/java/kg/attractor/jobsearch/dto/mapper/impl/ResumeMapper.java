@@ -11,6 +11,7 @@ public class ResumeMapper implements Mapper<ResumeDto, Resume> {
     @Override
     public ResumeDto mapToDto(Resume resume) {
         return ResumeDto.builder()
+                .id(resume.getId())
                 .name(resume.getName())
                 .categoryId(resume.getCategoryId())
                 .userId(resume.getUserId())

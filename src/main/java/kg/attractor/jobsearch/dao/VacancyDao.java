@@ -11,11 +11,8 @@ import org.springframework.stereotype.Component;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
-import static kg.attractor.jobsearch.util.ExceptionHandler.handleDataAccessException;
 
 @Component
 @RequiredArgsConstructor
@@ -59,7 +56,9 @@ public class VacancyDao {
     public Optional<Vacancy> findVacancyById(Long vacancyId) {
         String query = "SELECT * FROM VACANCIES WHERE ID = ?";
 
-        return handleDataAccessException(() -> jdbcTemplate.queryForObject(query, new BeanPropertyRowMapper<>(Vacancy.class), vacancyId));
+        return Optional.ofNullable(jdbcTemplate.query(
+                query, new BeanPropertyRowMapper<>(Vacancy.class), vacancyId
+        ).getFirst());
     }
 
     public boolean deleteVacancyById(Long vacancyId) {
@@ -90,7 +89,7 @@ public class VacancyDao {
             pr.setDouble(4, vacancy.getSalary());
             pr.setDouble(5, vacancy.getExpFrom());
             pr.setDouble(6, vacancy.getExpTo());
-            pr.setLong(7, vacancy.getUserId());
+            pr.setLong(7, vacancy.getVacancyUserId());
             pr.setTimestamp(8, new Timestamp(System.currentTimeMillis()));
             return pr;
         }, keyHolder);

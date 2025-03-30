@@ -228,15 +228,17 @@ public class UserServiceImpl implements UserService {
         Validator.isValidId(vacancyId);
 
         UserDto authorizedUser = getAuthenticatedUser();
-        Long ownerId = vacancyService.findVacancyOwnerIdByVacancyId(vacancyId);
+        Long ownerId = vacancyService.
+                findVacancyOwnerIdByVacancyId(vacancyId);
 
+        log.info(String.valueOf(ownerId));
         if (!Objects.equals(ownerId, authorizedUser.getUserId()))
             throw new CustomIllegalArgException(
                     "Vacancies responses can only be seen by it's owner",
                     CustomBindingResult.builder()
                             .className(Vacancy.class.getSimpleName())
                             .fieldName("vacancyId")
-                            .rejectedValue(ownerId)
+                            .rejectedValue(vacancyId)
                             .build()
             );
 
