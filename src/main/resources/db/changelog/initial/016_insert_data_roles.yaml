@@ -1,0 +1,12 @@
+
+databaseChangeLog:
+  - changeSet:
+      id: 015_insert_data_roles.yaml
+      author: Zhanybekov Kanybek
+      changes:
+        - sql:
+            comment: Insert data into roles
+            sql: |
+              insert into roles(role)
+              values ('EMPLOYER'),
+                ('JOB_SEEKER');

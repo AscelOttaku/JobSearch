@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      id: 014_add_columns_users.yaml
+      author: Zhanybekov Kanybek
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: enabled
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: users
+            baseColumnNames: role_id
+            referencedTableName: roles
+            referencedColumnNames: id
+            constraintName: fk_users_role_id
+            onDelete: cascade
+            onUpdate: cascade

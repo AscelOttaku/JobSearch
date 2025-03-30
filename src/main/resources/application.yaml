@@ -12,6 +12,14 @@ spring:
   liquibase:
     change-log: classpath://db/changelog/master.yaml
 
+
   sql:
    init:
     mode: always
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+

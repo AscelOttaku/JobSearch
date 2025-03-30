@@ -1,0 +1,37 @@
+databaseChangeLog:
+  - changeSet:
+      id: 013_create_table_roles_authorities.yaml
+      author: Zhanybekov Kanybek
+      changes:
+        - createTable:
+            tableName: roles_authorities
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: role_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: authority_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: roles_authorities
+            baseColumnNames: role_id
+            referencedColumnNames: id
+            referencedTableName: roles
+            constraintName: fk_role_id_roles_authorities
+        - addForeignKeyConstraint:
+            baseTableName: roles_authorities
+            baseColumnNames: authority_id
+            referencedColumnNames: id
+            referencedTableName: authorities
+            constraintName: fk_authority_id_roles_authority

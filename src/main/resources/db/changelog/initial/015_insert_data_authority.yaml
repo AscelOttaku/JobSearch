@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 014_insert_data_authority.yaml
+      author: Zhanybekov Kanybek
+      changes:
+        - sql:
+            comment: Insert data into authority
+            sql: |
+              insert into authorities (authority)
+              values('CREATE_VACANCIES'), ('READ_RESUMES'), 
+              ('CREATE_RESUMES'), ('REDACTOR_RESUMES'),
+              ('REDACTOR_VACANCIES'), ('DELETE_RESUMES'),
+              ('DELETE_VACANCIES');
