@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,8 +76,8 @@ public class VacancyDao {
 
     public Long createVacancy(Vacancy vacancy) {
         String query = """
-                INSERT INTO VACANCIES(NAME, DESCRIPTION, CATEGORY_ID, SALARY, EXP_FROM, EXP_TO, VACANCY_USER_ID)
-                values ( ?,?,?,?,?,?,?)
+                INSERT INTO VACANCIES(NAME, DESCRIPTION, CATEGORY_ID, SALARY, EXP_FROM, EXP_TO, VACANCY_USER_ID, CREATED)
+                values ( ?,?,?,?,?,?,?,?)
                 """;
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -89,6 +91,7 @@ public class VacancyDao {
             pr.setDouble(5, vacancy.getExpFrom());
             pr.setDouble(6, vacancy.getExpTo());
             pr.setLong(7, vacancy.getUserId());
+            pr.setTimestamp(8, new Timestamp(System.currentTimeMillis()));
             return pr;
         }, keyHolder);
 

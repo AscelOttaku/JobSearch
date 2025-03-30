@@ -2,29 +2,45 @@ package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dao.UserDao;
 import kg.attractor.jobsearch.dto.UserDto;
+import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
 import kg.attractor.jobsearch.exceptions.UserNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.User;
+import kg.attractor.jobsearch.model.Vacancy;
 import kg.attractor.jobsearch.service.UserService;
+import kg.attractor.jobsearch.service.VacancyService;
 import kg.attractor.jobsearch.util.FileUtil;
 import kg.attractor.jobsearch.util.validater.Validator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final Mapper<UserDto, User> userMapper;
     private final UserDao userDao;
+    private VacancyService vacancyService;
+
+    @Autowired
+    public void setVacancyService(@Lazy VacancyService vacancyService) {
+        this.vacancyService = vacancyService;
+    }
 
     @Override
     public String uploadAvatar(MultipartFile file) throws IOException {
@@ -86,44 +102,45 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUser(Long userId, UserDto userDto) {
-        Validator.isValidId(userId);
+    public void updateUser(UserDto userDto, UserDetails userDetails) {
+        UserDto userPreviousVal = findUserByEmail(userDetails.getUsername());
 
-        Optional<User> optionalUserFoundByEmail = userDao.findUserByEmail(userDto.getEmail());
+        if (!userDto.getEmail().equals(userPreviousVal.getEmail())) {
+            Optional<User> optionalUserFoundByEmail = userDao.findUserByEmail(userDto.getEmail());
 
-        boolean isUserByEmailExist = optionalUserFoundByEmail
-                .map(value -> !value.getEmail().equalsIgnoreCase(userDto.getEmail()))
-                .orElse(true);
+            boolean isUserByEmailExist = optionalUserFoundByEmail.isPresent();
 
-        Optional<User> optionalUserFoundByPhoneNumber = userDao.findUserByPhoneNumber(userDto.getPhoneNumber());
+            if (isUserByEmailExist)
+                throw new CustomIllegalArgException(
+                        "param email is already exists in data",
+                        CustomBindingResult.builder()
+                                .className(User.class.getSimpleName())
+                                .fieldName("email")
+                                .rejectedValue(userDto.getEmail())
+                                .build()
+                );
+        }
 
-        boolean isUserExistByPhoneNumber = optionalUserFoundByPhoneNumber
-                .map(value -> !value.getPhoneNumber().equals(userDto.getPhoneNumber()))
-                .orElse(true);
+        if (!userPreviousVal.getPhoneNumber().equals(userDto.getPhoneNumber())) {
+            Optional<User> optionalUserFoundByPhoneNumber = userDao.findUserByPhoneNumber(userDto.getPhoneNumber());
 
-        if (isUserByEmailExist)
-            throw new CustomIllegalArgException(
-                    "param email is already exists in data",
-                    CustomBindingResult.builder()
-                            .className(User.class.getSimpleName())
-                            .fieldName("email")
-                            .rejectedValue(userDto.getEmail())
-                            .build()
-            );
+            boolean isUserExistByPhoneNumber = optionalUserFoundByPhoneNumber.isPresent();
 
-        if (isUserExistByPhoneNumber)
-            throw new CustomIllegalArgException(
-                    "param phoneNumber is already exists in data",
-                    CustomBindingResult.builder()
-                            .className(User.class.getSimpleName())
-                            .fieldName("phoneNumber")
-                            .rejectedValue(userDto.getPhoneNumber())
-                            .build()
-            );
+            if (isUserExistByPhoneNumber)
+                throw new CustomIllegalArgException(
+                        "param phoneNumber is already exists in data",
+                        CustomBindingResult.builder()
+                                .className(User.class.getSimpleName())
+                                .fieldName("phoneNumber")
+                                .rejectedValue(userDto.getPhoneNumber())
+                                .build()
+                );
+        }
 
-        User user = userMapper.mapToEntity(userDto);
-        user.setUserId(userId);
-        userDao.updateUser(user);
+        User entity = userMapper.mapToEntity(userDto);
+
+        userPreviousVal.setUserId(userPreviousVal.getUserId());
+        userDao.updateUser(entity);
     }
 
     @Override
@@ -210,6 +227,19 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> findRespondedToVacancyUsersByVacancy(Long vacancyId) {
         Validator.isValidId(vacancyId);
 
+        UserDto authorizedUser = getAuthenticatedUser();
+        Long ownerId = vacancyService.findVacancyOwnerIdByVacancyId(vacancyId);
+
+        if (!Objects.equals(ownerId, authorizedUser.getUserId()))
+            throw new CustomIllegalArgException(
+                    "Vacancies responses can only be seen by it's owner",
+                    CustomBindingResult.builder()
+                            .className(Vacancy.class.getSimpleName())
+                            .fieldName("vacancyId")
+                            .rejectedValue(ownerId)
+                            .build()
+            );
+
         return userDao.findRespondedToVacancyUsersByVacancy(vacancyId).stream()
                 .filter(user -> user.getAccountType().equalsIgnoreCase("jobSeeker"))
                 .map(userMapper::mapToDto)
@@ -217,13 +247,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean checkIfUserExistById(Long userId) {
-        return userDao.findUserById(userId).isPresent();
-    }
-
-    @Override
-    public boolean checkIfEmployerExistById(Long employerId) {
-        Optional<User> user = userDao.findUserById(employerId);
+    public boolean checkIfEmployerExistByEmail(String employerEmail) {
+        Optional<User> user = userDao.findUserByEmail(employerEmail);
 
         return user.isPresent() && user.get().getAccountType().equalsIgnoreCase("employer");
     }
@@ -240,5 +265,13 @@ public class UserServiceImpl implements UserService {
         Optional<User> optionalUser = userDao.findUserById(jobSeekerId);
 
         return optionalUser.isPresent() && optionalUser.get().getAccountType().equalsIgnoreCase("jobSeeker");
+    }
+
+    private UserDto getAuthenticatedUser() {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        return findUserByEmail(userDetails.getUsername());
     }
 }

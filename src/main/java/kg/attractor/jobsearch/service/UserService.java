@@ -1,6 +1,7 @@
 package kg.attractor.jobsearch.service;
 
 import kg.attractor.jobsearch.dto.UserDto;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -12,7 +13,7 @@ public interface UserService {
 
     Long createUser(UserDto userDto);
 
-    void updateUser(Long userId, UserDto userDto);
+    void updateUser(UserDto userDto, UserDetails userDetails);
 
     UserDto findJobSeekerByEmail(String userEmail);
 
@@ -28,9 +29,7 @@ public interface UserService {
 
     List<UserDto> findRespondedToVacancyUsersByVacancy(Long vacancyId);
 
-    boolean checkIfUserExistById(Long userId);
-
-    boolean checkIfEmployerExistById(Long employerId);
+    boolean checkIfEmployerExistByEmail(String employerEmail);
 
     boolean checkIfJobSeekerExistByEmail(String userEmail);
 

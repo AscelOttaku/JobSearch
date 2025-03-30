@@ -6,6 +6,8 @@ import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -108,9 +110,12 @@ public class UserController {
         return userService.findRespondedToVacancyUsersByVacancy(vacancyId);
     }
 
-    @PutMapping
+    @PutMapping("updates")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateUser(@RequestParam Long userId, @RequestBody @Valid UserDto userDto) {
-        userService.updateUser(userId, userDto);
+    public void updateUser(
+            @RequestBody @Valid UserDto userDto,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        userService.updateUser(userDto, userDetails);
     }
 }

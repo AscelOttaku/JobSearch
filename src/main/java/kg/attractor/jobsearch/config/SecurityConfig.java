@@ -25,7 +25,7 @@ public class SecurityConfig {
 
     @Bean
     public JdbcUserDetailsManager configureGlobal(DataSource dataSource) {
-        String usersQuery = "select email, password, enable from users " +
+        String usersQuery = "select email, password, enabled from users " +
                 "where email = ?";
 
         String authorityQuery = "select email, ROLE from USERS U, ROLES R " +
@@ -51,8 +51,37 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
 
                 .authorizeHttpRequests(authorizeRequests ->
-                        authorizeRequests.requestMatchers("/vacancies/new-vacancies")
+                        authorizeRequests
+                                .requestMatchers("/vacancies/new-vacancies")
                                 .hasAuthority("EMPLOYER")
+
+                                .requestMatchers("/vacancies/redactor-vacancies")
+                                .hasAuthority("EMPLOYER")
+
+                                .requestMatchers("/vacancies/delete_vacancies/")
+                                .hasAuthority("EMPLOYER")
+
+                                .requestMatchers("/vacancies/users/responded_vacancies")
+                                .fullyAuthenticated()
+
+                                .requestMatchers("/users/updates")
+                                .fullyAuthenticated()
+
+                                .requestMatchers("users/responded/vacancies/")
+                                .hasAuthority("EMPLOYER")
+
+                                .requestMatchers("users/exist/*")
+                                .anonymous()
+
+                                .requestMatchers("/users/employer")
+                                .hasAuthority("JOB_SEEKER")
+
+                                .requestMatchers("users/job-seeker")
+                                .hasAuthority("EMPLOYER")
+
+                                .requestMatchers("users/**")
+                                .fullyAuthenticated()
+
                                 .anyRequest().permitAll());
 
         return http.build();

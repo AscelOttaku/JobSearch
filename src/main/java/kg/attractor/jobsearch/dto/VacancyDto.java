@@ -14,7 +14,7 @@ public class VacancyDto {
     @NotBlank(message = "{blank_message}")
     @Size(min = 3, max = 30, message = "{3_30_size_message}")
     @Pattern(
-            regexp = "^\\p{L}+$",
+            regexp = "^[\\p{L}\\s\\d]+$",
             message = "{symbol_numbers_pattern_message}"
     )
     private String name;
@@ -40,5 +40,6 @@ public class VacancyDto {
     private Integer expTo;
 
     private boolean isActive;
-    private Long userId;
+
+    private final Long userId;
 }

@@ -1,7 +1,7 @@
 package kg.attractor.jobsearch.service.impl;
 
-import jakarta.validation.constraints.Email;
 import kg.attractor.jobsearch.dao.VacancyDao;
+import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
@@ -10,22 +10,34 @@ import kg.attractor.jobsearch.exceptions.VacancyNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.model.Vacancy;
+import kg.attractor.jobsearch.service.AuthorizedUserService;
 import kg.attractor.jobsearch.service.CategoryService;
 import kg.attractor.jobsearch.service.UserService;
 import kg.attractor.jobsearch.service.VacancyService;
 import kg.attractor.jobsearch.util.validater.Validator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class VacancyServiceImpl implements VacancyService {
     private final Mapper<VacancyDto, Vacancy> vacancyMapper;
     private final VacancyDao vacancyDao;
     private final CategoryService categoryService;
-    private final UserService userService;
+    private UserService userService;
+    private final AuthorizedUserService authorizedUserService;
+
+    @Autowired
+    public void setUserService(@Lazy UserService userService) {
+        this.userService = userService;
+    }
 
     @Override
     public VacancyDto findVacancyById(Long vacancyId) {
@@ -57,8 +69,11 @@ public class VacancyServiceImpl implements VacancyService {
 
     @Override
     public VacancyDto createdVacancy(VacancyDto vacancyDto) {
+        UserDto authorizedUser = authorizedUserService.getAuthorizedUser();
+
+        log.info("Create vacancy / user name: {}", authorizedUser.getName());
+
         var getCategory = categoryService.checkIfCategoryExistsById(vacancyDto.getCategoryId());
-        var getUserId = userService.checkIfEmployerExistById(vacancyDto.getUserId());
 
         if (!getCategory)
             throw new CustomIllegalArgException(
@@ -70,17 +85,10 @@ public class VacancyServiceImpl implements VacancyService {
                             .build()
             );
 
-        if (!getUserId)
-            throw new CustomIllegalArgException(
-                    "Field userId is illegal argument",
-                    CustomBindingResult.builder()
-                            .className(Vacancy.class.getSimpleName())
-                            .fieldName("user_id")
-                            .rejectedValue(vacancyDto.getUserId())
-                            .build()
-            );
+        Vacancy vacancy = vacancyMapper.mapToEntity(vacancyDto);
+        vacancy.setUserId(authorizedUser.getUserId());
 
-        var vacancyId = vacancyDao.createVacancy(vacancyMapper.mapToEntity(vacancyDto));
+        var vacancyId = vacancyDao.createVacancy(vacancy);
 
         return findVacancyById(vacancyId);
     }
@@ -89,9 +97,11 @@ public class VacancyServiceImpl implements VacancyService {
     public VacancyDto updateVacancy(Long vacancyId, VacancyDto vacancyDto) {
         Validator.isValidId(vacancyId);
 
-        boolean isVacancyExistById = isVacancyExistById(vacancyId);
+        UserDto user = authorizedUserService.getAuthorizedUser();
 
-        if (!isVacancyExistById)
+        log.info("Updated vacancy / user name: {}", user.getName());
+
+        if (!isVacancyExistById(vacancyId))
             throw new EntityNotFoundException(
                     "Entity vacancy doesn't found by id",
                     CustomBindingResult.builder()
@@ -101,8 +111,19 @@ public class VacancyServiceImpl implements VacancyService {
                             .build()
             );
 
+        if (!categoryService.checkIfCategoryExistsById(vacancyDto.getCategoryId()))
+            throw new CustomIllegalArgException(
+                    "Category id is not exists",
+                    CustomBindingResult.builder()
+                            .className(Vacancy.class.getSimpleName())
+                            .fieldName("categoryId")
+                            .rejectedValue(vacancyDto.getCategoryId())
+                            .build()
+            );
+
         Vacancy vacancy = vacancyMapper.mapToEntity(vacancyDto);
         vacancy.setId(vacancyId);
+        vacancy.setUserId(user.getUserId());
 
         var updatedVacancyId = vacancyDao.updateVacancy(vacancy);
         return findVacancyById(updatedVacancyId);
@@ -155,20 +176,22 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public List<VacancyDto> findUserRespondedVacancies(String userEmail) {
-        boolean isUserExistsByEmail = userService.checkIfJobSeekerExistByEmail(userEmail);
+    public List<VacancyDto> findUserRespondedVacancies() {
+        UserDto user = authorizedUserService.getAuthorizedUser();
 
-        if (isUserExistsByEmail)
+        boolean isUserJobSeeker = userService.checkIfJobSeekerExistByEmail(user.getEmail());
+
+        if (!isUserJobSeeker)
             throw new EntityNotFoundException(
-                    "User not found by email",
+                    "User account type is not job seeker",
                     CustomBindingResult.builder()
                             .className(User.class.getSimpleName())
                             .fieldName("email")
-                            .rejectedValue(userEmail)
+                            .rejectedValue(user.getEmail())
                             .build()
             );
 
-        return vacancyDao.findVacanciesByUserEmail(userEmail).stream()
+        return vacancyDao.findVacanciesByUserEmail(user.getEmail()).stream()
                 .map(vacancyMapper::mapToDto)
                 .toList();
     }
@@ -182,5 +205,14 @@ public class VacancyServiceImpl implements VacancyService {
 
     public boolean isVacancyExistById(Long id) {
         return vacancyDao.findVacancyById(id).isPresent();
+    }
+
+    @Override
+    public Long findVacancyOwnerIdByVacancyId(Long vacancyId) {
+        Optional<Vacancy> vacancy = vacancyDao.findVacancyById(vacancyId);
+
+        return vacancy
+                .map(Vacancy::getUserId)
+                .orElse(-1L);
     }
 }

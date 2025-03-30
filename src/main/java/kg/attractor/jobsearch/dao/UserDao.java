@@ -2,6 +2,7 @@ package kg.attractor.jobsearch.dao;
 
 import kg.attractor.jobsearch.dao.mapper.CustomerRowMapper;
 import kg.attractor.jobsearch.model.User;
+import kg.attractor.jobsearch.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -77,8 +78,8 @@ public class UserDao {
     }
 
     public Long createUser(User user) {
-        String query = "insert into USERS (FIRST_NAME, SURNAME, AGE, EMAIL, PASSWORD, PHONE_NUMBER, AVATAR, ACCOUNT_TYPE)" +
-                "values ( ?,?,?,?,?,?,?,? ) ";
+        String query = "insert into USERS (FIRST_NAME, SURNAME, AGE, EMAIL, PASSWORD, PHONE_NUMBER, AVATAR, ACCOUNT_TYPE, ENABLED, ROLE_ID)" +
+                "values ( ?,?,?,?,?,?,?,?,?,? ) ";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -92,6 +93,9 @@ public class UserDao {
             ps.setString(6, user.getPhoneNumber());
             ps.setString(7, user.getAvatar());
             ps.setString(8, user.getAccountType());
+            ps.setBoolean(9, true);
+            ps.setLong(10, getUserRole(user.getAccountType()));
+
             return ps;
         }, keyHolder);
 
@@ -133,5 +137,15 @@ public class UserDao {
         String query = "select * from USERS";
 
         return jdbcTemplate.query(query, userRowMapper);
+    }
+
+    public Long getUserRole(String accountType) {
+        String query = "select id from ROLES where LOWER(ROLE) = ?";
+
+        String accountTypeInSneakyCase = Util.convertToSneakyCase(accountType);
+
+        return handleDataAccessException(() ->
+                jdbcTemplate.queryForObject(query, Long.class, accountTypeInSneakyCase))
+                .orElse(-1L);
     }
 }

@@ -1,11 +1,13 @@
 package kg.attractor.jobsearch.util;
 
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 
 import java.util.Optional;
 import java.util.function.Supplier;
 
+@Slf4j
 @UtilityClass
 public class ExceptionHandler {
 
@@ -13,6 +15,7 @@ public class ExceptionHandler {
         try {
             return Optional.of(supplier.get());
         } catch (DataAccessException e) {
+            log.warn(e.getMessage(), e);
             return Optional.empty();
         }
     }

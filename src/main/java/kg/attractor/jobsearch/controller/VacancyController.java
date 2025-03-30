@@ -1,7 +1,6 @@
 package kg.attractor.jobsearch.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.service.VacancyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +27,11 @@ public class VacancyController {
 
     @PostMapping("new-vacancies")
     @ResponseStatus(HttpStatus.CREATED)
-    public VacancyDto createVacancy(
-            @RequestBody @Valid VacancyDto vacancyDto
-    ) {
+    public VacancyDto createVacancy(@RequestBody @Valid VacancyDto vacancyDto) {
         return vacancyService.createdVacancy(vacancyDto);
     }
 
-    @PutMapping
+    @PutMapping("redactor-vacancies")
     @ResponseStatus(HttpStatus.OK)
     public VacancyDto redactorVacancy(
             @RequestParam Long vacancyId,
@@ -43,7 +40,7 @@ public class VacancyController {
         return vacancyService.updateVacancy(vacancyId, vacancyDto);
     }
 
-    @DeleteMapping("{vacancyId}")
+    @DeleteMapping("delete_vacancies/{vacancyId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteVacancy(
             @PathVariable Long vacancyId
@@ -63,13 +60,10 @@ public class VacancyController {
         return vacancyService.findVacanciesByCategory(categoryId);
     }
 
-    @GetMapping("users/{userEmail}")
+    @GetMapping("users/responded_vacancies")
     @ResponseStatus(HttpStatus.OK)
-    public List<VacancyDto> findUserRespondedVacancies(
-            @PathVariable @Email(message = "{email_message}")
-            String userEmail
-    ) {
-        return vacancyService.findUserRespondedVacancies(userEmail);
+    public List<VacancyDto> findUserRespondedVacancies() {
+        return vacancyService.findUserRespondedVacancies();
     }
 
     @GetMapping

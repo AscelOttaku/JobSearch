@@ -19,7 +19,9 @@ public interface VacancyService {
 
     List<VacancyDto> findVacanciesByCategory(Long id);
 
-    List<VacancyDto> findUserRespondedVacancies(String userEmail);
+    List<VacancyDto> findUserRespondedVacancies();
 
     List<VacancyDto> findAllVacancies();
+
+    Long findVacancyOwnerIdByVacancyId(Long vacancyId);
 }
