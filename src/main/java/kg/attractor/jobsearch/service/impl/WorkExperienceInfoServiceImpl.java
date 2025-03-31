@@ -12,18 +12,19 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService {
     private final WorkExperienceDao workExperienceDao;
-    private final WokExperienceMapper workExperienceInfoMapperDto;
+    private final WokExperienceMapper workExperienceInfoMapper;
 
     @Override
-    public WorkExperienceInfoDto findWorkExperience(Long id) {
+    public WorkExperienceInfoDto findWorkExperienceById(Long id) {
         return workExperienceDao.findWorkExperienceById(id)
-                .map(workExperienceInfoMapperDto::mapToDto)
+                .map(workExperienceInfoMapper::mapToDto)
                 .orElseThrow(() -> new WorkExperienceNotFoundException(
                         "work experience info not found by id " + id,
                         CustomBindingResult.builder()
@@ -35,15 +36,31 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
     }
 
     @Override
-    public void updateWorkExperienceInfo(List<WorkExperienceInfo> workExperienceInfos, Long resumeId) {
+    public void updateWorkExperienceInfo(List<WorkExperienceInfoDto> workExperienceInfosDtos, Long resumeId) {
+        List<WorkExperienceInfo> workExperienceInfos = workExperienceInfosDtos.stream()
+                .map(workExperienceInfoMapper::mapToEntity)
+                .toList();
+
+        workExperienceInfos.forEach(workExperienceInfo -> workExperienceInfo.setResumeId(resumeId));
+
         for (WorkExperienceInfo workExperienceInfo : workExperienceInfos) {
-            if (workExperienceDao.isWorkExperienceExist(workExperienceInfo.getId())) {
+            if (isWorkExperienceExistInThisResume(workExperienceInfo.getId(), resumeId)) {
                 workExperienceDao.updateWorkExperience(workExperienceInfo);
                 continue;
             }
 
-            workExperienceDao.create(workExperienceInfo);
+            if (workExperienceInfo.getId() == null)
+                workExperienceDao.create(workExperienceInfo);
         }
+    }
+
+    private boolean isWorkExperienceExistInThisResume(Long id, Long resumeId) {
+        if (id == null)
+            return false;
+
+        Optional<WorkExperienceInfo> workExperienceInfo = workExperienceDao.findWorkExperienceById(id);
+
+        return workExperienceInfo.isPresent() && Objects.equals(workExperienceInfo.get().getResumeId(), resumeId);
     }
 
     @Override
@@ -59,7 +76,7 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
             return Collections.emptyList();
 
         List<WorkExperienceInfo> workExperienceInfos = workExperienceInfosDtos.stream()
-                .map(workExperienceInfoMapperDto::mapToEntity)
+                .map(workExperienceInfoMapper::mapToEntity)
                 .toList();
 
         workExperienceInfos.forEach(workExperienceInfo -> workExperienceInfo.setResumeId(resumeId));
@@ -73,21 +90,21 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
     public List<WorkExperienceInfoDto> findWorkExperienceByIds(List<Long> workExperienceOpIds) {
         return workExperienceOpIds.stream()
                 .filter(id -> id != -1)
-                .map(this::findWorkExperience)
+                .map(this::findWorkExperienceById)
                 .toList();
     }
 
     @Override
     public List<WorkExperienceInfoDto> findAll() {
         return workExperienceDao.findAllWorkExperienceInfos().stream()
-                .map(workExperienceInfoMapperDto::mapToDto)
+                .map(workExperienceInfoMapper::mapToDto)
                 .toList();
     }
 
     @Override
     public List<WorkExperienceInfoDto> findWorkExperienceByResumeId(Long resumeId) {
         return workExperienceDao.findWorkExperienceByResumeId(resumeId).stream()
-                .map(workExperienceInfoMapperDto::mapToDto)
+                .map(workExperienceInfoMapper::mapToDto)
                 .toList();
     }
 }

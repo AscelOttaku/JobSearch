@@ -12,13 +12,10 @@ import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.model.Vacancy;
 import kg.attractor.jobsearch.service.AuthorizedUserService;
 import kg.attractor.jobsearch.service.CategoryService;
-import kg.attractor.jobsearch.service.UserService;
 import kg.attractor.jobsearch.service.VacancyService;
 import kg.attractor.jobsearch.util.validater.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,13 +28,7 @@ public class VacancyServiceImpl implements VacancyService {
     private final Mapper<VacancyDto, Vacancy> vacancyMapper;
     private final VacancyDao vacancyDao;
     private final CategoryService categoryService;
-    private UserService userService;
     private final AuthorizedUserService authorizedUserService;
-
-    @Autowired
-    public void setUserService(@Lazy UserService userService) {
-        this.userService = userService;
-    }
 
     @Override
     public VacancyDto findVacancyById(Long vacancyId) {
@@ -179,7 +170,7 @@ public class VacancyServiceImpl implements VacancyService {
     public List<VacancyDto> findUserRespondedVacancies() {
         UserDto user = authorizedUserService.getAuthorizedUser();
 
-        boolean isUserJobSeeker = userService.checkIfJobSeekerExistByEmail(user.getEmail());
+        boolean isUserJobSeeker = authorizedUserService.checkIfJobSeekerExistByEmail(user.getEmail());
 
         if (!isUserJobSeeker)
             throw new EntityNotFoundException(

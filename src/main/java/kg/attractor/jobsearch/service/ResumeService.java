@@ -15,10 +15,6 @@ public interface ResumeService {
 
     Long createResume(ResumeDto resumeDto);
 
-    void checkCreateResumeParams(ResumeDto resumeDto);
-
-    void checkUpdateResumeParams(ResumeDto resumeDto);
-
     void deleteResume(Long resumeId);
 
     List<ResumeDto> findUserCreatedResumes(String userEmail);

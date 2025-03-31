@@ -4,17 +4,17 @@ import kg.attractor.jobsearch.dto.EducationalInfoDto;
 import kg.attractor.jobsearch.dto.ResumeDetailedInfoDto;
 import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.dto.WorkExperienceInfoDto;
-import kg.attractor.jobsearch.dto.mapper.impl.EducationInfoMapper;
-import kg.attractor.jobsearch.dto.mapper.impl.WokExperienceMapper;
-import kg.attractor.jobsearch.model.EducationInfo;
-import kg.attractor.jobsearch.model.WorkExperienceInfo;
+import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
+import kg.attractor.jobsearch.exceptions.EntityNotFoundException;
+import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
+import kg.attractor.jobsearch.model.Category;
+import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.service.*;
 import kg.attractor.jobsearch.util.validater.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,14 +25,40 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
     private final WorkExperienceInfoService workExperienceInfoService;
     private final ResumeService resumeService;
     private final EducationInfoService educationInfoService;
-    private final WokExperienceMapper updateWorkExperienceInfoMapper;
-    private final EducationInfoMapper updatedEducationalInfoDto;
+    private final CategoryService categoryService;
+    private final AuthorizedUserService authorizedUserService;
 
     @Override
     public ResumeDetailedInfoDto createResume(ResumeDetailedInfoDto resumeDetailedInfoDto) {
-        resumeService.checkCreateResumeParams(resumeDetailedInfoDto.getResumeDto());
+        ResumeDto resumeDto = resumeDetailedInfoDto.getResumeDto();
+        boolean isCategoryExist = categoryService.checkIfCategoryExistsById(resumeDto.getCategoryId());
 
-        Long resumeId = resumeService.createResume(resumeDetailedInfoDto.getResumeDto());
+        if (!isCategoryExist)
+            throw new CustomIllegalArgException(
+                    "category doesn't exist",
+                    CustomBindingResult.builder()
+                            .className(Category.class.getSimpleName())
+                            .fieldName("id")
+                            .rejectedValue(resumeDto.getCategoryId())
+                            .build()
+            );
+
+        ResumeDto getResumeDto = resumeDetailedInfoDto.getResumeDto();
+        getResumeDto.setUserId(authorizedUserService.getAuthorizedUser().getUserId());
+
+        Long resumeId = resumeService.createResume(getResumeDto);
+
+        if (resumeId == -1) {
+            log.warn("Resume wasn't created");
+            throw new EntityNotFoundException(
+                    "Resume was not created",
+                    CustomBindingResult.builder()
+                            .className(Resume.class.getSimpleName())
+                            .fieldName("resume")
+                            .rejectedValue(resumeDetailedInfoDto.getResumeDto())
+                            .build()
+            );
+        }
 
         List<Long> educationInfosIds = educationInfoService
                 .createEducationInfos(
@@ -73,7 +99,37 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
     public void updateResumeDetailedInfo(Long resumeId, ResumeDetailedInfoDto resumeDetailedInfoDto) {
         Validator.isValidId(resumeId);
 
-        resumeService.checkUpdateResumeParams(resumeDetailedInfoDto.getResumeDto());
+        boolean isCategoryCValid = categoryService
+                .checkIfCategoryExistsById(
+                        resumeDetailedInfoDto.getResumeDto().getCategoryId()
+                );
+
+        if (!isCategoryCValid) {
+            log.warn("Category doesn't exists by id");
+            throw new CustomIllegalArgException(
+                    "Category is not exists",
+                    CustomBindingResult.builder()
+                            .className(Category.class.getSimpleName())
+                            .fieldName("categoryId")
+                            .rejectedValue(resumeDetailedInfoDto.getResumeDto().getCategoryId())
+                            .build()
+            );
+        }
+
+        long authorizedUserId = authorizedUserService.getAuthorizedUser().getUserId();
+        ResumeDto resumeDto = resumeService.findResumeById(resumeId);
+
+        if (authorizedUserId != resumeDto.getUserId()) {
+            log.warn("Resume doesn't belongs to user");
+            throw new CustomIllegalArgException(
+                    "Resume doesn't belongs to authorized user",
+                    CustomBindingResult.builder()
+                            .className(Resume.class.getSimpleName())
+                            .fieldName("resumeId")
+                            .rejectedValue(resumeId)
+                            .build()
+            );
+        }
 
         boolean res = resumeService.updateResume(resumeDetailedInfoDto.getResumeDto(), resumeId);
 
@@ -100,25 +156,13 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
         if (educationalInfoDtos == null || educationalInfoDtos.isEmpty())
             return;
 
-        List<EducationInfo> educationInfos = educationalInfoDtos.stream()
-                .map(updatedEducationalInfoDto::mapToEntity)
-                .toList();
-
-        educationInfos.forEach(educationalInfo -> educationalInfo.setResumeId(resumeId));
-
-        educationInfoService.updateEducationInfo(educationInfos);
+        educationInfoService.updateEducationInfo(educationalInfoDtos, resumeId);
     }
 
     private void updateWorkExperienceInfo(Long resumeId, List<WorkExperienceInfoDto> workExperienceInfoDtos) {
         if (workExperienceInfoDtos == null || workExperienceInfoDtos.isEmpty())
             return;
 
-        List<WorkExperienceInfo> workExperienceInfos = workExperienceInfoDtos.stream()
-                .map(updateWorkExperienceInfoMapper::mapToEntity)
-                .toList();
-
-        workExperienceInfos.forEach(workExperienceInfo -> workExperienceInfo.setResumeId(resumeId));
-
-        workExperienceInfoService.updateWorkExperienceInfo(workExperienceInfos, resumeId);
+        workExperienceInfoService.updateWorkExperienceInfo(workExperienceInfoDtos, resumeId);
     }
 }

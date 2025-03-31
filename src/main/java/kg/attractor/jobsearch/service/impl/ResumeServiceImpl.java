@@ -10,6 +10,7 @@ import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.model.User;
+import kg.attractor.jobsearch.service.AuthorizedUserService;
 import kg.attractor.jobsearch.service.ResumeService;
 import kg.attractor.jobsearch.service.UserService;
 import kg.attractor.jobsearch.util.validater.Validator;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 
 @Service
@@ -27,6 +29,7 @@ public class ResumeServiceImpl implements ResumeService {
     private final CategoryServiceImpl categoryService;
     private final UserService userService;
     private final ResumeMapper resumeMapper;
+    private final AuthorizedUserService authorizedUserService;
 
     @Override
     public List<ResumeDto> findAllResumes() {
@@ -86,52 +89,18 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public void checkCreateResumeParams(ResumeDto resumeDto) {
-        Validator.isValidId(resumeDto.getCategoryId());
-        Validator.isValidId(resumeDto.getUserId());
-
-        boolean isCategoryExist = categoryService.checkIfCategoryExistsById(resumeDto.getCategoryId());
-        boolean jobSeekerId = userService.checkIfJobSeekerExistById(resumeDto.getUserId());
-
-        if (!isCategoryExist)
-            throw new CustomIllegalArgException(
-                    "category doesn't exist",
-                    CustomBindingResult.builder()
-                            .className(Category.class.getSimpleName())
-                            .fieldName("id")
-                            .rejectedValue(resumeDto.getCategoryId())
-                            .build()
-            );
-
-        if (!jobSeekerId)
-            throw new CustomIllegalArgException(
-                    "jobSeeker don't exist",
-                    CustomBindingResult.builder()
-                            .className(User.class.getSimpleName())
-                            .fieldName("id")
-                            .rejectedValue(resumeDto.getUserId())
-                            .build()
-            );
-    }
-
-    @Override
-    public void checkUpdateResumeParams(ResumeDto resumeDto) {
-        boolean isCategoryExist = categoryService.checkIfCategoryExistsById(resumeDto.getCategoryId());
-
-        if (!isCategoryExist)
-            throw new CustomIllegalArgException(
-                    "category is not exist",
-                    CustomBindingResult.builder()
-                            .className(Category.class.getSimpleName())
-                            .fieldName("id")
-                            .rejectedValue(resumeDto.getCategoryId())
-                            .build()
-            );
-    }
-
-    @Override
     public void deleteResume(Long resumeId) {
         Validator.isValidId(resumeId);
+
+        if (!Objects.equals(resumeId, authorizedUserService.getAuthorizedUser().getUserId()))
+            throw new CustomIllegalArgException(
+                    "Resume doesn't belongs to authorized user",
+                    CustomBindingResult.builder()
+                            .className(Resume.class.getSimpleName())
+                            .fieldName("resumeId")
+                            .rejectedValue(resumeId)
+                            .build()
+            );
 
         boolean res = resumeDao.deleteResumeById(resumeId);
 

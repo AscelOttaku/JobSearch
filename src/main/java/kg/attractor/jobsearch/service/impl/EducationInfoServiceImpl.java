@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -31,19 +32,35 @@ public class EducationInfoServiceImpl implements EducationInfoService {
                                 .fieldName("id")
                                 .rejectedValue(educationInfoOptionalId)
                                 .build()
-                        ));
+                ));
     }
 
     @Override
-    public void updateEducationInfo(List<EducationInfo> educationInfos) {
+    public void updateEducationInfo(List<EducationalInfoDto> educationInfosDtos, Long resumeId) {
+        List<EducationInfo> educationInfos = educationInfosDtos.stream()
+                .map(educationInfoMapperDto::mapToEntity)
+                .toList();
+
+        educationInfos.forEach(educationalInfo -> educationalInfo.setResumeId(resumeId));
+
         for (EducationInfo info : educationInfos) {
-            if (educationInfoDao.isEducationInfoExist(info.getId())) {
+            if (isEducationInfoExist(info.getId(), resumeId)) {
                 educationInfoDao.updateEducationInfo(info);
                 continue;
             }
 
-            educationInfoDao.create(info);
+            if (info.getId() == null)
+                educationInfoDao.create(info);
         }
+    }
+
+    private boolean isEducationInfoExist(Long id, Long resumeId) {
+        if (id == null)
+            return false;
+
+        Optional<EducationInfo> educationInfo = educationInfoDao.findEducationInfoById(id);
+
+        return educationInfo.isPresent() && Objects.equals(educationInfo.get().getResumeId(), resumeId);
     }
 
     @Override

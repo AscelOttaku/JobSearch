@@ -2,7 +2,6 @@ package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dao.UserDao;
 import kg.attractor.jobsearch.dto.UserDto;
-import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
 import kg.attractor.jobsearch.exceptions.UserNotFoundException;
@@ -15,8 +14,6 @@ import kg.attractor.jobsearch.util.FileUtil;
 import kg.attractor.jobsearch.util.validater.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -35,12 +32,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final Mapper<UserDto, User> userMapper;
     private final UserDao userDao;
-    private VacancyService vacancyService;
-
-    @Autowired
-    public void setVacancyService(@Lazy VacancyService vacancyService) {
-        this.vacancyService = vacancyService;
-    }
+    private final VacancyService vacancyService;
 
     @Override
     public String uploadAvatar(MultipartFile file) throws IOException {
@@ -228,10 +220,9 @@ public class UserServiceImpl implements UserService {
         Validator.isValidId(vacancyId);
 
         UserDto authorizedUser = getAuthenticatedUser();
-        Long ownerId = vacancyService.
-                findVacancyOwnerIdByVacancyId(vacancyId);
+        Long ownerId = vacancyService.findVacancyOwnerIdByVacancyId(vacancyId);
 
-        log.info(String.valueOf(ownerId));
+        log.info("Vacancy owner id {}", ownerId);
         if (!Objects.equals(ownerId, authorizedUser.getUserId()))
             throw new CustomIllegalArgException(
                     "Vacancies responses can only be seen by it's owner",
@@ -253,13 +244,6 @@ public class UserServiceImpl implements UserService {
         Optional<User> user = userDao.findUserByEmail(employerEmail);
 
         return user.isPresent() && user.get().getAccountType().equalsIgnoreCase("employer");
-    }
-
-    @Override
-    public boolean checkIfJobSeekerExistByEmail(String userEmail) {
-        Optional<User> user = userDao.findUserByEmail(userEmail);
-
-        return user.isPresent() && user.get().getAccountType().equalsIgnoreCase("JobSeeker");
     }
 
     @Override

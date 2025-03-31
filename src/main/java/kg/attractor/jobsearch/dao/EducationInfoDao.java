@@ -69,14 +69,10 @@ public class EducationInfoDao {
         return handleDataAccessException(() -> jdbcTemplate.queryForObject(query, educationInfoRowMapper, id));
     }
 
-    public Optional<EducationInfo> findEducationalInfoByResumeId(Long resumeId) {
+    public List<EducationInfo> findEducationalInfoByResumeId(Long resumeId) {
         String query = "select * from EDUCATION_INFO where resume_id = ?";
 
-        return handleDataAccessException(() -> jdbcTemplate.queryForObject(query, educationInfoRowMapper, resumeId));
-    }
-
-    public boolean isEducationInfoExist(long id) {
-        return findEducationalInfoByResumeId(id).isPresent();
+        return jdbcTemplate.query(query, educationInfoRowMapper, resumeId);
     }
 
     public void updateEducationInfo(EducationInfo educationInfo) {

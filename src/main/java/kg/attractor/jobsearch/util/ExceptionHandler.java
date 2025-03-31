@@ -15,7 +15,7 @@ public class ExceptionHandler {
         try {
             return Optional.of(supplier.get());
         } catch (DataAccessException e) {
-            log.warn(e.getMessage(), e);
+            log.warn(e.getMessage());
             return Optional.empty();
         }
     }

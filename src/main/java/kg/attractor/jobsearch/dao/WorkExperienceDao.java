@@ -57,14 +57,10 @@ public class WorkExperienceDao {
         return handleDataAccessException(() -> jdbcTemplate.queryForObject(query, workExperienceInfoBeanPropertyRowMapper, id));
     }
 
-    public Optional<WorkExperienceInfo> findWorkExperienceByResumeId(long resumeId) {
+    public List<WorkExperienceInfo> findWorkExperienceByResumeId(long resumeId) {
         String query = "select * from WORK_EXPERIENCE_INFO where resume_id = ?";
 
-        return handleDataAccessException(() -> jdbcTemplate.queryForObject(query, workExperienceInfoBeanPropertyRowMapper, resumeId));
-    }
-
-    public boolean isWorkExperienceExist(long id) {
-        return findWorkExperienceById(id).isPresent();
+        return jdbcTemplate.query(query, workExperienceInfoBeanPropertyRowMapper, resumeId);
     }
 
     public void updateWorkExperience(WorkExperienceInfo workExperienceInfo) {
