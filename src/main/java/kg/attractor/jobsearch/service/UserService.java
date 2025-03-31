@@ -31,7 +31,5 @@ public interface UserService {
 
     boolean checkIfEmployerExistByEmail(String employerEmail);
 
-    boolean checkIfJobSeekerExistByEmail(String userEmail);
-
     boolean checkIfJobSeekerExistById(Long jobSeekerId);
 }

@@ -6,9 +6,9 @@ import kg.attractor.jobsearch.model.WorkExperienceInfo;
 import java.util.List;
 
 public interface WorkExperienceInfoService {
-    WorkExperienceInfoDto findWorkExperience(Long workExperienceOptionalId);
+    WorkExperienceInfoDto findWorkExperienceById(Long workExperienceOptionalId);
 
-    void updateWorkExperienceInfo(List<WorkExperienceInfo> workExperienceInfosIds, Long resumeId);
+    void updateWorkExperienceInfo(List<WorkExperienceInfoDto> workExperienceInfosIdsDtos, Long resumeId);
 
     Long createWorkExperience(WorkExperienceInfo workExperienceInfo);
 

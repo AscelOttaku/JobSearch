@@ -8,7 +8,7 @@ import java.util.List;
 public interface EducationInfoService {
     EducationalInfoDto findEducationInfo(Long educationInfoOptionalId);
 
-    void updateEducationInfo(List<EducationInfo> educationInfosDtos);
+    void updateEducationInfo(List<EducationalInfoDto> educationInfosDtos, Long resumeId);
 
     Long createEducationInfo(EducationInfo educationInfo);
 

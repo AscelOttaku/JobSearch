@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,7 +42,7 @@ public class ResumeDao {
     }
 
     public Optional<Long> create(Resume resume) {
-        String query = "insert into RESUMES(USER_ID, NAME, CATEGORY_ID, SALARY) values(?,?,?,?)";
+        String query = "insert into RESUMES(USER_ID, NAME, CATEGORY_ID, SALARY, CREATED) values(?,?,?,?,?)";
 
         jdbcTemplate.update(connection -> {
             PreparedStatement pr = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
@@ -49,6 +50,7 @@ public class ResumeDao {
             pr.setString(2, resume.getName());
             pr.setObject(3, resume.getCategoryId());
             pr.setDouble(4, resume.getSalary());
+            pr.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
             return pr;
         }, keyHolder);
 

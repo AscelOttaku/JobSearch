@@ -17,7 +17,7 @@ public class RespondedApplicationController {
         this.respondService = respondService;
     }
 
-    @PostMapping()
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public RespondApplicationDto createRespond(
             @RequestBody @Valid RespondApplicationDto respondApplicationDto
