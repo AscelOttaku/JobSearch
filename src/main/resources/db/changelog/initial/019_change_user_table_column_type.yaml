@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: 019_change_user_table_column_type.yaml
+      author: Zhanybekov Kanybek
+      changes:
+        - modifyDataType:
+            tableName: users
+            columnName: avatar
+            newDataType: varchar(255)
+            schemaName: public

@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: 021_create_default_value.yaml
+      author: Kanybek Zhanybekov
+      changes:
+        - addDefaultValue:
+            tableName: users
+            columnName: avatar
+            schemaName: public
+            defaultValue: f4b466c2-ac3b-4095-b08d-a610e1762b44_9399278.png
