@@ -72,7 +72,10 @@ public class SecurityConfig {
 
                                 // Users Endpoints
 
-                                .requestMatchers(POST, "/users/updates")
+                                .requestMatchers(POST, "/users")
+                                .anonymous()
+
+                                .requestMatchers(PUT, "/users/updates")
                                 .fullyAuthenticated()
 
                                 .requestMatchers("/users/responded/vacancies/*")
@@ -83,6 +86,12 @@ public class SecurityConfig {
 
                                 .requestMatchers("/users/job-seeker/*")
                                 .hasAuthority(Role.EMPLOYER.getValue())
+
+                                .requestMatchers("/users/upload/*")
+                                .fullyAuthenticated()
+
+                                .requestMatchers("users/avatars")
+                                .fullyAuthenticated()
 
                                 .requestMatchers("/users/**")
                                 .hasAuthority(Role.EMPLOYER.getValue())

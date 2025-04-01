@@ -18,7 +18,7 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 public class FileUtil {
-    private static final String DIRECTORY = "data/images";
+    private static final String DIRECTORY = "src/main/resources/static/photos";
 
     private FileUtil() {
         throw new IllegalStateException("Utility class");
@@ -50,7 +50,7 @@ public class FileUtil {
     }
 
     @SneakyThrows
-    public ResponseEntity<Object> getOutputFile(String filename, MediaType mediaType) {
+    public static ResponseEntity<Object> getOutputFile(String filename, MediaType mediaType) {
         try {
             byte[] image = Files.readAllBytes(Paths.get(DIRECTORY + "/" + filename));
             Resource resource = new ByteArrayResource(image);
@@ -62,5 +62,10 @@ public class FileUtil {
         } catch (NoSuchFileException e) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Image not found");
         }
+    }
+
+    public static MediaType defineFileType(String filePath) throws IOException {
+        String fileType = Files.probeContentType(Paths.get(filePath));
+        return MediaType.parseMediaType(fileType);
     }
 }

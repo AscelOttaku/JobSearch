@@ -3,10 +3,15 @@ package kg.attractor.jobsearch.dto.mapper.impl;
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.model.User;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserMapper implements Mapper<UserDto, User> {
+    private final PasswordEncoder passwordEncoder;
+
     @Override
     public UserDto mapToDto(User user) {
         return UserDto.builder()
@@ -30,7 +35,7 @@ public class UserMapper implements Mapper<UserDto, User> {
         user.setSurname(userDto.getSurname());
         user.setAge(userDto.getAge());
         user.setEmail(userDto.getEmail());
-        user.setPassword(userDto.getPassword());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user.setPhoneNumber(userDto.getPhoneNumber());
         user.setAvatar(userDto.getAvatar());
         user.setAccountType(userDto.getAccountType());

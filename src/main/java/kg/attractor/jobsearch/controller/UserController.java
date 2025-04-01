@@ -6,6 +6,7 @@ import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -53,11 +54,9 @@ public class UserController {
         return userService.findEmployerByEmail(employerEmail);
     }
 
-    @PostMapping("upload/avatars")
+    @PutMapping("upload/avatars")
     @ResponseStatus(HttpStatus.OK)
-    public String uploadAvatar(MultipartFile file) throws IOException {
-        //ToDO logic for storing avatar and user
-
+    public ResponseEntity<Object> uploadAvatar(MultipartFile file) throws IOException {
         return userService.uploadAvatar(file);
     }
 
@@ -115,7 +114,12 @@ public class UserController {
     public void updateUser(
             @RequestBody @Valid UserDto userDto,
             @AuthenticationPrincipal UserDetails userDetails
-    ) {
+    ) throws IOException {
         userService.updateUser(userDto, userDetails);
+    }
+
+    @GetMapping("avatars")
+    public ResponseEntity<Object> getAvatars() throws IOException {
+        return userService.getAvatarOfAuthorizedUser();
     }
 }
