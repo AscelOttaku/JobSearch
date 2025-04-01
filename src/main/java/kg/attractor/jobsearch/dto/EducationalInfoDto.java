@@ -2,7 +2,6 @@ package kg.attractor.jobsearch.dto;
 
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.PastOrPresent;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
