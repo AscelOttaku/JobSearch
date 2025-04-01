@@ -14,6 +14,7 @@ import kg.attractor.jobsearch.util.FileUtil;
 import kg.attractor.jobsearch.util.validater.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -35,10 +36,20 @@ public class UserServiceImpl implements UserService {
     private final VacancyService vacancyService;
 
     @Override
-    public String uploadAvatar(MultipartFile file) throws IOException {
-        //ToDO save user avatar logic should be implemented
+    public ResponseEntity<Object> uploadAvatar(MultipartFile file) throws IOException {
 
-        return FileUtil.uploadFile(file);
+        UserDto userDto = getAuthenticatedUser();
+
+        String fileUploadedPath = FileUtil.uploadFile(file);
+        userDto.setAvatar(fileUploadedPath);
+        updateUser(userDto, getAutentificatedUserDetails());
+        return getAvatarOfAuthorizedUser();
+    }
+
+    @Override
+    public ResponseEntity<Object> getAvatarOfAuthorizedUser() throws IOException {
+        UserDto userDto = getAuthenticatedUser();
+        return FileUtil.getOutputFile(userDto.getAvatar(), FileUtil.defineFileType(userDto.getAvatar()));
     }
 
     @Override
@@ -259,5 +270,9 @@ public class UserServiceImpl implements UserService {
                 .getPrincipal();
 
         return findUserByEmail(userDetails.getUsername());
+    }
+
+    public UserDetails getAutentificatedUserDetails() {
+        return (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }

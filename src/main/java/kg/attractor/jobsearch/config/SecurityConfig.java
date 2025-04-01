@@ -84,6 +84,9 @@ public class SecurityConfig {
                                 .requestMatchers("/users/job-seeker/*")
                                 .hasAuthority(Role.EMPLOYER.getValue())
 
+                                .requestMatchers("/users/upload/*")
+                                .fullyAuthenticated()
+
                                 .requestMatchers("/users/**")
                                 .hasAuthority(Role.EMPLOYER.getValue())
 

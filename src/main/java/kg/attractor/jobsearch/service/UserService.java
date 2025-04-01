@@ -1,6 +1,7 @@
 package kg.attractor.jobsearch.service;
 
 import kg.attractor.jobsearch.dto.UserDto;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -9,7 +10,9 @@ import java.util.List;
 import java.util.Set;
 
 public interface UserService {
-    String uploadAvatar(MultipartFile file) throws IOException;
+    ResponseEntity<Object> uploadAvatar(MultipartFile file) throws IOException;
+
+    ResponseEntity<Object> getAvatarOfAuthorizedUser() throws IOException;
 
     Long createUser(UserDto userDto);
 
