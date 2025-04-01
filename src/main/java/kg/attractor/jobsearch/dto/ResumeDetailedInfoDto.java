@@ -13,6 +13,6 @@ public class ResumeDetailedInfoDto {
     @Valid
     private ResumeDto resumeDto;
 
-    private List<EducationalInfoDto> educationInfoDtos;
-    private List<WorkExperienceInfoDto> workExperienceInfoDtos;
+    private List<@Valid EducationalInfoDto> educationInfoDtos;
+    private List<@Valid WorkExperienceInfoDto> workExperienceInfoDtos;
 }
