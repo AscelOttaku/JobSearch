@@ -18,7 +18,7 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 public class FileUtil {
-    private static final String DIRECTORY = "static";
+    private static final String DIRECTORY = "src/main/resources/static/photos";
 
     private FileUtil() {
         throw new IllegalStateException("Utility class");

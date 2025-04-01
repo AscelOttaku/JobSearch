@@ -16,7 +16,7 @@ public interface UserService {
 
     Long createUser(UserDto userDto);
 
-    void updateUser(UserDto userDto, UserDetails userDetails);
+    void updateUser(UserDto userDto, UserDetails userDetails) throws IOException;
 
     UserDto findJobSeekerByEmail(String userEmail);
 

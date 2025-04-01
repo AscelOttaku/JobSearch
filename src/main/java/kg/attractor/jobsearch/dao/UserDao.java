@@ -78,8 +78,8 @@ public class UserDao {
     }
 
     public Long createUser(User user) {
-        String query = "insert into USERS (FIRST_NAME, SURNAME, AGE, EMAIL, PASSWORD, PHONE_NUMBER, AVATAR, ACCOUNT_TYPE, ENABLED, ROLE_ID)" +
-                "values ( ?,?,?,?,?,?,?,?,?,? ) ";
+        String query = "insert into USERS (FIRST_NAME, SURNAME, AGE, EMAIL, PASSWORD, PHONE_NUMBER, ACCOUNT_TYPE, ENABLED, ROLE_ID)" +
+                "values ( ?,?,?,?,?,?,?,?,? ) ";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -91,10 +91,9 @@ public class UserDao {
             ps.setString(4, user.getEmail());
             ps.setString(5, user.getPassword());
             ps.setString(6, user.getPhoneNumber());
-            ps.setString(7, user.getAvatar());
-            ps.setString(8, user.getAccountType());
-            ps.setBoolean(9, true);
-            ps.setLong(10, getUserRole(user.getAccountType()));
+            ps.setString(7, user.getAccountType());
+            ps.setBoolean(8, true);
+            ps.setObject(9, getUserRole(user.getAccountType()));
 
             return ps;
         }, keyHolder);
@@ -147,5 +146,13 @@ public class UserDao {
         return handleDataAccessException(() ->
                 jdbcTemplate.queryForObject(query, Long.class, accountTypeInSneakyCase))
                 .orElse(-1L);
+    }
+
+    public void uploadAvatarFile(String userEmail, String fileName) {
+        String query = "update USERS " +
+                "set USERS.AVATAR = ?" +
+                "where EMAIL = ? ";
+
+        jdbcTemplate.update(query, fileName, userEmail);
     }
 }

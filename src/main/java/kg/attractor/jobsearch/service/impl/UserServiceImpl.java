@@ -37,12 +37,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<Object> uploadAvatar(MultipartFile file) throws IOException {
-
         UserDto userDto = getAuthenticatedUser();
 
         String fileUploadedPath = FileUtil.uploadFile(file);
-        userDto.setAvatar(fileUploadedPath);
-        updateUser(userDto, getAutentificatedUserDetails());
+        userDao.uploadAvatarFile(userDto.getEmail(), fileUploadedPath);
+
         return getAvatarOfAuthorizedUser();
     }
 
@@ -105,7 +104,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUser(UserDto userDto, UserDetails userDetails) {
+    public void updateUser(UserDto userDto, UserDetails userDetails) throws IOException {
         UserDto userPreviousVal = findUserByEmail(userDetails.getUsername());
 
         if (!userDto.getEmail().equals(userPreviousVal.getEmail())) {
