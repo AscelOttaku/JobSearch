@@ -54,7 +54,7 @@ public class UserController {
         return userService.findEmployerByEmail(employerEmail);
     }
 
-    @PostMapping("upload/avatars")
+    @PutMapping("upload/avatars")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> uploadAvatar(MultipartFile file) throws IOException {
         return userService.uploadAvatar(file);
@@ -114,7 +114,7 @@ public class UserController {
     public void updateUser(
             @RequestBody @Valid UserDto userDto,
             @AuthenticationPrincipal UserDetails userDetails
-    ) {
+    ) throws IOException {
         userService.updateUser(userDto, userDetails);
     }
 

@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: 020_add_non_null_constraint_users_avatar.yaml
+      author: Zhanybekov Kanybek
+      changes:
+        - addNotNullConstraint:
+            schemaName: public
+            tableName: users
+            columnName: avatar
+            constraintName: avatar_non_null
