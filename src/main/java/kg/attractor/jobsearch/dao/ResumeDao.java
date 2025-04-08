@@ -68,7 +68,7 @@ public class ResumeDao {
                 resume.getName(),
                 resume.getCategoryId(),
                 resume.getSalary(),
-                resume.getIsActive(),
+                resume.getIsActive() == null,
                 resumeId
                 ) > 0;
     }

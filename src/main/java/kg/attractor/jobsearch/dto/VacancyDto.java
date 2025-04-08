@@ -1,6 +1,7 @@
 package kg.attractor.jobsearch.dto;
 
 import jakarta.validation.constraints.*;
+import kg.attractor.jobsearch.annotations.CategoryExistById;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,6 +24,7 @@ public class VacancyDto {
 
     @NotNull(message = "{null_message}")
     @Positive(message = "{positive_number_message}")
+    @CategoryExistById(message = "{category_does't_exist}")
     private Long categoryId;
 
     @NotNull(message = "{null_message}")

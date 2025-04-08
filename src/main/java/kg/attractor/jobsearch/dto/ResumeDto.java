@@ -1,6 +1,7 @@
 package kg.attractor.jobsearch.dto;
 
 import jakarta.validation.constraints.*;
+import kg.attractor.jobsearch.annotations.CategoryExistById;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,16 +21,15 @@ public class ResumeDto {
     )
     private String name;
 
-    @NotNull(message = "{null_message}")
-    @Positive(message = "{user_id_positive_message}")
     private Long userId;
 
     @NotNull(message = "{null_message}")
     @Positive(message = "{category_id_positive_message}")
+    @CategoryExistById(message = "{category_does't_exist}")
     private Long categoryId;
 
     @PositiveOrZero(message = "{non_negative_message}")
     private double salary;
 
-    private boolean isActive;
+    private Boolean isActive;
 }

@@ -1,4 +1,4 @@
-package kg.attractor.jobsearch.util.validater;
+package kg.attractor.jobsearch.validators;
 
 import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;

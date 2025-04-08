@@ -13,7 +13,7 @@ import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.service.AuthorizedUserService;
 import kg.attractor.jobsearch.service.ResumeService;
 import kg.attractor.jobsearch.service.UserService;
-import kg.attractor.jobsearch.util.validater.Validator;
+import kg.attractor.jobsearch.validators.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

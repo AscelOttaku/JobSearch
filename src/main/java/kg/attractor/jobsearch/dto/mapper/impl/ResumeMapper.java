@@ -27,7 +27,7 @@ public class ResumeMapper implements Mapper<ResumeDto, Resume> {
         resume.setCategoryId(resumeDto.getCategoryId());
         resume.setUserId(resumeDto.getUserId());
         resume.setSalary(resumeDto.getSalary());
-        resume.setIsActive(resumeDto.isActive());
+        resume.setIsActive(resumeDto.getIsActive());
         return resume;
     }
 }

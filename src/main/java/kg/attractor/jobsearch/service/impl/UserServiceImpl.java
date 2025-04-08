@@ -11,7 +11,7 @@ import kg.attractor.jobsearch.model.Vacancy;
 import kg.attractor.jobsearch.service.UserService;
 import kg.attractor.jobsearch.service.VacancyService;
 import kg.attractor.jobsearch.util.FileUtil;
-import kg.attractor.jobsearch.util.validater.Validator;
+import kg.attractor.jobsearch.validators.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -28,5 +29,12 @@ public class CategoryServiceImpl implements CategoryService {
         } catch (DataAccessException e) {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public List<CategoryDto> findAllCategories() {
+        return categoryDao.findAllCategories().stream()
+                .map(categoryMapper::mapToDto)
+                .toList();
     }
 }

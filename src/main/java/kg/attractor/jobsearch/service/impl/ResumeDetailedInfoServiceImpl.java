@@ -10,7 +10,7 @@ import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.service.*;
-import kg.attractor.jobsearch.util.validater.Validator;
+import kg.attractor.jobsearch.validators.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,19 +30,6 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
 
     @Override
     public ResumeDetailedInfoDto createResume(ResumeDetailedInfoDto resumeDetailedInfoDto) {
-        ResumeDto resumeDto = resumeDetailedInfoDto.getResumeDto();
-        boolean isCategoryExist = categoryService.checkIfCategoryExistsById(resumeDto.getCategoryId());
-
-        if (!isCategoryExist)
-            throw new CustomIllegalArgException(
-                    "category doesn't exist",
-                    CustomBindingResult.builder()
-                            .className(Category.class.getSimpleName())
-                            .fieldName("id")
-                            .rejectedValue(resumeDto.getCategoryId())
-                            .build()
-            );
-
         ResumeDto getResumeDto = resumeDetailedInfoDto.getResumeDto();
         getResumeDto.setUserId(authorizedUserService.getAuthorizedUser().getUserId());
 
@@ -99,23 +86,6 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
     public void updateResumeDetailedInfo(Long resumeId, ResumeDetailedInfoDto resumeDetailedInfoDto) {
         Validator.isValidId(resumeId);
 
-        boolean isCategoryCValid = categoryService
-                .checkIfCategoryExistsById(
-                        resumeDetailedInfoDto.getResumeDto().getCategoryId()
-                );
-
-        if (!isCategoryCValid) {
-            log.warn("Category doesn't exists by id");
-            throw new CustomIllegalArgException(
-                    "Category is not exists",
-                    CustomBindingResult.builder()
-                            .className(Category.class.getSimpleName())
-                            .fieldName("categoryId")
-                            .rejectedValue(resumeDetailedInfoDto.getResumeDto().getCategoryId())
-                            .build()
-            );
-        }
-
         long authorizedUserId = authorizedUserService.getAuthorizedUser().getUserId();
         ResumeDto resumeDto = resumeService.findResumeById(resumeId);
 
@@ -131,7 +101,9 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
             );
         }
 
-        boolean res = resumeService.updateResume(resumeDetailedInfoDto.getResumeDto(), resumeId);
+        ResumeDto getResumeDto = resumeDetailedInfoDto.getResumeDto();
+        getResumeDto.setUserId(authorizedUserId);
+        boolean res = resumeService.updateResume(getResumeDto, resumeId);
 
         if (!res)
             log.info("Update Resume Operation stopped there is no changes");
