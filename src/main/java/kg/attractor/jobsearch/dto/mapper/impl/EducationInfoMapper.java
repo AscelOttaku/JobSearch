@@ -11,6 +11,7 @@ public class EducationInfoMapper implements Mapper<EducationalInfoDto, Education
     public EducationalInfoDto mapToDto(EducationInfo entity) {
         return EducationalInfoDto.builder()
                 .id(entity.getId())
+                .resumeId(entity.getResumeId())
                 .institution(entity.getInstitution())
                 .program(entity.getProgram())
                 .startDate(entity.getStartDate())
@@ -23,6 +24,7 @@ public class EducationInfoMapper implements Mapper<EducationalInfoDto, Education
     public EducationInfo mapToEntity(EducationalInfoDto dto) {
         EducationInfo educationInfo = new EducationInfo();
         educationInfo.setId(dto.getId());
+        educationInfo.setResumeId(dto.getResumeId());
         educationInfo.setInstitution(dto.getInstitution());
         educationInfo.setProgram(dto.getProgram());
         educationInfo.setStartDate(dto.getStartDate());

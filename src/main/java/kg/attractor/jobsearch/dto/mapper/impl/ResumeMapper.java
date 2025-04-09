@@ -23,6 +23,7 @@ public class ResumeMapper implements Mapper<ResumeDto, Resume> {
     @Override
     public Resume mapToEntity(ResumeDto resumeDto) {
         Resume resume = new Resume();
+        resume.setId(resumeDto.getId());
         resume.setName(resumeDto.getName());
         resume.setCategoryId(resumeDto.getCategoryId());
         resume.setUserId(resumeDto.getUserId());

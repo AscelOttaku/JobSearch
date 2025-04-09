@@ -14,6 +14,8 @@ import lombok.Setter;
 public class WorkExperienceInfoDto {
     private Long id;
 
+    private Long resumeId;
+
     @PositiveOrZero(message = "Year cannot be negative")
     private Integer years;
 

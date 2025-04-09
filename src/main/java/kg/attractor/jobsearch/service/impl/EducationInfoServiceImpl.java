@@ -36,15 +36,13 @@ public class EducationInfoServiceImpl implements EducationInfoService {
     }
 
     @Override
-    public void updateEducationInfo(List<EducationalInfoDto> educationInfosDtos, Long resumeId) {
+    public void updateEducationInfo(List<EducationalInfoDto> educationInfosDtos) {
         List<EducationInfo> educationInfos = educationInfosDtos.stream()
                 .map(educationInfoMapperDto::mapToEntity)
                 .toList();
 
-        educationInfos.forEach(educationalInfo -> educationalInfo.setResumeId(resumeId));
-
         for (EducationInfo info : educationInfos) {
-            if (isEducationInfoExist(info.getId(), resumeId)) {
+            if (isEducationInfoExist(info.getId(), info.getResumeId())) {
                 educationInfoDao.updateEducationInfo(info);
                 continue;
             }

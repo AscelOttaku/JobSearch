@@ -2,10 +2,12 @@ package kg.attractor.jobsearch.controller;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
+import kg.attractor.jobsearch.annotations.EntityExistById;
 import kg.attractor.jobsearch.dto.ResumeDetailedInfoDto;
 import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.service.ResumeDetailedInfoService;
 import kg.attractor.jobsearch.service.ResumeService;
+import kg.attractor.jobsearch.util.EntityType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -53,9 +55,14 @@ public class ResumeController {
     @PutMapping("{resumeId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void redactorResume(
-            @PathVariable Long resumeId, @RequestBody @Valid ResumeDetailedInfoDto resumeDto
+            @PathVariable
+            @EntityExistById(
+                    entityType = EntityType.RESUMES,
+                    message = "Resume id is not exists"
+            ) Long resumeId,
+            @RequestBody @Valid ResumeDetailedInfoDto resumeDto
     ) {
-        resumeDetailedInfoService.updateResumeDetailedInfo(resumeId, resumeDto);
+        resumeDetailedInfoService.updateResumeDetailedInfo(resumeDto, resumeId);
     }
 
     @DeleteMapping("{resumeId}")

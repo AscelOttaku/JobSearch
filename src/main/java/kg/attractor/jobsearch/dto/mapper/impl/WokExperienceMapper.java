@@ -11,6 +11,7 @@ public class WokExperienceMapper implements Mapper<WorkExperienceInfoDto, WorkEx
     public WorkExperienceInfoDto mapToDto(WorkExperienceInfo entity) {
         return WorkExperienceInfoDto.builder()
                 .id(entity.getId())
+                .resumeId(entity.getResumeId())
                 .years(entity.getYears())
                 .companyName(entity.getCompanyName())
                 .position(entity.getPosition())
@@ -22,6 +23,7 @@ public class WokExperienceMapper implements Mapper<WorkExperienceInfoDto, WorkEx
     public WorkExperienceInfo mapToEntity(WorkExperienceInfoDto dto) {
         WorkExperienceInfo entity = new WorkExperienceInfo();
         entity.setId(dto.getId());
+        entity.setResumeId(dto.getResumeId());
         entity.setYears(dto.getYears());
         entity.setCompanyName(dto.getCompanyName());
         entity.setPosition(dto.getPosition());

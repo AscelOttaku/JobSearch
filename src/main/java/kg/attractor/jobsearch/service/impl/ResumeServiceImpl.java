@@ -78,8 +78,8 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public boolean updateResume(ResumeDto resumeDto, Long resumeId) {
-        return resumeDao.updateResume(mapper.mapToEntity(resumeDto), resumeId);
+    public boolean updateResume(ResumeDto resumeDto) {
+        return resumeDao.updateResume(mapper.mapToEntity(resumeDto));
     }
 
     @Override

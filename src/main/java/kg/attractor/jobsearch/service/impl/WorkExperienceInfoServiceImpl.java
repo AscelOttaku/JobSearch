@@ -36,15 +36,13 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
     }
 
     @Override
-    public void updateWorkExperienceInfo(List<WorkExperienceInfoDto> workExperienceInfosDtos, Long resumeId) {
+    public void updateWorkExperienceInfo(List<WorkExperienceInfoDto> workExperienceInfosDtos) {
         List<WorkExperienceInfo> workExperienceInfos = workExperienceInfosDtos.stream()
                 .map(workExperienceInfoMapper::mapToEntity)
                 .toList();
 
-        workExperienceInfos.forEach(workExperienceInfo -> workExperienceInfo.setResumeId(resumeId));
-
         for (WorkExperienceInfo workExperienceInfo : workExperienceInfos) {
-            if (isWorkExperienceExistInThisResume(workExperienceInfo.getId(), resumeId)) {
+            if (isWorkExperienceExistInThisResume(workExperienceInfo.getId(), workExperienceInfo.getResumeId())) {
                 workExperienceDao.updateWorkExperience(workExperienceInfo);
                 continue;
             }

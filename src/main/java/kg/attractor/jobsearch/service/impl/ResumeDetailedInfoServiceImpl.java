@@ -7,10 +7,8 @@ import kg.attractor.jobsearch.dto.WorkExperienceInfoDto;
 import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
 import kg.attractor.jobsearch.exceptions.EntityNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
-import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.service.*;
-import kg.attractor.jobsearch.validators.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -83,9 +81,7 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
     }
 
     @Override
-    public void updateResumeDetailedInfo(Long resumeId, ResumeDetailedInfoDto resumeDetailedInfoDto) {
-        Validator.isValidId(resumeId);
-
+    public void updateResumeDetailedInfo(ResumeDetailedInfoDto resumeDetailedInfoDto, Long resumeId) {
         long authorizedUserId = authorizedUserService.getAuthorizedUser().getUserId();
         ResumeDto resumeDto = resumeService.findResumeById(resumeId);
 
@@ -96,20 +92,30 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
                     CustomBindingResult.builder()
                             .className(Resume.class.getSimpleName())
                             .fieldName("resumeId")
-                            .rejectedValue(resumeId)
+                            .rejectedValue(resumeDto.getUserId())
                             .build()
             );
         }
 
         ResumeDto getResumeDto = resumeDetailedInfoDto.getResumeDto();
+        getResumeDto.setId(resumeId);
         getResumeDto.setUserId(authorizedUserId);
-        boolean res = resumeService.updateResume(getResumeDto, resumeId);
+
+        boolean res = resumeService.updateResume(getResumeDto);
 
         if (!res)
             log.info("Update Resume Operation stopped there is no changes");
 
-        updateWorkExperienceInfo(resumeId, resumeDetailedInfoDto.getWorkExperienceInfoDtos());
-        updateEducationalInfo(resumeId, resumeDetailedInfoDto.getEducationInfoDtos());
+        List<WorkExperienceInfoDto> workExperienceInfoDtos = resumeDetailedInfoDto.getWorkExperienceInfoDtos();
+        workExperienceInfoDtos.forEach(workExperienceInfoDto ->
+                workExperienceInfoDto.setResumeId(resumeId));
+
+        List<EducationalInfoDto> educationalInfoDtos = resumeDetailedInfoDto.getEducationInfoDtos();
+        educationalInfoDtos.forEach(educationalInfoDto ->
+                educationalInfoDto.setResumeId(resumeId));
+
+        updateWorkExperienceInfo(workExperienceInfoDtos);
+        updateEducationalInfo(resumeDetailedInfoDto.getEducationInfoDtos());
     }
 
     @Override
@@ -124,17 +130,17 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
                 .toList();
     }
 
-    private void updateEducationalInfo(Long resumeId, List<EducationalInfoDto> educationalInfoDtos) {
+    private void updateEducationalInfo(List<EducationalInfoDto> educationalInfoDtos) {
         if (educationalInfoDtos == null || educationalInfoDtos.isEmpty())
             return;
 
-        educationInfoService.updateEducationInfo(educationalInfoDtos, resumeId);
+        educationInfoService.updateEducationInfo(educationalInfoDtos);
     }
 
-    private void updateWorkExperienceInfo(Long resumeId, List<WorkExperienceInfoDto> workExperienceInfoDtos) {
+    private void updateWorkExperienceInfo(List<WorkExperienceInfoDto> workExperienceInfoDtos) {
         if (workExperienceInfoDtos == null || workExperienceInfoDtos.isEmpty())
             return;
 
-        workExperienceInfoService.updateWorkExperienceInfo(workExperienceInfoDtos, resumeId);
+        workExperienceInfoService.updateWorkExperienceInfo(workExperienceInfoDtos);
     }
 }

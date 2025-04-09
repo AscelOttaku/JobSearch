@@ -58,7 +58,7 @@ public class ResumeDao {
         return number != null ? Optional.of(number.longValue()) : Optional.empty();
     }
 
-    public boolean updateResume(Resume resume, Long resumeId) {
+    public boolean updateResume(Resume resume) {
         String query = "UPDATE RESUMES " +
                 "set NAME = ?, CATEGORY_ID = ?, SALARY = ?, IS_ACTIVE = ?" +
                 "WHERE ID = ?";
@@ -69,7 +69,7 @@ public class ResumeDao {
                 resume.getCategoryId(),
                 resume.getSalary(),
                 resume.getIsActive() == null,
-                resumeId
+                resume.getId()
                 ) > 0;
     }
 

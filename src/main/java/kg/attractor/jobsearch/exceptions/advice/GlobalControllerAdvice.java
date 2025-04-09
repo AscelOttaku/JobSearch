@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
+import java.time.format.DateTimeParseException;
 import java.util.Map;
 
 @RestControllerAdvice
@@ -59,12 +56,9 @@ public class GlobalControllerAdvice {
         return errorService.handleMethodValidationException(ex, request);
     }
 
-    @ExceptionHandler(IOException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Map<String, String> handleIOException(IOException exception) {
-        Map<String, String> map = new HashMap<>();
-        map.put("timestamp", DateTimeFormatter.ofPattern("dd:MM:yyyy HH:mm").format(LocalDateTime.now()));
-        map.put("error", exception.getMessage());
-        return map;
+    @ExceptionHandler(DateTimeParseException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, Object> handleDateTimeParseException(DateTimeParseException ex) {
+        return errorService.handleDateTimeParserException(ex);
     }
 }

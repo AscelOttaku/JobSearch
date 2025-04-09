@@ -8,6 +8,7 @@ import kg.attractor.jobsearch.exceptions.body.ValidationExceptionBody;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
+import java.time.format.DateTimeParseException;
 import java.util.Map;
 
 public interface ErrorService {
@@ -22,4 +23,6 @@ public interface ErrorService {
     );
 
     Map<String, Object> handleMethodValidationException(HandlerMethodValidationException ex, HttpServletRequest request);
+
+    Map<String, Object> handleDateTimeParserException(DateTimeParseException ex);
 }

@@ -8,7 +8,7 @@ import java.util.List;
 public interface WorkExperienceInfoService {
     WorkExperienceInfoDto findWorkExperienceById(Long workExperienceOptionalId);
 
-    void updateWorkExperienceInfo(List<WorkExperienceInfoDto> workExperienceInfosIdsDtos, Long resumeId);
+    void updateWorkExperienceInfo(List<WorkExperienceInfoDto> workExperienceInfosIdsDtos);
 
     Long createWorkExperience(WorkExperienceInfo workExperienceInfo);
 

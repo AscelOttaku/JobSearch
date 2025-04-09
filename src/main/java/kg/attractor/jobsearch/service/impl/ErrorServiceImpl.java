@@ -15,6 +15,7 @@ import org.springframework.web.method.annotation.HandlerMethodValidationExceptio
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -105,5 +106,17 @@ public class ErrorServiceImpl implements ErrorService {
         });
 
         return errors;
+    }
+
+    @Override
+    public Map<String, Object> handleDateTimeParserException(DateTimeParseException ex) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("timestamp", DateTimeFormatter.ofPattern("dd:MM:yyyy HH:mm:ss").format(LocalDateTime.now()));
+        map.put("status", HttpStatus.BAD_REQUEST.value());
+        map.put("error", HttpStatus.BAD_REQUEST.getReasonPhrase());
+        map.put("message", ex.getMessage());
+        map.put("rejected value", ex.getParsedString());
+        map.put("correct format", "yyyy:MM:dd HH:mm:ss");
+        return map;
     }
 }
