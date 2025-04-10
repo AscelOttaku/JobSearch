@@ -1,4 +1,4 @@
-package kg.attractor.jobsearch.controller;
+package kg.attractor.jobsearch.controller.api;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/resumes")
+@RestController("resumeControllerApi")
+@RequestMapping("/api/resumes")
 public class ResumeController {
     private final ResumeService resumeService;
     private final ResumeDetailedInfoService resumeDetailedInfoService;
