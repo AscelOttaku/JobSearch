@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Builder
 @Getter
 @Setter
@@ -29,8 +31,12 @@ public class ResumeDto {
     @EntityExistById(message = "{category_does't_exist}", entityType = EntityType.CATEGORIES)
     private Long categoryId;
 
+    private String categoryName;
+
     @PositiveOrZero(message = "{non_negative_message}")
     private double salary;
 
     private Boolean isActive;
+    private String created;
+    private String updated;
 }

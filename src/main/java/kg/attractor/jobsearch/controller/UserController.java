@@ -1,14 +1,18 @@
 package kg.attractor.jobsearch.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
 import kg.attractor.jobsearch.dto.UserDto;
+import kg.attractor.jobsearch.service.ResumeService;
 import kg.attractor.jobsearch.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,22 +20,40 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-@RestController
+@Controller
 @RequestMapping("users")
 public class UserController {
     private final UserService userService;
+    private final ResumeService resumeService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, ResumeService resumeService) {
         this.userService = userService;
+        this.resumeService = resumeService;
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Long createUser(
-            @RequestBody @Valid UserDto userDto
-    ) {
-        return userService.createUser(userDto);
+    @GetMapping("profile/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public String getProfile(@PathVariable Long userId, Model model) {
+        UserDto userDto = userService.findUserById(userId);
+        model.addAttribute("user", userDto);
+        model.addAttribute("resumes", resumeService.findResumeByUserId(userDto.getUserId()));
+        return "users/profile";
+    }
+
+    @PostMapping("registration")
+    @ResponseStatus(HttpStatus.SEE_OTHER)
+    public String createUser(@Valid UserDto userDto) {
+        var userId = userService.createUser(userDto);
+        return "redirect:/users/profile/" + userId;
+    }
+
+    @GetMapping("update/profile/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public String editPage(@PathVariable Long userId, Model model) {
+        UserDto userDto = userService.findUserById(userId);
+        model.addAttribute("user", userDto);
+        return "users/update_profile";
     }
 
     @GetMapping("job-seeker/{userEmail}")
@@ -89,7 +111,7 @@ public class UserController {
             @PathVariable
             @Pattern(regexp = "^\\+?[0-9\\-\\s]+$", message = "{phone_number_pattern_message}")
             String userPhoneNumber
-            ) {
+    ) {
         return userService.findUserByPhoneNumber(userPhoneNumber);
     }
 
@@ -116,6 +138,13 @@ public class UserController {
             @AuthenticationPrincipal UserDetails userDetails
     ) throws IOException {
         userService.updateUser(userDto, userDetails);
+    }
+
+    @PutMapping("updates/non_authorized")
+    @ResponseStatus(HttpStatus.SEE_OTHER)
+    public String updateUser(UserDto userDto) {
+        Long userId = userService.updateUser(userDto);
+        return "redirect:/users/profile/".concat(String.valueOf(userId));
     }
 
     @GetMapping("avatars")

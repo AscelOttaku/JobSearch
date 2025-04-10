@@ -12,7 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.sql.DataSource;
 
@@ -46,12 +46,19 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                 )
                 .httpBasic(Customizer.withDefaults())
 
-                .formLogin(AbstractHttpConfigurer::disable)
-                .logout(AbstractHttpConfigurer::disable)
+                .formLogin(login ->
+                        login.loginPage("/auth/login")
+                                .loginProcessingUrl("/auth/login")
+                                .defaultSuccessUrl("/users/profile/1", true)
+                                .failureUrl("/auth/forbidden")
+                                .permitAll())
+                .logout(logout -> logout
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout"))
+                        .permitAll())
                 .csrf(AbstractHttpConfigurer::disable)
 
                 .authorizeHttpRequests(authorizeRequests ->
@@ -72,53 +79,56 @@ public class SecurityConfig {
 
                                 // Users Endpoints
 
-                                .requestMatchers(POST, "/users")
-                                .anonymous()
-
-                                .requestMatchers(PUT, "/users/updates")
-                                .fullyAuthenticated()
-
-                                .requestMatchers("/users/responded/vacancies/*")
-                                .hasAuthority(Role.EMPLOYER.getValue())
-
-                                .requestMatchers("/users/employer/*")
-                                .hasAuthority(Role.JOB_SEEKER.getValue())
-
-                                .requestMatchers("/users/job-seeker/*")
-                                .hasAuthority(Role.EMPLOYER.getValue())
-
-                                .requestMatchers("/users/upload/*")
-                                .fullyAuthenticated()
-
-                                .requestMatchers("users/avatars")
-                                .fullyAuthenticated()
-
-                                .requestMatchers("/users/**")
-                                .hasAuthority(Role.EMPLOYER.getValue())
-
-                                //RespondedApplication Endpoints
-
-                                .requestMatchers(POST, "/responds")
-                                .hasAuthority(Role.JOB_SEEKER.getValue())
+//                                .requestMatchers(POST, "/users")
+//                                .anonymous()
+//
+//                                .requestMatchers(PUT, "/users/updates")
+//                                .fullyAuthenticated()
+//
+//                                .requestMatchers("/users/responded/vacancies/*")
+//                                .hasAuthority(Role.EMPLOYER.getValue())
+//
+//                                .requestMatchers("/users/employer/*")
+//                                .hasAuthority(Role.JOB_SEEKER.getValue())
+//
+//                                .requestMatchers("/users/job-seeker/*")
+//                                .hasAuthority(Role.EMPLOYER.getValue())
+//
+//                                .requestMatchers("/users/upload/*")
+//                                .fullyAuthenticated()
+//
+//                                .requestMatchers("users/avatars")
+//                                .fullyAuthenticated()
+//
+//                                .requestMatchers("/users/**")
+//                                .hasAuthority(Role.EMPLOYER.getValue())
+//
+////                                RespondedApplication Endpoints
+//
+//                                .requestMatchers(POST, "/responds")
+//                                .hasAuthority(Role.JOB_SEEKER.getValue())
 
                                 //Resumes Endpoints
 
-                                .requestMatchers(GET, "/resumes")
-                                .hasAuthority(Role.EMPLOYER.getValue())
-
-                                .requestMatchers(POST, "/resumes")
-                                .hasAuthority(Role.JOB_SEEKER.getValue())
-
-                                .requestMatchers(PUT, "/resumes/*")
-                                .hasAuthority(Role.JOB_SEEKER.getValue())
-
-                                .requestMatchers(DELETE, "/resumes/*")
-                                .hasAuthority(Role.JOB_SEEKER.getValue())
-
-                                .requestMatchers("/resumes/*")
-                                .hasAuthority(Role.EMPLOYER.getValue())
+//                                .requestMatchers(GET, "/resumes")
+//                                .hasAuthority(Role.EMPLOYER.getValue())
+//
+//                                .requestMatchers(POST, "/resumes")
+//                                .hasAuthority(Role.JOB_SEEKER.getValue())
+//
+//                                .requestMatchers(PUT, "/resumes/*")
+//                                .hasAuthority(Role.JOB_SEEKER.getValue())
+//
+//                                .requestMatchers(DELETE, "/resumes/*")
+//                                .hasAuthority(Role.JOB_SEEKER.getValue())
+//
+//                                .requestMatchers("/resumes/*")
+//                                .hasAuthority(Role.EMPLOYER.getValue())
 
                                 //All Other Endpoints
+
+                                .requestMatchers("/static/css/*")
+                                .permitAll()
 
                                 .anyRequest().permitAll());
 

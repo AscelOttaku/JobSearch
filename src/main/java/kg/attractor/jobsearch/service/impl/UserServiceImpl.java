@@ -21,10 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -107,6 +104,17 @@ public class UserServiceImpl implements UserService {
     public void updateUser(UserDto userDto, UserDetails userDetails) throws IOException {
         UserDto userPreviousVal = findUserByEmail(userDetails.getUsername());
 
+        updateUser(userDto, userPreviousVal);
+    }
+
+    @Override
+    public Long updateUser(UserDto userDto) {
+        UserDto userPreviousVal = findUserById(userDto.getUserId());
+
+        return updateUser(userDto, userPreviousVal);
+    }
+
+    private Long updateUser(UserDto userDto, UserDto userPreviousVal) {
         if (!userDto.getEmail().equals(userPreviousVal.getEmail())) {
             Optional<User> optionalUserFoundByEmail = userDao.findUserByEmail(userDto.getEmail());
 
@@ -143,6 +151,7 @@ public class UserServiceImpl implements UserService {
 
         userPreviousVal.setUserId(userPreviousVal.getUserId());
         userDao.updateUser(entity);
+        return entity.getUserId();
     }
 
     @Override
@@ -273,5 +282,19 @@ public class UserServiceImpl implements UserService {
 
     public UserDetails getAutentificatedUserDetails() {
         return (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
+    @Override
+    public UserDto findUserById(Long userId) {
+        return userDao.findUserById(userId)
+                .map(userMapper::mapToDto)
+                .orElseThrow(() -> new UserNotFoundException(
+                        "User not found by id " + userId,
+                        CustomBindingResult.builder()
+                                .className(User.class.getSimpleName())
+                                .fieldName("userId")
+                                .rejectedValue(userId)
+                                .build()
+                ));
     }
 }

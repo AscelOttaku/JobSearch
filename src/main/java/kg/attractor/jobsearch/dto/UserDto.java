@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Builder
 @Getter
 @Setter
@@ -40,7 +42,7 @@ public class UserDto {
     @NotNull(message = "{null_message}")
     @NotBlank(message = "{blank_message}")
     @Pattern(
-            regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\\W_]).+$",
+            regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).+$",
             message = "{password_message}"
     )
     private String password;
@@ -59,4 +61,6 @@ public class UserDto {
     private String avatar;
 
     private String accountType;
+    private LocalDateTime created;
+    private LocalDateTime updated;
 }
