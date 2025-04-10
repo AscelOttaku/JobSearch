@@ -5,10 +5,10 @@ import kg.attractor.jobsearch.dto.CategoryDto;
 import kg.attractor.jobsearch.dto.mapper.impl.CategoryMapper;
 import kg.attractor.jobsearch.service.CategoryService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -24,11 +24,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Optional<CategoryDto> findCategoryById(Long categoryId) {
-        try {
-            return Optional.of(categoryMapper.mapToDto(categoryDao.findCategoryById(categoryId)));
-        } catch (DataAccessException e) {
-            return Optional.empty();
-        }
+        return categoryDao.findCategoryById(categoryId)
+                .map(categoryMapper::mapToDto);
     }
 
     @Override
@@ -36,5 +33,11 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryDao.findAllCategories().stream()
                 .map(categoryMapper::mapToDto)
                 .toList();
+    }
+
+    @Override
+    public String findCategoryNameById(Long categoryId) {
+        return categoryDao.findCategoryNameById(categoryId)
+                .orElseThrow(() -> new NoSuchElementException("Category not found by id " + categoryId));
     }
 }

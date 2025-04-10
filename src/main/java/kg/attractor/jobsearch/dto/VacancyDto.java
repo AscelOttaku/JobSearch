@@ -12,6 +12,8 @@ import lombok.Setter;
 @Setter
 public class VacancyDto {
 
+    private Long vacancyId;
+
     @NotNull(message = "{null_message}")
     @NotBlank(message = "{blank_message}")
     @Size(min = 3, max = 30, message = "{3_30_size_message}")
@@ -27,6 +29,8 @@ public class VacancyDto {
     @Positive(message = "{positive_number_message}")
     @EntityExistById(message = "{category_does't_exist}", entityType = EntityType.CATEGORIES)
     private Long categoryId;
+
+    private String categoryName;
 
     @NotNull(message = "{null_message}")
     @PositiveOrZero(message = "{non_negative_message}")

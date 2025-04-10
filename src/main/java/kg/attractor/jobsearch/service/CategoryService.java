@@ -11,4 +11,6 @@ public interface CategoryService {
     Optional<CategoryDto> findCategoryById(Long categoryId);
 
     List<CategoryDto> findAllCategories();
+
+    String findCategoryNameById(Long categoryId);
 }
