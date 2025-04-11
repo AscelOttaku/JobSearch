@@ -101,20 +101,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUser(UserDto userDto, UserDetails userDetails) throws IOException {
+    public void updateUser(UserDto userDto, UserDetails userDetails) {
         UserDto userPreviousVal = findUserByEmail(userDetails.getUsername());
 
-        updateUser(userDto, userPreviousVal);
-    }
-
-    @Override
-    public Long updateUser(UserDto userDto) {
-        UserDto userPreviousVal = findUserById(userDto.getUserId());
-
-        return updateUser(userDto, userPreviousVal);
-    }
-
-    private Long updateUser(UserDto userDto, UserDto userPreviousVal) {
         if (!userDto.getEmail().equals(userPreviousVal.getEmail())) {
             Optional<User> optionalUserFoundByEmail = userDao.findUserByEmail(userDto.getEmail());
 
@@ -149,9 +138,11 @@ public class UserServiceImpl implements UserService {
 
         User entity = userMapper.mapToEntity(userDto);
 
+        if (entity.getPassword() == null || entity.getPassword().isBlank())
+            entity.setPassword(findUserPasswordByUserId(userDto.getUserId()));
+
         userPreviousVal.setUserId(userPreviousVal.getUserId());
         userDao.updateUser(entity);
-        return entity.getUserId();
     }
 
     @Override
@@ -296,5 +287,13 @@ public class UserServiceImpl implements UserService {
                                 .rejectedValue(userId)
                                 .build()
                 ));
+    }
+
+    @Override
+    public String findUserPasswordByUserId(Long userId) {
+        return userDao.findPasswordByUserId(userId)
+                .orElseThrow(() -> new NoSuchElementException(
+                        "Password not found by user id " + userId)
+                );
     }
 }

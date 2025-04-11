@@ -57,7 +57,7 @@
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <form method="post" action="/users/updates/non_authorized" class="card border-0 shadow-sm rounded-3">
-                    <input type="hidden" name="_method" value="PUT">
+                    <input type="hidden" name="_method" value="put"/>
 
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -85,7 +85,7 @@
                                         </div>
                                     </#if>
                                     <div class="avatar-input">
-                                        <input type="text" class="form-control" name="avatarUrl" value="${user.avatar!''}" placeholder="URL аватара">
+                                        <input type="text" class="form-control" name="avatar" value="${user.avatar!''}" placeholder="URL аватара">
                                     </div>
                                 </div>
                             </div>
@@ -125,15 +125,17 @@
                                                 <div class="mb-3">
                                                     <label class="form-label fw-bold">Телефон</label>
                                                     <input type="tel" class="form-control" name="phoneNumber" value="${user.phoneNumber!''}">
+                                                    <input type="hidden" class="form-control" name="userId" value="${user.userId!''}">
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label fw-bold">Пароль</label>
-                                                    <input type="password" class="form-control" name="password" placeholder="Оставьте пустым, чтобы не изменять">
+                                                    <input type="password" class="form-control" name="password"
+                                                           placeholder="Оставьте пустым, чтобы не изменять">
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label fw-bold">Тип аккаунта</label>
-                                                    <select class="form-select" name="accountType" disabled>
-                                                        <option>${user.accountType}</option>
+                                                    <select class="form-select" name="accountType" readonly>
+                                                        <option value="${user.accountType}" selected>${user.accountType}</option>
                                                     </select>
                                                 </div>
                                             </div>

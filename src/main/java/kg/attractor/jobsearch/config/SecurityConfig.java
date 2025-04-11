@@ -3,10 +3,8 @@ package kg.attractor.jobsearch.config;
 import kg.attractor.jobsearch.model.Role;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -45,21 +43,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
-                )
-                .httpBasic(Customizer.withDefaults())
-
-                .formLogin(login ->
-                        login.loginPage("/auth/login")
-                                .loginProcessingUrl("/auth/login")
-                                .defaultSuccessUrl("/users/profile/1", true)
-                                .failureUrl("/auth/forbidden")
-                                .permitAll())
-                .logout(logout -> logout
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout"))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+                .formLogin(form -> form
+                        .loginPage("/auth/login")
+                        .loginProcessingUrl("/auth/login")
+                        .defaultSuccessUrl("/users/profile")
+                        .failureUrl("/login?error=true")
                         .permitAll())
-                .csrf(AbstractHttpConfigurer::disable)
+
+                .logout(logout -> logout
+                        .logoutRequestMatcher(new AntPathRequestMatcher("auth/logout"))
+                        .permitAll())
 
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
@@ -67,63 +61,51 @@ public class SecurityConfig {
 
                                 .requestMatchers(POST, "/vacancies/new-vacancies")
                                 .hasAuthority(Role.EMPLOYER.getValue())
-
                                 .requestMatchers(PUT, "/vacancies/redactor-vacancies")
                                 .hasAuthority(Role.EMPLOYER.getValue())
-
                                 .requestMatchers(DELETE, "/vacancies/delete_vacancies")
                                 .hasAuthority(Role.EMPLOYER.getValue())
-
                                 .requestMatchers("/vacancies/users/responded_vacancies")
                                 .hasAuthority(Role.EMPLOYER.getValue())
 
                                 // Users Endpoints
 
-//                                .requestMatchers(POST, "/users")
-//                                .anonymous()
-//
+                                .requestMatchers(POST, "/users/registration")
+                                .anonymous()
+                                .requestMatchers(GET, "/users/profile")
+                                .fullyAuthenticated()
 //                                .requestMatchers(PUT, "/users/updates")
 //                                .fullyAuthenticated()
-//
 //                                .requestMatchers("/users/responded/vacancies/*")
 //                                .hasAuthority(Role.EMPLOYER.getValue())
-//
 //                                .requestMatchers("/users/employer/*")
 //                                .hasAuthority(Role.JOB_SEEKER.getValue())
-//
 //                                .requestMatchers("/users/job-seeker/*")
 //                                .hasAuthority(Role.EMPLOYER.getValue())
-//
 //                                .requestMatchers("/users/upload/*")
 //                                .fullyAuthenticated()
-//
 //                                .requestMatchers("users/avatars")
 //                                .fullyAuthenticated()
-//
 //                                .requestMatchers("/users/**")
 //                                .hasAuthority(Role.EMPLOYER.getValue())
-//
-////                                RespondedApplication Endpoints
-//
-//                                .requestMatchers(POST, "/responds")
-//                                .hasAuthority(Role.JOB_SEEKER.getValue())
 
-                                //Resumes Endpoints
+//                                RespondedApplication Endpoints
 
-//                                .requestMatchers(GET, "/resumes")
-//                                .hasAuthority(Role.EMPLOYER.getValue())
-//
-//                                .requestMatchers(POST, "/resumes")
-//                                .hasAuthority(Role.JOB_SEEKER.getValue())
-//
-//                                .requestMatchers(PUT, "/resumes/*")
-//                                .hasAuthority(Role.JOB_SEEKER.getValue())
-//
-//                                .requestMatchers(DELETE, "/resumes/*")
-//                                .hasAuthority(Role.JOB_SEEKER.getValue())
-//
-//                                .requestMatchers("/resumes/*")
-//                                .hasAuthority(Role.EMPLOYER.getValue())
+                                .requestMatchers(POST, "/responds")
+                                .hasAuthority(Role.JOB_SEEKER.getValue())
+
+//                                Resumes Endpoints
+
+                                .requestMatchers(GET, "/resumes")
+                                .hasAuthority(Role.EMPLOYER.getValue())
+                                .requestMatchers(POST, "/resumes")
+                                .hasAuthority(Role.JOB_SEEKER.getValue())
+                                .requestMatchers(PUT, "/resumes/*")
+                                .hasAuthority(Role.JOB_SEEKER.getValue())
+                                .requestMatchers(DELETE, "/resumes/*")
+                                .hasAuthority(Role.JOB_SEEKER.getValue())
+                                .requestMatchers("/resumes/*")
+                                .hasAuthority(Role.EMPLOYER.getValue())
 
                                 //All Other Endpoints
 

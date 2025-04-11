@@ -44,4 +44,17 @@ public class AuthorizedUserServiceImpl implements AuthorizedUserService {
 
         return user.isPresent() && user.get().getAccountType().equalsIgnoreCase("JobSeeker");
     }
+
+    @Override
+    public Long getAuthorizedUserId() {
+        return userDao.getAuthorizedUserId()
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Authorized User not found",
+                        CustomBindingResult.builder()
+                                .className(User.class.getSimpleName())
+                                .fieldName("user")
+                                .rejectedValue(getAuthorizedUser())
+                                .build()
+                ));
+    }
 }

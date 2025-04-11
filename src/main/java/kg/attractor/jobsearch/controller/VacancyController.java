@@ -14,11 +14,11 @@ import java.util.List;
 
 @Controller("vacancyController")
 @RequestMapping("vacancies")
-public class VacancyControllerMvc {
+public class VacancyController {
     private final VacancyService vacancyService;
 
     @Autowired
-    public VacancyControllerMvc(VacancyService vacancyService) {
+    public VacancyController(VacancyService vacancyService) {
         this.vacancyService = vacancyService;
     }
 

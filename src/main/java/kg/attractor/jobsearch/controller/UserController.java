@@ -4,9 +4,11 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import kg.attractor.jobsearch.dto.UserDto;
+import kg.attractor.jobsearch.service.AuthorizedUserService;
+import kg.attractor.jobsearch.service.RespondService;
 import kg.attractor.jobsearch.service.ResumeService;
 import kg.attractor.jobsearch.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,23 +23,21 @@ import java.util.List;
 import java.util.Set;
 
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("users")
 public class UserController {
+    private final AuthorizedUserService authorizedUserService;
     private final UserService userService;
     private final ResumeService resumeService;
+    private final RespondService respondService;
 
-    @Autowired
-    public UserController(UserService userService, ResumeService resumeService) {
-        this.userService = userService;
-        this.resumeService = resumeService;
-    }
-
-    @GetMapping("profile/{userId}")
+    @GetMapping("profile")
     @ResponseStatus(HttpStatus.OK)
-    public String getProfile(@PathVariable Long userId, Model model) {
-        UserDto userDto = userService.findUserById(userId);
-        model.addAttribute("user", userDto);
+    public String getProfile(Model model) {
+        UserDto userDto = authorizedUserService.getAuthorizedUser();
+        model.addAttribute("user", authorizedUserService.getAuthorizedUser());
         model.addAttribute("resumes", resumeService.findResumeByUserId(userDto.getUserId()));
+        model.addAttribute("responses", respondService.findAllActiveResponsesByUserId(userDto.getUserId()));
         return "users/profile";
     }
 
@@ -45,13 +45,13 @@ public class UserController {
     @ResponseStatus(HttpStatus.SEE_OTHER)
     public String createUser(@Valid UserDto userDto) {
         var userId = userService.createUser(userDto);
-        return "redirect:/users/profile/" + userId;
+        return "redirect:/users/profile" + userId;
     }
 
-    @GetMapping("update/profile/{userId}")
+    @GetMapping("update/profile")
     @ResponseStatus(HttpStatus.OK)
-    public String editPage(@PathVariable Long userId, Model model) {
-        UserDto userDto = userService.findUserById(userId);
+    public String editPage(Model model) {
+        UserDto userDto = userService.findUserById(authorizedUserService.getAuthorizedUser().getUserId());
         model.addAttribute("user", userDto);
         return "users/update_profile";
     }
@@ -133,18 +133,12 @@ public class UserController {
 
     @PutMapping("updates")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateUser(
+    public String updateUser(
             @RequestBody @Valid UserDto userDto,
             @AuthenticationPrincipal UserDetails userDetails
-    ) throws IOException {
+    ) {
         userService.updateUser(userDto, userDetails);
-    }
-
-    @PutMapping("updates/non_authorized")
-    @ResponseStatus(HttpStatus.SEE_OTHER)
-    public String updateUser(UserDto userDto) {
-        Long userId = userService.updateUser(userDto);
-        return "redirect:/users/profile/".concat(String.valueOf(userId));
+        return "redirect:/users/profile";
     }
 
     @GetMapping("avatars")

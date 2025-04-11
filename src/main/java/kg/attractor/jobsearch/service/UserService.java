@@ -16,9 +16,7 @@ public interface UserService {
 
     Long createUser(UserDto userDto);
 
-    void updateUser(UserDto userDto, UserDetails userDetails) throws IOException;
-
-    Long updateUser(UserDto userDto);
+    void updateUser(UserDto userDto, UserDetails userDetails);
 
     UserDto findJobSeekerByEmail(String userEmail);
 
@@ -39,4 +37,6 @@ public interface UserService {
     boolean checkIfJobSeekerExistById(Long jobSeekerId);
 
     UserDto findUserById(Long userId);
+
+    String findUserPasswordByUserId(Long userId);
 }

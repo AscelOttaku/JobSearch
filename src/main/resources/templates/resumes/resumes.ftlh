@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +9,7 @@
     <style>
         body {
             background-color: #f8f9fa;
-            padding-top: 2rem;
+            padding-top: 0;
             padding-bottom: 2rem;
         }
         .resume-item {
@@ -37,9 +37,15 @@
             border-width: 1px;
         }
     </style>
+
+    <title>Resumes</title>
+    <#include "../layout/navbar.ftlh">
 </head>
+
+<body class="bg-light">
+
 <body>
-<div class="container">
+<div class="container mt-5">
     <div class="row mb-4">
         <div class="col-12">
             <h2 class="fw-bold">
@@ -85,7 +91,5 @@
         </#list>
     </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
