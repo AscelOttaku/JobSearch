@@ -39,4 +39,6 @@ public interface UserService {
     boolean checkIfJobSeekerExistById(Long jobSeekerId);
 
     UserDto findUserById(Long userId);
+
+    String findUserPasswordByUserId(Long userId);
 }

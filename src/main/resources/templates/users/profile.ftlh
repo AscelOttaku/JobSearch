@@ -26,9 +26,13 @@
             border-left: 3px solid #0d6efd;
         }
     </style>
+
+    <title>Profile</title>
+    <#include "../layout/navbar.ftlh">
 </head>
+
 <body class="bg-light">
-<div class="container py-5">
+<div class="container py-5 mt-4">
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm rounded-3">
@@ -41,6 +45,19 @@
                             <i class="bi bi-pencil-square me-2"></i>Редактировать
                         </a>
                     </div>
+
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h3 class="h4 fw-bold">
+                                <i class="bi bi-file-earmark-text me-2"></i>Отклики
+                            </h3>
+                            <span class="badge bg-light shadow-sm text-primary border border-primary p-3 rounded-3">
+                                <p class="mb-0 fw-bold">Responses Count</p>
+                                <p class="mb-0 fs-5 fw-normal">${responses?size!0}</p>
+                            </span>
+                        </div>
+                    </div>
+
 
                     <div class="row align-items-center mb-4">
                         <div class="col-md-3 text-center mb-3 mb-md-0">
@@ -126,10 +143,12 @@
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <div>
                                                         <small class="text-muted">
-                                                            <i class="bi bi-calendar me-1"></i>Created Date: ${resume.created!''}
+                                                            <i class="bi bi-calendar me-1"></i>Created
+                                                            Date: ${resume.created!''}
                                                         </small>
                                                         <small class="text-muted d-block">
-                                                            <i class="bi bi-calendar me-1"></i>Updated Date: ${resume.updated!''}
+                                                            <i class="bi bi-calendar me-1"></i>Updated
+                                                            Date: ${resume.updated!''}
                                                         </small>
                                                     </div>
                                                     <div>

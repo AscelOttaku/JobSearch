@@ -155,4 +155,11 @@ public class UserDao {
 
         jdbcTemplate.update(query, fileName, userEmail);
     }
+
+    public Optional<String> findPasswordByUserId(Long userId) {
+        String query = "select PASSWORD from users where USER_ID = ?";
+
+        return handleDataAccessException(() ->
+                jdbcTemplate.queryForObject(query, String.class, userId));
+    }
 }

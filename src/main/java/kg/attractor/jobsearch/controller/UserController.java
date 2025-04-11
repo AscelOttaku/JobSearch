@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import kg.attractor.jobsearch.dto.UserDto;
+import kg.attractor.jobsearch.service.RespondService;
 import kg.attractor.jobsearch.service.ResumeService;
 import kg.attractor.jobsearch.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +26,13 @@ import java.util.Set;
 public class UserController {
     private final UserService userService;
     private final ResumeService resumeService;
+    private final RespondService respondService;
 
     @Autowired
-    public UserController(UserService userService, ResumeService resumeService) {
+    public UserController(UserService userService, ResumeService resumeService, RespondService respondService) {
         this.userService = userService;
         this.resumeService = resumeService;
+        this.respondService = respondService;
     }
 
     @GetMapping("profile/{userId}")
@@ -38,6 +41,7 @@ public class UserController {
         UserDto userDto = userService.findUserById(userId);
         model.addAttribute("user", userDto);
         model.addAttribute("resumes", resumeService.findResumeByUserId(userDto.getUserId()));
+        model.addAttribute("responses", respondService.findAllActiveResponsesByUserId(userId));
         return "users/profile";
     }
 
@@ -142,7 +146,7 @@ public class UserController {
 
     @PutMapping("updates/non_authorized")
     @ResponseStatus(HttpStatus.SEE_OTHER)
-    public String updateUser(UserDto userDto) {
+    public String updateUser(@Valid UserDto userDto) {
         Long userId = userService.updateUser(userDto);
         return "redirect:/users/profile/".concat(String.valueOf(userId));
     }

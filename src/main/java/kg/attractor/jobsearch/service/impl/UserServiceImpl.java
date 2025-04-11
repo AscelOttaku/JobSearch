@@ -149,6 +149,9 @@ public class UserServiceImpl implements UserService {
 
         User entity = userMapper.mapToEntity(userDto);
 
+        if (entity.getPassword() == null || entity.getPassword().isBlank())
+            entity.setPassword(findUserPasswordByUserId(userDto.getUserId()));
+
         userPreviousVal.setUserId(userPreviousVal.getUserId());
         userDao.updateUser(entity);
         return entity.getUserId();
@@ -296,5 +299,13 @@ public class UserServiceImpl implements UserService {
                                 .rejectedValue(userId)
                                 .build()
                 ));
+    }
+
+    @Override
+    public String findUserPasswordByUserId(Long userId) {
+        return userDao.findPasswordByUserId(userId)
+                .orElseThrow(() -> new NoSuchElementException(
+                        "Password not found by user id " + userId)
+                );
     }
 }

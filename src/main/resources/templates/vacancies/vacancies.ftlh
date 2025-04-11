@@ -9,7 +9,7 @@
     <style>
         body {
             background-color: #f8f9fa;
-            padding-top: 2rem;
+            padding-top: 0;
             padding-bottom: 2rem;
         }
         .vacancy-item {
@@ -38,8 +38,12 @@
         }
     </style>
 </head>
-<body>
-<div class="container">
+
+    <title>Vacancies</title>
+<#include "../layout/navbar.ftlh">
+
+<body class="bg-light">
+<div class="container mt-5">
     <div class="row mb-4">
         <div class="col-12">
             <h2 class="fw-bold">
@@ -89,6 +93,6 @@
         </#list>
     </div>
 </div>
-
+</body>
 </body>
 </html>
