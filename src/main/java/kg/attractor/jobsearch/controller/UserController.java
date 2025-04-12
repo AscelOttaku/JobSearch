@@ -5,8 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.service.AuthorizedUserService;
-import kg.attractor.jobsearch.service.RespondService;
-import kg.attractor.jobsearch.service.ResumeService;
+import kg.attractor.jobsearch.service.ProfileService;
 import kg.attractor.jobsearch.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,16 +27,12 @@ import java.util.Set;
 public class UserController {
     private final AuthorizedUserService authorizedUserService;
     private final UserService userService;
-    private final ResumeService resumeService;
-    private final RespondService respondService;
+    private final ProfileService profileService;
 
     @GetMapping("profile")
     @ResponseStatus(HttpStatus.OK)
     public String getProfile(Model model) {
-        UserDto userDto = authorizedUserService.getAuthorizedUser();
-        model.addAttribute("user", authorizedUserService.getAuthorizedUser());
-        model.addAttribute("resumes", resumeService.findResumeByUserId(userDto.getUserId()));
-        model.addAttribute("responses", respondService.findAllActiveResponsesByUserId(userDto.getUserId()));
+        model.addAllAttributes(profileService.getProfile());
         return "users/profile";
     }
 
@@ -51,7 +46,7 @@ public class UserController {
     @GetMapping("update/profile")
     @ResponseStatus(HttpStatus.OK)
     public String editPage(Model model) {
-        UserDto userDto = userService.findUserById(authorizedUserService.getAuthorizedUser().getUserId());
+        UserDto userDto = userService.findUserById(authorizedUserService.getAuthorizedUserId());
         model.addAttribute("user", userDto);
         return "users/update_profile";
     }
@@ -76,9 +71,9 @@ public class UserController {
         return userService.findEmployerByEmail(employerEmail);
     }
 
-    @PutMapping("upload/avatars")
+    @PostMapping("upload/avatars")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Object> uploadAvatar(MultipartFile file) throws IOException {
+    public ResponseEntity<?> uploadAvatar(MultipartFile file) throws IOException {
         return userService.uploadAvatar(file);
     }
 
@@ -142,7 +137,7 @@ public class UserController {
     }
 
     @GetMapping("avatars")
-    public ResponseEntity<Object> getAvatars() throws IOException {
+    public ResponseEntity<?> getAvatars() throws IOException {
         return userService.getAvatarOfAuthorizedUser();
     }
 }

@@ -33,8 +33,8 @@ public class UserServiceImpl implements UserService {
     private final VacancyService vacancyService;
 
     @Override
-    public ResponseEntity<Object> uploadAvatar(MultipartFile file) throws IOException {
-        UserDto userDto = getAuthenticatedUser();
+    public ResponseEntity<?> uploadAvatar(MultipartFile file) throws IOException {
+        UserDto userDto = getAuthorizedUser();
 
         String fileUploadedPath = FileUtil.uploadFile(file);
         userDao.uploadAvatarFile(userDto.getEmail(), fileUploadedPath);
@@ -43,8 +43,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<Object> getAvatarOfAuthorizedUser() throws IOException {
-        UserDto userDto = getAuthenticatedUser();
+    public ResponseEntity<?> getAvatarOfAuthorizedUser() throws IOException {
+        UserDto userDto = getAuthorizedUser();
         return FileUtil.getOutputFile(userDto.getAvatar(), FileUtil.defineFileType(userDto.getAvatar()));
     }
 
@@ -229,7 +229,7 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> findRespondedToVacancyUsersByVacancy(Long vacancyId) {
         Validator.isValidId(vacancyId);
 
-        UserDto authorizedUser = getAuthenticatedUser();
+        UserDto authorizedUser = getAuthorizedUser();
         Long ownerId = vacancyService.findVacancyOwnerIdByVacancyId(vacancyId);
 
         log.info("Vacancy owner id {}", ownerId);
@@ -263,11 +263,8 @@ public class UserServiceImpl implements UserService {
         return optionalUser.isPresent() && optionalUser.get().getAccountType().equalsIgnoreCase("jobSeeker");
     }
 
-    private UserDto getAuthenticatedUser() {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal();
-
+    private UserDto getAuthorizedUser() {
+        UserDetails userDetails = getAutentificatedUserDetails();
         return findUserByEmail(userDetails.getUsername());
     }
 

@@ -28,7 +28,7 @@ public class Validator {
         return user.getAccountType().equalsIgnoreCase("jobSeeker");
     }
 
-    public boolean isStringValid(String arg) {
-        return arg != null && !arg.isBlank();
+    public boolean isStringNotValid(String arg) {
+        return arg == null || arg.isBlank();
     }
 }

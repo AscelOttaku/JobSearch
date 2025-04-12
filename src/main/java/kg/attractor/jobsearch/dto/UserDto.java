@@ -5,6 +5,7 @@ import kg.attractor.jobsearch.annotations.ValidPassword;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
 

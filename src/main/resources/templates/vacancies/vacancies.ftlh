@@ -81,12 +81,6 @@
                                 <p class="card-text">${vacancy.description}</p>
                             </div>
                         </#if>
-
-                        <div class="d-flex justify-content-between align-items-center">
-                            <a href="/vacancies/${vacancy.vacancyId}" class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-eye me-1"></i>Подробнее
-                            </a>
-                        </div>
                     </div>
                 </div>
             </div>

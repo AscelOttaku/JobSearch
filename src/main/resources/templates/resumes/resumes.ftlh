@@ -6,37 +6,7 @@
     <title>Список резюме | Job Seeker</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            padding-top: 0;
-            padding-bottom: 2rem;
-        }
-        .resume-item {
-            border-left: 3px solid #0d6efd;
-            transition: all 0.3s ease;
-            height: 100%;
-        }
-        .resume-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        .card-title {
-            color: #212529;
-            font-weight: 600;
-        }
-        .card-text {
-            color: #6c757d;
-        }
-        .badge {
-            font-size: 0.8rem;
-            font-weight: 500;
-            padding: 0.35em 0.65em;
-        }
-        .btn-outline-primary {
-            border-width: 1px;
-        }
-    </style>
+    <link rel="stylesheet" href="/static/css/resume.css">
 
     <title>Resumes</title>
     <#include "../layout/navbar.ftlh">
@@ -79,11 +49,6 @@
                             <small class="text-muted">
                                 <i class="bi bi-calendar me-1"></i>Обновлено: ${resume.updated!resume.created}
                             </small>
-                            <div>
-                                <a href="/resumes/${resume.id}" class="btn btn-sm btn-outline-primary me-1">
-                                    <i class="bi bi-eye"></i>
-                                </a>
-                            </div>
                         </div>
                     </div>
                 </div>

@@ -21,7 +21,7 @@ public interface ResumeService {
 
     boolean isResumeExist(Long resumeId);
 
-    List<ResumeDto> findResumeByUserId(Long userId);
+    List<ResumeDto> findUserCreatedResumes();
 
     List<Long> findAllResumesIds();
 }

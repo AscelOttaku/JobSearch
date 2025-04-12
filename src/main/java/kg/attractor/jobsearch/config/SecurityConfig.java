@@ -3,6 +3,7 @@ package kg.attractor.jobsearch.config;
 import kg.attractor.jobsearch.model.Role;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -57,6 +58,7 @@ public class SecurityConfig {
                         .permitAll())
 
                 .csrf(AbstractHttpConfigurer::disable)
+                .httpBasic(Customizer.withDefaults())
 
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
@@ -80,20 +82,20 @@ public class SecurityConfig {
                                 .fullyAuthenticated()
                                 .requestMatchers(POST, "/users/registration")
                                 .permitAll()
-//                                .requestMatchers(PUT, "/users/updates")
-//                                .fullyAuthenticated()
-//                                .requestMatchers("/users/responded/vacancies/*")
-//                                .hasAuthority(Role.EMPLOYER.getValue())
-//                                .requestMatchers("/users/employer/*")
-//                                .hasAuthority(Role.JOB_SEEKER.getValue())
-//                                .requestMatchers("/users/job-seeker/*")
-//                                .hasAuthority(Role.EMPLOYER.getValue())
-//                                .requestMatchers("/users/upload/*")
-//                                .fullyAuthenticated()
-//                                .requestMatchers("users/avatars")
-//                                .fullyAuthenticated()
-//                                .requestMatchers("/users/**")
-//                                .hasAuthority(Role.EMPLOYER.getValue())
+                                .requestMatchers(PUT, "/users/updates")
+                                .fullyAuthenticated()
+                                .requestMatchers("/users/responded/vacancies/*")
+                                .hasAuthority(Role.EMPLOYER.getValue())
+                                .requestMatchers("/users/employer/*")
+                                .hasAuthority(Role.JOB_SEEKER.getValue())
+                                .requestMatchers("/users/job-seeker/*")
+                                .hasAuthority(Role.EMPLOYER.getValue())
+                                .requestMatchers("/users/upload/*")
+                                .fullyAuthenticated()
+                                .requestMatchers("/users/avatars")
+                                .fullyAuthenticated()
+                                .requestMatchers("/users/**")
+                                .hasAuthority(Role.EMPLOYER.getValue())
 
 //                                RespondedApplication Endpoints
 

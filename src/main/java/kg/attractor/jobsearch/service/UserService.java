@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Set;
 
 public interface UserService {
-    ResponseEntity<Object> uploadAvatar(MultipartFile file) throws IOException;
+    ResponseEntity<?> uploadAvatar(MultipartFile file) throws IOException;
 
-    ResponseEntity<Object> getAvatarOfAuthorizedUser() throws IOException;
+    ResponseEntity<?> getAvatarOfAuthorizedUser() throws IOException;
 
     void createUser(UserDto userDto);
 

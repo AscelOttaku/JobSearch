@@ -4,7 +4,6 @@ import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.service.AuthorizedUserService;
 import kg.attractor.jobsearch.service.ResumeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +18,6 @@ import java.util.List;
 @RequestMapping("resumes")
 @RequiredArgsConstructor
 public class ResumeController {
-    private final AuthorizedUserService authorizedUserService;
     private final ResumeService resumeService;
 
     @GetMapping
@@ -34,9 +32,16 @@ public class ResumeController {
     @ResponseStatus(HttpStatus.OK)
     public String findUserResumes(Model model) {
         List<ResumeDto> resumeDtos = resumeService
-                .findResumeByUserId(authorizedUserService.getAuthorizedUserId());
+                .findUserCreatedResumes();
 
         model.addAttribute("resumes", resumeDtos);
         return "resumes/resumes";
+    }
+
+    @GetMapping("users/{resumeId}")
+    @ResponseStatus(HttpStatus.OK)
+    public String findUserResumeById(@PathVariable Long resumeId, Model model) {
+        model.addAttribute("resume", resumeService.findResumeById(resumeId));
+        return "resumes/resume";
     }
 }

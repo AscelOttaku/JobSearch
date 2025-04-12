@@ -1,0 +1,7 @@
+package kg.attractor.jobsearch.service;
+
+import java.util.Map;
+
+public interface ProfileService {
+    Map<String, Object> getProfile();
+}

@@ -206,4 +206,14 @@ public class VacancyServiceImpl implements VacancyService {
                 .map(Vacancy::getVacancyUserId)
                 .orElse(-1L);
     }
+
+    @Override
+    public List<VacancyDto> findUserCreatedVacancies() {
+        Long userId = authorizedUserService.getAuthorizedUserId();
+
+        return vacancyDao.findUserCreatedVacanciesByUserId(userId)
+                .stream()
+                .map(vacancyMapper::mapToDto)
+                .toList();
+    }
 }

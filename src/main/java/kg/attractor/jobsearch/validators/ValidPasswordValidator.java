@@ -8,6 +8,8 @@ import kg.attractor.jobsearch.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
+
 @Service
 @RequiredArgsConstructor
 public class ValidPasswordValidator implements ConstraintValidator<ValidPassword, UserDto> {
@@ -18,10 +20,10 @@ public class ValidPasswordValidator implements ConstraintValidator<ValidPassword
         String password = userDto.getPassword();
         Long userId = userDto.getUserId();
 
-        if (!Validator.isStringValid(password)) {
+        if (Validator.isStringNotValid(password)) {
             String hasPreviousPassword = userService.findUserPasswordByUserId(userId);
 
-            if (!Validator.isStringValid(hasPreviousPassword)) {
+            if (Validator.isStringNotValid(hasPreviousPassword)) {
                 constraintValidatorContext.buildConstraintViolationWithTemplate(
                         "Password cannot be null or blank"
                 )
@@ -29,7 +31,7 @@ public class ValidPasswordValidator implements ConstraintValidator<ValidPassword
                         .addConstraintViolation();
                 return false;
             }
-
+            userDto.setPassword(hasPreviousPassword);
             return true;
         }
 

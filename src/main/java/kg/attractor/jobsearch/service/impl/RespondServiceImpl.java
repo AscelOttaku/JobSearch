@@ -51,7 +51,7 @@ public class RespondServiceImpl implements RespondService {
 
             if (isResumeByIdExist && isVacancyByIdExist) {
 
-                boolean isResumeBelongsToAuthorizedUser = resumeService.findResumeByUserId(userDto.getUserId())
+                boolean isResumeBelongsToAuthorizedUser = resumeService.findUserCreatedResumes()
                         .stream()
                         .anyMatch(resumeDto -> Objects.equals(resumeDto.getId(), respondApplicationDto.getResumeId()));
 
