@@ -18,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -190,8 +192,16 @@ public class VacancyServiceImpl implements VacancyService {
     @Override
     public List<VacancyDto> findAllVacancies() {
         return vacancyDao.findAllVacancies().stream()
+                .sorted(Comparator.comparing(this::getLastTimeOfVacancy).reversed())
                 .map(vacancyMapper::mapToDto)
                 .toList();
+    }
+
+    private LocalDateTime getLastTimeOfVacancy(Vacancy vacancy) {
+        if (vacancy.getUpdated() == null)
+            return vacancy.getCreated();
+
+        return vacancy.getUpdated();
     }
 
     public boolean isVacancyExistById(Long id) {
