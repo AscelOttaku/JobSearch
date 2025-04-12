@@ -56,13 +56,13 @@
     <div class="container py-5">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <form method="post" action="/users/updates/non_authorized" class="card border-0 shadow-sm rounded-3">
+                <form method="post" action="/users/updates" class="card border-0 shadow-sm rounded-3">
                     <input type="hidden" name="_method" value="put"/>
 
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <div>
-                                <a href="/users/profile/${user.userId}" class="btn btn-outline-secondary me-2">
+                                <a href="/users/profile" class="btn btn-outline-secondary me-2">
                                     <i class="bi bi-arrow-left me-2"></i>Назад
                                 </a>
                                 <h2 class="d-inline-block mb-0 fw-bold">

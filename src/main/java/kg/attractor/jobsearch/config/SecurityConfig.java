@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,7 +28,7 @@ public class SecurityConfig {
 
     @Bean
     public JdbcUserDetailsManager configureGlobal(DataSource dataSource) {
-        String usersQuery = "select email, password, enabled from users " +
+        String usersQuery = "select email as username, password, enabled from users " +
                 "where email = ?";
 
         String authorityQuery = "select email, ROLE from USERS U, ROLES R " +
@@ -52,11 +53,14 @@ public class SecurityConfig {
                         .permitAll())
 
                 .logout(logout -> logout
-                        .logoutRequestMatcher(new AntPathRequestMatcher("auth/logout"))
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout"))
                         .permitAll())
+
+                .csrf(AbstractHttpConfigurer::disable)
 
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
+
                                 //Vacancies Endpoints
 
                                 .requestMatchers(POST, "/vacancies/new-vacancies")
@@ -74,6 +78,8 @@ public class SecurityConfig {
                                 .anonymous()
                                 .requestMatchers(GET, "/users/profile")
                                 .fullyAuthenticated()
+                                .requestMatchers(POST, "/users/registration")
+                                .permitAll()
 //                                .requestMatchers(PUT, "/users/updates")
 //                                .fullyAuthenticated()
 //                                .requestMatchers("/users/responded/vacancies/*")
@@ -105,7 +111,7 @@ public class SecurityConfig {
                                 .requestMatchers(DELETE, "/resumes/*")
                                 .hasAuthority(Role.JOB_SEEKER.getValue())
                                 .requestMatchers("/resumes/*")
-                                .hasAuthority(Role.EMPLOYER.getValue())
+                                .authenticated()
 
                                 //All Other Endpoints
 

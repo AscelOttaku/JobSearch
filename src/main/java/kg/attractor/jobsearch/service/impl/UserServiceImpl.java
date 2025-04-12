@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Long createUser(UserDto userDto) {
+    public void createUser(UserDto userDto) {
 
         String accountType = userDto.getAccountType();
         if (accountType == null || accountType.isBlank())
@@ -97,7 +97,7 @@ public class UserServiceImpl implements UserService {
                             .build()
             );
 
-        return userDao.createUser(userMapper.mapToEntity(userDto));
+        userDao.createUser(userMapper.mapToEntity(userDto));
     }
 
     @Override

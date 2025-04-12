@@ -44,8 +44,8 @@ public class UserController {
     @PostMapping("registration")
     @ResponseStatus(HttpStatus.SEE_OTHER)
     public String createUser(@Valid UserDto userDto) {
-        var userId = userService.createUser(userDto);
-        return "redirect:/users/profile" + userId;
+        userService.createUser(userDto);
+        return "redirect:/users/profile";
     }
 
     @GetMapping("update/profile")
@@ -132,9 +132,9 @@ public class UserController {
     }
 
     @PutMapping("updates")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.SEE_OTHER)
     public String updateUser(
-            @RequestBody @Valid UserDto userDto,
+            @ModelAttribute @Valid UserDto userDto,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
         userService.updateUser(userDto, userDetails);

@@ -14,7 +14,7 @@ public interface UserService {
 
     ResponseEntity<Object> getAvatarOfAuthorizedUser() throws IOException;
 
-    Long createUser(UserDto userDto);
+    void createUser(UserDto userDto);
 
     void updateUser(UserDto userDto, UserDetails userDetails);
 

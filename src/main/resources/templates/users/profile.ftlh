@@ -41,7 +41,7 @@
                         <h2 class="mb-0 fw-bold">
                             <i class="bi bi-person-badge me-2"></i>Профиль ${user.accountType}
                         </h2>
-                        <a href="/users/update/profile/${user.userId}" class="btn btn-outline-secondary">
+                        <a href="/users/update/profile" class="btn btn-outline-secondary">
                             <i class="bi bi-pencil-square me-2"></i>Редактировать
                         </a>
                     </div>
@@ -123,7 +123,7 @@
                                 <i class="bi bi-file-earmark-text me-2"></i>Мои резюме
                             </h3>
                             <div>
-                                <a href="/resumes/users/${user.userId}" class="btn btn-view-all">
+                                <a href="/resumes/users" class="btn btn-view-all">
                                     <i class="bi bi-collection me-2"></i>Все резюме
                                 </a>
                                 <a href="/users/resume/create" class="btn btn-primary">

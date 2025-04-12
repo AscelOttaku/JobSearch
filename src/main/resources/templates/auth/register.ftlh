@@ -64,7 +64,7 @@
         </form>
 
         <div class="signup-link">
-            <p>Already have an account? <a href="/login">Login here</a></p>
+            <p>Already have an account? <a href="/auth/login">Login here</a></p>
         </div>
     </div>
 </@layout.layout>

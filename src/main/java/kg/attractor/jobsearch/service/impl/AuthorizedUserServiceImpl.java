@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 
 import java.util.Optional;
 
@@ -47,13 +48,13 @@ public class AuthorizedUserServiceImpl implements AuthorizedUserService {
 
     @Override
     public Long getAuthorizedUserId() {
-        return userDao.getAuthorizedUserId()
+        return userDao.findUserIdByEmail(getAuthorizedUserDetails().getUsername())
                 .orElseThrow(() -> new EntityNotFoundException(
-                        "Authorized User not found",
+                        "authorized user not found by email ",
                         CustomBindingResult.builder()
                                 .className(User.class.getSimpleName())
-                                .fieldName("user")
-                                .rejectedValue(getAuthorizedUser())
+                                .fieldName("email")
+                                .rejectedValue(getAuthorizedUserDetails().getUsername())
                                 .build()
                 ));
     }
