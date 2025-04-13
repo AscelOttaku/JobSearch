@@ -11,7 +11,7 @@ public interface VacancyService {
 
     VacancyDto createdVacancy(VacancyDto vacancyDto);
 
-    VacancyDto updateVacancy(Long vacancyId, VacancyDto vacancyDto);
+    VacancyDto updateVacancy(VacancyDto vacancyDto);
 
     void deleteVacancy(Long vacancyId);
 
@@ -26,4 +26,6 @@ public interface VacancyService {
     Long findVacancyOwnerIdByVacancyId(Long vacancyId);
 
     List<VacancyDto> findUserCreatedVacancies();
+
+    VacancyDto findAuthorizedUsersVacancyById(Long vacancyId);
 }

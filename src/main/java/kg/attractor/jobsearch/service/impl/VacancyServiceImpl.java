@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -87,35 +88,24 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public VacancyDto updateVacancy(Long vacancyId, VacancyDto vacancyDto) {
-        Validator.isValidId(vacancyId);
+    public VacancyDto updateVacancy(VacancyDto vacancyDto) {
+        Validator.isValidId(vacancyDto.getVacancyId());
 
         UserDto user = authorizedUserService.getAuthorizedUser();
 
         log.info("Updated vacancy / user name: {}", user.getName());
 
-        if (!isVacancyExistById(vacancyId))
+        if (!isVacancyExistById(vacancyDto.getVacancyId()))
             throw new EntityNotFoundException(
                     "Entity vacancy doesn't found by id",
                     CustomBindingResult.builder()
                             .className(Vacancy.class.getSimpleName())
                             .fieldName("id")
-                            .rejectedValue(vacancyId)
-                            .build()
-            );
-
-        if (!categoryService.checkIfCategoryExistsById(vacancyDto.getCategoryId()))
-            throw new CustomIllegalArgException(
-                    "Category id is not exists",
-                    CustomBindingResult.builder()
-                            .className(Vacancy.class.getSimpleName())
-                            .fieldName("categoryId")
-                            .rejectedValue(vacancyDto.getCategoryId())
+                            .rejectedValue(vacancyDto.getVacancyId())
                             .build()
             );
 
         Vacancy vacancy = vacancyMapper.mapToEntity(vacancyDto);
-        vacancy.setId(vacancyId);
         vacancy.setVacancyUserId(user.getUserId());
 
         var updatedVacancyId = vacancyDao.updateVacancy(vacancy);
@@ -225,5 +215,24 @@ public class VacancyServiceImpl implements VacancyService {
                 .stream()
                 .map(vacancyMapper::mapToDto)
                 .toList();
+    }
+
+    @Override
+    public VacancyDto findAuthorizedUsersVacancyById(Long vacancyId) {
+        Long authorizedUserId = authorizedUserService.getAuthorizedUserId();
+        VacancyDto vacancyDto = findVacancyById(vacancyId);
+
+        if (!Objects.equals(vacancyDto.getUserId(), authorizedUserId)) {
+            throw new EntityNotFoundException(
+                    "User created vacancy by " + vacancyId + " not found",
+                    CustomBindingResult.builder()
+                            .className(Vacancy.class.getSimpleName())
+                            .fieldName("vacancyId")
+                            .rejectedValue(vacancyId)
+                            .build()
+            );
+        }
+
+        return vacancyDto;
     }
 }

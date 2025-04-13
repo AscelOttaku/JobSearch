@@ -1,7 +1,6 @@
 package kg.attractor.jobsearch.dao;
 
 import kg.attractor.jobsearch.model.Category;
-import kg.attractor.jobsearch.util.ExceptionHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;

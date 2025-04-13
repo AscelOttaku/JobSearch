@@ -3,13 +3,15 @@ package kg.attractor.jobsearch.service.impl;
 import kg.attractor.jobsearch.dao.CategoryDao;
 import kg.attractor.jobsearch.dto.CategoryDto;
 import kg.attractor.jobsearch.dto.mapper.impl.CategoryMapper;
+import kg.attractor.jobsearch.exceptions.EntityNotFoundException;
+import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,13 +21,21 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public boolean checkIfCategoryExistsById(Long categoryId) {
-        return findCategoryById(categoryId).isPresent();
+        return categoryDao.findCategoryById(categoryId).isPresent();
     }
 
     @Override
-    public Optional<CategoryDto> findCategoryById(Long categoryId) {
+    public CategoryDto findCategoryById(Long categoryId) {
         return categoryDao.findCategoryById(categoryId)
-                .map(categoryMapper::mapToDto);
+                .map(categoryMapper::mapToDto)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Category by id " + categoryId + " not found",
+                        CustomBindingResult.builder()
+                                .className("category")
+                                .fieldName("id")
+                                .rejectedValue(categoryId)
+                                .build()
+                ));
     }
 
     @Override

@@ -34,10 +34,9 @@ public class VacancyController {
     @PutMapping("redactor-vacancies")
     @ResponseStatus(HttpStatus.OK)
     public VacancyDto redactorVacancy(
-            @RequestParam Long vacancyId,
             @RequestBody @Valid VacancyDto vacancyDto
     ) {
-        return vacancyService.updateVacancy(vacancyId, vacancyDto);
+        return vacancyService.updateVacancy(vacancyDto);
     }
 
     @DeleteMapping("delete_vacancies/{vacancyId}")

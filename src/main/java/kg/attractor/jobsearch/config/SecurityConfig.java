@@ -65,7 +65,8 @@ public class SecurityConfig {
 
                                 //Vacancies Endpoints
 
-                                .requestMatchers(POST, "/vacancies/new-vacancies").hasAuthority(Role.EMPLOYER.getValue())
+                                .requestMatchers(GET, "/vacancies/new_vacancy").hasAuthority(Role.EMPLOYER.getValue())
+                                .requestMatchers(GET, "/vacancies/update/vacancy/*").hasAnyAuthority(Role.EMPLOYER.getValue())
                                 .requestMatchers(PUT, "/vacancies/redactor-vacancies").hasAuthority(Role.EMPLOYER.getValue())
                                 .requestMatchers(DELETE, "/vacancies/delete_vacancies").hasAuthority(Role.EMPLOYER.getValue())
                                 .requestMatchers("/vacancies/users/responded_vacancies").hasAuthority(Role.EMPLOYER.getValue())

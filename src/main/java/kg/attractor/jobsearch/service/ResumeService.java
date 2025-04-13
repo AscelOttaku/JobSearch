@@ -9,7 +9,7 @@ public interface ResumeService {
 
     ResumeDto findResumeById(Long id);
 
-    List<ResumeDto> findResumesByCategory(Long categoryId);
+    List<ResumeDto> findResumesByCategoryId(Long categoryId);
 
     boolean updateResume(ResumeDto resumeDto);
 

@@ -139,7 +139,7 @@
                                     <a href="/vacancies/users" class="btn btn-view-all">
                                         <i class="bi bi-collection me-2"></i>Все созданные Вакансии
                                     </a>
-                                    <a href="/users/resume/create" class="btn btn-primary">
+                                    <a href="/vacancies/new_vacancy" class="btn btn-primary">
                                         <i class="bi bi-plus-circle me-2"></i>Создать вакансию
                                     </a>
                                 <#else>
@@ -218,7 +218,7 @@
                                                                class="btn btn-sm btn-outline-primary me-1">
                                                                 <i class="bi bi-eye"></i>
                                                             </a>
-                                                            <a href="#" class="btn btn-sm btn-outline-secondary">
+                                                            <a href="/vacancies/update/vacancy/${vacancy.vacancyId}" class="btn btn-sm btn-outline-secondary">
                                                                 <i class="bi bi-pencil"></i>
                                                             </a>
                                                         </div>

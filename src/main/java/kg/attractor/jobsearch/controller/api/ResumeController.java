@@ -41,7 +41,7 @@ public class ResumeController {
     @GetMapping("category")
     @ResponseStatus(HttpStatus.OK)
     public List<ResumeDto> findByResumeByCategory(@RequestParam Long category) {
-        return resumeService.findResumesByCategory(category);
+        return resumeService.findResumesByCategoryId(category);
     }
 
     @PostMapping
