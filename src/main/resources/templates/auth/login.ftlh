@@ -1,6 +1,5 @@
 <#import "../layout.ftlh" as layout>
 <link rel="stylesheet" href="/static/css/login.css">
-
 <@layout.layout>
     <div class="custom-body">
         <div class="custom-login-card">
@@ -14,12 +13,11 @@
                 <div class="custom-form-group">
                     <label for="email">Email</label>
                     <input
-                            class="custom-form-control"
                             type="email"
                             name="username"
                             placeholder="email@"
                             autocomplete="email"
-                            id="email"
+                            class="custom-form-control"
                     >
                     <div class="error" id="emailError"></div>
                 </div>
@@ -27,12 +25,11 @@
                 <div class="custom-form-group">
                     <label for="password">Password</label>
                     <input
-                            class="custom-form-control"
                             type="password"
                             name="password"
                             placeholder="Enter your password"
                             autocomplete="current-password"
-                            id="password"
+                            class="custom-form-control"
                     >
                     <div class="error" id="passwordError"></div>
                 </div>

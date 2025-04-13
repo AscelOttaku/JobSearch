@@ -1,115 +1,67 @@
-<#import "../layout.ftlh" as main>
-<@main.layout ; spring>
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
+<#import "../layout.ftlh" as layout>
 
-        .bg-image {
-            background-image: url('https://mdbcdn.b-cdn.net/img/Photos/new-templates/search-box/img4.webp');
-            background-size: cover;
-            background-position: center bottom;
-            background-repeat: no-repeat;
-            height: 100vh;
-            width: 100%;
-        }
+<@layout.layout ; spring>
 
-        .gradient-custom-3 {
-            background: linear-gradient(to right, rgba(132, 250, 176, 0.5), rgba(143, 211, 244, 0.5));
-        }
+    <link rel="stylesheet" href="/static/css/login.css">
 
-        .gradient-custom-4 {
-            background: linear-gradient(to right, rgba(132, 250, 176, 1), rgba(143, 211, 244, 1));
-        }
-    </style>
+    <div class="custom-body">
+    <div class="custom-login-card">
+    <div class="custom-brand">
+        <div class="custom-brand-logo"></div>
+        <h1>Welcome To Job Search Application</h1>
+        <p>Enter Your Account Data</p>
+    </div>
 
-
-    <section class="vh-100 bg-image"
-             style="background-image: url('https://mdbcdn.b-cdn.net/img/Photos/new-templates/search-box/img4.webp');">
-        <div class="mask d-flex align-items-center h-100 gradient-custom-3">
-            <div class="container h-100">
-                <div class="row d-flex justify-content-center align-items-center h-100">
-                    <div class="col-12 col-md-9 col-lg-7 col-xl-6">
-                        <div class="card" style="border-radius: 15px;">
-                            <div class="card-body p-5">
-                                <h2 class="text-uppercase text-center mb-5">Create an account</h2>
-
-                                <form method="post" action="/users/registration">
-
-                                    <div class="form-outline mb-4">
-                                        <label class="form-label" for="name">First Name</label>
-                                        <@spring.formInput "user.name", 'class="form-control form-control-lg" id="name"'/>
-                                        <@spring.showErrors "<br>" "error text-danger" />
-                                    </div>
-
-                                    <div class="form-outline mb-4">
-                                        <label class="form-label" for="surname">Last Name</label>
-                                        <@spring.formInput "user.surname", 'class="form-control form-control-lg" id="surname"'/>
-                                        <@spring.showErrors "<br>" "error text-danger" />
-                                    </div>
-
-                                    <div class="form-outline mb-4">
-                                        <label class="form-label" for="age">Age</label>
-                                        <@spring.formInput "user.age", 'class="form-control form-control-lg" id="age"'/>
-                                        <@spring.showErrors "<br>" "error text-danger" />
-                                    </div>
-
-                                    <div class="form-outline mb-4">
-                                        <label class="form-label" for="email">Email</label>
-                                        <@spring.formInput "user.email", 'class="form-control form-control-lg" id="email"'/>
-                                        <@spring.showErrors "<br>" "error text-danger" />
-                                    </div>
-
-                                    <div class="form-outline mb-4">
-                                        <label class="form-label" for="password">Password</label>
-                                        <@spring.formInput "user.password", 'class="form-control form-control-lg" id="password"'/>
-                                        <@spring.showErrors "<br>" "error text-danger" />
-                                    </div>
-
-                                    <div class="form-outline mb-4">
-                                        <label class="form-label" for="phoneNumber">Phone Number</label>
-                                        <@spring.formInput "user.phoneNumber", 'class="form-control form-control-lg" id="phoneNumber"'/>
-                                        <@spring.showErrors "<br>" "error text-danger" />
-                                    </div>
-
-                                    <div class="form-outline mb-4">
-                                        <label class="form-label" for="accountType">Account Type</label>
-                                        <select id="accountType" name="accountType" class="form-control form-control-lg"
-                                                required>
-                                            <option value="">Select account type</option>
-                                            <option value="JobSeeker">JobSeeker</option>
-                                            <option value="Employer">Employer</option>
-                                        </select>
-                                        <@spring.showErrors "<br>" "error text-danger" />
-                                    </div>
-
-                                    <div class="form-outline mb-4">
-                                        <label class="form-label" for="avatar">Avatar URL (optional)</label>
-                                        <@spring.formInput "user.avatar", 'class="form-control form-control-lg" id="avatar"'/>
-                                        <@spring.showErrors "<br>" "error text-danger" />
-                                    </div>
-
-                                    <div class="d-flex justify-content-center">
-                                        <button type="submit"
-                                                class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">
-                                            Register
-                                        </button>
-                                    </div>
-
-                                    <p class="text-center text-muted mt-5 mb-0">
-                                        Already have an account? <a href="/auth/login" class="fw-bold text-body"><u>Login
-                                                here</u></a>
-                                    </p>
-
-                                </form>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <form method="post" action="/users/registration" id="registerForm">
+        <div class="custom-form-group">
+            <label for="name">First Name</label>
+            <@spring.formInput "user.name", 'class="custom-form-control" id="name" placeholder="John" required'/>
+            <@spring.showErrors "<br>" "text-danger small"/>
         </div>
-    </section>
-</@main.layout>
+
+        <div class="custom-form-group">
+            <label for="surname">Last Name</label>
+            <@spring.formInput "user.surname", 'class="custom-form-control" id="surname" placeholder="Smith" required'/>
+            <@spring.showErrors "<br>" "text-danger small"/>
+        </div>
+
+        <div class="custom-form-group">
+            <label for="age">Age</label>
+            <@spring.formInput "user.age", 'class="custom-form-control" id="age" min="5" max="140" required'/>
+            <@spring.showErrors "<br>" "text-danger small"/>
+        </div>
+
+        <div class="custom-form-group">
+            <label for="email">Email</label>
+            <@spring.formInput "user.email", 'class="custom-form-control" id="email" placeholder="email@" type="email" required'/>
+            <@spring.showErrors "<br>" "text-danger small"/>
+        </div>
+
+        <div class="custom-form-group">
+            <label for="password">Password</label>
+            <@spring.formInput "user.password", 'class="custom-form-control" id="password" placeholder="Enter your password" type="password" autocomplete="new-password" required'/>
+            <@spring.showErrors "<br>" "text-danger small"/>
+        </div>
+
+        <div class="custom-form-group">
+            <label for="phoneNumber">Phone Number</label>
+            <@spring.formInput "user.phoneNumber", 'class="custom-form-control" id="phoneNumber" placeholder="+996..." required'/>
+            <@spring.showErrors "<br>" "text-danger small"/>
+        </div>
+
+        <div class="custom-form-group">
+            <label for="accountType">Account Type</label>
+            <@spring.formSingleSelect "user.accountType", {"": "Select account type", "JobSeeker": "JobSeeker", "Employer": "Employer"}, 'class="custom-form-control" id="accountType" required'/>
+            <@spring.showErrors "<br>" "text-danger small"/>
+        </div>
+
+        <div class="custom-form-group">
+            <label for="avatar">Avatar URL (optional)</label>
+            <@spring.formInput "user.avatar", 'class="custom-form-control" id="avatar" placeholder="https://example.com/avatar.jpg"'/>
+            <@spring.showErrors "<br>" "text-danger small"/>
+        </div>
+
+        <button type="submit" class="custom-btn-primary">Register</button>
+    </form>
+
+</@layout.layout>
