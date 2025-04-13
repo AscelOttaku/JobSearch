@@ -4,9 +4,10 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import kg.attractor.jobsearch.dto.UserDto;
-import kg.attractor.jobsearch.service.ResumeService;
+import kg.attractor.jobsearch.service.AuthorizedUserService;
+import kg.attractor.jobsearch.service.ProfileService;
 import kg.attractor.jobsearch.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,37 +22,31 @@ import java.util.List;
 import java.util.Set;
 
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("users")
 public class UserController {
+    private final AuthorizedUserService authorizedUserService;
     private final UserService userService;
-    private final ResumeService resumeService;
+    private final ProfileService profileService;
 
-    @Autowired
-    public UserController(UserService userService, ResumeService resumeService) {
-        this.userService = userService;
-        this.resumeService = resumeService;
-    }
-
-    @GetMapping("profile/{userId}")
+    @GetMapping("profile")
     @ResponseStatus(HttpStatus.OK)
-    public String getProfile(@PathVariable Long userId, Model model) {
-        UserDto userDto = userService.findUserById(userId);
-        model.addAttribute("user", userDto);
-        model.addAttribute("resumes", resumeService.findResumeByUserId(userDto.getUserId()));
+    public String getProfile(Model model) {
+        model.addAllAttributes(profileService.getProfile());
         return "users/profile";
     }
 
     @PostMapping("registration")
     @ResponseStatus(HttpStatus.SEE_OTHER)
     public String createUser(@Valid UserDto userDto) {
-        var userId = userService.createUser(userDto);
-        return "redirect:/users/profile/" + userId;
+        userService.createUser(userDto);
+        return "redirect:/users/profile";
     }
 
-    @GetMapping("update/profile/{userId}")
+    @GetMapping("update/profile")
     @ResponseStatus(HttpStatus.OK)
-    public String editPage(@PathVariable Long userId, Model model) {
-        UserDto userDto = userService.findUserById(userId);
+    public String editPage(Model model) {
+        UserDto userDto = userService.findUserById(authorizedUserService.getAuthorizedUserId());
         model.addAttribute("user", userDto);
         return "users/update_profile";
     }
@@ -76,9 +71,9 @@ public class UserController {
         return userService.findEmployerByEmail(employerEmail);
     }
 
-    @PutMapping("upload/avatars")
+    @PostMapping("upload/avatars")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Object> uploadAvatar(MultipartFile file) throws IOException {
+    public ResponseEntity<?> uploadAvatar(MultipartFile file) throws IOException {
         return userService.uploadAvatar(file);
     }
 
@@ -132,23 +127,17 @@ public class UserController {
     }
 
     @PutMapping("updates")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateUser(
-            @RequestBody @Valid UserDto userDto,
-            @AuthenticationPrincipal UserDetails userDetails
-    ) throws IOException {
-        userService.updateUser(userDto, userDetails);
-    }
-
-    @PutMapping("updates/non_authorized")
     @ResponseStatus(HttpStatus.SEE_OTHER)
-    public String updateUser(UserDto userDto) {
-        Long userId = userService.updateUser(userDto);
-        return "redirect:/users/profile/".concat(String.valueOf(userId));
+    public String updateUser(
+            @ModelAttribute @Valid UserDto userDto,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        userService.updateUser(userDto, userDetails);
+        return "redirect:/users/profile";
     }
 
     @GetMapping("avatars")
-    public ResponseEntity<Object> getAvatars() throws IOException {
+    public ResponseEntity<?> getAvatars() throws IOException {
         return userService.getAvatarOfAuthorizedUser();
     }
 }

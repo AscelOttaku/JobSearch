@@ -17,6 +17,7 @@ import kg.attractor.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -50,7 +51,7 @@ public class RespondServiceImpl implements RespondService {
 
             if (isResumeByIdExist && isVacancyByIdExist) {
 
-                boolean isResumeBelongsToAuthorizedUser = resumeService.findResumeByUserId(userDto.getUserId())
+                boolean isResumeBelongsToAuthorizedUser = resumeService.findUserCreatedResumes()
                         .stream()
                         .anyMatch(resumeDto -> Objects.equals(resumeDto.getId(), respondApplicationDto.getResumeId()));
 
@@ -95,5 +96,13 @@ public class RespondServiceImpl implements RespondService {
 
         return allData.stream()
                 .noneMatch(data -> data.equals(respondApplication));
+    }
+
+    @Override
+    public List<RespondApplicationDto> findAllActiveResponsesByUserId(Long userId) {
+        return respondApplicationDao.findActiveRespondApplicationsByUserId(userId)
+                .stream()
+                .map(respondApplicationMapper::mapToDto)
+                .toList();
     }
 }

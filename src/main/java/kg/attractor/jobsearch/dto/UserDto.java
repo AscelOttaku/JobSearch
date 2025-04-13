@@ -1,15 +1,18 @@
 package kg.attractor.jobsearch.dto;
 
 import jakarta.validation.constraints.*;
+import kg.attractor.jobsearch.annotations.ValidPassword;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
 
 @Builder
 @Getter
 @Setter
+@ValidPassword
 public class UserDto {
 
     private Long userId;
@@ -39,12 +42,6 @@ public class UserDto {
     @Email(message = "{email_message}")
     private String email;
 
-    @NotNull(message = "{null_message}")
-    @NotBlank(message = "{blank_message}")
-    @Pattern(
-            regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).+$",
-            message = "{password_message}"
-    )
     private String password;
 
     @NotNull(message = "{null_message}")

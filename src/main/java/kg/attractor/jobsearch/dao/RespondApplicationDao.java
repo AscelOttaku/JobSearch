@@ -50,4 +50,13 @@ public class RespondApplicationDao {
 
         return jdbcTemplate.query(query, respondApplicationRowMapper);
     }
+
+    public List<RespondedApplication> findActiveRespondApplicationsByUserId(Long userId) {
+        String query = "select * from RESPONDED_APPLICATION RA " +
+                "LEFT JOIN RESUMES R ON R.ID = RA.RESUME_ID " +
+                "LEFT JOIN USERS U ON U.USER_ID = R.USER_ID " +
+                " where U.USER_ID = ? And CONFIRMATION = TRUE";
+
+        return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(RespondedApplication.class), userId);
+    }
 }

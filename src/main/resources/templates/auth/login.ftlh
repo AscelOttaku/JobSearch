@@ -8,27 +8,30 @@
             <p>Enter Your Account Data</p>
         </div>
 
-
-        <form id="loginForm">
+        <form id="login-form" action="/auth/login" method="post">
             <div class="form-group">
                 <label for="email">Email</label>
-                <input
-                        type="email"
-                        id="email"
-                        placeholder="email@"
-                        autocomplete="email"
-                >
+                <label>
+                    <input
+                            type="email"
+                            name="username"
+                            placeholder="email@"
+                            autocomplete="email"
+                    >
+                </label>
                 <div class="error" id="emailError"></div>
             </div>
 
             <div class="form-group">
                 <label for="password">Password</label>
-                <input
-                        type="password"
-                        id="password"
-                        placeholder="Enter your password"
-                        autocomplete="current-password"
-                >
+                <label>
+                    <input
+                            type="password"
+                            name="password"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                    >
+                </label>
                 <div class="error" id="passwordError"></div>
             </div>
 
@@ -55,7 +58,7 @@
         </div>
 
         <div class="signup-link">
-            <p>Don't have an account? <a href="auth/registration">Sign up</a></p>
+            <p>Don't have an account? <a href="/auth/registration">Sign up</a></p>
         </div>
     </div>
 </@layout.layout>

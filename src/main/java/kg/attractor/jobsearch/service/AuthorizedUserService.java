@@ -6,4 +6,6 @@ public interface AuthorizedUserService {
     UserDto getAuthorizedUser();
 
     boolean checkIfJobSeekerExistByEmail(String userEmail);
+
+    Long getAuthorizedUserId();
 }

@@ -116,4 +116,10 @@ public class VacancyDao {
                 vacancy.getId()
         ) > 0 ? vacancy.getId() : -1L;
     }
+
+    public List<Vacancy> findUserCreatedVacanciesByUserId(Long userId) {
+        String query = "select * from vacancies where vacancy_user_id = ?";
+
+        return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Vacancy.class), userId);
+    }
 }

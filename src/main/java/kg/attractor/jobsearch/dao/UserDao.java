@@ -5,12 +5,8 @@ import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,29 +73,22 @@ public class UserDao {
         return handleDataAccessException(() -> jdbcTemplate.queryForObject(query, userRowMapper, email));
     }
 
-    public Long createUser(User user) {
+    public void createUser(User user) {
         String query = "insert into USERS (FIRST_NAME, SURNAME, AGE, EMAIL, PASSWORD, PHONE_NUMBER, ACCOUNT_TYPE, ENABLED, ROLE_ID)" +
                 "values ( ?,?,?,?,?,?,?,?,? ) ";
 
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, user.getName());
-            ps.setString(2, user.getSurname());
-            ps.setInt(3, user.getAge());
-            ps.setString(4, user.getEmail());
-            ps.setString(5, user.getPassword());
-            ps.setString(6, user.getPhoneNumber());
-            ps.setString(7, user.getAccountType());
-            ps.setBoolean(8, true);
-            ps.setObject(9, getUserRole(user.getAccountType()));
-
-            return ps;
-        }, keyHolder);
-
-        Number number = keyHolder.getKey();
-        return number != null ? number.longValue() : -1;
+        jdbcTemplate.update(
+                query,
+                user.getName(),
+                user.getSurname(),
+                user.getAge(),
+                user.getEmail(),
+                user.getPassword(),
+                user.getPhoneNumber(),
+                user.getAccountType(),
+                true,
+                getUserRole(user.getAccountType())
+                );
     }
 
     public Optional<User> findUserById(Long userId) {
@@ -154,5 +143,18 @@ public class UserDao {
                 "where EMAIL = ? ";
 
         jdbcTemplate.update(query, fileName, userEmail);
+    }
+
+    public Optional<String> findPasswordByUserId(Long userId) {
+        String query = "select PASSWORD from users where USER_ID = ?";
+
+        return handleDataAccessException(() ->
+                jdbcTemplate.queryForObject(query, String.class, userId));
+    }
+
+    public Optional<Long> findUserIdByEmail(String email) {
+        String query = "select USER_ID from USERS where EMAIL ilike ?";
+
+        return handleDataAccessException(() -> jdbcTemplate.queryForObject(query, Long.class, email));
     }
 }

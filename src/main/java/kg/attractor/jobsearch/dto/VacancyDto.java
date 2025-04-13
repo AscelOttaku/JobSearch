@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Builder
 @Getter
 @Setter
@@ -49,4 +51,7 @@ public class VacancyDto {
     private boolean isActive;
 
     private final Long userId;
+
+    private String created;
+    private String updated;
 }

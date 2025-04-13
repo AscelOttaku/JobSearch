@@ -10,15 +10,13 @@ import java.util.List;
 import java.util.Set;
 
 public interface UserService {
-    ResponseEntity<Object> uploadAvatar(MultipartFile file) throws IOException;
+    ResponseEntity<?> uploadAvatar(MultipartFile file) throws IOException;
 
-    ResponseEntity<Object> getAvatarOfAuthorizedUser() throws IOException;
+    ResponseEntity<?> getAvatarOfAuthorizedUser() throws IOException;
 
-    Long createUser(UserDto userDto);
+    void createUser(UserDto userDto);
 
-    void updateUser(UserDto userDto, UserDetails userDetails) throws IOException;
-
-    Long updateUser(UserDto userDto);
+    void updateUser(UserDto userDto, UserDetails userDetails);
 
     UserDto findJobSeekerByEmail(String userEmail);
 
@@ -39,4 +37,6 @@ public interface UserService {
     boolean checkIfJobSeekerExistById(Long jobSeekerId);
 
     UserDto findUserById(Long userId);
+
+    String findUserPasswordByUserId(Long userId);
 }

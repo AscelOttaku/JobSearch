@@ -1,9 +1,11 @@
 package kg.attractor.jobsearch.util;
 
 import lombok.experimental.UtilityClass;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.regex.Pattern;
 
 @UtilityClass
 public class Util {
@@ -20,5 +22,14 @@ public class Util {
             return null;
 
         return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(dateTime);
+    }
+
+    public static String encodePassword(PasswordEncoder passwordEncoder, String password) {
+        Pattern bcryptPattern = Pattern.compile("\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}");
+
+        if (bcryptPattern.matcher(password).matches())
+            return password;
+
+        return passwordEncoder.encode(password);
     }
 }

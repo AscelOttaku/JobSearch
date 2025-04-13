@@ -140,7 +140,9 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public List<ResumeDto> findResumeByUserId(Long userId) {
+    public List<ResumeDto> findUserCreatedResumes() {
+        Long userId = authorizedUserService.getAuthorizedUserId();
+
         return resumeDao.findResumeByUserId(userId).stream()
                 .map(resumeMapper::mapToDto)
                 .toList();

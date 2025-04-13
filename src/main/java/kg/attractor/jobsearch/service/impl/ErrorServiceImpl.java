@@ -10,6 +10,7 @@ import kg.attractor.jobsearch.service.ErrorService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
@@ -31,19 +32,9 @@ public class ErrorServiceImpl implements ErrorService {
         List<ValidationErrorBody> errors = new ArrayList<>();
 
         ex.getBindingResult().getAllErrors().forEach(error -> {
-            FieldError fieldError = (FieldError) error;
-            String message = fieldError.getDefaultMessage();
-            String objectName = fieldError.getObjectName();
-            String fieldName = fieldError.getField();
-            Object rejectedValue = fieldError.getRejectedValue();
 
-            errors.add(ValidationErrorBody
-                    .builder()
-                    .objectName(objectName)
-                    .rejectedValue(rejectedValue)
-                    .fieldName(fieldName)
-                    .message(message)
-                    .build());
+            if (error instanceof FieldError fieldError)
+                getFieldErrors(fieldError, errors);
         });
 
         return ValidationExceptionBody.builder()
@@ -56,6 +47,21 @@ public class ErrorServiceImpl implements ErrorService {
                 .errors(errors)
                 .path(httpServletRequest.getRequestURL().toString())
                 .build();
+    }
+
+    private void getFieldErrors(FieldError fieldError, List<ValidationErrorBody> errors) {
+        String message = fieldError.getDefaultMessage();
+        String objectName = fieldError.getObjectName();
+        String fieldName = fieldError.getField();
+        Object rejectedValue = fieldError.getRejectedValue();
+
+        errors.add(ValidationErrorBody
+                .builder()
+                .objectName(objectName)
+                .rejectedValue(rejectedValue)
+                .fieldName(fieldName)
+                .message(message)
+                .build());
     }
 
     @Override

@@ -2,7 +2,7 @@ package kg.attractor.jobsearch.controller;
 
 import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.service.ResumeService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,13 +15,9 @@ import java.util.List;
 
 @Controller
 @RequestMapping("resumes")
-public class ResumeControllerMvc {
+@RequiredArgsConstructor
+public class ResumeController {
     private final ResumeService resumeService;
-
-    @Autowired
-    public ResumeControllerMvc(ResumeService resumeService) {
-        this.resumeService = resumeService;
-    }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -31,11 +27,20 @@ public class ResumeControllerMvc {
         return "resumes/resumes";
     }
 
-    @GetMapping("users/{userId}")
+    @GetMapping("users")
     @ResponseStatus(HttpStatus.OK)
-    public String findUserResumes(@PathVariable Long userId, Model model) {
-        List<ResumeDto> resumeDtos = resumeService.findResumeByUserId(userId);
+    public String findUserResumes(Model model) {
+        List<ResumeDto> resumeDtos = resumeService
+                .findUserCreatedResumes();
+
         model.addAttribute("resumes", resumeDtos);
         return "resumes/resumes";
+    }
+
+    @GetMapping("{resumeId}")
+    @ResponseStatus(HttpStatus.OK)
+    public String findResumeById(@PathVariable Long resumeId, Model model) {
+        model.addAttribute("resume", resumeService.findResumeById(resumeId));
+        return "resumes/resume";
     }
 }

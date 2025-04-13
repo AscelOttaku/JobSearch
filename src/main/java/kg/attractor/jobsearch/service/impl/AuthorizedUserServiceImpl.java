@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 
 import java.util.Optional;
 
@@ -43,5 +44,18 @@ public class AuthorizedUserServiceImpl implements AuthorizedUserService {
         Optional<User> user = userDao.findUserByEmail(userEmail);
 
         return user.isPresent() && user.get().getAccountType().equalsIgnoreCase("JobSeeker");
+    }
+
+    @Override
+    public Long getAuthorizedUserId() {
+        return userDao.findUserIdByEmail(getAuthorizedUserDetails().getUsername())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "authorized user not found by email ",
+                        CustomBindingResult.builder()
+                                .className(User.class.getSimpleName())
+                                .fieldName("email")
+                                .rejectedValue(getAuthorizedUserDetails().getUsername())
+                                .build()
+                ));
     }
 }
