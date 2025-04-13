@@ -21,28 +21,31 @@ public class ValidPasswordValidator implements ConstraintValidator<ValidPassword
         Long userId = userDto.getUserId();
 
         if (Validator.isStringNotValid(password)) {
+
+            if (userId == null)
+                return getNullContext(constraintValidatorContext, "Password cannot be null or blank");
+
             String hasPreviousPassword = userService.findUserPasswordByUserId(userId);
 
-            if (Validator.isStringNotValid(hasPreviousPassword)) {
-                constraintValidatorContext.buildConstraintViolationWithTemplate(
-                        "Password cannot be null or blank"
-                )
-                        .addPropertyNode("password")
-                        .addConstraintViolation();
-                return false;
-            }
+            if (Validator.isStringNotValid(hasPreviousPassword))
+                return getNullContext(constraintValidatorContext, "Password cannot be null or blank");
+
             userDto.setPassword(hasPreviousPassword);
             return true;
         }
 
         if (!password.matches("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).+$")) {
-            constraintValidatorContext.buildConstraintViolationWithTemplate(
-                    "password should contains at least one digit"
-            )
-                    .addPropertyNode("password")
-                    .addConstraintViolation();
-            return false;
+            return getNullContext(constraintValidatorContext, "password should contains at least one digit");
         }
         return true;
+    }
+
+    private static boolean getNullContext(ConstraintValidatorContext constraintValidatorContext, String message) {
+        constraintValidatorContext.buildConstraintViolationWithTemplate(
+                        message
+                )
+                .addPropertyNode("password")
+                .addConstraintViolation();
+        return false;
     }
 }

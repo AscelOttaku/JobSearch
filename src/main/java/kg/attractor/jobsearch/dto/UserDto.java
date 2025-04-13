@@ -2,10 +2,7 @@ package kg.attractor.jobsearch.dto;
 
 import jakarta.validation.constraints.*;
 import kg.attractor.jobsearch.annotations.ValidPassword;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -13,6 +10,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ValidPassword
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserDto {
 
     private Long userId;

@@ -168,7 +168,7 @@
                                                             </small>
                                                         </div>
                                                         <div>
-                                                            <a href="resumes/${resume.id}"
+                                                            <a href="/resumes/${resume.id}"
                                                                class="btn btn-sm btn-outline-primary me-1">
                                                                 <i class="bi bi-eye"></i>
                                                             </a>

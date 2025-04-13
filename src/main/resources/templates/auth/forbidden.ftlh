@@ -1,4 +1,4 @@
-<#import "../layout/layout.ftlh" as layout>
+<#import "../layout.ftlh" as layout>
 
 <style>
     @import url('https://fonts.googleapis.com/css?family=Press+Start+2P');

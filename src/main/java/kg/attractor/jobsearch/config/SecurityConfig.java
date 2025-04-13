@@ -65,37 +65,21 @@ public class SecurityConfig {
 
                                 //Vacancies Endpoints
 
-                                .requestMatchers(POST, "/vacancies/new-vacancies")
-                                .hasAuthority(Role.EMPLOYER.getValue())
-                                .requestMatchers(PUT, "/vacancies/redactor-vacancies")
-                                .hasAuthority(Role.EMPLOYER.getValue())
-                                .requestMatchers(DELETE, "/vacancies/delete_vacancies")
-                                .hasAuthority(Role.EMPLOYER.getValue())
-                                .requestMatchers("/vacancies/users/responded_vacancies")
-                                .hasAuthority(Role.EMPLOYER.getValue())
+                                .requestMatchers(POST, "/vacancies/new-vacancies").hasAuthority(Role.EMPLOYER.getValue())
+                                .requestMatchers(PUT, "/vacancies/redactor-vacancies").hasAuthority(Role.EMPLOYER.getValue())
+                                .requestMatchers(DELETE, "/vacancies/delete_vacancies").hasAuthority(Role.EMPLOYER.getValue())
+                                .requestMatchers("/vacancies/users/responded_vacancies").hasAuthority(Role.EMPLOYER.getValue())
 
-                                // Users Endpoints
-
-                                .requestMatchers(POST, "/users/registration")
-                                .anonymous()
-                                .requestMatchers(GET, "/users/profile")
-                                .fullyAuthenticated()
-                                .requestMatchers(POST, "/users/registration")
-                                .permitAll()
-                                .requestMatchers(PUT, "/users/updates")
-                                .fullyAuthenticated()
-                                .requestMatchers("/users/responded/vacancies/*")
-                                .hasAuthority(Role.EMPLOYER.getValue())
-                                .requestMatchers("/users/employer/*")
-                                .hasAuthority(Role.JOB_SEEKER.getValue())
-                                .requestMatchers("/users/job-seeker/*")
-                                .hasAuthority(Role.EMPLOYER.getValue())
-                                .requestMatchers("/users/upload/*")
-                                .fullyAuthenticated()
-                                .requestMatchers("/users/avatars")
-                                .fullyAuthenticated()
-                                .requestMatchers("/users/**")
-                                .hasAuthority(Role.EMPLOYER.getValue())
+                                // Users
+                                .requestMatchers(PUT, "/users/updates").hasAnyAuthority(Role.EMPLOYER.getValue(), Role.JOB_SEEKER.getValue())
+                                .requestMatchers(POST, "/users/registration").anonymous()
+                                .requestMatchers(GET, "/users/profile").fullyAuthenticated()
+                                .requestMatchers("users/update/profile").fullyAuthenticated()
+                                .requestMatchers("/users/responded/vacancies/*").hasAuthority(Role.EMPLOYER.getValue())
+                                .requestMatchers("/users/employer/*").hasAuthority(Role.JOB_SEEKER.getValue())
+                                .requestMatchers("/users/job-seeker/*").hasAuthority(Role.EMPLOYER.getValue())
+                                .requestMatchers("/users/upload/*").fullyAuthenticated().requestMatchers("/users/avatars").fullyAuthenticated()
+                                .requestMatchers(GET,"/users/**").hasAuthority(Role.EMPLOYER.getValue())
 
 //                                RespondedApplication Endpoints
 
@@ -104,16 +88,11 @@ public class SecurityConfig {
 
 //                                Resumes Endpoints
 
-                                .requestMatchers(GET, "/resumes")
-                                .hasAuthority(Role.EMPLOYER.getValue())
-                                .requestMatchers(POST, "/resumes")
-                                .hasAuthority(Role.JOB_SEEKER.getValue())
-                                .requestMatchers(PUT, "/resumes/*")
-                                .hasAuthority(Role.JOB_SEEKER.getValue())
-                                .requestMatchers(DELETE, "/resumes/*")
-                                .hasAuthority(Role.JOB_SEEKER.getValue())
-                                .requestMatchers("/resumes/*")
-                                .authenticated()
+                                .requestMatchers(GET, "/resumes").hasAuthority(Role.EMPLOYER.getValue())
+                                .requestMatchers(POST, "/resumes").hasAuthority(Role.JOB_SEEKER.getValue())
+                                .requestMatchers(PUT, "/resumes/*").hasAuthority(Role.JOB_SEEKER.getValue())
+                                .requestMatchers(DELETE, "/resumes/*").hasAuthority(Role.JOB_SEEKER.getValue())
+                                .requestMatchers("/resumes/*").authenticated()
 
                                 //All Other Endpoints
 

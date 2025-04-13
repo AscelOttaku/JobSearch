@@ -14,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,8 +38,12 @@ public class UserController {
     }
 
     @PostMapping("registration")
-    @ResponseStatus(HttpStatus.SEE_OTHER)
-    public String createUser(@Valid UserDto userDto) {
+    public String createUser(@Valid @ModelAttribute("user")  UserDto userDto, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("user", userDto);
+            return "auth/register";
+        }
+
         userService.createUser(userDto);
         return "redirect:/users/profile";
     }

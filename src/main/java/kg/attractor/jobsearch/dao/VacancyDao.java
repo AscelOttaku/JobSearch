@@ -1,6 +1,9 @@
 package kg.attractor.jobsearch.dao;
 
 import kg.attractor.jobsearch.model.Vacancy;
+import kg.attractor.jobsearch.util.ExceptionHandler;
+import kg.attractor.jobsearch.util.Util;
+import kg.attractor.jobsearch.validators.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,6 +16,8 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
+
+import static kg.attractor.jobsearch.util.ExceptionHandler.handleDataAccessException;
 
 @Component
 @RequiredArgsConstructor
@@ -56,9 +61,9 @@ public class VacancyDao {
     public Optional<Vacancy> findVacancyById(Long vacancyId) {
         String query = "SELECT * FROM VACANCIES WHERE ID = ?";
 
-        return Optional.ofNullable(jdbcTemplate.query(
+        return handleDataAccessException(() -> jdbcTemplate.queryForObject(
                 query, new BeanPropertyRowMapper<>(Vacancy.class), vacancyId
-        ).getFirst());
+        ));
     }
 
     public boolean deleteVacancyById(Long vacancyId) {

@@ -9,16 +9,17 @@ import kg.attractor.jobsearch.exceptions.body.ValidationExceptionBody;
 import kg.attractor.jobsearch.service.ErrorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.time.format.DateTimeParseException;
 import java.util.Map;
 
-@RestControllerAdvice
+@ControllerAdvice
 @RequiredArgsConstructor
 @Valid
 public class GlobalControllerAdvice {
@@ -34,10 +35,14 @@ public class GlobalControllerAdvice {
 
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public InputElementExceptionBody handleNoSuchElementException(
-            EntityNotFoundException ex, HttpServletRequest request
+    public String handleNoSuchElementException(
+            Model model, EntityNotFoundException ex, HttpServletRequest request
     ) {
-        return errorService.handleNoSuchElementException(ex, request);
+        model.addAttribute("status", HttpStatus.NOT_FOUND.value());
+        model.addAttribute("reason", HttpStatus.NOT_FOUND.getReasonPhrase());
+        model.addAttribute("message", ex.getMessage());
+        model.addAttribute("details", request);
+        return "errors/error";
     }
 
     @ExceptionHandler(CustomIllegalArgException.class)

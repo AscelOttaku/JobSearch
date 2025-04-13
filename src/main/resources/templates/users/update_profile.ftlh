@@ -1,4 +1,4 @@
-<#import "../layout/layout.ftlh" as layout>
+<#import "../layout.ftlh" as layout>
 
 <!doctype html>
 <html lang="en">

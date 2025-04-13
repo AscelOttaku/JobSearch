@@ -1,8 +1,13 @@
 package kg.attractor.jobsearch.controller;
 
+import jakarta.validation.Valid;
+import kg.attractor.jobsearch.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -21,7 +26,8 @@ public class AuthController {
     }
 
     @GetMapping("registration")
-    public String registerForm() {
+    public String registerForm(Model model) {
+        model.addAttribute("user", new UserDto());
         return "auth/register";
     }
 }
