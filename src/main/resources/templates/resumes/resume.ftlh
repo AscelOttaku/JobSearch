@@ -5,13 +5,15 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/static/css/resume.css">
     <title>Resume</title>
 </head>
 <#include "../layout/navbar.ftlh">
 <body>
 <div class="container">
-    <div class="row g-4 mb-5">
+    <div class="row g-4 mt-5">
         <div class="col-md-6 col-lg-4">
             <div class="card resume-item">
                 <div class="card-body">

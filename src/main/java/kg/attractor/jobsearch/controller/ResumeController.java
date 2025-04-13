@@ -1,7 +1,6 @@
 package kg.attractor.jobsearch.controller;
 
 import kg.attractor.jobsearch.dto.ResumeDto;
-import kg.attractor.jobsearch.service.AuthorizedUserService;
 import kg.attractor.jobsearch.service.ResumeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -38,9 +37,9 @@ public class ResumeController {
         return "resumes/resumes";
     }
 
-    @GetMapping("users/{resumeId}")
+    @GetMapping("{resumeId}")
     @ResponseStatus(HttpStatus.OK)
-    public String findUserResumeById(@PathVariable Long resumeId, Model model) {
+    public String findResumeById(@PathVariable Long resumeId, Model model) {
         model.addAttribute("resume", resumeService.findResumeById(resumeId));
         return "resumes/resume";
     }

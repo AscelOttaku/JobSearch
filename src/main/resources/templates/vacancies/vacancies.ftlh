@@ -76,11 +76,10 @@
                             </p>
                         </div>
 
-                        <#if vacancy.description??>
-                            <div class="mb-3">
-                                <p class="card-text">${vacancy.description}</p>
-                            </div>
-                        </#if>
+                        <a href="/vacancies/${vacancy.vacancyId}" class="btn btn-sm btn-outline-primary"
+                           title="Посмотреть резюме">
+                            <i class="bi bi-eye"></i>
+                        </a>
                     </div>
                 </div>
             </div>

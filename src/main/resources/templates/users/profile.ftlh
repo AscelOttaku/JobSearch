@@ -130,14 +130,14 @@
                             <div>
                                 <#if user.accountType == "JobSeeker">
                                     <a href="/resumes/users" class="btn btn-view-all">
-                                        <i class="bi bi-collection me-2"></i>Все резюме
+                                        <i class="bi bi-collection me-2"></i>Все созданные резюме
                                     </a>
                                     <a href="/users/resume/create" class="btn btn-primary">
                                         <i class="bi bi-plus-circle me-2"></i>Создать резюме
                                     </a>
                                 <#elseif user.accountType == "Employer">
                                     <a href="/vacancies/users" class="btn btn-view-all">
-                                        <i class="bi bi-collection me-2"></i>Все Вакансии
+                                        <i class="bi bi-collection me-2"></i>Все созданные Вакансии
                                     </a>
                                     <a href="/users/resume/create" class="btn btn-primary">
                                         <i class="bi bi-plus-circle me-2"></i>Создать вакансию
@@ -168,7 +168,7 @@
                                                             </small>
                                                         </div>
                                                         <div>
-                                                            <a href="resumes/users/${resume.id}"
+                                                            <a href="resumes/${resume.id}"
                                                                class="btn btn-sm btn-outline-primary me-1">
                                                                 <i class="bi bi-eye"></i>
                                                             </a>
@@ -214,7 +214,7 @@
                                                             </small>
                                                         </div>
                                                         <div>
-                                                            <a href="/vacancies/users/${vacancy.vacancyId}"
+                                                            <a href="/vacancies/${vacancy.vacancyId}"
                                                                class="btn btn-sm btn-outline-primary me-1">
                                                                 <i class="bi bi-eye"></i>
                                                             </a>

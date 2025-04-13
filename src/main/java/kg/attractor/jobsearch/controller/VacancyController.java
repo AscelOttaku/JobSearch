@@ -39,7 +39,7 @@ public class VacancyController {
         return "vacancies/vacancies";
     }
 
-    @GetMapping("users/{vacancyId}")
+    @GetMapping("{vacancyId}")
     @ResponseStatus(HttpStatus.OK)
     public String findVacancyById(@PathVariable Long vacancyId, Model model) {
         model.addAttribute("vacancy", vacancyService.findVacancyById(vacancyId));

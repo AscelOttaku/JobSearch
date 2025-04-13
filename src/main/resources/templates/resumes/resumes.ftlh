@@ -49,6 +49,10 @@
                             <small class="text-muted">
                                 <i class="bi bi-calendar me-1"></i>Обновлено: ${resume.updated!resume.created}
                             </small>
+                            <a href="/resumes/${resume.id}" class="btn btn-sm btn-outline-primary"
+                               title="Посмотреть резюме">
+                                <i class="bi bi-eye"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
