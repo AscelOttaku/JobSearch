@@ -1,7 +1,6 @@
 package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dto.EducationalInfoDto;
-import kg.attractor.jobsearch.dto.ResumeDetailedInfoDto;
 import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.dto.WorkExperienceInfoDto;
 import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
@@ -13,8 +12,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -23,15 +23,13 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
     private final WorkExperienceInfoService workExperienceInfoService;
     private final ResumeService resumeService;
     private final EducationInfoService educationInfoService;
-    private final CategoryService categoryService;
     private final AuthorizedUserService authorizedUserService;
 
     @Override
-    public ResumeDetailedInfoDto createResume(ResumeDetailedInfoDto resumeDetailedInfoDto) {
-        ResumeDto getResumeDto = resumeDetailedInfoDto.getResumeDto();
-        getResumeDto.setUserId(authorizedUserService.getAuthorizedUser().getUserId());
+    public Long createResume(ResumeDto resumeDto) {
+        resumeDto.setUserId(authorizedUserService.getAuthorizedUser().getUserId());
 
-        Long resumeId = resumeService.createResume(getResumeDto);
+        Long resumeId = resumeService.createResume(resumeDto);
 
         if (resumeId == -1) {
             log.warn("Resume wasn't created");
@@ -40,52 +38,30 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
                     CustomBindingResult.builder()
                             .className(Resume.class.getSimpleName())
                             .fieldName("resume")
-                            .rejectedValue(resumeDetailedInfoDto.getResumeDto())
+                            .rejectedValue(resumeDto)
                             .build()
             );
         }
 
-        List<Long> educationInfosIds = educationInfoService
+        educationInfoService
                 .createEducationInfos(
-                        resumeDetailedInfoDto.getEducationInfoDtos(), resumeId
+                        resumeDto.getEducationInfoDtos(), resumeId
                 );
 
-        List<Long> workExperienceInfosIds = workExperienceInfoService
+        workExperienceInfoService
                 .createWorkExperienceInfos(
-                        resumeDetailedInfoDto.getWorkExperienceInfoDtos(), resumeId
+                        resumeDto.getWorkExperienceInfoDtos(), resumeId
                 );
 
-        return findAndMapToResumeDetailedInfoOrThrowResumeNotFoundException(resumeId, educationInfosIds, workExperienceInfosIds);
-    }
-
-    private ResumeDetailedInfoDto findAndMapToResumeDetailedInfoOrThrowResumeNotFoundException(
-            Long resumeId, List<Long> educationOpIds, List<Long> workExperienceOpIds
-    ) {
-        ResumeDto resumeDto = resumeService.findResumeById(resumeId);
-
-        List<EducationalInfoDto> educationInfosDtos = Collections.emptyList();
-
-        if (!educationOpIds.isEmpty())
-            educationInfosDtos = educationInfoService.findEducationInfoDtosByIds(educationOpIds);
-
-        List<WorkExperienceInfoDto> workExperienceInfoDtos = Collections.emptyList();
-
-        if (!workExperienceOpIds.isEmpty())
-            workExperienceInfoDtos = workExperienceInfoService.findWorkExperienceByIds(workExperienceOpIds);
-
-        return ResumeDetailedInfoDto.builder()
-                .resumeDto(resumeDto)
-                .educationInfoDtos(educationInfosDtos)
-                .workExperienceInfoDtos(workExperienceInfoDtos)
-                .build();
+        return resumeId;
     }
 
     @Override
-    public void updateResumeDetailedInfo(ResumeDetailedInfoDto resumeDetailedInfoDto, Long resumeId) {
+    public void updateResumeDetailedInfo(ResumeDto resumeDto, Long resumeId) {
         long authorizedUserId = authorizedUserService.getAuthorizedUser().getUserId();
-        ResumeDto resumeDto = resumeService.findResumeById(resumeId);
+        ResumeDto previousResume = resumeService.findResumeById(resumeId);
 
-        if (authorizedUserId != resumeDto.getUserId()) {
+        if (authorizedUserId != previousResume.getUserId()) {
             log.warn("Resume doesn't belongs to user");
             throw new CustomIllegalArgException(
                     "Resume doesn't belongs to authorized user",
@@ -97,37 +73,24 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
             );
         }
 
-        ResumeDto getResumeDto = resumeDetailedInfoDto.getResumeDto();
-        getResumeDto.setId(resumeId);
-        getResumeDto.setUserId(authorizedUserId);
+        resumeDto.setId(resumeId);
+        resumeDto.setUserId(authorizedUserId);
 
-        boolean res = resumeService.updateResume(getResumeDto);
+        boolean res = resumeService.updateResume(resumeDto);
 
         if (!res)
             log.info("Update Resume Operation stopped there is no changes");
 
-        List<WorkExperienceInfoDto> workExperienceInfoDtos = resumeDetailedInfoDto.getWorkExperienceInfoDtos();
+        List<WorkExperienceInfoDto> workExperienceInfoDtos = previousResume.getWorkExperienceInfoDtos();
         workExperienceInfoDtos.forEach(workExperienceInfoDto ->
                 workExperienceInfoDto.setResumeId(resumeId));
 
-        List<EducationalInfoDto> educationalInfoDtos = resumeDetailedInfoDto.getEducationInfoDtos();
+        List<EducationalInfoDto> educationalInfoDtos = previousResume.getEducationInfoDtos();
         educationalInfoDtos.forEach(educationalInfoDto ->
                 educationalInfoDto.setResumeId(resumeId));
 
         updateWorkExperienceInfo(workExperienceInfoDtos);
-        updateEducationalInfo(resumeDetailedInfoDto.getEducationInfoDtos());
-    }
-
-    @Override
-    public List<ResumeDetailedInfoDto> findAllResumesWithDetailedInfo() {
-
-        return resumeService.findAllResumesIds().stream()
-                .map(id -> ResumeDetailedInfoDto.builder()
-                        .resumeDto(resumeService.findResumeById(id))
-                        .workExperienceInfoDtos(workExperienceInfoService.findWorkExperienceByResumeId(id))
-                        .educationInfoDtos(educationInfoService.findEducationInfosByResumeId(id))
-                        .build())
-                .toList();
+        updateEducationalInfo(previousResume.getEducationInfoDtos());
     }
 
     private void updateEducationalInfo(List<EducationalInfoDto> educationalInfoDtos) {
@@ -142,5 +105,16 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
             return;
 
         workExperienceInfoService.updateWorkExperienceInfo(workExperienceInfoDtos);
+    }
+
+    @Override
+    public Map<String, Object> getResumeDtoModel() {
+        Map<String, Object> model = new HashMap<>();
+        ResumeDto resumeDto = new ResumeDto();
+        resumeDto.setWorkExperienceInfoDtos(List.of(new WorkExperienceInfoDto()));
+        resumeDto.setEducationInfoDtos(List.of(new EducationalInfoDto()));
+
+        model.put("resume", resumeDto);
+        return model;
     }
 }

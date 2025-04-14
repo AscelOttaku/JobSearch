@@ -34,7 +34,7 @@ public class DateIsBeforeValidator implements ConstraintValidator<IsDateCorrect,
         try {
             Field field = object.getClass().getDeclaredField(fieldName);
             field.setAccessible(true);
-            return Optional.of((LocalDateTime) field.get(object));
+            return Optional.ofNullable((LocalDateTime) field.get(object));
         } catch (IllegalAccessException | NoSuchFieldException e) {
             return Optional.empty();
         }

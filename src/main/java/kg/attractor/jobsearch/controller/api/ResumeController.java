@@ -3,7 +3,6 @@ package kg.attractor.jobsearch.controller.api;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import kg.attractor.jobsearch.annotations.EntityExistById;
-import kg.attractor.jobsearch.dto.ResumeDetailedInfoDto;
 import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.service.ResumeDetailedInfoService;
 import kg.attractor.jobsearch.service.ResumeService;
@@ -32,12 +31,6 @@ public class ResumeController {
         return resumeService.findAllResumes();
     }
 
-    @GetMapping("infos")
-    @ResponseStatus(HttpStatus.OK)
-    public List<ResumeDetailedInfoDto> findAllDetailedInfos() {
-        return resumeDetailedInfoService.findAllResumesWithDetailedInfo();
-    }
-
     @GetMapping("category")
     @ResponseStatus(HttpStatus.OK)
     public List<ResumeDto> findByResumeByCategory(@RequestParam Long category) {
@@ -46,8 +39,8 @@ public class ResumeController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResumeDetailedInfoDto createResume(
-            @RequestBody @Valid ResumeDetailedInfoDto resumeDto
+    public Long createResume(
+            @RequestBody @Valid ResumeDto resumeDto
     ) {
         return resumeDetailedInfoService.createResume(resumeDto);
     }
@@ -60,7 +53,7 @@ public class ResumeController {
                     entityType = EntityType.RESUMES,
                     message = "Resume id is not exists"
             ) Long resumeId,
-            @RequestBody @Valid ResumeDetailedInfoDto resumeDto
+            @RequestBody @Valid ResumeDto resumeDto
     ) {
         resumeDetailedInfoService.updateResumeDetailedInfo(resumeDto, resumeId);
     }

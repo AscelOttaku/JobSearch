@@ -1,7 +1,7 @@
 <#import "../layout.ftlh" as layout>
 <@layout.layout ; spring>
     <style>
-        .vacancy-form {
+        .resume-from {
             background: white;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -81,6 +81,15 @@
                             </label>
                             <@spring.formTextarea "vacancy.description", 'class="form-control" placeholder="Подробное описание вакансии" rows="4" id="description"'/>
                             <@spring.showErrors "<br>" "text-danger small"/>
+                        </div>
+
+                        <div class="mb-4 form-check form-switch">
+                            <input type="checkbox" class="form-check-input" role="switch"
+                                   id="active" name="active" ${(vacancy.active!true)?then('checked', '')}>
+                            <label class="form-check-label" for="active">
+                                <i class="bi bi-power form-icon me-2"></i>
+                                Вакансия активна
+                            </label>
                         </div>
 
                         <div class="d-grid gap-2">

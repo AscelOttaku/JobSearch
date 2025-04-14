@@ -51,6 +51,7 @@ public class VacancyController {
     }
 
     @PostMapping("new_vacancy")
+    @ResponseStatus(HttpStatus.CREATED)
     public String createVacancy(@ModelAttribute("vacancy") @Valid VacancyDto vacancyDto, BindingResult result, Model model) {
         if (result.hasErrors()) {
             model.addAttribute("vacancy", vacancyDto);

@@ -33,6 +33,75 @@
                         </p>
                     </div>
 
+                    <#if resume.workExperienceInfoDtos??>
+                        <div class="mb-3">
+                            <p class="card-text mb-2">
+                                <i class="bi bi-briefcase me-1"></i>Опыт работы
+                            </p>
+                            <#list resume.workExperienceInfoDtos as work>
+                                <div class="mb-2 ps-3 border-start border-2 border-primary">
+                                    <p class="card-text mb-1">
+                                        <strong>Должность:</strong> ${work.position!''}
+                                    </p>
+                                    <p class="card-text mb-1">
+                                        <strong>Компания:</strong> ${work.companyName!''}
+                                    </p>
+                                    <p class="card-text mb-1">
+                                        <strong>Период:</strong>
+                                        <#if work.years??>
+                                            ${work.years!''}
+                                        <#else>
+                                            не указано
+                                        </#if>
+                                    </p>
+                                    <p class="card-text mb-1">
+                                        <strong>Ответственность:</strong> ${work.responsibilities!''}
+                                    </p>
+                                    <p class="card-text mb-1">
+                                        <strong>Позиция:</strong> ${work.position!''}
+                                    </p>
+                                </div>
+                            </#list>
+                        </div>
+                    </#if>
+
+                    <#if resume.educationInfoDtos??>
+                        <div class="mb-3">
+                            <p class="card-text mb-2">
+                                <i class="bi bi-briefcase me-1"></i>Образование
+                            </p>
+                            <#list resume.educationInfoDtos as education>
+                                <div class="mb-2 ps-3 border-start border-2 border-primary">
+                                    <p class="card-text mb-1">
+                                        <strong>Институ:</strong> ${education.institution!''}
+                                    </p>
+                                    <p class="card-text mb-1">
+                                        <strong>Диплом:</strong> ${education.degree!''}
+                                    </p>
+                                    <p class="card-text mb-1">
+                                        <strong>Период:</strong>
+                                        <#if education.startDate??>
+                                            ${education.startDate}
+                                        <#else>
+                                            не указано
+                                        </#if>
+                                    </p>
+                                    <p class="card-text mb-1">
+                                        <strong>Период:</strong>
+                                        <#if education.endDate??>
+                                            ${education.endDate}
+                                        <#else>
+                                            не указано
+                                        </#if>
+                                    </p>
+                                    <p class="card-text mb-1">
+                                        <strong>Программа обучение:</strong> ${education.program!''}
+                                    </p>
+                                </div>
+                            </#list>
+                        </div>
+                    </#if>
+
                     <div class="d-flex justify-content-between align-items-center">
                         <small class="text-muted">
                             <i class="bi bi-calendar me-1"></i>Обновлено: ${resume.updated!resume.created}

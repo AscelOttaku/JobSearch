@@ -1,13 +1,13 @@
 package kg.attractor.jobsearch.service;
 
-import kg.attractor.jobsearch.dto.ResumeDetailedInfoDto;
+import kg.attractor.jobsearch.dto.ResumeDto;
 
-import java.util.List;
+import java.util.Map;
 
 public interface ResumeDetailedInfoService {
-    ResumeDetailedInfoDto createResume(ResumeDetailedInfoDto resumeDetailedInfoDto);
+    Long createResume(ResumeDto resumeDto);
 
-    void updateResumeDetailedInfo(ResumeDetailedInfoDto resumeDetailedInfoDto, Long resumeId);
+    void updateResumeDetailedInfo(ResumeDto resumeDto, Long resumeId);
 
-    List<ResumeDetailedInfoDto> findAllResumesWithDetailedInfo();
+    Map<String, Object> getResumeDtoModel();
 }

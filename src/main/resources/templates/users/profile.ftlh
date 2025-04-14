@@ -132,7 +132,7 @@
                                     <a href="/resumes/users" class="btn btn-view-all">
                                         <i class="bi bi-collection me-2"></i>Все созданные резюме
                                     </a>
-                                    <a href="/users/resume/create" class="btn btn-primary">
+                                    <a href="/resumes/new_resume" class="btn btn-primary">
                                         <i class="bi bi-plus-circle me-2"></i>Создать резюме
                                     </a>
                                 <#elseif user.accountType == "Employer">
@@ -187,7 +187,7 @@
                                     <div class="card-body text-center py-4">
                                         <i class="bi bi-file-earmark-text fs-1 text-muted mb-3"></i>
                                         <h5 class="text-muted mb-3">У вас пока нет резюме</h5>
-                                        <a href="#" class="btn btn-primary">
+                                        <a href="/resumes/new_resume" class="btn btn-primary">
                                             <i class="bi bi-plus-circle me-2"></i>Создать Резюме
                                         </a>
                                     </div>
@@ -233,7 +233,7 @@
                                     <div class="card-body text-center py-4">
                                         <i class="bi bi-file-earmark-text fs-1 text-muted mb-3"></i>
                                         <h5 class="text-muted mb-3">У вас пока нет созданных вакансий</h5>
-                                        <a href="#" class="btn btn-primary">
+                                        <a href="/vacancies/vacancies/new_vacancy" class="btn btn-primary">
                                             <i class="bi bi-plus-circle me-2"></i>Создать Вакансию
                                         </a>
                                     </div>
