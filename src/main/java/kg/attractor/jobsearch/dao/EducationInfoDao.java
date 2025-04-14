@@ -95,4 +95,10 @@ public class EducationInfoDao {
 
         return jdbcTemplate.query(query, educationInfoRowMapper);
     }
+
+    public List<EducationInfo> findEducationalInfoByResumeId(Long resumeId) {
+        String query = "select * from EDUCATION_INFO where RESUME_ID = ?";
+
+        return jdbcTemplate.query(query, educationInfoRowMapper, resumeId);
+    }
 }
