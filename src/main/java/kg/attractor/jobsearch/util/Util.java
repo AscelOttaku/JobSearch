@@ -1,10 +1,13 @@
 package kg.attractor.jobsearch.util;
 
 import lombok.experimental.UtilityClass;
+import org.springframework.core.io.UrlResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.net.MalformedURLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 @UtilityClass

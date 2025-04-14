@@ -33,18 +33,17 @@ public class UserServiceImpl implements UserService {
     private final VacancyService vacancyService;
 
     @Override
-    public ResponseEntity<?> uploadAvatar(MultipartFile file) throws IOException {
+    public void uploadAvatar(MultipartFile file) throws IOException {
         UserDto userDto = getAuthorizedUser();
 
         String fileUploadedPath = FileUtil.uploadFile(file);
         userDao.uploadAvatarFile(userDto.getEmail(), fileUploadedPath);
-
-        return getAvatarOfAuthorizedUser();
     }
 
     @Override
     public ResponseEntity<?> getAvatarOfAuthorizedUser() throws IOException {
         UserDto userDto = getAuthorizedUser();
+
         return FileUtil.getOutputFile(userDto.getAvatar(), FileUtil.defineFileType(userDto.getAvatar()));
     }
 
@@ -105,13 +104,8 @@ public class UserServiceImpl implements UserService {
         UserDto userPreviousVal = findUserByEmail(userDetails.getUsername());
 
         if (!userDto.getEmail().equals(userPreviousVal.getEmail())) {
-            Optional<User> optionalUserFoundByEmail = userDao.findUserByEmail(userDto.getEmail());
-
-            boolean isUserByEmailExist = optionalUserFoundByEmail.isPresent();
-
-            if (isUserByEmailExist)
                 throw new CustomIllegalArgException(
-                        "param email is already exists in data",
+                        "param email cannot be changed",
                         CustomBindingResult.builder()
                                 .className(User.class.getSimpleName())
                                 .fieldName("email")

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 public interface UserService {
-    ResponseEntity<?> uploadAvatar(MultipartFile file) throws IOException;
+    void uploadAvatar(MultipartFile file) throws IOException;
 
     ResponseEntity<?> getAvatarOfAuthorizedUser() throws IOException;
 

@@ -77,9 +77,10 @@ public class UserController {
     }
 
     @PostMapping("upload/avatars")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<?> uploadAvatar(MultipartFile file) throws IOException {
-        return userService.uploadAvatar(file);
+    @ResponseStatus(HttpStatus.SEE_OTHER)
+    public String uploadAvatar(MultipartFile file) throws IOException {
+        userService.uploadAvatar(file);
+        return "redirect:/users/profile";
     }
 
     @GetMapping("names/{userName}")
