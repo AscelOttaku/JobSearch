@@ -102,8 +102,8 @@
                           </div>
                       </#list>
 
-                       <#list resume.educationInfoDtos as educationInfo>
-                           <#assign index = educationInfo?index>
+                        <#list resume.educationInfoDtos as educationInfo>
+                            <#assign index = educationInfo?index>
                            <div class="row mb-3">
                                <div class="col-md-6">
                                    <div class="mb-3">
@@ -153,8 +153,8 @@
 
                         <div class="mb-4 form-check form-switch">
                             <input type="checkbox" class="form-check-input" role="switch"
-                                   id="active"
-                                   name="active" ${(resume.isActive!true)?then('checked', '')}>
+                                   id="isActive"
+                                   name="isActive" ${(resume.isActive!true)?then('checked', '')}>
                             <label class="form-check-label" for="active">
                                 <i class="bi bi-power form-icon me-2"></i>
                                 Вакансия активна

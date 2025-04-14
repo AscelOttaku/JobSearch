@@ -71,7 +71,7 @@ public class VacancyController {
         return "vacancies/new_vacancy";
     }
 
-    @PutMapping("update/vacancy")
+    @PostMapping("update/vacancy")
     public String updateVacancy(
             @ModelAttribute("vacancy") @Valid VacancyDto vacancyDto,
             BindingResult bindingResult,

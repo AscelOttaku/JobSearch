@@ -52,10 +52,10 @@ public class ResumeController {
             @EntityExistById(
                     entityType = EntityType.RESUMES,
                     message = "Resume id is not exists"
-            ) Long resumeId,
+            ) String resumeId,
             @RequestBody @Valid ResumeDto resumeDto
     ) {
-        resumeDetailedInfoService.updateResumeDetailedInfo(resumeDto, resumeId);
+        resumeDetailedInfoService.updateResumeDetailedInfo(resumeDto);
     }
 
     @DeleteMapping("{resumeId}")

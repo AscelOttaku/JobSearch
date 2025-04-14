@@ -146,4 +146,6 @@ public class UserController {
     public ResponseEntity<?> getAvatars() throws IOException {
         return userService.getAvatarOfAuthorizedUser();
     }
+
+
 }

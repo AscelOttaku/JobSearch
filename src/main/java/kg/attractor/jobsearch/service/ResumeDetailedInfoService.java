@@ -7,7 +7,7 @@ import java.util.Map;
 public interface ResumeDetailedInfoService {
     Long createResume(ResumeDto resumeDto);
 
-    void updateResumeDetailedInfo(ResumeDto resumeDto, Long resumeId);
+    void updateResumeDetailedInfo(ResumeDto resumeDto);
 
     Map<String, Object> getResumeDtoModel();
 }

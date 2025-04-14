@@ -4,6 +4,7 @@ import kg.attractor.jobsearch.dao.EducationInfoDao;
 import kg.attractor.jobsearch.dto.EducationalInfoDto;
 import kg.attractor.jobsearch.dto.mapper.impl.EducationInfoMapper;
 import kg.attractor.jobsearch.exceptions.EducationInfoNotFoundException;
+import kg.attractor.jobsearch.exceptions.EntityNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.EducationInfo;
 import kg.attractor.jobsearch.service.EducationInfoService;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -42,23 +43,24 @@ public class EducationInfoServiceImpl implements EducationInfoService {
                 .toList();
 
         for (EducationInfo info : educationInfos) {
-            if (isEducationInfoExist(info.getId(), info.getResumeId())) {
-                educationInfoDao.updateEducationInfo(info);
-                continue;
-            }
+            List<EducationInfo> getEducationInfosByResumeId = educationInfoDao.findEducationalInfosByResumeId(
+                    info.getResumeId()
+            );
 
-            if (info.getId() == null)
-                educationInfoDao.create(info);
+            info.setId(getEducationInfosByResumeId.getFirst().getId());
+            educationInfoDao.updateEducationInfo(info);
+
+//            Long id = getEducationInfosByResumeId.stream()
+//                    .filter(educationInfo -> educationInfo.equals(info))
+//                    .map(EducationInfo::getId)
+//                    .findFirst()
+//                    .orElseThrow(() -> new NoSuchElementException(
+//                            "Education info is not exist"
+//                    ));
+//
+//            info.setId(id);
+//            educationInfoDao.updateEducationInfo(info);
         }
-    }
-
-    private boolean isEducationInfoExist(Long id, Long resumeId) {
-        if (id == null)
-            return false;
-
-        Optional<EducationInfo> educationInfo = educationInfoDao.findEducationInfoById(id);
-
-        return educationInfo.isPresent() && Objects.equals(educationInfo.get().getResumeId(), resumeId);
     }
 
     @Override
@@ -101,7 +103,7 @@ public class EducationInfoServiceImpl implements EducationInfoService {
 
     @Override
     public List<EducationalInfoDto> findEducationInfosByResumeId(Long resumeId) {
-        return educationInfoDao.findEducationalInfoByResumeId(resumeId).stream()
+        return educationInfoDao.findEducationalInfosByResumeId(resumeId).stream()
                 .map(educationInfoMapperDto::mapToDto)
                 .toList();
     }

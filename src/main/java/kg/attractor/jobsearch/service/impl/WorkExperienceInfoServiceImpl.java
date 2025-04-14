@@ -10,10 +10,7 @@ import kg.attractor.jobsearch.service.WorkExperienceInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -42,23 +39,24 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
                 .toList();
 
         for (WorkExperienceInfo workExperienceInfo : workExperienceInfos) {
-            if (isWorkExperienceExistInThisResume(workExperienceInfo.getId(), workExperienceInfo.getResumeId())) {
-                workExperienceDao.updateWorkExperience(workExperienceInfo);
-                continue;
-            }
+            List<WorkExperienceInfo> getWorkExperienceInfosByResumeId = workExperienceDao.findWorkExperiencesInfoByResumeId(
+                    workExperienceInfo.getResumeId()
+            );
 
-            if (workExperienceInfo.getId() == null)
-                workExperienceDao.create(workExperienceInfo);
+            workExperienceInfo.setId(getWorkExperienceInfosByResumeId.getFirst().getId());
+            workExperienceDao.updateWorkExperience(workExperienceInfo);
+
+//            Long id = getWorkExperienceInfosByResumeId.stream()
+//                    .filter(info -> info.equals(workExperienceInfo))
+//                    .map(WorkExperienceInfo::getId)
+//                    .findFirst()
+//                    .orElseThrow(() -> new NoSuchElementException(
+//                            "Work Experience not found"
+//                    ));
+
+//            workExperienceInfo.setId(id);
+//            workExperienceDao.updateWorkExperience(workExperienceInfo);
         }
-    }
-
-    private boolean isWorkExperienceExistInThisResume(Long id, Long resumeId) {
-        if (id == null)
-            return false;
-
-        Optional<WorkExperienceInfo> workExperienceInfo = workExperienceDao.findWorkExperienceById(id);
-
-        return workExperienceInfo.isPresent() && Objects.equals(workExperienceInfo.get().getResumeId(), resumeId);
     }
 
     @Override

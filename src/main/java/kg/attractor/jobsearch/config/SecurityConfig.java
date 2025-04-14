@@ -93,6 +93,7 @@ public class SecurityConfig {
                                 .requestMatchers(POST, "/resumes").hasAuthority(Role.JOB_SEEKER.getValue())
                                 .requestMatchers(PUT, "/resumes/*").hasAuthority(Role.JOB_SEEKER.getValue())
                                 .requestMatchers(DELETE, "/resumes/*").hasAuthority(Role.JOB_SEEKER.getValue())
+                                .requestMatchers(GET, "/resumes/update/resume/*") .hasAnyAuthority(Role.JOB_SEEKER.getValue())
                                 .requestMatchers("/resumes/*").authenticated()
 
                                 //All Other Endpoints

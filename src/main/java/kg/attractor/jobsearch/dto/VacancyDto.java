@@ -51,4 +51,9 @@ public class VacancyDto {
 
     private String created;
     private String updated;
+
+    @AssertTrue(message = "expTo should be bigger")
+    private boolean isExpToBiggerExpFrom() {
+        return expTo.compareTo(expFrom) > 0;
+    }
 }

@@ -58,19 +58,21 @@ public class ResumeDao {
         return number != null ? Optional.of(number.longValue()) : Optional.empty();
     }
 
-    public boolean updateResume(Resume resume) {
+    public Long updateResume(Resume resume) {
         String query = "UPDATE RESUMES " +
                 "set NAME = ?, CATEGORY_ID = ?, SALARY = ?, IS_ACTIVE = ?" +
                 "WHERE ID = ?";
 
-        return jdbcTemplate.update(
+        jdbcTemplate.update(
                 query,
                 resume.getName(),
                 resume.getCategoryId(),
                 resume.getSalary(),
                 resume.getIsActive() == null,
                 resume.getId()
-                ) > 0;
+                );
+
+        return resume.getId();
     }
 
     public Optional<Resume> findResumeById(Long resumeId) {

@@ -1,10 +1,8 @@
 package kg.attractor.jobsearch.util;
 
 import lombok.experimental.UtilityClass;
-import org.springframework.core.io.UrlResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.net.MalformedURLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -34,5 +32,13 @@ public class Util {
             return password;
 
         return passwordEncoder.encode(password);
+    }
+
+    public static Optional<Long> convertToLong(String arg) {
+        try {
+            return Optional.of(Long.parseLong(arg));
+        } catch (NumberFormatException e) {
+            return Optional.empty();
+        }
     }
 }

@@ -1,5 +1,6 @@
 package kg.attractor.jobsearch.dto;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
@@ -16,6 +17,7 @@ public class WorkExperienceInfoDto {
     private Long resumeId;
 
     @PositiveOrZero(message = "Year cannot be negative")
+    @Max(value = 10, message = "max year is 10")
     private Integer years;
 
     @NotBlank(message = "{blank_message}")

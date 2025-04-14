@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
-
     private Long userId;
 
     @NotNull(message = "{null_message}")
@@ -41,6 +40,8 @@ public class UserDto {
     @Email(message = "{email_message}")
     private String email;
 
+    @NotBlank(message = "{blank_message}")
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d).+$\n", message = "{password_message}")
     private String password;
 
     @NotNull(message = "{null_message}")

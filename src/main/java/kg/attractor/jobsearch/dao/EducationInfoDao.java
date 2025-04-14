@@ -69,7 +69,7 @@ public class EducationInfoDao {
         return handleDataAccessException(() -> jdbcTemplate.queryForObject(query, educationInfoRowMapper, id));
     }
 
-    public List<EducationInfo> findEducationalInfoByResumeId(Long resumeId) {
+    public List<EducationInfo> findEducationalInfosByResumeId(Long resumeId) {
         String query = "select * from EDUCATION_INFO where resume_id = ?";
 
         return jdbcTemplate.query(query, educationInfoRowMapper, resumeId);

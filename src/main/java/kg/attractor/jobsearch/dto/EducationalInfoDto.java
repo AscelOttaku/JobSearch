@@ -25,7 +25,7 @@ public class EducationalInfoDto {
     private Long id;
     private Long resumeId;
 
-    @NotBlank(message = "{message_blank}")
+    @NotBlank(message = "{blank_message}")
     private String institution;
     private String program;
 
@@ -37,6 +37,6 @@ public class EducationalInfoDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endDate;
 
-    @NotBlank(message = "{message_blank}")
+    @NotBlank(message = "{blank_message}")
     private String degree;
 }

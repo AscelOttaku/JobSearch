@@ -18,6 +18,7 @@ import org.springframework.web.method.annotation.HandlerMethodValidationExceptio
 
 import java.time.format.DateTimeParseException;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @ControllerAdvice
 @RequiredArgsConstructor
@@ -33,10 +34,10 @@ public class GlobalControllerAdvice {
         return errorService.handleValidationException(ex, request);
     }
 
-    @ExceptionHandler(EntityNotFoundException.class)
+    @ExceptionHandler(NoSuchElementException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleNoSuchElementException(
-            Model model, EntityNotFoundException ex, HttpServletRequest request
+            Model model, NoSuchElementException ex, HttpServletRequest request
     ) {
         model.addAttribute("status", HttpStatus.NOT_FOUND.value());
         model.addAttribute("reason", HttpStatus.NOT_FOUND.getReasonPhrase());

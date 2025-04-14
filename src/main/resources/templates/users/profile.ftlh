@@ -172,7 +172,7 @@
                                                                class="btn btn-sm btn-outline-primary me-1">
                                                                 <i class="bi bi-eye"></i>
                                                             </a>
-                                                            <a href="#" class="btn btn-sm btn-outline-secondary">
+                                                            <a href="/resumes/update/resume/${resume.id}" class="btn btn-sm btn-outline-secondary">
                                                                 <i class="bi bi-pencil"></i>
                                                             </a>
                                                         </div>

@@ -5,6 +5,7 @@ import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.service.CategoryService;
 import kg.attractor.jobsearch.service.ResumeDetailedInfoService;
 import kg.attractor.jobsearch.service.ResumeService;
+import kg.attractor.jobsearch.validators.ResumeValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,7 @@ public class ResumeController {
     private final ResumeService resumeService;
     private final ResumeDetailedInfoService resumeDetailedInfoService;
     private final CategoryService categoryService;
+    private final ResumeValidator resumeValidator;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -69,5 +71,33 @@ public class ResumeController {
 
         Long resumeId = resumeDetailedInfoService.createResume(resumeDto);
         return "redirect:/resumes/" + resumeId;
+    }
+
+    @GetMapping("update/resume/{resumeId}")
+    @ResponseStatus(HttpStatus.SEE_OTHER)
+    public String updateResumeById(@PathVariable Long resumeId, Model model) {
+        ResumeDto resumeDto = resumeService.findResumeById(resumeId);
+
+        model.addAttribute("resume", resumeDto);
+        model.addAttribute("categories", categoryService.findAllCategories());
+        return "resumes/update_resume";
+    }
+
+    @PostMapping("update/resume")
+    public String updateResume(
+            @ModelAttribute("resume") ResumeDto resumeDto,
+            BindingResult bindingResult,
+            Model model) {
+
+        resumeValidator.isValid(resumeDto, bindingResult);
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("resume", resumeDto);
+            model.addAttribute("categories", categoryService.findAllCategories());
+            return "resumes/update_resume";
+        }
+
+        resumeDetailedInfoService.updateResumeDetailedInfo(resumeDto);
+        return "redirect:/resumes/" + resumeDto.getId();
     }
 }

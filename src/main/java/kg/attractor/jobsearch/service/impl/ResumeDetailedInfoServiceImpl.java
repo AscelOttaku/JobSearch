@@ -8,6 +8,8 @@ import kg.attractor.jobsearch.exceptions.EntityNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.service.*;
+import kg.attractor.jobsearch.util.Util;
+import kg.attractor.jobsearch.validators.ResumeValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -57,9 +59,10 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
     }
 
     @Override
-    public void updateResumeDetailedInfo(ResumeDto resumeDto, Long resumeId) {
+    public void updateResumeDetailedInfo(ResumeDto resumeDto) {
+
         long authorizedUserId = authorizedUserService.getAuthorizedUser().getUserId();
-        ResumeDto previousResume = resumeService.findResumeById(resumeId);
+        ResumeDto previousResume = resumeService.findResumeById(resumeDto.getId());
 
         if (authorizedUserId != previousResume.getUserId()) {
             log.warn("Resume doesn't belongs to user");
@@ -73,24 +76,20 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
             );
         }
 
-        resumeDto.setId(resumeId);
         resumeDto.setUserId(authorizedUserId);
 
-        boolean res = resumeService.updateResume(resumeDto);
+        Long res = resumeService.updateResume(resumeDto);
 
-        if (!res)
-            log.info("Update Resume Operation stopped there is no changes");
-
-        List<WorkExperienceInfoDto> workExperienceInfoDtos = previousResume.getWorkExperienceInfoDtos();
+        List<WorkExperienceInfoDto> workExperienceInfoDtos = resumeDto.getWorkExperienceInfoDtos();
         workExperienceInfoDtos.forEach(workExperienceInfoDto ->
-                workExperienceInfoDto.setResumeId(resumeId));
+                workExperienceInfoDto.setResumeId(res));
 
-        List<EducationalInfoDto> educationalInfoDtos = previousResume.getEducationInfoDtos();
+        List<EducationalInfoDto> educationalInfoDtos = resumeDto.getEducationInfoDtos();
         educationalInfoDtos.forEach(educationalInfoDto ->
-                educationalInfoDto.setResumeId(resumeId));
+                educationalInfoDto.setResumeId(res));
 
         updateWorkExperienceInfo(workExperienceInfoDtos);
-        updateEducationalInfo(previousResume.getEducationInfoDtos());
+        updateEducationalInfo(educationalInfoDtos);
     }
 
     private void updateEducationalInfo(List<EducationalInfoDto> educationalInfoDtos) {

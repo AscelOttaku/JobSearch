@@ -1,6 +1,5 @@
 package kg.attractor.jobsearch.dao;
 
-import kg.attractor.jobsearch.dto.WorkExperienceInfoDto;
 import kg.attractor.jobsearch.model.WorkExperienceInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
@@ -82,5 +81,11 @@ public class WorkExperienceDao {
         String query = "select * from WORK_EXPERIENCE_INFO";
 
         return jdbcTemplate.query(query, workExperienceInfoBeanPropertyRowMapper);
+    }
+
+    public List<WorkExperienceInfo> findWorkExperiencesInfoByResumeId(long resumeId) {
+        String query = "select * from WORK_EXPERIENCE_INFO where resume_id = ?";
+
+        return jdbcTemplate.query(query, workExperienceInfoBeanPropertyRowMapper, resumeId);
     }
 }
