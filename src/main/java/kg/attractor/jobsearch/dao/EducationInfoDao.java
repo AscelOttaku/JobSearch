@@ -101,4 +101,10 @@ public class EducationInfoDao {
 
         return jdbcTemplate.query(query, educationInfoRowMapper, resumeId);
     }
+
+    public void deleteEducationInfoById(Long educationInfoId) {
+        String query = "delete from EDUCATION_INFO where ID = ?";
+
+        jdbcTemplate.update(query, educationInfoId);
+    }
 }

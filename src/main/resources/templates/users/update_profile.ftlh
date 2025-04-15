@@ -66,7 +66,6 @@
                 </div>
 
                 <form method="post" action="/users/updates" class="card border-0 shadow-sm rounded-3">
-                    <input type="hidden" name="_method" value="put"/>
 
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-center mb-4">

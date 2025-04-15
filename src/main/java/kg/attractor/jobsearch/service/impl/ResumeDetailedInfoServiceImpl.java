@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +27,7 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
     private final ResumeService resumeService;
     private final EducationInfoService educationInfoService;
     private final AuthorizedUserService authorizedUserService;
+    private final ResumeValidator resumeValidator;
 
     @Override
     public Long createResume(ResumeDto resumeDto) {
@@ -90,6 +92,8 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
 
         updateWorkExperienceInfo(workExperienceInfoDtos);
         updateEducationalInfo(educationalInfoDtos);
+
+        cleanEmptyData();
     }
 
     private void updateEducationalInfo(List<EducationalInfoDto> educationalInfoDtos) {
@@ -115,5 +119,24 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
 
         model.put("resume", resumeDto);
         return model;
+    }
+
+    private void cleanEmptyData() {
+        List<EducationalInfoDto> educationalInfoDtos = educationInfoService.findAll();
+        List<WorkExperienceInfoDto> workExperienceInfoDtos = workExperienceInfoService.findAll();
+
+        educationalInfoDtos = educationalInfoDtos.stream()
+                .filter(resumeValidator::isNotEmptyEducationalInfo)
+                .toList();
+
+        workExperienceInfoDtos = workExperienceInfoDtos.stream()
+                .filter(resumeValidator::isNotEmptyWorkExperience)
+                .toList();
+
+        educationalInfoDtos.forEach(educationalInfoDto ->
+                educationInfoService.deleteEducationInfoById(educationalInfoDto.getId()));
+
+        workExperienceInfoDtos.forEach(workExperienceInfoDto ->
+                workExperienceInfoService.deleteWorkExperience(workExperienceInfoDto.getId()));
     }
 }

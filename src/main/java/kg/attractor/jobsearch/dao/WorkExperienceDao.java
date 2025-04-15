@@ -88,4 +88,10 @@ public class WorkExperienceDao {
 
         return jdbcTemplate.query(query, workExperienceInfoBeanPropertyRowMapper, resumeId);
     }
+
+    public void deleteWorkExperienceId(Long id) {
+        String query = "delete from EDUCATION_INFO where ID = ?";
+
+        jdbcTemplate.update(query, id);
+    }
 }

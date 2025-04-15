@@ -44,11 +44,7 @@ public class EducationInfoServiceImpl implements EducationInfoService {
         for (EducationInfo info : educationInfos) {
             if (isEducationInfoExist(info.getId(), info.getResumeId())) {
                 educationInfoDao.updateEducationInfo(info);
-                continue;
             }
-
-            if (info.getId() == null)
-                educationInfoDao.create(info);
         }
     }
 
@@ -104,5 +100,10 @@ public class EducationInfoServiceImpl implements EducationInfoService {
         return educationInfoDao.findEducationalInfoByResumeId(resumeId).stream()
                 .map(educationInfoMapperDto::mapToDto)
                 .toList();
+    }
+
+    @Override
+    public void deleteEducationInfoById(Long educationInfoId) {
+        educationInfoDao.deleteEducationInfoById(educationInfoId);
     }
 }

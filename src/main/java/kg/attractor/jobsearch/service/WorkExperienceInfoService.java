@@ -19,4 +19,6 @@ public interface WorkExperienceInfoService {
     List<WorkExperienceInfoDto> findAll();
 
     List<WorkExperienceInfoDto> findWorkExperienceByResumeId(Long resumeId);
+
+    void deleteWorkExperience(Long id);
 }

@@ -24,7 +24,7 @@ import java.util.Set;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("users")
+@RequestMapping("/users")
 public class UserController {
     private final AuthorizedUserService authorizedUserService;
     private final UserService userService;
@@ -38,7 +38,7 @@ public class UserController {
     }
 
     @PostMapping("registration")
-    public String createUser(@Valid @ModelAttribute("user")  UserDto userDto, BindingResult bindingResult, Model model) {
+    public String createUser(@Valid @ModelAttribute("user") UserDto userDto, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("user", userDto);
             return "auth/register";
@@ -132,7 +132,7 @@ public class UserController {
         return userService.findRespondedToVacancyUsersByVacancy(vacancyId);
     }
 
-    @PutMapping("updates")
+    @PostMapping("updates")
     @ResponseStatus(HttpStatus.SEE_OTHER)
     public String updateUser(
             @ModelAttribute @Valid UserDto userDto,
@@ -146,6 +146,4 @@ public class UserController {
     public ResponseEntity<?> getAvatars() throws IOException {
         return userService.getAvatarOfAuthorizedUser();
     }
-
-
 }

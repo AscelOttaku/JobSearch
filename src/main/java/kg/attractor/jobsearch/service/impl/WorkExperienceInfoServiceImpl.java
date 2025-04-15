@@ -44,11 +44,7 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
         for (WorkExperienceInfo workExperienceInfo : workExperienceInfos) {
             if (isWorkExperienceExistInThisResume(workExperienceInfo.getId(), workExperienceInfo.getResumeId())) {
                 workExperienceDao.updateWorkExperience(workExperienceInfo);
-                continue;
             }
-
-            if (workExperienceInfo.getId() == null)
-                workExperienceDao.create(workExperienceInfo);
         }
     }
 
@@ -104,5 +100,10 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
         return workExperienceDao.findWorkExperienceByResumeId(resumeId).stream()
                 .map(workExperienceInfoMapper::mapToDto)
                 .toList();
+    }
+
+    @Override
+    public void deleteWorkExperience(Long id) {
+        workExperienceDao.deleteWorkExperienceId(id);
     }
 }

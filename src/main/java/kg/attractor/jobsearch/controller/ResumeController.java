@@ -1,7 +1,9 @@
 package kg.attractor.jobsearch.controller;
 
 import jakarta.validation.Valid;
+import kg.attractor.jobsearch.dto.EducationalInfoDto;
 import kg.attractor.jobsearch.dto.ResumeDto;
+import kg.attractor.jobsearch.dto.WorkExperienceInfoDto;
 import kg.attractor.jobsearch.service.CategoryService;
 import kg.attractor.jobsearch.service.ResumeDetailedInfoService;
 import kg.attractor.jobsearch.service.ResumeService;
@@ -77,6 +79,12 @@ public class ResumeController {
     @ResponseStatus(HttpStatus.SEE_OTHER)
     public String updateResumeById(@PathVariable Long resumeId, Model model) {
         ResumeDto resumeDto = resumeService.findResumeById(resumeId);
+
+        if (resumeDto.getWorkExperienceInfoDtos().isEmpty())
+            resumeDto.setWorkExperienceInfoDtos(List.of(new WorkExperienceInfoDto()));
+
+        if (resumeDto.getEducationInfoDtos().isEmpty())
+            resumeDto.setEducationInfoDtos(List.of(new EducationalInfoDto()));
 
         model.addAttribute("resume", resumeDto);
         model.addAttribute("categories", categoryService.findAllCategories());
