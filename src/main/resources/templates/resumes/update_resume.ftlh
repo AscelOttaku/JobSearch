@@ -64,7 +64,7 @@
 
                         <#list resume.workExperienceInfoDtos as workExperience>
                             <#assign index = workExperience?index>
-                            <@spring.formInput "resume.workExperienceInfoDtos[${index}].id", 'class="form-control", type="hidden", placeholder="Ваша должность" id="position"'/>
+                            <@spring.formHiddenInput "resume.workExperienceInfoDtos[${index}].id", 'class="form-control", type="hidden", placeholder="Ваша должность" id="position"'/>
 
                             <div class="row mb-3">
                                 <div class="col-md-6">
@@ -107,8 +107,7 @@
 
                         <#list resume.educationInfoDtos as educationInfo>
                             <#assign index = educationInfo?index>
-                            <@spring.formInput "resume.educationInfoDtos[${index}].id", 'class="form-control", text="hidden", placeholder="Образование" id="degree"'/>
-
+                            <@spring.formHiddenInput "resume.educationInfoDtos[${index}].id", 'class="form-control", type="hidden", placeholder="Id" id="position"'/>
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <div class="mb-3">
