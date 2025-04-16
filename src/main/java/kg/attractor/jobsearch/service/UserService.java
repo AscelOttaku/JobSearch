@@ -24,8 +24,6 @@ public interface UserService {
 
     Set<UserDto> findUsersByName(String userName);
 
-    UserDto findUserByEmail(String email);
-
     UserDto findUserByPhoneNumber(String phoneNumber);
 
     void isUserExistByEmail(String email);
@@ -38,5 +36,5 @@ public interface UserService {
 
     UserDto findUserById(Long userId);
 
-    String findUserPasswordByUserId(Long userId);
+    UserDto findUserByEmail(String email);
 }

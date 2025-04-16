@@ -15,16 +15,19 @@ public class CategoryMapper implements Mapper<CategoryDto, Category> {
         return CategoryDto.builder()
                 .id(entity.getId())
                 .name(entity.getName())
-                .parentId(entity.getParentId())
+                .parentId(entity.getUnderCategory().getId())
                 .build();
     }
 
     @Override
     public Category mapToEntity(CategoryDto dto) {
+        Category underCategory = new Category();
+        underCategory.setId(dto.getParentId());
+
         Category category = new Category();
         category.setId(dto.getId());
         category.setName(dto.getName());
-        category.setParentId(dto.getParentId());
+        category.setUnderCategory(underCategory);
         return category;
     }
 }

@@ -1,6 +1,5 @@
 package kg.attractor.jobsearch.service.impl;
 
-import kg.attractor.jobsearch.dao.ResumeDao;
 import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.dto.mapper.impl.ResumeMapper;
@@ -10,6 +9,7 @@ import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.model.User;
+import kg.attractor.jobsearch.repository.ResumeRepository;
 import kg.attractor.jobsearch.service.AuthorizedUserService;
 import kg.attractor.jobsearch.service.ResumeService;
 import kg.attractor.jobsearch.service.UserService;
@@ -25,7 +25,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class ResumeServiceImpl implements ResumeService {
     private final Mapper<ResumeDto, Resume> mapper;
-    private final ResumeDao resumeDao;
+    private final ResumeRepository resumeRepository;
     private final CategoryServiceImpl categoryService;
     private final UserService userService;
     private final ResumeMapper resumeMapper;
@@ -33,7 +33,7 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public List<ResumeDto> findAllResumes() {
-        return resumeDao.findAllResumes().stream()
+        return resumeRepository.findAll().stream()
                 .map(mapper::mapToDto)
                 .toList();
     }
@@ -42,7 +42,7 @@ public class ResumeServiceImpl implements ResumeService {
     public ResumeDto findResumeById(Long id) {
         Validator.isValidId(id);
 
-        return resumeDao.findResumeById(id)
+        return resumeRepository.findById(id)
                 .map(mapper::mapToDto)
                 .orElseThrow(() -> new ResumeNotFoundException(
                         "Resume by id is not found ",
@@ -70,7 +70,7 @@ public class ResumeServiceImpl implements ResumeService {
                             .build()
             );
 
-        var optionalResume = resumeDao.findResumesByCategory(resumeCategory);
+        var optionalResume = resumeRepository.findResumesByCategoryId(resumeCategory);
 
         return optionalResume.stream()
                 .map(mapper::mapToDto)
@@ -78,14 +78,14 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public boolean updateResume(ResumeDto resumeDto) {
-        return resumeDao.updateResume(mapper.mapToEntity(resumeDto));
+    public void updateResume(ResumeDto resumeDto) {
+        resumeRepository.save(mapper.mapToEntity(resumeDto));
     }
 
     @Override
-    public Long createResume(ResumeDto resumeDto) {
+    public ResumeDto createResume(ResumeDto resumeDto) {
         Resume resume = resumeMapper.mapToEntity(resumeDto);
-        return resumeDao.create(resume).orElse(-1L);
+        return resumeMapper.mapToDto(resumeRepository.save(resume));
     }
 
     @Override
@@ -102,17 +102,7 @@ public class ResumeServiceImpl implements ResumeService {
                             .build()
             );
 
-        boolean res = resumeDao.deleteResumeById(resumeId);
-
-        if (!res)
-            throw new ResumeNotFoundException(
-                    "Resume by id is not found " + resumeId,
-                    CustomBindingResult.builder()
-                            .className(Resume.class.getCanonicalName())
-                            .fieldName("id")
-                            .rejectedValue(resumeId)
-                            .build()
-            );
+        resumeRepository.deleteById(resumeId);
     }
 
     @Override
@@ -129,28 +119,28 @@ public class ResumeServiceImpl implements ResumeService {
                             .build()
             );
 
-        return resumeDao.findUserCreatedResumes(getUser.getUserId()).stream()
+        return resumeRepository.findResumeByUserId(getUser.getUserId()).stream()
                 .map(resumeMapper::mapToDto)
                 .toList();
     }
 
     @Override
     public boolean isResumeExist(Long resumeId) {
-        return resumeDao.findResumeById(resumeId).isPresent();
+        return resumeRepository.findById(resumeId).isPresent();
     }
 
     @Override
     public List<ResumeDto> findUserCreatedResumes() {
         Long userId = authorizedUserService.getAuthorizedUserId();
 
-        return resumeDao.findResumeByUserId(userId).stream()
+        return resumeRepository.findResumeByUserId(userId).stream()
                 .map(resumeMapper::mapToDto)
                 .toList();
     }
 
     @Override
     public List<Long> findAllResumesIds() {
-        return resumeDao.findAllResumes().stream()
+        return resumeRepository.findAll().stream()
                 .map(Resume::getId)
                 .toList();
     }

@@ -4,6 +4,9 @@ server:
 spring:
   application:
     name: JobSearch
+  jpa:
+    hibernate:
+      ddl-auto: validate
   datasource:
     url: jdbc:h2:./db/job_seeker;AUTO_SERVER=TRUE
     username: Kanybek
@@ -17,9 +20,14 @@ spring:
    init:
     mode: always
 
+
 logging:
   level:
     org:
       springframework:
         security: DEBUG
+        web:
+          servlet:
+            DispatcherServlet: DEBUG
+
 

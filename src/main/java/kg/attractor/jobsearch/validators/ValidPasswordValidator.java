@@ -4,16 +4,15 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import kg.attractor.jobsearch.annotations.ValidPassword;
 import kg.attractor.jobsearch.dto.UserDto;
-import kg.attractor.jobsearch.service.UserService;
+import kg.attractor.jobsearch.model.User;
+import kg.attractor.jobsearch.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.lang.reflect.Field;
 
 @Service
 @RequiredArgsConstructor
 public class ValidPasswordValidator implements ConstraintValidator<ValidPassword, UserDto> {
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     @Override
     public boolean isValid(UserDto userDto, ConstraintValidatorContext constraintValidatorContext) {
@@ -21,9 +20,12 @@ public class ValidPasswordValidator implements ConstraintValidator<ValidPassword
         Long userId = userDto.getUserId();
 
         if (Validator.isStringNotValid(password)) {
-            String hasPreviousPassword = userService.findUserPasswordByUserId(userId);
+            String hasPreviousPassword = userRepository.findUserPasswordByUserId(userId)
+                    .map(User::getPassword)
+                    .orElse("");
 
-            if (Validator.isStringNotValid(hasPreviousPassword)) {
+
+            if (hasPreviousPassword.isBlank()) {
                 constraintValidatorContext.buildConstraintViolationWithTemplate(
                         "Password cannot be null or blank"
                 )

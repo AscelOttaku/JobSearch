@@ -3,7 +3,8 @@ package kg.attractor.jobsearch.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Past;
 import kg.attractor.jobsearch.annotations.IsDateCorrect;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 

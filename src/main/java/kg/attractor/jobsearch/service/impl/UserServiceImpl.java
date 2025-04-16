@@ -1,13 +1,12 @@
 package kg.attractor.jobsearch.service.impl;
 
-import kg.attractor.jobsearch.dao.UserDao;
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
 import kg.attractor.jobsearch.exceptions.UserNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.User;
-import kg.attractor.jobsearch.model.Vacancy;
+import kg.attractor.jobsearch.repository.UserRepository;
 import kg.attractor.jobsearch.service.UserService;
 import kg.attractor.jobsearch.service.VacancyService;
 import kg.attractor.jobsearch.util.FileUtil;
@@ -29,15 +28,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final Mapper<UserDto, User> userMapper;
-    private final UserDao userDao;
-    private final VacancyService vacancyService;
+    private final UserRepository userRepository;
 
     @Override
     public ResponseEntity<?> uploadAvatar(MultipartFile file) throws IOException {
         UserDto userDto = getAuthorizedUser();
 
         String fileUploadedPath = FileUtil.uploadFile(file);
-        userDao.uploadAvatarFile(userDto.getEmail(), fileUploadedPath);
+        userRepository.updateAvatarByUserEmail(userDto.getEmail(), fileUploadedPath);
 
         return getAvatarOfAuthorizedUser();
     }
@@ -50,19 +48,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void createUser(UserDto userDto) {
-
-        String accountType = userDto.getAccountType();
-        if (accountType == null || accountType.isBlank())
-            throw new CustomIllegalArgException(
-                    "account type is null or blank",
-                    CustomBindingResult.builder()
-                            .className(User.class.getSimpleName())
-                            .fieldName("accountType")
-                            .rejectedValue(accountType)
-                            .build()
-
-            );
-
         if (!userDto.getAccountType().equalsIgnoreCase("jobSeeker") &&
                 !userDto.getAccountType().equalsIgnoreCase("employer"))
             throw new CustomIllegalArgException(
@@ -74,10 +59,10 @@ public class UserServiceImpl implements UserService {
                             .build()
             );
 
-        boolean isEmailAlreadyExists = userDao.findUserByEmail(userDto.getEmail()).isPresent();
-        boolean isPhoneNumberAlreadyExists = userDao.findUserByPhoneNumber(userDto.getPhoneNumber()).isPresent();
+        Optional<User> userByEmail = userRepository.findUserByEmail(userDto.getEmail());
+        Optional<User> userByPhoneNumber = userRepository.findUserByPhoneNumber(userDto.getPhoneNumber());
 
-        if (isEmailAlreadyExists)
+        if (userByEmail.isPresent())
             throw new CustomIllegalArgException(
                     "email is already exists",
                     CustomBindingResult.builder()
@@ -87,7 +72,7 @@ public class UserServiceImpl implements UserService {
                             .build()
             );
 
-        if (isPhoneNumberAlreadyExists)
+        if (userByPhoneNumber.isPresent())
             throw new CustomIllegalArgException(
                     "phone number is already exists",
                     CustomBindingResult.builder()
@@ -97,15 +82,20 @@ public class UserServiceImpl implements UserService {
                             .build()
             );
 
-        userDao.createUser(userMapper.mapToEntity(userDto));
+        userRepository.save(userMapper.mapToEntity(userDto));
     }
 
     @Override
     public void updateUser(UserDto userDto, UserDetails userDetails) {
-        UserDto userPreviousVal = findUserByEmail(userDetails.getUsername());
+        Optional<User> optionalUserPrevious = userRepository.findUserByEmail(userDetails.getUsername());
 
-        if (!userDto.getEmail().equals(userPreviousVal.getEmail())) {
-            Optional<User> optionalUserFoundByEmail = userDao.findUserByEmail(userDto.getEmail());
+        if (optionalUserPrevious.isEmpty())
+            throw new IllegalArgumentException("User not exists by email " + userDetails.getUsername());
+
+        User previousUser = optionalUserPrevious.get();
+
+        if (!userDto.getEmail().equals(previousUser.getEmail())) {
+            Optional<User> optionalUserFoundByEmail = userRepository.findUserByEmail(userDto.getEmail());
 
             boolean isUserByEmailExist = optionalUserFoundByEmail.isPresent();
 
@@ -120,8 +110,8 @@ public class UserServiceImpl implements UserService {
                 );
         }
 
-        if (!userPreviousVal.getPhoneNumber().equals(userDto.getPhoneNumber())) {
-            Optional<User> optionalUserFoundByPhoneNumber = userDao.findUserByPhoneNumber(userDto.getPhoneNumber());
+        if (!previousUser.getPhoneNumber().equals(userDto.getPhoneNumber())) {
+            Optional<User> optionalUserFoundByPhoneNumber = userRepository.findUserByPhoneNumber(userDto.getPhoneNumber());
 
             boolean isUserExistByPhoneNumber = optionalUserFoundByPhoneNumber.isPresent();
 
@@ -137,17 +127,13 @@ public class UserServiceImpl implements UserService {
         }
 
         User entity = userMapper.mapToEntity(userDto);
-
-        if (entity.getPassword() == null || entity.getPassword().isBlank())
-            entity.setPassword(findUserPasswordByUserId(userDto.getUserId()));
-
-        userPreviousVal.setUserId(userPreviousVal.getUserId());
-        userDao.updateUser(entity);
+        entity.setUserId(previousUser.getUserId());
+        userRepository.save(entity);
     }
 
     @Override
     public UserDto findJobSeekerByEmail(String userEmail) {
-        var optionalUser = userDao.findJobSeekerByEmail(userEmail);
+        var optionalUser = userRepository.findJobSeekerByEmail(userEmail);
         return optionalUser.map(userMapper::mapToDto)
                 .orElseThrow(() -> new UserNotFoundException(
                         "Job Seeker not found By Email: " + userEmail,
@@ -161,7 +147,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto findEmployerByEmail(String employerEmail) {
-        var optionalUser = userDao.findEmployerByEmail(employerEmail);
+        var optionalUser = userRepository.findEmployerByEmail(employerEmail);
         return optionalUser.map(userMapper::mapToDto).orElseThrow(() ->
                 new UserNotFoundException(
                         "Employer not found By email: " + employerEmail,
@@ -175,29 +161,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Set<UserDto> findUsersByName(String userName) {
-        return userDao.findUsersByName(userName).stream()
+        return userRepository.findUserByName(userName).stream()
                 .map(userMapper::mapToDto)
                 .collect(Collectors.toSet());
     }
 
     @Override
-    public UserDto findUserByEmail(String email) {
-        var optionalUser = userDao.findUserByEmail(email);
-
-        return optionalUser.map(userMapper::mapToDto)
-                .orElseThrow(() -> new UserNotFoundException(
-                        "User not found by Email: " + email,
-                        CustomBindingResult.builder()
-                                .className(User.class.getSimpleName())
-                                .fieldName("email")
-                                .rejectedValue(email)
-                                .build()
-                ));
-    }
-
-    @Override
     public UserDto findUserByPhoneNumber(String phoneNumber) {
-        var optionalUser = userDao.findUserByPhoneNumber(phoneNumber);
+        var optionalUser = userRepository.findUserByPhoneNumber(phoneNumber);
 
         return optionalUser.map(userMapper::mapToDto)
                 .orElseThrow(() -> new UserNotFoundException(
@@ -212,7 +183,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void isUserExistByEmail(String email) {
-        boolean res = userDao.findUserByEmail(email).isPresent();
+        boolean res = userRepository.findUserByEmail(email).isPresent();
 
         if (!res)
             throw new UserNotFoundException(
@@ -230,20 +201,12 @@ public class UserServiceImpl implements UserService {
         Validator.isValidId(vacancyId);
 
         UserDto authorizedUser = getAuthorizedUser();
-        Long ownerId = vacancyService.findVacancyOwnerIdByVacancyId(vacancyId);
+        userRepository.findUserByVacancyId(vacancyId)
+                .map(User::getUserId)
+                .filter(id -> Objects.equals(id, authorizedUser.getUserId()))
+                .orElseThrow(() -> new IllegalFormatFlagsException("Vacancies responses can only be seen by it's owner"));
 
-        log.info("Vacancy owner id {}", ownerId);
-        if (!Objects.equals(ownerId, authorizedUser.getUserId()))
-            throw new CustomIllegalArgException(
-                    "Vacancies responses can only be seen by it's owner",
-                    CustomBindingResult.builder()
-                            .className(Vacancy.class.getSimpleName())
-                            .fieldName("vacancyId")
-                            .rejectedValue(vacancyId)
-                            .build()
-            );
-
-        return userDao.findRespondedToVacancyUsersByVacancy(vacancyId).stream()
+        return userRepository.findRespondedToVacancyUsersByVacancyId(vacancyId).stream()
                 .filter(user -> user.getAccountType().equalsIgnoreCase("jobSeeker"))
                 .map(userMapper::mapToDto)
                 .toList();
@@ -251,21 +214,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean checkIfEmployerExistByEmail(String employerEmail) {
-        Optional<User> user = userDao.findUserByEmail(employerEmail);
+        Optional<User> user = userRepository.findUserByEmail(employerEmail);
 
         return user.isPresent() && user.get().getAccountType().equalsIgnoreCase("employer");
     }
 
     @Override
     public boolean checkIfJobSeekerExistById(Long jobSeekerId) {
-        Optional<User> optionalUser = userDao.findUserById(jobSeekerId);
+        Optional<User> optionalUser = userRepository.findById(jobSeekerId);
 
         return optionalUser.isPresent() && optionalUser.get().getAccountType().equalsIgnoreCase("jobSeeker");
     }
 
     private UserDto getAuthorizedUser() {
         UserDetails userDetails = getAutentificatedUserDetails();
-        return findUserByEmail(userDetails.getUsername());
+        return userRepository.findUserByEmail(userDetails.getUsername())
+                .map(userMapper::mapToDto)
+                .orElseThrow(() -> new NoSuchElementException("Authorized user not found"));
     }
 
     public UserDetails getAutentificatedUserDetails() {
@@ -274,7 +239,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto findUserById(Long userId) {
-        return userDao.findUserById(userId)
+        return userRepository.findById(userId)
                 .map(userMapper::mapToDto)
                 .orElseThrow(() -> new UserNotFoundException(
                         "User not found by id " + userId,
@@ -287,10 +252,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String findUserPasswordByUserId(Long userId) {
-        return userDao.findPasswordByUserId(userId)
-                .orElseThrow(() -> new NoSuchElementException(
-                        "Password not found by user id " + userId)
-                );
+    public UserDto findUserByEmail(String email) {
+        return userRepository.findUserByEmail(email)
+                .map(userMapper::mapToDto)
+                .orElseThrow(() -> new NoSuchElementException("User not found by email " + email));
     }
 }

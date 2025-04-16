@@ -1,11 +1,11 @@
 package kg.attractor.jobsearch.service.impl;
 
-import kg.attractor.jobsearch.dao.WorkExperienceDao;
 import kg.attractor.jobsearch.dto.WorkExperienceInfoDto;
 import kg.attractor.jobsearch.dto.mapper.impl.WokExperienceMapper;
 import kg.attractor.jobsearch.exceptions.WorkExperienceNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.WorkExperienceInfo;
+import kg.attractor.jobsearch.repository.WorkExperienceRepository;
 import kg.attractor.jobsearch.service.WorkExperienceInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,12 +18,12 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService {
-    private final WorkExperienceDao workExperienceDao;
+    private final WorkExperienceRepository workExperienceRepository;
     private final WokExperienceMapper workExperienceInfoMapper;
 
     @Override
     public WorkExperienceInfoDto findWorkExperienceById(Long id) {
-        return workExperienceDao.findWorkExperienceById(id)
+        return workExperienceRepository.findById(id)
                 .map(workExperienceInfoMapper::mapToDto)
                 .orElseThrow(() -> new WorkExperienceNotFoundException(
                         "work experience info not found by id " + id,
@@ -41,43 +41,35 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
                 .map(workExperienceInfoMapper::mapToEntity)
                 .toList();
 
-        for (WorkExperienceInfo workExperienceInfo : workExperienceInfos) {
-            if (isWorkExperienceExistInThisResume(workExperienceInfo.getId(), workExperienceInfo.getResumeId())) {
-                workExperienceDao.updateWorkExperience(workExperienceInfo);
-                continue;
-            }
-
-            if (workExperienceInfo.getId() == null)
-                workExperienceDao.create(workExperienceInfo);
-        }
+        workExperienceInfos.stream()
+                .filter(workExperienceInfo ->
+                        isWorkExperienceExistInThisResume(workExperienceInfo.getId(), workExperienceInfo.getResume().getId()))
+                .forEach(workExperienceRepository::save);
     }
 
     private boolean isWorkExperienceExistInThisResume(Long id, Long resumeId) {
         if (id == null)
             return false;
 
-        Optional<WorkExperienceInfo> workExperienceInfo = workExperienceDao.findWorkExperienceById(id);
+        Optional<WorkExperienceInfo> workExperienceInfo = workExperienceRepository.findById(id);
 
-        return workExperienceInfo.isPresent() && Objects.equals(workExperienceInfo.get().getResumeId(), resumeId);
+        return workExperienceInfo.isPresent() &&
+                Objects.equals(workExperienceInfo.get().getResume().getId(), resumeId);
     }
 
     @Override
-    public Long createWorkExperience(WorkExperienceInfo workExperienceInfo) {
-        Optional<Long> id = workExperienceDao.create(workExperienceInfo);
-        return id.orElse(-1L);
+    public WorkExperienceInfoDto createWorkExperience(WorkExperienceInfo workExperienceInfo) {
+        return workExperienceInfoMapper.mapToDto(workExperienceRepository.save(workExperienceInfo));
     }
 
     @Override
-    public List<Long> createWorkExperienceInfos(List<WorkExperienceInfoDto> workExperienceInfosDtos, Long resumeId) {
-
+    public List<WorkExperienceInfoDto> createWorkExperienceInfos(List<WorkExperienceInfoDto> workExperienceInfosDtos) {
         if (workExperienceInfosDtos == null || workExperienceInfosDtos.isEmpty())
             return Collections.emptyList();
 
         List<WorkExperienceInfo> workExperienceInfos = workExperienceInfosDtos.stream()
                 .map(workExperienceInfoMapper::mapToEntity)
                 .toList();
-
-        workExperienceInfos.forEach(workExperienceInfo -> workExperienceInfo.setResumeId(resumeId));
 
         return workExperienceInfos.stream()
                 .map(this::createWorkExperience)
@@ -94,14 +86,14 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
 
     @Override
     public List<WorkExperienceInfoDto> findAll() {
-        return workExperienceDao.findAllWorkExperienceInfos().stream()
+        return workExperienceRepository.findAll().stream()
                 .map(workExperienceInfoMapper::mapToDto)
                 .toList();
     }
 
     @Override
     public List<WorkExperienceInfoDto> findWorkExperienceByResumeId(Long resumeId) {
-        return workExperienceDao.findWorkExperienceByResumeId(resumeId).stream()
+        return workExperienceRepository.findWorkExperienceInfoByResumeId(resumeId).stream()
                 .map(workExperienceInfoMapper::mapToDto)
                 .toList();
     }

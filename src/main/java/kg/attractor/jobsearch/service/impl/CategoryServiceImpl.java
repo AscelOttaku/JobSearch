@@ -1,8 +1,9 @@
 package kg.attractor.jobsearch.service.impl;
 
-import kg.attractor.jobsearch.dao.CategoryDao;
 import kg.attractor.jobsearch.dto.CategoryDto;
 import kg.attractor.jobsearch.dto.mapper.impl.CategoryMapper;
+import kg.attractor.jobsearch.model.Category;
+import kg.attractor.jobsearch.repository.CategoryRepository;
 import kg.attractor.jobsearch.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,8 +15,8 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
-    private final CategoryDao categoryDao;
     private final CategoryMapper categoryMapper;
+    private final CategoryRepository categoryRepository;
 
     @Override
     public boolean checkIfCategoryExistsById(Long categoryId) {
@@ -24,20 +25,21 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Optional<CategoryDto> findCategoryById(Long categoryId) {
-        return categoryDao.findCategoryById(categoryId)
+        return categoryRepository.findById(categoryId)
                 .map(categoryMapper::mapToDto);
     }
 
     @Override
     public List<CategoryDto> findAllCategories() {
-        return categoryDao.findAllCategories().stream()
+        return categoryRepository.findAll().stream()
                 .map(categoryMapper::mapToDto)
                 .toList();
     }
 
     @Override
     public String findCategoryNameById(Long categoryId) {
-        return categoryDao.findCategoryNameById(categoryId)
+        return categoryRepository.findById(categoryId)
+                .map(Category::getName)
                 .orElseThrow(() -> new NoSuchElementException("Category not found by id " + categoryId));
     }
 }

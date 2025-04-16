@@ -1,6 +1,5 @@
 package kg.attractor.jobsearch.service.impl;
 
-import kg.attractor.jobsearch.dao.VacancyDao;
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
@@ -10,6 +9,7 @@ import kg.attractor.jobsearch.exceptions.VacancyNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.model.Vacancy;
+import kg.attractor.jobsearch.repository.VacancyRepository;
 import kg.attractor.jobsearch.service.AuthorizedUserService;
 import kg.attractor.jobsearch.service.CategoryService;
 import kg.attractor.jobsearch.service.VacancyService;
@@ -28,7 +28,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class VacancyServiceImpl implements VacancyService {
     private final Mapper<VacancyDto, Vacancy> vacancyMapper;
-    private final VacancyDao vacancyDao;
+    private final VacancyRepository vacancyRepository;
     private final CategoryService categoryService;
     private final AuthorizedUserService authorizedUserService;
 
@@ -36,7 +36,7 @@ public class VacancyServiceImpl implements VacancyService {
     public VacancyDto findVacancyById(Long vacancyId) {
         Validator.isValidId(vacancyId);
 
-        return vacancyDao.findVacancyById(vacancyId)
+        return vacancyRepository.findById(vacancyId)
                 .map(vacancyMapper::mapToDto)
                 .orElseThrow(() -> new VacancyNotFoundException(
                         "vacancy by id " + vacancyId + " not found",
@@ -52,17 +52,13 @@ public class VacancyServiceImpl implements VacancyService {
     public boolean isVacancyExist(Long vacancyId) {
         Validator.isValidId(vacancyId);
 
-        try {
-            findVacancyById(vacancyId);
-            return true;
-        } catch (VacancyNotFoundException e) {
-            return false;
-        }
+        return vacancyRepository.findById(vacancyId).isPresent();
     }
 
     @Override
     public VacancyDto createdVacancy(VacancyDto vacancyDto) {
-        UserDto authorizedUser = authorizedUserService.getAuthorizedUser();
+        User authorizedUser = new User();
+        authorizedUser.setUserId(authorizedUserService.getAuthorizedUserId());
 
         log.info("Create vacancy / user name: {}", authorizedUser.getName());
 
@@ -79,18 +75,17 @@ public class VacancyServiceImpl implements VacancyService {
             );
 
         Vacancy vacancy = vacancyMapper.mapToEntity(vacancyDto);
-        vacancy.setVacancyUserId(authorizedUser.getUserId());
+        vacancy.setUser(authorizedUser);
 
-        var vacancyId = vacancyDao.createVacancy(vacancy);
-
-        return findVacancyById(vacancyId);
+        return vacancyMapper.mapToDto(vacancyRepository.save(vacancy));
     }
 
     @Override
     public VacancyDto updateVacancy(Long vacancyId, VacancyDto vacancyDto) {
         Validator.isValidId(vacancyId);
 
-        UserDto user = authorizedUserService.getAuthorizedUser();
+        User user = new User();
+        user.setUserId(authorizedUserService.getAuthorizedUserId());
 
         log.info("Updated vacancy / user name: {}", user.getName());
 
@@ -116,33 +111,21 @@ public class VacancyServiceImpl implements VacancyService {
 
         Vacancy vacancy = vacancyMapper.mapToEntity(vacancyDto);
         vacancy.setId(vacancyId);
-        vacancy.setVacancyUserId(user.getUserId());
+        vacancy.setUser(user);
 
-        var updatedVacancyId = vacancyDao.updateVacancy(vacancy);
-        return findVacancyById(updatedVacancyId);
+        return vacancyMapper.mapToDto(vacancyRepository.save(vacancy));
     }
-
 
     @Override
     public void deleteVacancy(Long vacancyId) {
         Validator.isValidId(vacancyId);
 
-        boolean res = vacancyDao.deleteVacancyById(vacancyId);
-
-        if (!res)
-            throw new VacancyNotFoundException(
-                    "vacancy by id " + vacancyId + " not found",
-                    CustomBindingResult.builder()
-                            .className(Vacancy.class.getSimpleName())
-                            .fieldName("id")
-                            .rejectedValue(vacancyId)
-                            .build()
-            );
+        vacancyRepository.deleteById(vacancyId);
     }
 
     @Override
     public List<VacancyDto> findAllActiveVacancies() {
-        return vacancyDao.findAllActiveVacancies().stream()
+        return vacancyRepository.findIsActiveVacancies().stream()
                 .map(vacancyMapper::mapToDto)
                 .toList();
     }
@@ -163,7 +146,8 @@ public class VacancyServiceImpl implements VacancyService {
                             .build()
             );
 
-        return vacancyDao.findVacancyByCategory(id).stream()
+        return vacancyRepository.findVacanciesByCategoryId(id)
+                .stream()
                 .map(vacancyMapper::mapToDto)
                 .toList();
     }
@@ -184,14 +168,15 @@ public class VacancyServiceImpl implements VacancyService {
                             .build()
             );
 
-        return vacancyDao.findVacanciesByUserEmail(user.getEmail()).stream()
+        return vacancyRepository.findVacanciesByUserEmail(user.getEmail())
+                .stream()
                 .map(vacancyMapper::mapToDto)
                 .toList();
     }
 
     @Override
     public List<VacancyDto> findAllVacancies() {
-        return vacancyDao.findAllVacancies().stream()
+        return vacancyRepository.findAll().stream()
                 .sorted(Comparator.comparing(this::getLastTimeOfVacancy).reversed())
                 .map(vacancyMapper::mapToDto)
                 .toList();
@@ -205,15 +190,15 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     public boolean isVacancyExistById(Long id) {
-        return vacancyDao.findVacancyById(id).isPresent();
+        return vacancyRepository.findById(id).isPresent();
     }
 
     @Override
-    public Long findVacancyOwnerIdByVacancyId(Long vacancyId) {
-        Optional<Vacancy> vacancy = vacancyDao.findVacancyById(vacancyId);
+    public Long findVacancyOwnerByVacancyId(Long vacancyId) {
+        Optional<Vacancy> vacancy = vacancyRepository.findById(vacancyId);
 
         return vacancy
-                .map(Vacancy::getVacancyUserId)
+                .map(v -> v.getUser().getUserId())
                 .orElse(-1L);
     }
 
@@ -221,7 +206,7 @@ public class VacancyServiceImpl implements VacancyService {
     public List<VacancyDto> findUserCreatedVacancies() {
         Long userId = authorizedUserService.getAuthorizedUserId();
 
-        return vacancyDao.findUserCreatedVacanciesByUserId(userId)
+        return vacancyRepository.findUserVacanciesByUserId(userId)
                 .stream()
                 .map(vacancyMapper::mapToDto)
                 .toList();

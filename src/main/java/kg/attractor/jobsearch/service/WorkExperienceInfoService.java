@@ -10,9 +10,9 @@ public interface WorkExperienceInfoService {
 
     void updateWorkExperienceInfo(List<WorkExperienceInfoDto> workExperienceInfosIdsDtos);
 
-    Long createWorkExperience(WorkExperienceInfo workExperienceInfo);
+    WorkExperienceInfoDto createWorkExperience(WorkExperienceInfo workExperienceInfo);
 
-    List<Long> createWorkExperienceInfos(List<WorkExperienceInfoDto> workExperienceInfosDtos, Long resumeId);
+    List<WorkExperienceInfoDto> createWorkExperienceInfos(List<WorkExperienceInfoDto> workExperienceInfosDtos);
 
     List<WorkExperienceInfoDto> findWorkExperienceByIds(List<Long> workExperienceOpIds);
 

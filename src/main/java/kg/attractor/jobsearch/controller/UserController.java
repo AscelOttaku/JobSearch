@@ -14,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,7 +24,7 @@ import java.util.Set;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("users")
+@RequestMapping("/users")
 public class UserController {
     private final AuthorizedUserService authorizedUserService;
     private final UserService userService;
@@ -37,8 +38,12 @@ public class UserController {
     }
 
     @PostMapping("registration")
-    @ResponseStatus(HttpStatus.SEE_OTHER)
-    public String createUser(@Valid UserDto userDto) {
+    public String createUser(@Valid @ModelAttribute("user") UserDto userDto, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("user", userDto);
+            return "auth/register";
+        }
+
         userService.createUser(userDto);
         return "redirect:/users/profile";
     }
@@ -72,9 +77,10 @@ public class UserController {
     }
 
     @PostMapping("upload/avatars")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<?> uploadAvatar(MultipartFile file) throws IOException {
-        return userService.uploadAvatar(file);
+    @ResponseStatus(HttpStatus.SEE_OTHER)
+    public String uploadAvatar(MultipartFile file) throws IOException {
+        userService.uploadAvatar(file);
+        return "redirect:/users/profile";
     }
 
     @GetMapping("names/{userName}")
@@ -126,7 +132,7 @@ public class UserController {
         return userService.findRespondedToVacancyUsersByVacancy(vacancyId);
     }
 
-    @PutMapping("updates")
+    @PostMapping("/updates")
     @ResponseStatus(HttpStatus.SEE_OTHER)
     public String updateUser(
             @ModelAttribute @Valid UserDto userDto,
