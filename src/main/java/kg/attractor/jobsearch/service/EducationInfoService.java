@@ -10,11 +10,9 @@ public interface EducationInfoService {
 
     void updateEducationInfo(List<EducationalInfoDto> educationInfosDtos);
 
-    Long createEducationInfo(EducationInfo educationInfo);
+    void createEducationInfo(EducationInfo educationInfo);
 
-    List<Long> createEducationInfos(List<EducationalInfoDto> educationalInfosDtos, Long resumeId);
-
-    List<EducationalInfoDto> findEducationInfoDtosByIds(List<Long> educationOpIds);
+    List<EducationalInfoDto> createEducationInfos(List<EducationalInfoDto> educationalInfosDtos);
 
     List<EducationalInfoDto> findAll();
 

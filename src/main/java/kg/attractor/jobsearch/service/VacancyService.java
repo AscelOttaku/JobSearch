@@ -23,7 +23,7 @@ public interface VacancyService {
 
     List<VacancyDto> findAllVacancies();
 
-    Long findVacancyOwnerIdByVacancyId(Long vacancyId);
+    Long findVacancyOwnerByVacancyId(Long vacancyId);
 
     List<VacancyDto> findUserCreatedVacancies();
 

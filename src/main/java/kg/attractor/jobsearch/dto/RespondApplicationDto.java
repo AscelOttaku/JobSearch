@@ -11,11 +11,11 @@ public class RespondApplicationDto {
 
     @NotNull(message = "{null_message}")
     @Positive(message = "{positive_number_message}")
-    private Long resumeId;
+    private ResumeDto resumeDto;
 
     @NotNull(message = "{null_message}")
     @Positive(message = "{positive_number_message}")
-    private Long vacancyId;
+    private VacancyDto vacancyDto;
 
     private boolean confirmation;
 }

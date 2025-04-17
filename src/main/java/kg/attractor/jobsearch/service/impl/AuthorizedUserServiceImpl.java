@@ -1,29 +1,28 @@
 package kg.attractor.jobsearch.service.impl;
 
-import kg.attractor.jobsearch.dao.UserDao;
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.mapper.impl.UserMapper;
 import kg.attractor.jobsearch.exceptions.EntityNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.User;
+import kg.attractor.jobsearch.repository.UserRepository;
 import kg.attractor.jobsearch.service.AuthorizedUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
 
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class AuthorizedUserServiceImpl implements AuthorizedUserService {
-    private final UserDao userDao;
+    private final UserRepository userRepository;
     private final UserMapper userMapper;
 
     @Override
     public UserDto getAuthorizedUser() {
-        return userDao.findUserByEmail(getAuthorizedUserDetails().getUsername())
+        return userRepository.findUserByEmail(getAuthorizedUserDetails().getUsername())
                 .map(userMapper::mapToDto)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Authorized user not found",
@@ -41,14 +40,14 @@ public class AuthorizedUserServiceImpl implements AuthorizedUserService {
 
     @Override
     public boolean checkIfJobSeekerExistByEmail(String userEmail) {
-        Optional<User> user = userDao.findUserByEmail(userEmail);
+        Optional<User> user = userRepository.findUserByEmail(userEmail);
 
         return user.isPresent() && user.get().getAccountType().equalsIgnoreCase("JobSeeker");
     }
 
     @Override
     public Long getAuthorizedUserId() {
-        return userDao.findUserIdByEmail(getAuthorizedUserDetails().getUsername())
+        return userRepository.findUserIdByEmail(getAuthorizedUserDetails().getUsername())
                 .orElseThrow(() -> new EntityNotFoundException(
                         "authorized user not found by email ",
                         CustomBindingResult.builder()

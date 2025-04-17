@@ -1,11 +1,11 @@
 package kg.attractor.jobsearch.service.impl;
 
-import kg.attractor.jobsearch.dao.EducationInfoDao;
 import kg.attractor.jobsearch.dto.EducationalInfoDto;
 import kg.attractor.jobsearch.dto.mapper.impl.EducationInfoMapper;
 import kg.attractor.jobsearch.exceptions.EducationInfoNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.EducationInfo;
+import kg.attractor.jobsearch.repository.EducationInfoRepository;
 import kg.attractor.jobsearch.service.EducationInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,19 +18,19 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class EducationInfoServiceImpl implements EducationInfoService {
-    private final EducationInfoDao educationInfoDao;
+    private final EducationInfoRepository educationInfoRepository;
     private final EducationInfoMapper educationInfoMapperDto;
 
     @Override
-    public EducationalInfoDto findEducationInfo(Long educationInfoOptionalId) {
-        return educationInfoDao.findEducationInfoById(educationInfoOptionalId)
+    public EducationalInfoDto findEducationInfo(Long educationInfoId) {
+        return educationInfoRepository.findById(educationInfoId)
                 .map(educationInfoMapperDto::mapToDto)
                 .orElseThrow(() -> new EducationInfoNotFoundException(
                         "education info not found",
                         CustomBindingResult.builder()
                                 .className(EducationInfo.class.getName())
                                 .fieldName("id")
-                                .rejectedValue(educationInfoOptionalId)
+                                .rejectedValue(educationInfoId)
                                 .build()
                 ));
     }
@@ -42,9 +42,8 @@ public class EducationInfoServiceImpl implements EducationInfoService {
                 .toList();
 
         for (EducationInfo info : educationInfos) {
-            if (isEducationInfoExist(info.getId(), info.getResumeId())) {
-                educationInfoDao.updateEducationInfo(info);
-            }
+            if (isEducationInfoExist(info.getId(), info.getResume().getId()))
+                educationInfoRepository.save(info);
         }
     }
 
@@ -52,52 +51,39 @@ public class EducationInfoServiceImpl implements EducationInfoService {
         if (id == null)
             return false;
 
-        Optional<EducationInfo> educationInfo = educationInfoDao.findEducationInfoById(id);
+        Optional<EducationInfo> educationInfo = educationInfoRepository.findById(id);
 
-        return educationInfo.isPresent() && Objects.equals(educationInfo.get().getResumeId(), resumeId);
+        return educationInfo.isPresent() && Objects.equals(educationInfo.get().getResume().getId(), resumeId);
     }
 
     @Override
-    public Long createEducationInfo(EducationInfo educationInfo) {
-        Optional<Long> id = educationInfoDao.create(educationInfo);
-        return id.orElse(-1L);
+    public void createEducationInfo(EducationInfo educationInfo) {
+        educationInfoRepository.save(educationInfo);
     }
 
     @Override
-    public List<Long> createEducationInfos(List<EducationalInfoDto> educationalInfosDtos, Long resumeId) {
-
+    public List<EducationalInfoDto> createEducationInfos(List<EducationalInfoDto> educationalInfosDtos) {
         if (educationalInfosDtos == null || educationalInfosDtos.isEmpty())
             return Collections.emptyList();
 
-        List<EducationInfo> educationInfos = educationalInfosDtos.stream()
+        return educationalInfosDtos.stream()
                 .map(educationInfoMapperDto::mapToEntity)
-                .toList();
-
-        educationInfos.forEach(educationInfo -> educationInfo.setResumeId(resumeId));
-
-        return educationInfos.stream()
-                .map(this::createEducationInfo)
-                .toList();
-    }
-
-    @Override
-    public List<EducationalInfoDto> findEducationInfoDtosByIds(List<Long> educationOpIds) {
-        return educationOpIds.stream()
-                .filter(id -> id != -1)
-                .map(this::findEducationInfo)
+                .map(educationInfoRepository::save)
+                .map(educationInfoMapperDto::mapToDto)
                 .toList();
     }
 
     @Override
     public List<EducationalInfoDto> findAll() {
-        return educationInfoDao.findAllEducationInfos().stream()
+        return educationInfoRepository.findAll().stream()
                 .map(educationInfoMapperDto::mapToDto)
                 .toList();
     }
 
     @Override
     public List<EducationalInfoDto> findEducationInfosByResumeId(Long resumeId) {
-        return educationInfoDao.findEducationalInfoByResumeId(resumeId).stream()
+        return educationInfoRepository.findEducationInfoByResumeId(resumeId)
+                .stream()
                 .map(educationInfoMapperDto::mapToDto)
                 .toList();
     }

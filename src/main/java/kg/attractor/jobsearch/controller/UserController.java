@@ -132,7 +132,7 @@ public class UserController {
         return userService.findRespondedToVacancyUsersByVacancy(vacancyId);
     }
 
-    @PostMapping("updates")
+    @PostMapping("/updates")
     @ResponseStatus(HttpStatus.SEE_OTHER)
     public String updateUser(
             @ModelAttribute @Valid UserDto userDto,

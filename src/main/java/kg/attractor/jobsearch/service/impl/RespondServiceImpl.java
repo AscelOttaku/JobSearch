@@ -1,15 +1,14 @@
 package kg.attractor.jobsearch.service.impl;
 
-import kg.attractor.jobsearch.dao.RespondApplicationDao;
 import kg.attractor.jobsearch.dto.RespondApplicationDto;
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.mapper.impl.RespondApplicationMapper;
 import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
-import kg.attractor.jobsearch.exceptions.RespondApplicationNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.RespondedApplication;
 import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.model.User;
+import kg.attractor.jobsearch.repository.RespondedApplicationRepository;
 import kg.attractor.jobsearch.service.AuthorizedUserService;
 import kg.attractor.jobsearch.service.RespondService;
 import kg.attractor.jobsearch.service.ResumeService;
@@ -18,12 +17,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class RespondServiceImpl implements RespondService {
-    private final RespondApplicationDao respondApplicationDao;
+    private final RespondedApplicationRepository respondedApplicationRepository;
     private final RespondApplicationMapper respondApplicationMapper;
     private final ResumeService resumeService;
     private final VacancyService vacancyService;
@@ -46,14 +46,14 @@ public class RespondServiceImpl implements RespondService {
 
         if (checkIsRespondApplicationExist(respondApplicationDto)) {
 
-            boolean isResumeByIdExist = resumeService.isResumeExist(respondApplicationDto.getResumeId());
-            boolean isVacancyByIdExist = vacancyService.isVacancyExist(respondApplicationDto.getVacancyId());
+            boolean isResumeByIdExist = resumeService.isResumeExist(respondApplicationDto.getResumeDto().getId());
+            boolean isVacancyByIdExist = vacancyService.isVacancyExist(respondApplicationDto.getVacancyDto().getVacancyId());
 
             if (isResumeByIdExist && isVacancyByIdExist) {
 
                 boolean isResumeBelongsToAuthorizedUser = resumeService.findUserCreatedResumes()
                         .stream()
-                        .anyMatch(resumeDto -> Objects.equals(resumeDto.getId(), respondApplicationDto.getResumeId()));
+                        .anyMatch(resumeDto -> Objects.equals(resumeDto.getId(), respondApplicationDto.getResumeDto().getId()));
 
                 if (!isResumeBelongsToAuthorizedUser)
                     throw new CustomIllegalArgException(
@@ -61,46 +61,34 @@ public class RespondServiceImpl implements RespondService {
                             CustomBindingResult.builder()
                                     .className(Resume.class.getSimpleName())
                                     .fieldName("resumeId")
-                                    .rejectedValue(respondApplicationDto.getResumeId())
+                                    .rejectedValue(respondApplicationDto.getResumeDto().getId())
                                     .build()
                     );
 
                 RespondedApplication respondedApplication = respondApplicationMapper.mapToEntity(respondApplicationDto);
-                return respondApplicationDao.createRespond(respondedApplication)
-                        .flatMap(id -> respondApplicationDao.findRespondApplicationById(id)
-                                .map(respondApplicationMapper::mapToDto))
-                        .orElseThrow(() -> new RespondApplicationNotFoundException(
-                                "RespondApplication not found",
-                                CustomBindingResult.builder()
-                                        .className(RespondedApplication.class.getSimpleName())
-                                        .fieldName("id")
-                                        .rejectedValue(respondedApplication.getId())
-                                        .build()
-                        ));
+                Long respondId = respondedApplicationRepository.save(respondedApplication).getId();
+
+                return respondedApplicationRepository.findById(respondId)
+                        .map(respondApplicationMapper::mapToDto)
+                        .orElseThrow(() -> new NoSuchElementException("Respond doesn't found by id " + respondId));
             }
         }
 
-        throw new CustomIllegalArgException(
-                "Invalid respondApplicationDto",
-                CustomBindingResult.builder()
-                        .className(RespondedApplication.class.getName())
-                        .fieldName("unknown")
-                        .rejectedValue(respondApplicationDto)
-                        .build()
-        );
+        throw new IllegalArgumentException("Invalid respondApplicationDto");
     }
 
     public boolean checkIsRespondApplicationExist(RespondApplicationDto respondApplicationDto) {
         RespondedApplication respondApplication = respondApplicationMapper.mapToEntity(respondApplicationDto);
-        var allData = respondApplicationDao.findAll();
+        var allData = respondedApplicationRepository.findAll();
 
         return allData.stream()
-                .noneMatch(data -> data.equals(respondApplication));
+                .noneMatch(data ->
+                        data.getId().equals(respondApplication.getId()));
     }
 
     @Override
     public List<RespondApplicationDto> findAllActiveResponsesByUserId(Long userId) {
-        return respondApplicationDao.findActiveRespondApplicationsByUserId(userId)
+        return respondedApplicationRepository.findActiveRespondedApplicationsByUserId(userId)
                 .stream()
                 .map(respondApplicationMapper::mapToDto)
                 .toList();

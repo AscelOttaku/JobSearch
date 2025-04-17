@@ -1,17 +1,32 @@
 package kg.attractor.jobsearch.model;
 
-import lombok.EqualsAndHashCode;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@EqualsAndHashCode
+@Entity
+@Table(name = "work_experience_info")
 public class WorkExperienceInfo {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long resumeId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "resume_id")
+    private Resume resume;
+
+    @Column(name = "years")
     private Integer years;
+
+    @Column(name = "company_name")
     private String companyName;
+
+    @Column(name = "position")
     private String position;
+
+    @Column(name = "responsibilities")
     private String responsibilities;
 }
