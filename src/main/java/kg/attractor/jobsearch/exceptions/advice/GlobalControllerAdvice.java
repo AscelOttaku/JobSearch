@@ -79,4 +79,18 @@ public class GlobalControllerAdvice {
     public Map<String, Object> handleDateTimeParseException(DateTimeParseException ex) {
         return errorService.handleDateTimeParserException(ex);
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleIllegalArgumentException(
+            IllegalArgumentException ex,
+            HttpServletRequest request,
+            Model model) {
+
+        model.addAttribute("status", HttpStatus.BAD_REQUEST.value());
+        model.addAttribute("reason", HttpStatus.BAD_REQUEST.getReasonPhrase());
+        model.addAttribute("message", ex.getMessage());
+        model.addAttribute("details", request);
+        return "errors/error";
+    }
 }

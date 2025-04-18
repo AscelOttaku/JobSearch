@@ -90,9 +90,12 @@ public class VacancyController {
         return "redirect:/vacancies/" + vacancy.getVacancyId();
     }
 
-    @PatchMapping("times")
-    public void updateVacancyTime(@RequestParam("vacancyId") Long vacancyId) {
+    @PostMapping("times")
+    @ResponseStatus(HttpStatus.SEE_OTHER)
+    public String updateVacancyTime(@RequestParam("vacancyId") Long vacancyId) {
         log.info("text = {}", vacancyId);
         vacancyService.updateVacancyDate(vacancyId);
+
+        return "redirect:/users/profile";
     }
 }
