@@ -1,6 +1,5 @@
 package kg.attractor.jobsearch.model;
 
-import lombok.EqualsAndHashCode;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

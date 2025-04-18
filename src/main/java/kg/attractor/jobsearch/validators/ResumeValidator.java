@@ -22,11 +22,11 @@ public class ResumeValidator {
 
         boolean isWorkExperiencesValid = resumeDto.getWorkExperienceInfoDtos()
                 .stream()
-                .noneMatch(this::isNotEmptyWorkExperience);
+                .noneMatch(kg.attractor.jobsearch.validators.Validator::isNotEmptyWorkExperience);
 
         boolean isEducationalInfosValid = resumeDto.getEducationInfoDtos()
                 .stream()
-                .noneMatch(this::isNotEmptyEducationalInfo);
+                .noneMatch(kg.attractor.jobsearch.validators.Validator::isNotEmptyEducationalInfo);
 
         Set<ConstraintViolation<ResumeDto>> getListConstraintViolations = constraintViolations
                 .stream()
@@ -60,18 +60,5 @@ public class ResumeValidator {
 
             bindingResult.rejectValue(field, "resume_error", message);
         });
-    }
-
-    public boolean isNotEmptyWorkExperience(WorkExperienceInfoDto workExperienceInfoDto) {
-        return workExperienceInfoDto.getYears() != null ||
-                workExperienceInfoDto.getPosition() != null && !workExperienceInfoDto.getPosition().isBlank() ||
-                workExperienceInfoDto.getCompanyName() != null && !workExperienceInfoDto.getCompanyName().isBlank() ||
-                workExperienceInfoDto.getResponsibilities() != null && !workExperienceInfoDto.getResponsibilities().isBlank();
-    }
-
-    public boolean isNotEmptyEducationalInfo(EducationalInfoDto educationalInfoDto) {
-        return educationalInfoDto.getDegree() != null && !educationalInfoDto.getDegree().isBlank() ||
-                educationalInfoDto.getInstitution() != null && !educationalInfoDto.getInstitution().isBlank() ||
-                educationalInfoDto.getProgram() != null && !educationalInfoDto.getProgram().isBlank();
     }
 }

@@ -61,10 +61,13 @@ public class ResumeController {
 
     @PostMapping("new_resume")
     public String createResume(
-            @ModelAttribute("resume") @Valid ResumeDto resumeDto,
+            @ModelAttribute("resume") ResumeDto resumeDto,
             BindingResult bindingResult,
             Model model
     ) {
+
+        resumeValidator.isValid(resumeDto, bindingResult);
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("resume", resumeDto);
             model.addAttribute("categories", categoryService.findAllCategories());

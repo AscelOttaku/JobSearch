@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller("vacancyController")
-@RequestMapping("vacancies")
+@RequestMapping("/vacancies")
 @RequiredArgsConstructor
 public class VacancyController {
     private final VacancyService vacancyService;
@@ -43,15 +43,14 @@ public class VacancyController {
         return "vacancies/vacancy";
     }
 
-    @GetMapping("new_vacancy")
+    @GetMapping("/new_vacancy")
     public String createVacancy(Model model) {
         model.addAttribute("vacancy", new VacancyDto());
         model.addAttribute("categories", categoryService.findAllCategories());
         return "vacancies/new_vacancy";
     }
 
-    @PostMapping("new_vacancy")
-    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/new_vacancy")
     public String createVacancy(@ModelAttribute("vacancy") @Valid VacancyDto vacancyDto, BindingResult result, Model model) {
         if (result.hasErrors()) {
             model.addAttribute("vacancy", vacancyDto);
@@ -68,7 +67,7 @@ public class VacancyController {
         VacancyDto vacancyDto = vacancyService.findAuthorizedUsersVacancyById(vacancyId);
         model.addAttribute("vacancy", vacancyDto);
         model.addAttribute("categories", categoryService.findAllCategories());
-        return "vacancies/new_vacancy";
+        return "vacancies/update_vacancy";
     }
 
     @PostMapping("update/vacancy")

@@ -4,8 +4,6 @@ import jakarta.validation.constraints.*;
 import kg.attractor.jobsearch.annotations.ValidPassword;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Builder
 @Getter
 @Setter
@@ -40,8 +38,6 @@ public class UserDto {
     @Email(message = "{email_message}")
     private String email;
 
-    @NotBlank(message = "{blank_message}")
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d).+$\n", message = "{password_message}")
     private String password;
 
     @NotNull(message = "{null_message}")
@@ -58,6 +54,4 @@ public class UserDto {
     private String avatar;
 
     private String accountType;
-    private LocalDateTime created;
-    private LocalDateTime updated;
 }

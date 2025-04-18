@@ -78,8 +78,8 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public void updateResume(ResumeDto resumeDto) {
-        resumeRepository.save(mapper.mapToEntity(resumeDto));
+    public Long updateResume(ResumeDto resumeDto) {
+        return resumeRepository.save(mapper.mapToEntity(resumeDto)).getId();
     }
 
     @Override

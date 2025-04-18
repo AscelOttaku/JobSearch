@@ -3,8 +3,6 @@ package kg.attractor.jobsearch.dto.mapper.impl;
 import kg.attractor.jobsearch.dto.CategoryDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.model.Category;
-import kg.attractor.jobsearch.service.CategoryService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,7 +13,8 @@ public class CategoryMapper implements Mapper<CategoryDto, Category> {
         return CategoryDto.builder()
                 .id(entity.getId())
                 .name(entity.getName())
-                .parentId(entity.getUnderCategory().getId())
+                .parentId(entity.getUnderCategory() != null ?
+                        entity.getUnderCategory().getId() : null)
                 .build();
     }
 

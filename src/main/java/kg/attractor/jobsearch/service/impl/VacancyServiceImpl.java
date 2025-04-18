@@ -63,18 +63,6 @@ public class VacancyServiceImpl implements VacancyService {
 
         log.info("Create vacancy / user name: {}", authorizedUser.getName());
 
-        var getCategory = categoryService.checkIfCategoryExistsById(vacancyDto.getCategoryId());
-
-        if (!getCategory)
-            throw new CustomIllegalArgException(
-                    "Field id category is not exits",
-                    CustomBindingResult.builder()
-                            .className(Vacancy.class.getSimpleName())
-                            .fieldName("categoryId")
-                            .rejectedValue(vacancyDto.getCategoryId())
-                            .build()
-            );
-
         Vacancy vacancy = vacancyMapper.mapToEntity(vacancyDto);
         vacancy.setUser(authorizedUser);
 
@@ -90,20 +78,7 @@ public class VacancyServiceImpl implements VacancyService {
 
         log.info("Updated vacancy / user name: {}", user.getName());
 
-        if (!isVacancyExistById(vacancyDto.getVacancyId()))
-            throw new EntityNotFoundException(
-                    "Entity vacancy doesn't found by id",
-                    CustomBindingResult.builder()
-                            .className(Vacancy.class.getSimpleName())
-                            .fieldName("id")
-                            .rejectedValue(vacancyDto.getVacancyId())
-                            .build()
-            );
-
         Vacancy vacancy = vacancyMapper.mapToEntity(vacancyDto);
-        vacancy.setVacancyUserId(user.getUserId());
-
-        vacancy.setId(vacancyId);
         vacancy.setUser(user);
 
         return vacancyMapper.mapToDto(vacancyRepository.save(vacancy));
@@ -184,7 +159,7 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     public boolean isVacancyExistById(Long id) {
-        return vacancyRepository.findById(id).isPresent();
+        return id != null && vacancyRepository.findById(id).isPresent();
     }
 
     @Override

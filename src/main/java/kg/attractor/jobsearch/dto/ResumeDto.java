@@ -3,6 +3,7 @@ package kg.attractor.jobsearch.dto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import kg.attractor.jobsearch.annotations.EntityExistById;
+import kg.attractor.jobsearch.annotations.IsDateCorrect;
 import kg.attractor.jobsearch.util.EntityType;
 import lombok.*;
 

@@ -38,11 +38,11 @@
 
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="categoryId" class="form-label">
+                                <label for="category.id" class="form-label">
                                     <i class="bi bi-briefcase form-icon me-2"></i>Категория
                                 </label>
-                                <select class="form-select" id="categoryId" name="categoryId">
-                                    <option value="">Выберите категорию</option>
+                                <select class="form-select" id="" name="categoryId">
+                                    <option value="category.id">Выберите категорию</option>
                                     <#list categories as category>
                                         <option value="${category.id}"
                                                 ${(resume.categoryId?? && resume.categoryId == category.id)?string('selected','')}>

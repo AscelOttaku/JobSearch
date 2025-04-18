@@ -7,6 +7,7 @@ import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.EducationInfo;
 import kg.attractor.jobsearch.repository.EducationInfoRepository;
 import kg.attractor.jobsearch.service.EducationInfoService;
+import kg.attractor.jobsearch.validators.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -41,15 +42,19 @@ public class EducationInfoServiceImpl implements EducationInfoService {
                 .map(educationInfoMapperDto::mapToEntity)
                 .toList();
 
+        educationInfos.stream()
+                .filter(educationInfo -> isEducationInfoBelongToResume(educationInfo.getId(), educationInfo.getId()))
+                .forEach(educationInfoRepository::save);
+
         for (EducationInfo info : educationInfos) {
-            if (isEducationInfoExist(info.getId(), info.getResume().getId()))
+            if (isEducationInfoBelongToResume(info.getId(), info.getResume().getId()))
                 educationInfoRepository.save(info);
         }
     }
 
-    private boolean isEducationInfoExist(Long id, Long resumeId) {
+    private boolean isEducationInfoBelongToResume(Long id, Long resumeId) {
         if (id == null)
-            return false;
+            return true;
 
         Optional<EducationInfo> educationInfo = educationInfoRepository.findById(id);
 
@@ -67,6 +72,7 @@ public class EducationInfoServiceImpl implements EducationInfoService {
             return Collections.emptyList();
 
         return educationalInfosDtos.stream()
+                .filter(Validator::isNotEmptyEducationalInfo)
                 .map(educationInfoMapperDto::mapToEntity)
                 .map(educationInfoRepository::save)
                 .map(educationInfoMapperDto::mapToDto)
@@ -90,6 +96,6 @@ public class EducationInfoServiceImpl implements EducationInfoService {
 
     @Override
     public void deleteEducationInfoById(Long educationInfoId) {
-        educationInfoDao.deleteEducationInfoById(educationInfoId);
+        educationInfoRepository.deleteById(educationInfoId);
     }
 }

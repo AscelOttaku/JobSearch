@@ -4,19 +4,23 @@ import kg.attractor.jobsearch.dto.EducationalInfoDto;
 import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.dto.WorkExperienceInfoDto;
 import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
+import kg.attractor.jobsearch.exceptions.EntityNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.model.WorkExperienceInfo;
+import kg.attractor.jobsearch.repository.ResumeRepository;
 import kg.attractor.jobsearch.service.*;
 import kg.attractor.jobsearch.util.Util;
 import kg.attractor.jobsearch.validators.ResumeValidator;
+import kg.attractor.jobsearch.validators.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,28 +37,24 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
     public Long createResume(ResumeDto resumeDto) {
         resumeDto.setUserId(authorizedUserService.getAuthorizedUser().getUserId());
 
-        Long resumeId = resumeService.createResume(resumeDto);
+        Long resumeId = resumeService.createResume(resumeDto).getId();
 
-        if (resumeId == -1) {
-            log.warn("Resume wasn't created");
-            throw new EntityNotFoundException(
-                    "Resume was not created",
-                    CustomBindingResult.builder()
-                            .className(Resume.class.getSimpleName())
-                            .fieldName("resume")
-                            .rejectedValue(resumeDto)
-                            .build()
-            );
-        }
+        resumeDto.getEducationInfoDtos()
+                .forEach(educationInfoDto ->
+                        educationInfoDto.setResumeId(resumeId));
+
+        resumeDto.getWorkExperienceInfoDtos()
+                        .forEach(workExperienceInfoDto ->
+                                workExperienceInfoDto.setResumeId(resumeId));
 
         educationInfoService
                 .createEducationInfos(
-                        resumeDto.getEducationInfoDtos(), resumeId
+                        resumeDto.getEducationInfoDtos()
                 );
 
         workExperienceInfoService
                 .createWorkExperienceInfos(
-                        resumeDto.getWorkExperienceInfoDtos(), resumeId
+                        resumeDto.getWorkExperienceInfoDtos()
                 );
 
         return resumeId;
@@ -79,6 +79,9 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
         }
 
         resumeDto.setUserId(authorizedUserId);
+
+        resumeDto.setCreated(previousResume.getCreated());
+        resumeDto.setUpdated(String.valueOf(LocalDateTime.now()));
 
         Long res = resumeService.updateResume(resumeDto);
 
@@ -126,11 +129,11 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
         List<WorkExperienceInfoDto> workExperienceInfoDtos = workExperienceInfoService.findAll();
 
         educationalInfoDtos = educationalInfoDtos.stream()
-                .filter(resumeValidator::isNotEmptyEducationalInfo)
+                .filter(educationalInfoDto1 -> !Validator.isNotEmptyEducationalInfo(educationalInfoDto1))
                 .toList();
 
         workExperienceInfoDtos = workExperienceInfoDtos.stream()
-                .filter(resumeValidator::isNotEmptyWorkExperience)
+                .filter(workExperienceInfoDto1 -> !Validator.isNotEmptyWorkExperience(workExperienceInfoDto1))
                 .toList();
 
         educationalInfoDtos.forEach(educationalInfoDto ->

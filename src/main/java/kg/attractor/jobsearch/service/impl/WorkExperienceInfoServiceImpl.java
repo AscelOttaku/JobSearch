@@ -7,6 +7,7 @@ import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.WorkExperienceInfo;
 import kg.attractor.jobsearch.repository.WorkExperienceRepository;
 import kg.attractor.jobsearch.service.WorkExperienceInfoService;
+import kg.attractor.jobsearch.validators.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -43,13 +44,13 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
 
         workExperienceInfos.stream()
                 .filter(workExperienceInfo ->
-                        isWorkExperienceExistInThisResume(workExperienceInfo.getId(), workExperienceInfo.getResume().getId()))
+                        isWorkExperienceBelongsToResume(workExperienceInfo.getId(), workExperienceInfo.getResume().getId()))
                 .forEach(workExperienceRepository::save);
     }
 
-    private boolean isWorkExperienceExistInThisResume(Long id, Long resumeId) {
+    private boolean isWorkExperienceBelongsToResume(Long id, Long resumeId) {
         if (id == null)
-            return false;
+            return true;
 
         Optional<WorkExperienceInfo> workExperienceInfo = workExperienceRepository.findById(id);
 
@@ -67,14 +68,13 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
         if (workExperienceInfosDtos == null || workExperienceInfosDtos.isEmpty())
             return Collections.emptyList();
 
-        List<WorkExperienceInfo> workExperienceInfos = workExperienceInfosDtos.stream()
+        return workExperienceInfosDtos.stream()
+                .filter(Validator::isNotEmptyWorkExperience)
                 .map(workExperienceInfoMapper::mapToEntity)
-                .toList();
-
-        return workExperienceInfos.stream()
                 .map(this::createWorkExperience)
                 .toList();
     }
+
 
     @Override
     public List<WorkExperienceInfoDto> findWorkExperienceByIds(List<Long> workExperienceOpIds) {
@@ -100,6 +100,6 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
 
     @Override
     public void deleteWorkExperience(Long id) {
-        workExperienceDao.deleteWorkExperienceId(id);
+        workExperienceRepository.deleteById(id);
     }
 }

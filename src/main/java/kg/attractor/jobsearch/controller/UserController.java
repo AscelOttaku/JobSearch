@@ -41,14 +41,14 @@ public class UserController {
     public String createUser(@Valid @ModelAttribute("user") UserDto userDto, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("user", userDto);
-            return "auth/register";
+            return "/auth/register";
         }
 
         userService.createUser(userDto);
         return "redirect:/users/profile";
     }
 
-    @GetMapping("update/profile")
+    @GetMapping("/update/profile")
     @ResponseStatus(HttpStatus.OK)
     public String editPage(Model model) {
         UserDto userDto = userService.findUserById(authorizedUserService.getAuthorizedUserId());
@@ -132,7 +132,7 @@ public class UserController {
         return userService.findRespondedToVacancyUsersByVacancy(vacancyId);
     }
 
-    @PostMapping("/updates")
+    @PostMapping("/updates/profile")
     @ResponseStatus(HttpStatus.SEE_OTHER)
     public String updateUser(
             @ModelAttribute @Valid UserDto userDto,

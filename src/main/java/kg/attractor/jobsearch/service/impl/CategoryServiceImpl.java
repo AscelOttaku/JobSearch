@@ -2,18 +2,14 @@ package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dto.CategoryDto;
 import kg.attractor.jobsearch.dto.mapper.impl.CategoryMapper;
-import kg.attractor.jobsearch.exceptions.EntityNotFoundException;
-import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.repository.CategoryRepository;
 import kg.attractor.jobsearch.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,13 +19,14 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public boolean checkIfCategoryExistsById(Long categoryId) {
-        return findCategoryById(categoryId).isPresent();
+        return categoryRepository.findById(categoryId).isPresent();
     }
 
     @Override
-    public Optional<CategoryDto> findCategoryById(Long categoryId) {
+    public CategoryDto findCategoryById(Long categoryId) {
         return categoryRepository.findById(categoryId)
-                .map(categoryMapper::mapToDto);
+                .map(categoryMapper::mapToDto)
+                .orElseThrow(() -> new NoSuchElementException("Category not found by id: " + categoryId));
     }
 
     @Override

@@ -12,6 +12,9 @@ import kg.attractor.jobsearch.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Service
 @RequiredArgsConstructor
 public class ResumeMapper implements Mapper<ResumeDto, Resume> {
@@ -51,6 +54,11 @@ public class ResumeMapper implements Mapper<ResumeDto, Resume> {
         resume.setUser(user);
         resume.setSalary(resumeDto.getSalary());
         resume.setIsActive(resumeDto.getIsActive());
+        resume.setCreated(resumeDto.getCreated() != null ? LocalDateTime.parse(resumeDto.getCreated(),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) :
+                LocalDateTime.now());
+        resume.setUpdated(resumeDto.getUpdated() != null ?
+                LocalDateTime.parse(resumeDto.getUpdated()) : null);
         return resume;
     }
 }

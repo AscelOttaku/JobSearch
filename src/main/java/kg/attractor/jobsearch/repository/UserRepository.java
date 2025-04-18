@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +17,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findUserByPhoneNumber(String phoneNumber);
 
-    Optional<User> findUserPasswordByUserId(Long userId);
+    @Query("select u.password from User u where u.userId = :userId")
+    Optional<String> findUserPasswordByUserId(Long userId);
 
     Optional<User> findJobSeekerByEmail(String email);
 
@@ -26,10 +28,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("select u from User u LEFT JOIN Resume AS r ON r.user.userId = u.userId " +
             "                JOIN RespondedApplication ra ON ra.resume.id = r.id " +
-            "                JOIN Vacancy AS v ON v.id = ra.vacancy.id" +
-            "                WHERE v.id = :vacancyId AND u.accountType LIKE 'JobSeeker'")
+            "                JOIN Vacancy AS v ON v.id = ra.vacancy.id " +
+            "                JOIN Role rl ON rl.id = u.role.id" +
+            "                WHERE v.id = :vacancyId AND rl.role ilike 'JobSeeker'")
     List<User> findRespondedToVacancyUsersByVacancyId(Long vacancyId);
 
+    @Transactional
     @Modifying
     @Query("update User u set u.avatar = :avatar where u.email = :email")
     void updateAvatarByUserEmail(@Param(value = "avatar") String avatar, @Param(value = "email") String email);

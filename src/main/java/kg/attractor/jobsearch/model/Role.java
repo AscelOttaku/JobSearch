@@ -1,12 +1,19 @@
 package kg.attractor.jobsearch.model;
 
+import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
+@Entity
+@Table(name = "ROLES")
+@Setter
 @Getter
-@RequiredArgsConstructor
-public enum Role {
-    EMPLOYER("EMPLOYER"), JOB_SEEKER("JOB_SEEKER");
+public class Role {
 
-    private final String value;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "role", nullable = false)
+    private String role;
 }

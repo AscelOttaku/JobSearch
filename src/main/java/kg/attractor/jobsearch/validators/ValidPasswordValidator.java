@@ -20,32 +20,16 @@ public class ValidPasswordValidator implements ConstraintValidator<ValidPassword
         String password = userDto.getPassword();
         Long userId = userDto.getUserId();
 
-        if (Validator.isStringNotValid(password)) {
+        if (password == null || password.isBlank()) {
+            String previousPassword = userService.findUserById(userId).getPassword();
 
-            if (userId == null)
-                return getNullContext(constraintValidatorContext, "Password cannot be null or blank");
+            if (previousPassword == null || previousPassword.isBlank())
+                return false;
 
-            String hasPreviousPassword = userService.findUserPasswordByUserId(userId);
-
-            if (Validator.isStringNotValid(hasPreviousPassword))
-                return getNullContext(constraintValidatorContext, "Password cannot be null or blank");
-
-            userDto.setPassword(hasPreviousPassword);
+            userDto.setPassword(previousPassword);
             return true;
         }
 
-        if (!password.matches("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).+$")) {
-            return getNullContext(constraintValidatorContext, "password should contains at least one digit");
-        }
-        return true;
-    }
-
-    private static boolean getNullContext(ConstraintValidatorContext constraintValidatorContext, String message) {
-        constraintValidatorContext.buildConstraintViolationWithTemplate(
-                        message
-                )
-                .addPropertyNode("password")
-                .addConstraintViolation();
-        return false;
+        return password.matches("^(?=.*[A-Z])(?=.*\\d).+$");
     }
 }

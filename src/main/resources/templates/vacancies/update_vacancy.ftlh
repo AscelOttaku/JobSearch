@@ -25,7 +25,7 @@
                 <div class="vacancy-form">
                     <h2 class="mb-4">Обновить вакансию</h2>
                     <form method="post" action="/vacancies/update/vacancy">
-                        <@spring.formHiddenInput "resume.id", 'class="form-control", type="hidden", placeholder="Введите название", id="name"'/>
+                        <@spring.formHiddenInput "vacancy.vacancyId", 'class="form-control", type="hidden", placeholder="Введите название", id="name"'/>
                         <div class="mb-3">
                             <label for="name" class="form-label">
                                 <i class="bi bi-card-heading form-icon me-2"></i>Название вакансии
@@ -94,7 +94,7 @@
                         </div>
 
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-submit btn-lg">Сохранить вакансию</button>
+                            <button type="submit" class="btn btn-submit btn-lg">Обновить вакансию</button>
                         </div>
                     </form>
                 </div>

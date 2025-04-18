@@ -48,10 +48,16 @@ public class GlobalControllerAdvice {
 
     @ExceptionHandler(CustomIllegalArgException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public InputElementExceptionBody handleCustomIllegalArgException(
-            CustomIllegalArgException ex, HttpServletRequest request
+    public String handleCustomIllegalArgException(
+            CustomIllegalArgException ex, HttpServletRequest request, Model model
     ) {
-        return errorService.handleInvalidArgumentException(ex, request);
+        InputElementExceptionBody body = errorService.handleInvalidArgumentException(ex, request);
+
+        model.addAttribute("status", HttpStatus.BAD_REQUEST.value());
+        model.addAttribute("reason", HttpStatus.BAD_REQUEST.getReasonPhrase());
+        model.addAttribute("message", body.getMessage());
+        model.addAttribute("details", request);
+        return "errors/error";
     }
 
     @ExceptionHandler(HandlerMethodValidationException.class)

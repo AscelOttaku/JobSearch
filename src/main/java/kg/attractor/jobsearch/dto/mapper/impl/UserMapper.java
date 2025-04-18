@@ -2,6 +2,7 @@ package kg.attractor.jobsearch.dto.mapper.impl;
 
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
+import kg.attractor.jobsearch.model.Role;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.util.Util;
 import lombok.RequiredArgsConstructor;
@@ -24,12 +25,20 @@ public class UserMapper implements Mapper<UserDto, User> {
                 .password(user.getPassword())
                 .phoneNumber(user.getPhoneNumber())
                 .avatar(user.getAvatar())
-                .accountType(user.getAccountType())
+                .accountType(user.getRole().getRole())
                 .build();
     }
 
     @Override
     public User mapToEntity(UserDto userDto) {
+
+        Role role = new Role();
+
+        if (userDto.getAccountType().equalsIgnoreCase("EMPLOYER"))
+            role.setId(1L);
+        else
+            role.setId(2L);
+
         User user = new User();
         user.setUserId(userDto.getUserId());
         user.setName(userDto.getName());
@@ -38,8 +47,9 @@ public class UserMapper implements Mapper<UserDto, User> {
         user.setEmail(userDto.getEmail());
         user.setPassword(Util.encodePassword(passwordEncoder, userDto.getPassword()));
         user.setPhoneNumber(userDto.getPhoneNumber());
-        user.setAvatar(userDto.getAvatar());
         user.setAccountType(userDto.getAccountType());
+        user.setRole(role);
+        user.setEnabled(true);
         return user;
     }
 }

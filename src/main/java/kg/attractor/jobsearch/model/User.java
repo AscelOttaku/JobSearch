@@ -37,6 +37,18 @@ public class User {
     @Column(name = "avatar")
     private String avatar;
 
-    @Column(name = "account_type", nullable = false, updatable = false)
+    @Transient
     private String accountType;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id")
+    private Role role;
+
+    @Column(name = "enabled", nullable = false)
+    private boolean enabled;
+
+    @PostLoad
+    public void postLoad() {
+        accountType = role.getRole();
+    }
 }
