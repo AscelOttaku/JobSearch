@@ -3,7 +3,6 @@ package kg.attractor.jobsearch.exceptions.advice;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
-import kg.attractor.jobsearch.exceptions.EntityNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.InputElementExceptionBody;
 import kg.attractor.jobsearch.exceptions.body.ValidationExceptionBody;
 import kg.attractor.jobsearch.service.ErrorService;
@@ -62,10 +61,17 @@ public class GlobalControllerAdvice {
 
     @ExceptionHandler(HandlerMethodValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, Object> handleHandlerMethodValidationException(
-            HandlerMethodValidationException ex, HttpServletRequest request
+    public String handleHandlerMethodValidationException(
+            HandlerMethodValidationException ex, HttpServletRequest request, Model model
     ) {
-        return errorService.handleMethodValidationException(ex, request);
+        Map<String, Object> exceptionBody = errorService.handleMethodValidationException(ex, request);
+
+        model.addAttribute("status", HttpStatus.BAD_REQUEST.value());
+        model.addAttribute("reason", HttpStatus.BAD_REQUEST.getReasonPhrase());
+        model.addAttribute("message", exceptionBody.get("message"));
+        model.addAttribute("details", request);
+
+        return "errors/error";
     }
 
     @ExceptionHandler(DateTimeParseException.class)

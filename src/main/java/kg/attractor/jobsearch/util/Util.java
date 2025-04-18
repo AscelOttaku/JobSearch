@@ -1,6 +1,7 @@
 package kg.attractor.jobsearch.util;
 
 import lombok.experimental.UtilityClass;
+import org.apache.commons.text.CaseUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
@@ -16,6 +17,10 @@ public class Util {
                 .replaceAll("([A-Z])(?=[A-Z])", "$1_")
                 .replaceAll("([a-z])([A-Z])", "$1_$2")
                 .toLowerCase();
+    }
+
+    public static String convertToCamelCase(String str) {
+        return CaseUtils.toCamelCase(str, false, '_');
     }
 
     public static String dateTimeFormat(LocalDateTime dateTime) {

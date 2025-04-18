@@ -2,6 +2,7 @@ package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.service.*;
+import kg.attractor.jobsearch.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,9 @@ public class ProfileServiceImpl implements ProfileService {
         UserDto userDto = authorizedUserService.getAuthorizedUser();
         model.put("user", userDto);
 
-        if (userDto.getAccountType().equalsIgnoreCase("JobSeeker"))
+        String userAccountType = Util.convertToCamelCase(userDto.getAccountType());
+
+        if (userAccountType.equalsIgnoreCase("JobSeeker"))
             model.put("resumes", resumeService.findUserCreatedResumes());
         else
             model.put("vacancies", vacancyService.findUserCreatedVacancies());

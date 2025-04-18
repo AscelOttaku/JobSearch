@@ -1,10 +1,13 @@
 package kg.attractor.jobsearch.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import kg.attractor.jobsearch.dto.VacancyDto;
+import kg.attractor.jobsearch.repository.VacancyRepository;
 import kg.attractor.jobsearch.service.CategoryService;
 import kg.attractor.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +18,7 @@ import java.util.List;
 
 @Controller("vacancyController")
 @RequestMapping("/vacancies")
+@Slf4j
 @RequiredArgsConstructor
 public class VacancyController {
     private final VacancyService vacancyService;
@@ -84,5 +88,11 @@ public class VacancyController {
 
         VacancyDto vacancy = vacancyService.updateVacancy(vacancyDto);
         return "redirect:/vacancies/" + vacancy.getVacancyId();
+    }
+
+    @PatchMapping("times")
+    public void updateVacancyTime(@RequestParam("vacancyId") Long vacancyId) {
+        log.info("text = {}", vacancyId);
+        vacancyService.updateVacancyDate(vacancyId);
     }
 }

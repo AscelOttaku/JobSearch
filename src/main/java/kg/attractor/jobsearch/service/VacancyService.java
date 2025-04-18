@@ -28,4 +28,6 @@ public interface VacancyService {
     List<VacancyDto> findUserCreatedVacancies();
 
     VacancyDto findAuthorizedUsersVacancyById(Long vacancyId);
+
+    void updateVacancyDate(Long vacancyId);
 }

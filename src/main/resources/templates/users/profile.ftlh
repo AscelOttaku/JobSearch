@@ -134,7 +134,7 @@
                                 </#if>
                             </h3>
                             <div>
-                                <#if user.accountType == "JobSeeker">
+                                <#if user.accountType == "JOB_SEEKER">
                                     <a href="/resumes/users" class="btn btn-view-all">
                                         <i class="bi bi-collection me-2"></i>Все созданные резюме
                                     </a>
@@ -153,7 +153,7 @@
                             </div>
                         </div>
 
-                        <#if user.accountType == "JobSeeker">
+                        <#if user.accountType == "JOB_SEEKER">
                             <#if resumes?? && resumes?has_content>
                                 <div class="row g-3">
                                     <#list resumes as resume>
@@ -226,6 +226,9 @@
                                                                 <i class="bi bi-clock-history me-1"></i>Опыт: ${vacancy.expFrom}
                                                                 - ${vacancy.expTo} лет
                                                             </p>
+                                                            <a href="/vacancies/time?vacancyId=${vacancy.vacancyId}" class="btn btn-sm btn-outline-secondary" title="Update">
+                                                                <i class="bi bi-arrow-clockwise"></i>
+                                                            </a>
                                                         </div>
                                                     </div>
                                                     <div>

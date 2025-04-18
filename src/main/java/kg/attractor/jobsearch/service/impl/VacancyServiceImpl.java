@@ -19,10 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -198,5 +195,24 @@ public class VacancyServiceImpl implements VacancyService {
         }
 
         return vacancyDto;
+    }
+
+    @Override
+    public void updateVacancyDate(Long vacancyId) {
+        UserDto authorizedUser = authorizedUserService.getAuthorizedUser();
+
+        Vacancy vacancy = vacancyRepository.findById(vacancyId)
+                .orElseThrow(() -> new CustomIllegalArgException(
+                        "Vacancy not found by " + vacancyId,
+                        CustomBindingResult.builder()
+                                .className(Vacancy.class.getSimpleName())
+                                .fieldName("vacancyId")
+                                .rejectedValue(vacancyId)
+                                .build()));
+
+        if (!Objects.equals(authorizedUser.getUserId(), vacancy.getUser().getUserId()))
+            throw new IllegalArgumentException("user doesn't belongs this vacancy");
+
+        vacancyRepository.updateVacancyTime(vacancyId);
     }
 }
