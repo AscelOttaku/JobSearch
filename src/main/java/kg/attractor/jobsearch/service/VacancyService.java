@@ -1,5 +1,6 @@
 package kg.attractor.jobsearch.service;
 
+import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.VacancyDto;
 
 import java.util.List;
@@ -21,11 +22,11 @@ public interface VacancyService {
 
     List<VacancyDto> findUserRespondedVacancies();
 
-    List<VacancyDto> findAllVacancies();
+    PageHolder<VacancyDto> findAllVacancies(int page, int pageSize);
 
     Long findVacancyOwnerByVacancyId(Long vacancyId);
 
-    List<VacancyDto> findUserCreatedVacancies();
+    PageHolder<VacancyDto> findUserCreatedVacancies(int page, int size);
 
     VacancyDto findAuthorizedUsersVacancyById(Long vacancyId);
 

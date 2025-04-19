@@ -69,9 +69,11 @@ public class ResumeController {
     public List<ResumeDto> findUserCreatedResumes(
             @RequestParam(name = "email")
             @Email(message = "{email_message}")
-            String userEmail
+            String userEmail,
+            @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+            @RequestParam(value = "size", defaultValue = "10", required = false) Integer size
     ) {
-        return resumeService.findUserCreatedResumes(userEmail);
+        return resumeService.findUserCreatedResumes(userEmail, page, size);
     }
 
     @GetMapping("{resumeId}")

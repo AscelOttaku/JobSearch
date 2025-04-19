@@ -1,5 +1,6 @@
 package kg.attractor.jobsearch.service.impl;
 
+import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
@@ -16,11 +17,15 @@ import kg.attractor.jobsearch.service.VacancyService;
 import kg.attractor.jobsearch.validators.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -142,18 +147,21 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public List<VacancyDto> findAllVacancies() {
-        return vacancyRepository.findAll().stream()
-                .sorted(Comparator.comparing(this::getLastTimeOfVacancy).reversed())
-                .map(vacancyMapper::mapToDto)
-                .toList();
-    }
+    public PageHolder<VacancyDto> findAllVacancies(int page, int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
 
-    private LocalDateTime getLastTimeOfVacancy(Vacancy vacancy) {
-        if (vacancy.getUpdated() == null)
-            return vacancy.getCreated();
+        Page<Vacancy> vacanciesPage = vacancyRepository.findAllVacancies(pageable);
 
-        return vacancy.getUpdated();
+        return PageHolder.<VacancyDto>builder()
+                .content(vacanciesPage.stream()
+                        .map(vacancyMapper::mapToDto)
+                        .toList())
+                .page(page)
+                .size(pageSize)
+                .totalPages(vacanciesPage.getTotalPages())
+                .hasNextPage(vacanciesPage.hasNext())
+                .hasPreviousPage(vacanciesPage.hasPrevious())
+                .build();
     }
 
     public boolean isVacancyExistById(Long id) {
@@ -170,13 +178,23 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public List<VacancyDto> findUserCreatedVacancies() {
+    public PageHolder<VacancyDto> findUserCreatedVacancies(int page, int size) {
         Long userId = authorizedUserService.getAuthorizedUserId();
 
-        return vacancyRepository.findUserVacanciesByUserId(userId)
-                .stream()
-                .map(vacancyMapper::mapToDto)
-                .toList();
+        Pageable pageable = PageRequest.of(page, size, Sort.by("lastUpdated").descending());
+
+        Page<Vacancy> vacanciesPage = vacancyRepository.findUserVacanciesByUserId(userId, pageable);
+
+        return PageHolder.<VacancyDto>builder()
+                .content(vacanciesPage.stream()
+                        .map(vacancyMapper::mapToDto)
+                        .toList())
+                .page(page)
+                .size(size)
+                .totalPages(vacanciesPage.getTotalPages())
+                .hasNextPage(vacanciesPage.hasNext())
+                .hasPreviousPage(vacanciesPage.hasPrevious())
+                .build();
     }
 
     @Override

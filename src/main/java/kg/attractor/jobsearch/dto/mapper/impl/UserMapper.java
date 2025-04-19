@@ -25,7 +25,7 @@ public class UserMapper implements Mapper<UserDto, User> {
                 .password(user.getPassword())
                 .phoneNumber(user.getPhoneNumber())
                 .avatar(user.getAvatar())
-                .accountType(user.getRole().getRole())
+                .accountType(user.getRole().getRoleName())
                 .build();
     }
 

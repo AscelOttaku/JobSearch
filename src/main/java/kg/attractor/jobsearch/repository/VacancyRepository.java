@@ -1,7 +1,9 @@
 package kg.attractor.jobsearch.repository;
 
+import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.model.Vacancy;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -23,10 +25,16 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Long> {
     @Query("select v from Vacancy v " +
             "join Role r on r.id = v.user.role.id " +
             "where v.user.userId = :userId and " +
-            "r.roleName ilike 'EMPLOYER'")
-    List<Vacancy> findUserVacanciesByUserId(Long userId);
+            "r.roleName ilike 'EMPLOYER' " +
+            "order by coalesce(v.updated, v.created) desc")
+    Page<Vacancy> findUserVacanciesByUserId(Long userId, Pageable pageable);
 
     @Modifying
     @Query("update Vacancy v set v.updated = CURRENT_TIMESTAMP where v.id = :vacancyId")
     void updateVacancyTime(@Param("vacancyId") Long vacancyId);
+
+    Long user(User user);
+
+    @Query("select v from Vacancy v order by coalesce(v.updated, v.created) desc")
+    Page<Vacancy> findAllVacancies(Pageable pageable);
 }

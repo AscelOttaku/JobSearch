@@ -1,9 +1,8 @@
 package kg.attractor.jobsearch.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
+import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.VacancyDto;
-import kg.attractor.jobsearch.repository.VacancyRepository;
 import kg.attractor.jobsearch.service.CategoryService;
 import kg.attractor.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
@@ -26,16 +25,24 @@ public class VacancyController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public String findAllVacancies(Model model) {
-        List<VacancyDto> vacancyDtos = vacancyService.findAllVacancies();
+    public String findAllVacancies(
+            Model model,
+            @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+            @RequestParam(value = "size", defaultValue = "1", required = false) Integer size
+    ) {
+        PageHolder<VacancyDto> vacancyDtos = vacancyService.findAllVacancies(page, size);
         model.addAttribute("vacancies", vacancyDtos);
         return "vacancies/vacancies";
     }
 
     @GetMapping("users")
     @ResponseStatus(HttpStatus.OK)
-    public String findUserCreatedVacancies(Model model) {
-        List<VacancyDto> vacancyDtos = vacancyService.findUserCreatedVacancies();
+    public String findUserCreatedVacancies(
+            Model model,
+            @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+            @RequestParam(value = "size", defaultValue = "10", required = false) Integer size
+    ) {
+        PageHolder<VacancyDto> vacancyDtos = vacancyService.findUserCreatedVacancies(page, size);
         model.addAttribute("vacancies", vacancyDtos);
         return "vacancies/vacancies";
     }

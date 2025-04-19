@@ -18,7 +18,7 @@ public class ProfileServiceImpl implements ProfileService {
     private final RespondService respondService;
 
     @Override
-    public Map<String, Object> getProfile() {
+    public Map<String, Object> getProfile(int page, int size) {
         Map<String, Object> model = new HashMap<>();
 
         UserDto userDto = authorizedUserService.getAuthorizedUser();
@@ -27,9 +27,9 @@ public class ProfileServiceImpl implements ProfileService {
         String userAccountType = Util.convertToCamelCase(userDto.getAccountType());
 
         if (userAccountType.equalsIgnoreCase("JobSeeker"))
-            model.put("resumes", resumeService.findUserCreatedResumes());
+            model.put("pageHolder", resumeService.findUserCreatedResumes(page, size));
         else
-            model.put("vacancies", vacancyService.findUserCreatedVacancies());
+            model.put("pageHolder", vacancyService.findUserCreatedVacancies(page, size));
 
         model.put("responses", respondService.findAllActiveResponsesByUserId(userDto.getUserId()));
         return model;

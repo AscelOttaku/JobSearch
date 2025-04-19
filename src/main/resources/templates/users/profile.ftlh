@@ -154,9 +154,9 @@
                         </div>
 
                         <#if user.accountType == "JOB_SEEKER">
-                            <#if resumes?? && resumes?has_content>
+                            <#if pageHolder.resumes?? && resumes?has_content>
                                 <div class="row g-3">
-                                    <#list resumes as resume>
+                                    <#list pageHolder.resumes as resume>
                                         <div class="col-md-6">
                                             <div class="card h-100 resume-item">
                                                 <div class="card-body">
@@ -201,9 +201,9 @@
                                 </div>
                             </#if>
                         <#else>
-                            <#if vacancies?? && vacancies?has_content>
+                            <#if pageHolder.content?? && vacancies?has_content>
                                 <div class="row g-3">
-                                    <#list vacancies as vacancy>
+                                    <#list pageHolder.content as vacancy>
                                         <div class="col-md-6">
                                             <div class="card h-100 resume-item">
                                                 <div class="card-body">
@@ -259,6 +259,30 @@
                             </#if>
                         </#if>
                     </div>
+
+                    <#if pageHolder.totalPages gt 1>
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination">
+                                <li class="page-item <#if !pageHolder.hasPreviousPage>disabled</#if>">
+                                    <a class="page-link" href="/users/profile?page=${pageHolder.page - 1}" aria-label="Previous">
+                                        &laquo; Previous
+                                    </a>
+                                </li>
+
+                                <li class="page-item disabled">
+                                <span class="page-link">
+                                 Page ${pageHolder.page + 1} of ${pageHolder.page}
+                                </span>
+                                </li>
+
+                                <li class="page-item <#if !pageHolder.hasNextPage>disabled</#if>">
+                                    <a class="page-link" href="/users/profile?page=${pageHolder.page + 1}" aria-label="Next">
+                                        Next &raquo;
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </#if>
                 </div>
             </div>
         </div>

@@ -53,7 +53,7 @@
     </div>
 
     <div class="row g-4">
-        <#list vacancies as vacancy>
+        <#list vacancies.content as vacancy>
             <div class="col-md-6 col-lg-4">
                 <div class="card vacancy-item">
                     <div class="card-body">
@@ -88,6 +88,31 @@
                 </div>
             </div>
         </#list>
+
+        <#if vacancies.totalPages gt 1>
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li class="page-item <#if !vacancies.hasPreviousPage>disabled</#if>">
+                        <a class="page-link" href="/vacancies?page=${vacancies.page - 1}" aria-label="Previous">
+                            &laquo; Previous
+                        </a>
+                    </li>
+
+                    <li class="page-item disabled">
+                <span class="page-link">
+                    Page ${vacancies.page + 1} of ${vacancies.page}
+                </span>
+                    </li>
+
+                    <li class="page-item <#if !vacancies.hasNextPage>disabled</#if>">
+                        <a class="page-link" href="/vacancies?page=${vacancies.page + 1}" aria-label="Next">
+                            Next &raquo;
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </#if>
+
     </div>
 </div>
 </body>

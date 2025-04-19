@@ -14,7 +14,6 @@
 
 <body class="bg-light">
 
-<body>
 <div class="container mt-5">
     <div class="row mb-4">
         <div class="col-12">
@@ -25,7 +24,7 @@
     </div>
 
     <div class="row g-4">
-        <#list resumes as resume>
+        <#list pageResume.content as resume>
             <div class="col-md-6 col-lg-4">
                 <div class="card resume-item">
                     <div class="card-body">
@@ -58,6 +57,30 @@
                 </div>
             </div>
         </#list>
+
+        <#if pageResume.totalPages gt 1>
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li class="page-item <#if !pageResume.hasPreviousPage>disabled</#if>">
+                        <a class="page-link" href="/vacancies?page=${pageResume.page - 1}" aria-label="Previous">
+                            &laquo; Previous
+                        </a>
+                    </li>
+
+                    <li class="page-item disabled">
+                <span class="page-link">
+                    Page ${pageResume.page + 1} of ${pageResume.page}
+                </span>
+                    </li>
+
+                    <li class="page-item <#if !pageResume.hasNextPage>disabled</#if>">
+                        <a class="page-link" href="/vacancies?page=${pageResume.page + 1}" aria-label="Next">
+                            Next &raquo;
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </#if>
     </div>
 </div>
 </body>

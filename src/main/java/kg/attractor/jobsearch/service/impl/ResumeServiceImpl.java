@@ -1,5 +1,6 @@
 package kg.attractor.jobsearch.service.impl;
 
+import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.dto.mapper.impl.ResumeMapper;
@@ -15,6 +16,8 @@ import kg.attractor.jobsearch.service.ResumeService;
 import kg.attractor.jobsearch.service.UserService;
 import kg.attractor.jobsearch.validators.Validator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -106,7 +109,7 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public List<ResumeDto> findUserCreatedResumes(String userEmail) {
+    public List<ResumeDto> findUserCreatedResumes(String userEmail, int page, int size) {
         var getUser = userService.findUserByEmail(userEmail);
 
         if (!getUser.getAccountType().equalsIgnoreCase("jobSeeker"))
@@ -119,7 +122,8 @@ public class ResumeServiceImpl implements ResumeService {
                             .build()
             );
 
-        return resumeRepository.findResumeByUserId(getUser.getUserId()).stream()
+        return resumeRepository.findResumeByUserId(getUser.getUserId(), PageRequest.of(page, size))
+                .stream()
                 .map(resumeMapper::mapToDto)
                 .toList();
     }
@@ -130,10 +134,27 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public List<ResumeDto> findUserCreatedResumes() {
+    public PageHolder<ResumeDto> findUserCreatedResumes(int page, int size) {
         Long userId = authorizedUserService.getAuthorizedUserId();
 
-        return resumeRepository.findResumeByUserId(userId).stream()
+        Page<Resume> resumesPage = resumeRepository.findResumeByUserId(userId, PageRequest.of(page, size));
+
+        return PageHolder.<ResumeDto>builder()
+                .content(resumesPage.stream()
+                        .map(resumeMapper::mapToDto)
+                        .toList())
+                .page(page)
+                .size(size)
+                .totalPages(resumesPage.getTotalPages())
+                .hasNextPage(resumesPage.hasNext())
+                .hasPreviousPage(resumesPage.hasPrevious())
+                .build();
+    }
+
+    @Override
+    public List<ResumeDto> findUserCreatedResumes() {
+        return resumeRepository.findResumeByUserId(authorizedUserService.getAuthorizedUserId())
+                .stream()
                 .map(resumeMapper::mapToDto)
                 .toList();
     }
