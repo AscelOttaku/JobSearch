@@ -1,6 +1,8 @@
 package kg.attractor.jobsearch.repository;
 
 import kg.attractor.jobsearch.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -45,4 +47,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "JOIN Vacancy v on v.user.userId = u.userId " +
             "where v.id = :vacancyId")
     Optional<User> findUserByVacancyId(Long vacancyId);
+
+    @Query("select u from User u where u.role.roleName ilike :roleName")
+    Page<User> findUsersByRoleRoleNameIgnoreCases(String roleName, Pageable pageable);
 }

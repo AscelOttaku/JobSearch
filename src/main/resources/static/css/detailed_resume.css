@@ -1,0 +1,59 @@
+body {
+    background-color: #f8f9fa;
+    font-size: 1.1rem;
+}
+.resume-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+}
+.resume-item {
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border: none;
+    transition: transform 0.3s;
+}
+.resume-item:hover {
+    transform: translateY(-5px);
+}
+.card-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+.badge {
+    font-size: 1rem;
+    padding: 0.5em 0.8em;
+}
+.card-text {
+    font-size: 1.1rem;
+    margin-bottom: 0.8rem;
+}
+.bi {
+    font-size: 1.2rem;
+    margin-right: 0.5rem;
+    color: #3498db;
+}
+.experience-section, .education-section {
+    margin-top: 1.5rem;
+}
+.section-title {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+.info-block {
+    border-left: 3px solid #3498db;
+    padding-left: 1rem;
+    margin-bottom: 1.5rem;
+}
+.info-block p {
+    margin-bottom: 0.5rem;
+}
+strong {
+    font-weight: 600;
+    color: #2c3e50;
+}
+.text-muted {
+    font-size: 1rem;
+}

@@ -83,6 +83,10 @@ public class SecurityConfig {
                                 .requestMatchers("/users/upload/*").fullyAuthenticated().requestMatchers("/users/avatars").fullyAuthenticated()
                                 .requestMatchers(GET,"/users/**").hasAuthority(Roles.EMPLOYER.getValue())
 
+                                // Companies
+
+                                .requestMatchers(GET, "/companies").hasAuthority(Roles.JOB_SEEKER.getValue())
+
 //                                RespondedApplication Endpoints
 
                                 .requestMatchers(POST, "/responds")

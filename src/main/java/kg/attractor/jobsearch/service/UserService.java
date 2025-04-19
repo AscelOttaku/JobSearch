@@ -1,5 +1,6 @@
 package kg.attractor.jobsearch.service;
 
+import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.UserDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -37,4 +37,6 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Long> {
 
     @Query("select v from Vacancy v order by coalesce(v.updated, v.created) desc")
     Page<Vacancy> findAllVacancies(Pageable pageable);
+
+    long count();
 }

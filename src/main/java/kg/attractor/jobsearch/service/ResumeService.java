@@ -27,4 +27,6 @@ public interface ResumeService {
     List<ResumeDto> findUserCreatedResumes();
 
     List<Long> findAllResumesIds();
+
+    PageHolder<ResumeDto> findAllResumes(int page, int size);
 }

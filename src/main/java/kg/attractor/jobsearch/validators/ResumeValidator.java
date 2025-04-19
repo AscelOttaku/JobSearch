@@ -2,9 +2,7 @@ package kg.attractor.jobsearch.validators;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
-import kg.attractor.jobsearch.dto.EducationalInfoDto;
 import kg.attractor.jobsearch.dto.ResumeDto;
-import kg.attractor.jobsearch.dto.WorkExperienceInfoDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;

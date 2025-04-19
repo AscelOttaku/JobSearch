@@ -28,7 +28,7 @@ public class ResumeDto {
 
     private Long userId;
 
-    @NotNull(message = "{null_message}")
+    @NotNull(message = "Category id cannot be null")
     @Positive(message = "{category_id_positive_message}")
     @EntityExistById(message = "{category_does't_exist}", entityType = EntityType.CATEGORIES)
     private Long categoryId;

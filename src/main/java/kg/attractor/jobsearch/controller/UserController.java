@@ -4,9 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import kg.attractor.jobsearch.dto.UserDto;
-import kg.attractor.jobsearch.service.AuthorizedUserService;
-import kg.attractor.jobsearch.service.ProfileService;
-import kg.attractor.jobsearch.service.UserService;
+import kg.attractor.jobsearch.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +33,7 @@ public class UserController {
     public String getProfile(
             Model model,
             @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
-            @RequestParam(value = "size", defaultValue = "10", required = false) Integer size
+            @RequestParam(value = "size", defaultValue = "1", required = false) Integer size
     ) {
         model.addAllAttributes(profileService.getProfile(page, size));
         return "users/profile";

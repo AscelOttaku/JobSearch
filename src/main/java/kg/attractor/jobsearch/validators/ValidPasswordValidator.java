@@ -23,8 +23,15 @@ public class ValidPasswordValidator implements ConstraintValidator<ValidPassword
         if (password == null || password.isBlank()) {
             String previousPassword = userService.findUserById(userId).getPassword();
 
-            if (previousPassword == null || previousPassword.isBlank())
+            if (previousPassword == null || previousPassword.isBlank()) {
+
+                constraintValidatorContext.buildConstraintViolationWithTemplate(
+                        "password is null or blank"
+                )
+                        .addPropertyNode("password")
+                        .addConstraintViolation();
                 return false;
+            }
 
             userDto.setPassword(previousPassword);
             return true;

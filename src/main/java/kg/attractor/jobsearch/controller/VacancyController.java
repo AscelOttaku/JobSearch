@@ -28,7 +28,7 @@ public class VacancyController {
     public String findAllVacancies(
             Model model,
             @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
-            @RequestParam(value = "size", defaultValue = "1", required = false) Integer size
+            @RequestParam(value = "size", defaultValue = "2", required = false) Integer size
     ) {
         PageHolder<VacancyDto> vacancyDtos = vacancyService.findAllVacancies(page, size);
         model.addAttribute("vacancies", vacancyDtos);
@@ -90,7 +90,7 @@ public class VacancyController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("vacancy", vacancyDto);
             model.addAttribute("categories", categoryService.findAllCategories());
-            return "vacancies/new_vacancy";
+            return "vacancies/update_vacancy";
         }
 
         VacancyDto vacancy = vacancyService.updateVacancy(vacancyDto);

@@ -8,12 +8,14 @@ import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.repository.UserRepository;
 import kg.attractor.jobsearch.service.AuthorizedUserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthorizedUserServiceImpl implements AuthorizedUserService {
@@ -22,20 +24,22 @@ public class AuthorizedUserServiceImpl implements AuthorizedUserService {
 
     @Override
     public UserDto getAuthorizedUser() {
-        return userRepository.findUserByEmail(getAuthorizedUserDetails().getUsername())
+        log.info("getAuthorizedUser: {}", getAuthentication());
+
+        return userRepository.findUserByEmail(getAuthentication().getName())
                 .map(userMapper::mapToDto)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        "Authorized user not found",
+                        "Authorized user not found by email: " + getAuthentication().getName(),
                         CustomBindingResult.builder()
                                 .className(User.class.getSimpleName())
-                                .fieldName("User")
-                                .rejectedValue(getAuthorizedUser())
+                                .fieldName("email")
+                                .rejectedValue(getAuthentication().getName())
                                 .build()
                 ));
     }
 
-    private UserDetails getAuthorizedUserDetails() {
-        return (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    private Authentication getAuthentication() {
+        return SecurityContextHolder.getContext().getAuthentication();
     }
 
     @Override
@@ -47,13 +51,13 @@ public class AuthorizedUserServiceImpl implements AuthorizedUserService {
 
     @Override
     public Long getAuthorizedUserId() {
-        return userRepository.findUserIdByEmail(getAuthorizedUserDetails().getUsername())
+        return userRepository.findUserIdByEmail(getAuthentication().getName())
                 .orElseThrow(() -> new EntityNotFoundException(
                         "authorized user not found by email ",
                         CustomBindingResult.builder()
                                 .className(User.class.getSimpleName())
                                 .fieldName("email")
-                                .rejectedValue(getAuthorizedUserDetails().getUsername())
+                                .rejectedValue(getAuthentication().getName())
                                 .build()
                 ));
     }

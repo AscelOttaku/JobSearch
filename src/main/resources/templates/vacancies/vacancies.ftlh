@@ -6,115 +6,80 @@
     <title>Список вакансий | Job Seeker</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            padding-top: 0;
-            padding-bottom: 2rem;
-        }
-        .vacancy-item {
-            border-left: 3px solid #0d6efd;
-            transition: all 0.3s ease;
-            height: 100%;
-        }
-        .vacancy-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        .card-title {
-            color: #212529;
-            font-weight: 600;
-        }
-        .card-text {
-            color: #6c757d;
-        }
-        .badge {
-            font-size: 0.8rem;
-            font-weight: 500;
-            padding: 0.35em 0.65em;
-        }
-        .btn-outline-primary {
-            border-width: 1px;
-        }
-    </style>
+    <link rel="stylesheet" href="/static/css/vacancy.css">
 </head>
 
-    <title>Vacancies</title>
+<body class="bg-light">
 <#include "../layout/navbar.ftlh">
 
-<body class="bg-light">
-<div class="container mt-5">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h2 class="fw-bold">
-                <i class="bi bi-briefcase me-2"></i>Доступные вакансии
-            </h2>
-        </div>
-    </div>
+<div class="vacancy-container">
+    <h1 class="page-title">
+        <i class="bi bi-briefcase"></i>Доступные вакансии
+    </h1>
 
-    <div class="row g-4">
-        <#list vacancies.content as vacancy>
-            <div class="col-md-6 col-lg-4">
-                <div class="card vacancy-item">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <h5 class="card-title">${vacancy.name}</h5>
-                            <span class="badge ${vacancy.active?string('bg-success', 'bg-secondary')}">
-                                    ${vacancy.active?string('Активна', 'Неактивна')}
-                                </span>
-                        </div>
+    <#list vacancies.content as vacancy>
+        <div class="vacancy-card">
+            <div class="vacancy-header">
+                <h2 class="vacancy-title">${vacancy.name}</h2>
+                <span class="vacancy-status ${vacancy.active?string('text-bg-success', 'text-bg-secondary')}">
+                    ${vacancy.active?string('Активна', 'Неактивна')}
+                </span>
+            </div>
 
-                        <div class="mb-3">
-                            <p class="card-text mb-2">
-                                <i class="bi bi-briefcase me-1"></i>${vacancy.categoryName!''}
-                            </p>
-                            <p class="card-text mb-2">
-                                <i class="bi bi-cash-coin me-1"></i>${vacancy.salary} KGS
-                            </p>
-                            <p class="card-text">
-                                <i class="bi bi-clock-history me-1"></i>Опыт: ${vacancy.expFrom} - ${vacancy.expTo} лет
-                            </p>
-                        </div>
-
-                        <a href="/vacancies/${vacancy.vacancyId}" class="btn btn-sm btn-outline-primary"
-                           title="Посмотреть резюме">
-                            <i class="bi bi-eye"></i>
-                        </a>
-
-                        <form action="/vacancies/times?vacancyId=${vacancy.vacancyId}" method="post" class="btn btn-sm btn-outline-secondary" title="Update">
-                            <button class="bi bi-arrow-clockwise" type="submit"></button>
-                        </form>
-                    </div>
+            <div class="vacancy-meta">
+                <div class="meta-item">
+                    <i class="bi bi-briefcase"></i>${vacancy.categoryName!''}
+                </div>
+                <div class="meta-item">
+                    <i class="bi bi-cash-coin"></i>${vacancy.salary} KGS
+                </div>
+                <div class="meta-item">
+                    <i class="bi bi-clock-history"></i>Опыт: ${vacancy.expFrom}-${vacancy.expTo} лет
                 </div>
             </div>
-        </#list>
 
-        <#if vacancies.totalPages gt 1>
-            <nav aria-label="Page navigation">
-                <ul class="pagination">
-                    <li class="page-item <#if !vacancies.hasPreviousPage>disabled</#if>">
-                        <a class="page-link" href="/vacancies?page=${vacancies.page - 1}" aria-label="Previous">
-                            &laquo; Previous
+            <div class="vacancy-footer">
+                <div>
+                    <i class="bi bi-calendar"></i>${vacancy.updated!vacancy.created}
+                </div>
+                <div class="vacancy-actions">
+                    <a href="/vacancies/${vacancy.vacancyId}" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-eye"></i> Подробнее
+                    </a>
+
+                    <#if authorizedUser?? && authorizedUser.userId == vacancy.user.userId>
+                        <a href="/vacancies/update/vacancy/${vacancy.vacancyId}" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-pencil"></i> Редактировать
                         </a>
-                    </li>
+                    </#if>
+                </div>
+            </div>
+        </div>
+    </#list>
 
-                    <li class="page-item disabled">
-                <span class="page-link">
-                    Page ${vacancies.page + 1} of ${vacancies.page}
-                </span>
+    <#if vacancies.totalPages gt 1>
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item <#if !vacancies.hasPreviousPage>disabled</#if>">
+                    <a class="page-link" href="/vacancies?page=${vacancies.page - 1}">
+                        &laquo; Назад
+                    </a>
+                </li>
+                <#list 1..vacancies.totalPages as pageNum>
+                    <li class="page-item <#if vacancies.page == pageNum - 1>active</#if>">
+                        <a class="page-link" href="/vacancies?page=${pageNum - 1}">${pageNum}</a>
                     </li>
-
-                    <li class="page-item <#if !vacancies.hasNextPage>disabled</#if>">
-                        <a class="page-link" href="/vacancies?page=${vacancies.page + 1}" aria-label="Next">
-                            Next &raquo;
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </#if>
-
-    </div>
+                </#list>
+                <li class="page-item <#if !vacancies.hasNextPage>disabled</#if>">
+                    <a class="page-link" href="/vacancies?page=${vacancies.page + 1}">
+                        Вперед &raquo;
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </#if>
 </div>
-</body>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

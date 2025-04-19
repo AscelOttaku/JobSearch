@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/static/css/resume.css">
+    <link rel="stylesheet" href="/static/css/resume.css">
 </head>
 
 <body class="bg-light">
@@ -14,37 +15,27 @@
 
 <div class="resume-container">
     <h1 class="page-title">
-        <i class="bi bi-file-earmark-text"></i>Список резюме
+        <i class="bi bi-file-earmark-text"></i>Компания
     </h1>
 
-    <#list pageResume.content as resume>
         <div class="resume-card">
             <div class="resume-header">
-                <h2 class="resume-title">${resume.name}</h2>
-                <span class="resume-status ${resume.isActive?string('text-bg-success', 'text-bg-secondary')}">
-                    ${resume.isActive?string('Активно', 'Неактивно')}
-                </span>
+                <h2 class="resume-title">${company.name}</h2>
             </div>
 
             <div class="resume-meta">
                 <div class="meta-item">
-                    <i class="bi bi-briefcase"></i>Категория: ${resume.categoryName!''}
-                </div>
-                <div class="meta-item">
-                    <i class="bi bi-cash-coin"></i>Зарплата: ${resume.salary} KGS
+                    <i class="bi bi-briefcase"></i>Категория: ${company.categoryName!''}
                 </div>
             </div>
 
             <div class="resume-footer">
-                <div>
-                    <i class="bi bi-calendar"></i>Обновлено: ${resume.updated!resume.created}
-                </div>
                 <div class="resume-actions">
-                    <a href="/resumes/${resume.id}" class="btn btn-outline-primary">
+                    <a href="/companies/${company.id}" class="btn btn-outline-primary">
                         <i class="bi bi-eye"></i> Подробнее
                     </a>
-                    <#if authorizedUser.userId = resume.userId>
-                        <a href="/resumes/update/resume/${resume.id}"
+                    <#if authorizedUser.userId = company.userId>
+                        <a href="/resumes/update/resume/${company.id}"
                            class="btn btn-sm btn-outline-secondary">
                             <i class="bi bi-pencil"></i>
                         </a>

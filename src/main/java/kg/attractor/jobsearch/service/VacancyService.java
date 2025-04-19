@@ -31,4 +31,6 @@ public interface VacancyService {
     VacancyDto findAuthorizedUsersVacancyById(Long vacancyId);
 
     void updateVacancyDate(Long vacancyId);
+
+    Long findVacanciesQuantity(Long employerId);
 }

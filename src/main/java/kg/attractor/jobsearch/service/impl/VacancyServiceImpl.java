@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -61,13 +60,13 @@ public class VacancyServiceImpl implements VacancyService {
 
     @Override
     public VacancyDto createdVacancy(VacancyDto vacancyDto) {
-        User authorizedUser = new User();
+        UserDto authorizedUser = new UserDto();
         authorizedUser.setUserId(authorizedUserService.getAuthorizedUserId());
 
+        vacancyDto.setUser(authorizedUser);
         log.info("Create vacancy / user name: {}", authorizedUser.getName());
 
         Vacancy vacancy = vacancyMapper.mapToEntity(vacancyDto);
-        vacancy.setUser(authorizedUser);
 
         return vacancyMapper.mapToDto(vacancyRepository.save(vacancy));
     }
@@ -76,13 +75,13 @@ public class VacancyServiceImpl implements VacancyService {
     public VacancyDto updateVacancy(VacancyDto vacancyDto) {
         Validator.isValidId(vacancyDto.getVacancyId());
 
-        User user = new User();
+        UserDto user = new UserDto();
         user.setUserId(authorizedUserService.getAuthorizedUserId());
 
+        vacancyDto.setUser(user);
         log.info("Updated vacancy / user name: {}", user.getName());
 
         Vacancy vacancy = vacancyMapper.mapToEntity(vacancyDto);
-        vacancy.setUser(user);
 
         return vacancyMapper.mapToDto(vacancyRepository.save(vacancy));
     }
@@ -181,7 +180,7 @@ public class VacancyServiceImpl implements VacancyService {
     public PageHolder<VacancyDto> findUserCreatedVacancies(int page, int size) {
         Long userId = authorizedUserService.getAuthorizedUserId();
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("lastUpdated").descending());
+        Pageable pageable = PageRequest.of(page, size);
 
         Page<Vacancy> vacanciesPage = vacancyRepository.findUserVacanciesByUserId(userId, pageable);
 
@@ -190,7 +189,7 @@ public class VacancyServiceImpl implements VacancyService {
                         .map(vacancyMapper::mapToDto)
                         .toList())
                 .page(page)
-                .size(size)
+                .size(vacanciesPage.getSize())
                 .totalPages(vacanciesPage.getTotalPages())
                 .hasNextPage(vacanciesPage.hasNext())
                 .hasPreviousPage(vacanciesPage.hasPrevious())
@@ -202,7 +201,7 @@ public class VacancyServiceImpl implements VacancyService {
         Long authorizedUserId = authorizedUserService.getAuthorizedUserId();
         VacancyDto vacancyDto = findVacancyById(vacancyId);
 
-        if (!Objects.equals(vacancyDto.getUserId(), authorizedUserId)) {
+        if (!Objects.equals(vacancyDto.getUser().getUserId(), authorizedUserId)) {
             throw new EntityNotFoundException(
                     "User created vacancy by " + vacancyId + " not found",
                     CustomBindingResult.builder()
@@ -233,5 +232,10 @@ public class VacancyServiceImpl implements VacancyService {
             throw new IllegalArgumentException("user doesn't belongs this vacancy");
 
         vacancyRepository.updateVacancyTime(vacancyId);
+    }
+
+    @Override
+    public Long findVacanciesQuantity(Long employerId) {
+        return vacancyRepository.count();
     }
 }
