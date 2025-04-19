@@ -30,7 +30,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "                JOIN RespondedApplication ra ON ra.resume.id = r.id " +
             "                JOIN Vacancy AS v ON v.id = ra.vacancy.id " +
             "                JOIN Role rl ON rl.id = u.role.id" +
-            "                WHERE v.id = :vacancyId AND rl.role ilike 'JobSeeker'")
+            "                WHERE v.id = :vacancyId AND rl.roleName ilike 'JobSeeker'")
     List<User> findRespondedToVacancyUsersByVacancyId(Long vacancyId);
 
     @Transactional

@@ -40,7 +40,7 @@ public class User {
     @Transient
     private String accountType;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "role_id")
     private Role role;
 
@@ -49,6 +49,6 @@ public class User {
 
     @PostLoad
     public void postLoad() {
-        accountType = role.getRole();
+        accountType = role.getRoleName();
     }
 }
