@@ -1,27 +1,28 @@
 package kg.attractor.jobsearch.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import kg.attractor.jobsearch.dto.VacancyDto;
+import kg.attractor.jobsearch.repository.VacancyRepository;
+import kg.attractor.jobsearch.service.CategoryService;
 import kg.attractor.jobsearch.service.VacancyService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Controller("vacancyController")
-@RequestMapping("vacancies")
+@RequestMapping("/vacancies")
+@Slf4j
+@RequiredArgsConstructor
 public class VacancyController {
     private final VacancyService vacancyService;
-
-    @Autowired
-    public VacancyController(VacancyService vacancyService) {
-        this.vacancyService = vacancyService;
-    }
+    private final CategoryService categoryService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -44,5 +45,57 @@ public class VacancyController {
     public String findVacancyById(@PathVariable Long vacancyId, Model model) {
         model.addAttribute("vacancy", vacancyService.findVacancyById(vacancyId));
         return "vacancies/vacancy";
+    }
+
+    @GetMapping("/new_vacancy")
+    public String createVacancy(Model model) {
+        model.addAttribute("vacancy", new VacancyDto());
+        model.addAttribute("categories", categoryService.findAllCategories());
+        return "vacancies/new_vacancy";
+    }
+
+    @PostMapping("/new_vacancy")
+    public String createVacancy(@ModelAttribute("vacancy") @Valid VacancyDto vacancyDto, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("vacancy", vacancyDto);
+            model.addAttribute("categories", categoryService.findAllCategories());
+            return "vacancies/new_vacancy";
+        }
+
+        VacancyDto vacancy = vacancyService.createdVacancy(vacancyDto);
+        return "redirect:/vacancies/" + vacancy.getVacancyId();
+    }
+
+    @GetMapping("update/vacancy/{vacancyId}")
+    public String updateVacancy(@PathVariable Long vacancyId, Model model) {
+        VacancyDto vacancyDto = vacancyService.findAuthorizedUsersVacancyById(vacancyId);
+        model.addAttribute("vacancy", vacancyDto);
+        model.addAttribute("categories", categoryService.findAllCategories());
+        return "vacancies/update_vacancy";
+    }
+
+    @PostMapping("update/vacancy")
+    public String updateVacancy(
+            @ModelAttribute("vacancy") @Valid VacancyDto vacancyDto,
+            BindingResult bindingResult,
+            Model model
+    ) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("vacancy", vacancyDto);
+            model.addAttribute("categories", categoryService.findAllCategories());
+            return "vacancies/new_vacancy";
+        }
+
+        VacancyDto vacancy = vacancyService.updateVacancy(vacancyDto);
+        return "redirect:/vacancies/" + vacancy.getVacancyId();
+    }
+
+    @PostMapping("times")
+    @ResponseStatus(HttpStatus.SEE_OTHER)
+    public String updateVacancyTime(@RequestParam("vacancyId") Long vacancyId) {
+        log.info("text = {}", vacancyId);
+        vacancyService.updateVacancyDate(vacancyId);
+
+        return "redirect:/users/profile";
     }
 }

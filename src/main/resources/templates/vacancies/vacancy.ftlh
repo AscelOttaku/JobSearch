@@ -18,8 +18,8 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start mb-3">
                         <h5 class="card-title">${vacancy.name}</h5>
-                        <span class="badge ${vacancy.active?string('bg-success', 'bg-secondary')}">
-                                    ${vacancy.active?string('Активна', 'Неактивна')}
+                        <span class="badge ${vacancy.isActive()?string('bg-success', 'bg-secondary')}">
+                                    ${vacancy.isActive()?string('Активна', 'Неактивна')}
                                 </span>
                     </div>
 

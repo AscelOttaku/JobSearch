@@ -10,6 +10,9 @@ import kg.attractor.jobsearch.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Service
 @RequiredArgsConstructor
 public class VacancyMapper implements Mapper<VacancyDto, Vacancy> {
@@ -42,6 +45,7 @@ public class VacancyMapper implements Mapper<VacancyDto, Vacancy> {
         user.setUserId(vacancyDto.getUserId());
 
         Vacancy vacancy = new Vacancy();
+        vacancy.setId(vacancyDto.getVacancyId());
         vacancy.setName(vacancyDto.getName());
         vacancy.setDescription(vacancyDto.getDescription());
         vacancy.setCategory(category);
@@ -50,6 +54,10 @@ public class VacancyMapper implements Mapper<VacancyDto, Vacancy> {
         vacancy.setExpTo(vacancyDto.getExpTo());
         vacancy.setIsActive(vacancyDto.isActive());
         vacancy.setUser(user);
+        vacancy.setCreated(vacancyDto.getCreated() != null ?
+                LocalDateTime.parse(vacancyDto.getCreated(),
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) :
+                LocalDateTime.now());
         return vacancy;
     }
 }

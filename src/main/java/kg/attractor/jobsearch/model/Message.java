@@ -17,7 +17,7 @@ public class Message {
     @Column(name = "id", updatable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "responded_application_id", nullable = false)
     private RespondedApplication respondedApplication;
 

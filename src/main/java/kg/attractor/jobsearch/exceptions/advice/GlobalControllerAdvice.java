@@ -3,22 +3,23 @@ package kg.attractor.jobsearch.exceptions.advice;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
-import kg.attractor.jobsearch.exceptions.EntityNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.InputElementExceptionBody;
 import kg.attractor.jobsearch.exceptions.body.ValidationExceptionBody;
 import kg.attractor.jobsearch.service.ErrorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.time.format.DateTimeParseException;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
-@RestControllerAdvice
+@ControllerAdvice
 @RequiredArgsConstructor
 @Valid
 public class GlobalControllerAdvice {
@@ -32,33 +33,64 @@ public class GlobalControllerAdvice {
         return errorService.handleValidationException(ex, request);
     }
 
-    @ExceptionHandler(EntityNotFoundException.class)
+    @ExceptionHandler(NoSuchElementException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public InputElementExceptionBody handleNoSuchElementException(
-            EntityNotFoundException ex, HttpServletRequest request
+    public String handleNoSuchElementException(
+            Model model, NoSuchElementException ex, HttpServletRequest request
     ) {
-        return errorService.handleNoSuchElementException(ex, request);
+        model.addAttribute("status", HttpStatus.NOT_FOUND.value());
+        model.addAttribute("reason", HttpStatus.NOT_FOUND.getReasonPhrase());
+        model.addAttribute("message", ex.getMessage());
+        model.addAttribute("details", request);
+        return "errors/error";
     }
 
     @ExceptionHandler(CustomIllegalArgException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public InputElementExceptionBody handleCustomIllegalArgException(
-            CustomIllegalArgException ex, HttpServletRequest request
+    public String handleCustomIllegalArgException(
+            CustomIllegalArgException ex, HttpServletRequest request, Model model
     ) {
-        return errorService.handleInvalidArgumentException(ex, request);
+        InputElementExceptionBody body = errorService.handleInvalidArgumentException(ex, request);
+
+        model.addAttribute("status", HttpStatus.BAD_REQUEST.value());
+        model.addAttribute("reason", HttpStatus.BAD_REQUEST.getReasonPhrase());
+        model.addAttribute("message", body.getMessage());
+        model.addAttribute("details", request);
+        return "errors/error";
     }
 
     @ExceptionHandler(HandlerMethodValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, Object> handleHandlerMethodValidationException(
-            HandlerMethodValidationException ex, HttpServletRequest request
+    public String handleHandlerMethodValidationException(
+            HandlerMethodValidationException ex, HttpServletRequest request, Model model
     ) {
-        return errorService.handleMethodValidationException(ex, request);
+        Map<String, Object> exceptionBody = errorService.handleMethodValidationException(ex, request);
+
+        model.addAttribute("status", HttpStatus.BAD_REQUEST.value());
+        model.addAttribute("reason", HttpStatus.BAD_REQUEST.getReasonPhrase());
+        model.addAttribute("message", exceptionBody.get("message"));
+        model.addAttribute("details", request);
+
+        return "errors/error";
     }
 
     @ExceptionHandler(DateTimeParseException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, Object> handleDateTimeParseException(DateTimeParseException ex) {
         return errorService.handleDateTimeParserException(ex);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleIllegalArgumentException(
+            IllegalArgumentException ex,
+            HttpServletRequest request,
+            Model model) {
+
+        model.addAttribute("status", HttpStatus.BAD_REQUEST.value());
+        model.addAttribute("reason", HttpStatus.BAD_REQUEST.getReasonPhrase());
+        model.addAttribute("message", ex.getMessage());
+        model.addAttribute("details", request);
+        return "errors/error";
     }
 }

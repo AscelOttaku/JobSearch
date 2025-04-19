@@ -9,9 +9,9 @@ public interface ResumeService {
 
     ResumeDto findResumeById(Long id);
 
-    List<ResumeDto> findResumesByCategory(Long categoryId);
+    List<ResumeDto> findResumesByCategoryId(Long categoryId);
 
-    void updateResume(ResumeDto resumeDto);
+    Long updateResume(ResumeDto resumeDto);
 
     ResumeDto createResume(ResumeDto resumeDto);
 

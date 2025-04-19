@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - changeSet:
+      id: 21_delete_account_type_field.yaml
+      author: Zhanybekov Kanybek
+      changes:
+        - sql:
+            sql: ALTER TABLE users DROP COLUMN IF EXISTS account_type

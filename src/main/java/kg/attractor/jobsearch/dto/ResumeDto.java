@@ -1,17 +1,19 @@
 package kg.attractor.jobsearch.dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import kg.attractor.jobsearch.annotations.EntityExistById;
+import kg.attractor.jobsearch.annotations.IsDateCorrect;
 import kg.attractor.jobsearch.util.EntityType;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class ResumeDto {
     private Long id;
 
@@ -39,4 +41,7 @@ public class ResumeDto {
     private Boolean isActive;
     private String created;
     private String updated;
+
+    private List<@Valid EducationalInfoDto> educationInfoDtos;
+    private List<@Valid WorkExperienceInfoDto> workExperienceInfoDtos;
 }

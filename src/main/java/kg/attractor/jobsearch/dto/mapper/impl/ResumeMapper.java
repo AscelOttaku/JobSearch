@@ -6,14 +6,21 @@ import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.service.CategoryService;
+import kg.attractor.jobsearch.service.EducationInfoService;
+import kg.attractor.jobsearch.service.WorkExperienceInfoService;
 import kg.attractor.jobsearch.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
 public class ResumeMapper implements Mapper<ResumeDto, Resume> {
     private final CategoryService categoryService;
+    private final WorkExperienceInfoService workExperienceInfoService;
+    private final EducationInfoService educationalInfoService;
 
     @Override
     public ResumeDto mapToDto(Resume resume) {
@@ -27,6 +34,8 @@ public class ResumeMapper implements Mapper<ResumeDto, Resume> {
                 .isActive(resume.getIsActive())
                 .created(Util.dateTimeFormat(resume.getCreated()))
                 .updated(Util.dateTimeFormat(resume.getUpdated()))
+                .workExperienceInfoDtos(workExperienceInfoService.findWorkExperienceByResumeId(resume.getId()))
+                .educationInfoDtos(educationalInfoService.findEducationInfosByResumeId(resume.getId()))
                 .build();
     }
 
@@ -45,6 +54,11 @@ public class ResumeMapper implements Mapper<ResumeDto, Resume> {
         resume.setUser(user);
         resume.setSalary(resumeDto.getSalary());
         resume.setIsActive(resumeDto.getIsActive());
+        resume.setCreated(resumeDto.getCreated() != null ? LocalDateTime.parse(resumeDto.getCreated(),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) :
+                LocalDateTime.now());
+        resume.setUpdated(resumeDto.getUpdated() != null ?
+                LocalDateTime.parse(resumeDto.getUpdated()) : null);
         return resume;
     }
 }

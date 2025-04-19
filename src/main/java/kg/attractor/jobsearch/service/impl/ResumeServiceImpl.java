@@ -55,10 +55,10 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public List<ResumeDto> findResumesByCategory(Long resumeCategory) {
-        Validator.isValidId(resumeCategory);
+    public List<ResumeDto> findResumesByCategoryId(Long categoryId) {
+        Validator.isValidId(categoryId);
 
-        boolean isCategoryExists = categoryService.findCategoryById(resumeCategory).isPresent();
+        boolean isCategoryExists = categoryService.checkIfCategoryExistsById(categoryId);
 
         if (!isCategoryExists)
             throw new CustomIllegalArgException(
@@ -66,11 +66,11 @@ public class ResumeServiceImpl implements ResumeService {
                     CustomBindingResult.builder()
                             .className(Category.class.getCanonicalName())
                             .fieldName("categoryId")
-                            .rejectedValue(resumeCategory)
+                            .rejectedValue(categoryId)
                             .build()
             );
 
-        var optionalResume = resumeRepository.findResumesByCategoryId(resumeCategory);
+        var optionalResume = resumeRepository.findResumesByCategoryId(categoryId);
 
         return optionalResume.stream()
                 .map(mapper::mapToDto)
@@ -78,8 +78,8 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public void updateResume(ResumeDto resumeDto) {
-        resumeRepository.save(mapper.mapToEntity(resumeDto));
+    public Long updateResume(ResumeDto resumeDto) {
+        return resumeRepository.save(mapper.mapToEntity(resumeDto)).getId();
     }
 
     @Override

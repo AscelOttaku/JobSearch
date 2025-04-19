@@ -1,6 +1,6 @@
 package kg.attractor.jobsearch.config;
 
-import kg.attractor.jobsearch.model.Role;
+import kg.attractor.jobsearch.model.Roles;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -65,36 +65,37 @@ public class SecurityConfig {
 
                                 //Vacancies Endpoints
 
-                                .requestMatchers(GET, "/vacancies/new_vacancy").hasAuthority(Role.EMPLOYER.getValue())
-                                .requestMatchers(GET, "/vacancies/update/vacancy/*").hasAnyAuthority(Role.EMPLOYER.getValue())
-                                .requestMatchers(PUT, "/vacancies/redactor-vacancies").hasAuthority(Role.EMPLOYER.getValue())
-                                .requestMatchers(DELETE, "/vacancies/delete_vacancies").hasAuthority(Role.EMPLOYER.getValue())
-                                .requestMatchers("/vacancies/users/responded_vacancies").hasAuthority(Role.EMPLOYER.getValue())
+                                .requestMatchers(GET, "/vacancies/new_vacancy").hasAuthority(Roles.EMPLOYER.getValue())
+                                .requestMatchers(GET, "/vacancies/update/vacancy/*").hasAnyAuthority(Roles.EMPLOYER.getValue())
+                                .requestMatchers(PUT, "/vacancies/redactor-vacancies").hasAuthority(Roles.EMPLOYER.getValue())
+                                .requestMatchers(DELETE, "/vacancies/delete_vacancies").hasAuthority(Roles.EMPLOYER.getValue())
+                                .requestMatchers("/vacancies/users/responded_vacancies").hasAuthority(Roles.EMPLOYER.getValue())
+                                .requestMatchers(POST, "/vacancies/times").fullyAuthenticated()
 
                                 // Users
-                                .requestMatchers(POST, "/users/updates").hasAnyAuthority(Role.EMPLOYER.getValue(), Role.JOB_SEEKER.getValue())
+                                .requestMatchers(PUT, "/users/updates").hasAnyAuthority(Roles.EMPLOYER.getValue(), Roles.JOB_SEEKER.getValue())
                                 .requestMatchers(POST, "/users/registration").anonymous()
                                 .requestMatchers(GET, "/users/profile").fullyAuthenticated()
                                 .requestMatchers("users/update/profile").fullyAuthenticated()
-                                .requestMatchers("/users/responded/vacancies/*").hasAuthority(Role.EMPLOYER.getValue())
-                                .requestMatchers("/users/employer/*").hasAuthority(Role.JOB_SEEKER.getValue())
-                                .requestMatchers("/users/job-seeker/*").hasAuthority(Role.EMPLOYER.getValue())
+                                .requestMatchers("/users/responded/vacancies/*").hasAuthority(Roles.EMPLOYER.getValue())
+                                .requestMatchers("/users/employer/*").hasAuthority(Roles.JOB_SEEKER.getValue())
+                                .requestMatchers("/users/job-seeker/*").hasAuthority(Roles.EMPLOYER.getValue())
                                 .requestMatchers("/users/upload/*").fullyAuthenticated().requestMatchers("/users/avatars").fullyAuthenticated()
-                                .requestMatchers(GET,"/users/**").hasAuthority(Role.EMPLOYER.getValue())
+                                .requestMatchers(GET,"/users/**").hasAuthority(Roles.EMPLOYER.getValue())
 
 //                                RespondedApplication Endpoints
 
                                 .requestMatchers(POST, "/responds")
-                                .hasAuthority(Role.JOB_SEEKER.getValue())
+                                .hasAuthority(Roles.JOB_SEEKER.getValue())
 
 //                                Resumes Endpoints
 
-                                .requestMatchers(GET, "/resumes").hasAuthority(Role.EMPLOYER.getValue())
-                                .requestMatchers(POST, "/resumes").hasAuthority(Role.JOB_SEEKER.getValue())
-                                .requestMatchers(PUT, "/resumes/*").hasAuthority(Role.JOB_SEEKER.getValue())
-                                .requestMatchers(DELETE, "/resumes/*").hasAuthority(Role.JOB_SEEKER.getValue())
-                                .requestMatchers(GET, "/resumes/update/resume/*") .hasAnyAuthority(Role.JOB_SEEKER.getValue())
-                                .requestMatchers("/resumes/*").fullyAuthenticated()
+                                .requestMatchers(GET, "/resumes").hasAuthority(Roles.EMPLOYER.getValue())
+                                .requestMatchers(POST, "/resumes").hasAuthority(Roles.JOB_SEEKER.getValue())
+                                .requestMatchers(PUT, "/resumes/*").hasAuthority(Roles.JOB_SEEKER.getValue())
+                                .requestMatchers(DELETE, "/resumes/*").hasAuthority(Roles.JOB_SEEKER.getValue())
+                                .requestMatchers(GET, "/resumes/update/resume/*") .hasAnyAuthority(Roles.JOB_SEEKER.getValue())
+                                .requestMatchers("/resumes/*").authenticated()
 
                                 //All Other Endpoints
 

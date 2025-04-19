@@ -80,6 +80,10 @@
                            title="Посмотреть резюме">
                             <i class="bi bi-eye"></i>
                         </a>
+
+                        <form action="/vacancies/times?vacancyId=${vacancy.vacancyId}" method="post" class="btn btn-sm btn-outline-secondary" title="Update">
+                            <button class="bi bi-arrow-clockwise" type="submit"></button>
+                        </form>
                     </div>
                 </div>
             </div>

@@ -2,19 +2,15 @@ package kg.attractor.jobsearch.dto;
 
 import jakarta.validation.constraints.*;
 import kg.attractor.jobsearch.annotations.ValidPassword;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Value;
-
-import java.time.LocalDateTime;
+import lombok.*;
 
 @Builder
 @Getter
 @Setter
 @ValidPassword
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserDto {
-
     private Long userId;
 
     @NotNull(message = "{null_message}")
@@ -58,6 +54,4 @@ public class UserDto {
     private String avatar;
 
     private String accountType;
-    private LocalDateTime created;
-    private LocalDateTime updated;
 }

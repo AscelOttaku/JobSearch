@@ -3,17 +3,14 @@ package kg.attractor.jobsearch.dto;
 import jakarta.validation.constraints.*;
 import kg.attractor.jobsearch.annotations.EntityExistById;
 import kg.attractor.jobsearch.util.EntityType;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.time.LocalDateTime;
+import lombok.*;
 
 @Builder
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class VacancyDto {
-
     private Long vacancyId;
 
     @NotNull(message = "{null_message}")
@@ -40,18 +37,23 @@ public class VacancyDto {
 
     @NotNull(message = "{null_message}")
     @PositiveOrZero(message = "{min_experience_negative_message}")
-    @Max(value = 90, message = "{max_experience_message}")
+    @Max(value = 5, message = "{max_experience_message}")
     private Integer expFrom;
 
     @NotNull(message = "{null_message}")
     @PositiveOrZero(message = "{max_experience_negative_message}")
-    @Max(value = 90, message = "{max_experience_message}")
+    @Max(value = 10, message = "{max_experience_message}")
     private Integer expTo;
 
     private boolean isActive;
 
-    private final Long userId;
+    private Long userId;
 
     private String created;
     private String updated;
+
+    @AssertTrue(message = "expTo should be bigger")
+    public boolean isExpToBiggerExpFrom() {
+        return expTo.compareTo(expFrom) > 0;
+    }
 }

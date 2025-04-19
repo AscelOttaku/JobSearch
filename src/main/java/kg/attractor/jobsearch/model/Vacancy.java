@@ -22,7 +22,7 @@ public class Vacancy {
     @Column(name = "description", columnDefinition = "clob")
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
@@ -35,7 +35,7 @@ public class Vacancy {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "vacancy_user_id", nullable = false)
     private User user;
 

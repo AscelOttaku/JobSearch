@@ -1,19 +1,27 @@
 package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dto.EducationalInfoDto;
-import kg.attractor.jobsearch.dto.ResumeDetailedInfoDto;
 import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.dto.WorkExperienceInfoDto;
 import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
+import kg.attractor.jobsearch.exceptions.EntityNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.model.WorkExperienceInfo;
+import kg.attractor.jobsearch.repository.ResumeRepository;
 import kg.attractor.jobsearch.service.*;
+import kg.attractor.jobsearch.util.Util;
+import kg.attractor.jobsearch.validators.ResumeValidator;
+import kg.attractor.jobsearch.validators.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,42 +31,42 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
     private final ResumeService resumeService;
     private final EducationInfoService educationInfoService;
     private final AuthorizedUserService authorizedUserService;
+    private final ResumeValidator resumeValidator;
 
     @Override
-    public ResumeDetailedInfoDto createResume(ResumeDetailedInfoDto resumeDetailedInfoDto) {
-        ResumeDto getResumeDto = resumeDetailedInfoDto.getResumeDto();
-        getResumeDto.setUserId(authorizedUserService.getAuthorizedUser().getUserId());
+    public Long createResume(ResumeDto resumeDto) {
+        resumeDto.setUserId(authorizedUserService.getAuthorizedUser().getUserId());
 
-        ResumeDto resumeDto = resumeService.createResume(getResumeDto);
+        Long resumeId = resumeService.createResume(resumeDto).getId();
 
-        resumeDetailedInfoDto.getEducationInfoDtos().forEach(educationInfoDto ->
-                educationInfoDto.setResumeId(resumeDto.getId()));
+        resumeDto.getEducationInfoDtos()
+                .forEach(educationInfoDto ->
+                        educationInfoDto.setResumeId(resumeId));
 
-        List<EducationalInfoDto> educationInfoDtos = educationInfoService
+        resumeDto.getWorkExperienceInfoDtos()
+                        .forEach(workExperienceInfoDto ->
+                                workExperienceInfoDto.setResumeId(resumeId));
+
+        educationInfoService
                 .createEducationInfos(
-                        resumeDetailedInfoDto.getEducationInfoDtos()
+                        resumeDto.getEducationInfoDtos()
                 );
 
-        resumeDetailedInfoDto.getWorkExperienceInfoDtos().forEach(workExperienceInfoDto ->
-                workExperienceInfoDto.setResumeId(resumeDto.getId()));
-
-        List<WorkExperienceInfoDto> workExperienceInfoDtos = workExperienceInfoService
+        workExperienceInfoService
                 .createWorkExperienceInfos(
-                        resumeDetailedInfoDto.getWorkExperienceInfoDtos()
+                        resumeDto.getWorkExperienceInfoDtos()
                 );
 
-        return ResumeDetailedInfoDto.builder()
-                .workExperienceInfoDtos(workExperienceInfoDtos)
-                .educationInfoDtos(educationInfoDtos)
-                .build();
+        return resumeId;
     }
 
     @Override
-    public void updateResumeDetailedInfo(ResumeDetailedInfoDto resumeDetailedInfoDto, Long resumeId) {
-        long authorizedUserId = authorizedUserService.getAuthorizedUser().getUserId();
-        ResumeDto resumeDto = resumeService.findResumeById(resumeId);
+    public void updateResumeDetailedInfo(ResumeDto resumeDto) {
 
-        if (authorizedUserId != resumeDto.getUserId()) {
+        long authorizedUserId = authorizedUserService.getAuthorizedUser().getUserId();
+        ResumeDto previousResume = resumeService.findResumeById(resumeDto.getId());
+
+        if (authorizedUserId != previousResume.getUserId()) {
             log.warn("Resume doesn't belongs to user");
             throw new CustomIllegalArgException(
                     "Resume doesn't belongs to authorized user",
@@ -70,34 +78,25 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
             );
         }
 
-        ResumeDto getResumeDto = resumeDetailedInfoDto.getResumeDto();
-        getResumeDto.setId(resumeId);
-        getResumeDto.setUserId(authorizedUserId);
+        resumeDto.setUserId(authorizedUserId);
 
-        resumeService.updateResume(getResumeDto);
+        resumeDto.setCreated(previousResume.getCreated());
+        resumeDto.setUpdated(String.valueOf(LocalDateTime.now()));
 
-        List<WorkExperienceInfoDto> workExperienceInfoDtos = resumeDetailedInfoDto.getWorkExperienceInfoDtos();
+        Long res = resumeService.updateResume(resumeDto);
+
+        List<WorkExperienceInfoDto> workExperienceInfoDtos = resumeDto.getWorkExperienceInfoDtos();
         workExperienceInfoDtos.forEach(workExperienceInfoDto ->
-                workExperienceInfoDto.setResumeId(resumeId));
+                workExperienceInfoDto.setResumeId(res));
 
-        List<EducationalInfoDto> educationalInfoDtos = resumeDetailedInfoDto.getEducationInfoDtos();
+        List<EducationalInfoDto> educationalInfoDtos = resumeDto.getEducationInfoDtos();
         educationalInfoDtos.forEach(educationalInfoDto ->
-                educationalInfoDto.setResumeId(resumeId));
+                educationalInfoDto.setResumeId(res));
 
         updateWorkExperienceInfo(workExperienceInfoDtos);
-        updateEducationalInfo(resumeDetailedInfoDto.getEducationInfoDtos());
-    }
+        updateEducationalInfo(educationalInfoDtos);
 
-    @Override
-    public List<ResumeDetailedInfoDto> findAllResumesWithDetailedInfo() {
-
-        return resumeService.findAllResumesIds().stream()
-                .map(id -> ResumeDetailedInfoDto.builder()
-                        .resumeDto(resumeService.findResumeById(id))
-                        .workExperienceInfoDtos(workExperienceInfoService.findWorkExperienceByResumeId(id))
-                        .educationInfoDtos(educationInfoService.findEducationInfosByResumeId(id))
-                        .build())
-                .toList();
+        cleanEmptyData();
     }
 
     private void updateEducationalInfo(List<EducationalInfoDto> educationalInfoDtos) {
@@ -112,5 +111,35 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
             return;
 
         workExperienceInfoService.updateWorkExperienceInfo(workExperienceInfoDtos);
+    }
+
+    @Override
+    public Map<String, Object> getResumeDtoModel() {
+        Map<String, Object> model = new HashMap<>();
+        ResumeDto resumeDto = new ResumeDto();
+        resumeDto.setWorkExperienceInfoDtos(List.of(new WorkExperienceInfoDto()));
+        resumeDto.setEducationInfoDtos(List.of(new EducationalInfoDto()));
+
+        model.put("resume", resumeDto);
+        return model;
+    }
+
+    private void cleanEmptyData() {
+        List<EducationalInfoDto> educationalInfoDtos = educationInfoService.findAll();
+        List<WorkExperienceInfoDto> workExperienceInfoDtos = workExperienceInfoService.findAll();
+
+        educationalInfoDtos = educationalInfoDtos.stream()
+                .filter(educationalInfoDto1 -> !Validator.isNotEmptyEducationalInfo(educationalInfoDto1))
+                .toList();
+
+        workExperienceInfoDtos = workExperienceInfoDtos.stream()
+                .filter(workExperienceInfoDto1 -> !Validator.isNotEmptyWorkExperience(workExperienceInfoDto1))
+                .toList();
+
+        educationalInfoDtos.forEach(educationalInfoDto ->
+                educationInfoService.deleteEducationInfoById(educationalInfoDto.getId()));
+
+        workExperienceInfoDtos.forEach(workExperienceInfoDto ->
+                workExperienceInfoService.deleteWorkExperience(workExperienceInfoDto.getId()));
     }
 }

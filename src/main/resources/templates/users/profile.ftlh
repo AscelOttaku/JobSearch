@@ -26,6 +26,12 @@
         .resume-item {
             border-left: 3px solid #0d6efd;
         }
+
+        .badge {
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 0.35em 0.65em;
+        }
     </style>
 
     <title>Job Search | Профиль</title>
@@ -121,25 +127,25 @@
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h3 class="h4 fw-bold">
                                 <i class="bi bi-file-earmark-text me-2"></i>
-                                <#if user.accountType == "Employer">
+                                <#if user.accountType == "EMPLOYER">
                                     Вакансии
                                 <#else>
                                     Резюме
                                 </#if>
                             </h3>
                             <div>
-                                <#if user.accountType == "JobSeeker">
+                                <#if user.accountType == "JOB_SEEKER">
                                     <a href="/resumes/users" class="btn btn-view-all">
                                         <i class="bi bi-collection me-2"></i>Все созданные резюме
                                     </a>
-                                    <a href="/users/resume/create" class="btn btn-primary">
+                                    <a href="/resumes/new_resume" class="btn btn-primary">
                                         <i class="bi bi-plus-circle me-2"></i>Создать резюме
                                     </a>
                                 <#elseif user.accountType == "Employer">
                                     <a href="/vacancies/users" class="btn btn-view-all">
                                         <i class="bi bi-collection me-2"></i>Все созданные Вакансии
                                     </a>
-                                    <a href="/users/resume/create" class="btn btn-primary">
+                                    <a href="/vacancies/new_vacancy" class="btn btn-primary">
                                         <i class="bi bi-plus-circle me-2"></i>Создать вакансию
                                     </a>
                                 <#else>
@@ -147,7 +153,7 @@
                             </div>
                         </div>
 
-                        <#if user.accountType == "JobSeeker">
+                        <#if user.accountType == "JOB_SEEKER">
                             <#if resumes?? && resumes?has_content>
                                 <div class="row g-3">
                                     <#list resumes as resume>
@@ -168,11 +174,12 @@
                                                             </small>
                                                         </div>
                                                         <div>
-                                                            <a href="resumes/${resume.id}"
+                                                            <a href="/resumes/${resume.id}"
                                                                class="btn btn-sm btn-outline-primary me-1">
                                                                 <i class="bi bi-eye"></i>
                                                             </a>
-                                                            <a href="#" class="btn btn-sm btn-outline-secondary">
+                                                            <a href="/resumes/update/resume/${resume.id}"
+                                                               class="btn btn-sm btn-outline-secondary">
                                                                 <i class="bi bi-pencil"></i>
                                                             </a>
                                                         </div>
@@ -187,7 +194,7 @@
                                     <div class="card-body text-center py-4">
                                         <i class="bi bi-file-earmark-text fs-1 text-muted mb-3"></i>
                                         <h5 class="text-muted mb-3">У вас пока нет резюме</h5>
-                                        <a href="#" class="btn btn-primary">
+                                        <a href="/resumes/new_resume" class="btn btn-primary">
                                             <i class="bi bi-plus-circle me-2"></i>Создать Резюме
                                         </a>
                                     </div>
@@ -201,27 +208,38 @@
                                             <div class="card h-100 resume-item">
                                                 <div class="card-body">
                                                     <h5 class="card-title">${vacancy.name}</h5>
-                                                    <p class="card-text text-muted">${vacancy.name!''}</p>
+                                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                                      <span class="badge ${vacancy.isActive()?string('bg-success', 'bg-secondary')}">
+                                                          ${vacancy.isActive()?string('Активна', 'Неактивна')}
+                                                         </span>
+                                                    </div>
                                                     <div class="d-flex justify-content-between align-items-center">
-                                                        <div>
-                                                            <small class="text-muted">
-                                                                <i class="bi bi-calendar me-1"></i>Created
-                                                                Date: ${vacancy.created!''}
-                                                            </small>
-                                                            <small class="text-muted d-block">
-                                                                <i class="bi bi-calendar me-1"></i>Updated
-                                                                Date: ${vacancy.updated!''}
-                                                            </small>
-                                                        </div>
-                                                        <div>
-                                                            <a href="/vacancies/${vacancy.vacancyId}"
-                                                               class="btn btn-sm btn-outline-primary me-1">
-                                                                <i class="bi bi-eye"></i>
-                                                            </a>
-                                                            <a href="#" class="btn btn-sm btn-outline-secondary">
-                                                                <i class="bi bi-pencil"></i>
+                                                        <div class="mb-3">
+                                                            <p class="card-text mb-2">
+                                                                <i class="bi bi-briefcase me-1"></i>${vacancy.categoryName!''}
+                                                            </p>
+                                                            <p class="card-text mb-2">
+                                                                <i class="bi bi-cash-coin me-1"></i>${vacancy.salary}
+                                                                KGS
+                                                            </p>
+                                                            <p class="card-text">
+                                                                <i class="bi bi-clock-history me-1"></i>Опыт: ${vacancy.expFrom}
+                                                                - ${vacancy.expTo} лет
+                                                            </p>
+                                                            <a href="/vacancies/time?vacancyId=${vacancy.vacancyId}" class="btn btn-sm btn-outline-secondary" title="Update">
+                                                                <i class="bi bi-arrow-clockwise"></i>
                                                             </a>
                                                         </div>
+                                                    </div>
+                                                    <div>
+                                                        <a href="/vacancies/${vacancy.vacancyId}"
+                                                           class="btn btn-sm btn-outline-primary me-1">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+                                                        <a href="/vacancies/update/vacancy/${vacancy.vacancyId}"
+                                                           class="btn btn-sm btn-outline-secondary">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -233,7 +251,7 @@
                                     <div class="card-body text-center py-4">
                                         <i class="bi bi-file-earmark-text fs-1 text-muted mb-3"></i>
                                         <h5 class="text-muted mb-3">У вас пока нет созданных вакансий</h5>
-                                        <a href="#" class="btn btn-primary">
+                                        <a href="/vacancies/new_vacancy" class="btn btn-primary">
                                             <i class="bi bi-plus-circle me-2"></i>Создать Вакансию
                                         </a>
                                     </div>
