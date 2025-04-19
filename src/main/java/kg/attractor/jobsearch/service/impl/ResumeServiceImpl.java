@@ -18,6 +18,7 @@ import kg.attractor.jobsearch.validators.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -164,5 +165,23 @@ public class ResumeServiceImpl implements ResumeService {
         return resumeRepository.findAll().stream()
                 .map(Resume::getId)
                 .toList();
+    }
+
+    @Override
+    public PageHolder<ResumeDto> findAllResumes(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Resume> resumePage = resumeRepository.findAllResumes(pageable);
+
+        return PageHolder.<ResumeDto>builder()
+                .content(resumePage.stream()
+                        .map(resumeMapper::mapToDto)
+                        .toList())
+                .page(page)
+                .size(size)
+                .totalPages(resumePage.getTotalPages())
+                .hasNextPage(resumePage.hasNext())
+                .hasPreviousPage(resumePage.hasPrevious())
+                .build();
     }
 }

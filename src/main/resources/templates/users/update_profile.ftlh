@@ -113,7 +113,9 @@
                             <div class="col-md-3 text-center">
                                 <div class="avatar-container">
                                     <#if user.avatar??>
-                                        <img src="${user.avatar}" class="profile-avatar rounded-circle" alt="Avatar">
+                                        <img src="/users/avatars"
+                                             class="profile-avatar rounded-circle border border-3 border-white shadow"
+                                             alt="Avatar">
                                     <#else>
                                         <div class="avatar-placeholder">
                                             <i class="bi bi-person-fill"></i>

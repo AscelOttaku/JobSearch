@@ -74,6 +74,12 @@
                             <p class="card-text">
                                 <i class="bi bi-clock-history me-1"></i>Опыт: ${vacancy.expFrom} - ${vacancy.expTo} лет
                             </p>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="bi bi-calendar me-1"></i>Обновлено: ${vacancy.updated!vacancy.created}
+                                </small>
+                            </div>
                         </div>
 
                         <a href="/vacancies/${vacancy.vacancyId}" class="btn btn-sm btn-outline-primary"

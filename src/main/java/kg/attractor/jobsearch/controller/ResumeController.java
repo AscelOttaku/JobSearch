@@ -28,9 +28,13 @@ public class ResumeController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public String findAll(Model model) {
-        List<ResumeDto> resumeDtos = resumeService.findAllResumes();
-        model.addAttribute("resumes", resumeDtos);
+    public String findAll(
+            Model model,
+            @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+            @RequestParam(value = "size", defaultValue = "1", required = false) Integer size
+    ) {
+        PageHolder<ResumeDto> resumeDtos = resumeService.findAllResumes(page, size);
+        model.addAttribute("pageResume", resumeDtos);
         return "resumes/resumes";
     }
 

@@ -181,7 +181,7 @@ public class VacancyServiceImpl implements VacancyService {
     public PageHolder<VacancyDto> findUserCreatedVacancies(int page, int size) {
         Long userId = authorizedUserService.getAuthorizedUserId();
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("lastUpdated").descending());
+        Pageable pageable = PageRequest.of(page, size);
 
         Page<Vacancy> vacanciesPage = vacancyRepository.findUserVacanciesByUserId(userId, pageable);
 

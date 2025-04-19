@@ -13,9 +13,12 @@ import java.util.List;
 public interface ResumeRepository extends JpaRepository<Resume, Long> {
     List<Resume> findResumesByCategoryId(Long categoryId);
 
-    @Query("select r from Resume r where r.user.userId = :userId")
+    @Query("select r from Resume r where r.user.userId = :userId order by coalesce(r.updated, r.created) desc")
     Page<Resume> findResumeByUserId(Long userId, Pageable pageable);
 
     @Query("select r from Resume r where r.user.userId = :userId")
     List<Resume> findResumeByUserId(Long userId);
+
+    @Query("select r from Resume r order by coalesce(r.created, r.updated)")
+    Page<Resume> findAllResumes(Pageable pageable);
 }

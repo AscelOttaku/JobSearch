@@ -141,7 +141,7 @@
                                     <a href="/resumes/new_resume" class="btn btn-primary">
                                         <i class="bi bi-plus-circle me-2"></i>Создать резюме
                                     </a>
-                                <#elseif user.accountType == "Employer">
+                                <#elseif user.accountType == "EMPLOYER">
                                     <a href="/vacancies/users" class="btn btn-view-all">
                                         <i class="bi bi-collection me-2"></i>Все созданные Вакансии
                                     </a>
@@ -154,9 +154,9 @@
                         </div>
 
                         <#if user.accountType == "JOB_SEEKER">
-                            <#if pageHolder.resumes?? && resumes?has_content>
+                            <#if pageHolder.content?? && pageHolder.content?has_content>
                                 <div class="row g-3">
-                                    <#list pageHolder.resumes as resume>
+                                    <#list pageHolder.content as resume>
                                         <div class="col-md-6">
                                             <div class="card h-100 resume-item">
                                                 <div class="card-body">
@@ -201,7 +201,7 @@
                                 </div>
                             </#if>
                         <#else>
-                            <#if pageHolder.content?? && vacancies?has_content>
+                            <#if pageHolder.content?? && pageHolder.content?has_content>
                                 <div class="row g-3">
                                     <#list pageHolder.content as vacancy>
                                         <div class="col-md-6">
@@ -226,6 +226,13 @@
                                                                 <i class="bi bi-clock-history me-1"></i>Опыт: ${vacancy.expFrom}
                                                                 - ${vacancy.expTo} лет
                                                             </p>
+
+                                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                                <small class="text-muted">
+                                                                    <i class="bi bi-calendar me-1"></i>Обновлено: ${vacancy.updated!vacancy.created}
+                                                                </small>
+                                                            </div>
+
                                                             <a href="/vacancies/time?vacancyId=${vacancy.vacancyId}" class="btn btn-sm btn-outline-secondary" title="Update">
                                                                 <i class="bi bi-arrow-clockwise"></i>
                                                             </a>

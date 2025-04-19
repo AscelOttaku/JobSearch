@@ -12,7 +12,7 @@
 </head>
 <body class="bg-light">
 <div class="container">
-    <div class="row g-4 mt-5 container">
+    <div class="row g-4 mt-5 container-fluid">
         <div class="col-md-6 col-lg-4">
             <div class="card vacancy-item">
                 <div class="card-body">
@@ -33,6 +33,12 @@
                         <p class="card-text">
                             <i class="bi bi-clock-history me-1"></i>Опыт: ${vacancy.expFrom} - ${vacancy.expTo} лет
                         </p>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="bi bi-calendar me-1"></i>Обновлено: ${vacancy.updated!vacancy.created}
+                            </small>
+                        </div>
                     </div>
 
                     <#if vacancy.description??>
