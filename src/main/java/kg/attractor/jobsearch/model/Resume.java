@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -36,4 +37,10 @@ public class Resume {
 
     private LocalDateTime created;
     private LocalDateTime updated;
+
+    @OneToMany(mappedBy = "resume", fetch = FetchType.LAZY)
+    private List<WorkExperienceInfo> workExperienceInfos;
+
+    @OneToMany(mappedBy = "resume", fetch = FetchType.LAZY)
+    private List<EducationInfo> educationInfos;
 }

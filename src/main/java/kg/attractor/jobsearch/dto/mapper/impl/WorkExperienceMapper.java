@@ -7,7 +7,7 @@ import kg.attractor.jobsearch.model.WorkExperienceInfo;
 import org.springframework.stereotype.Service;
 
 @Service
-public class WokExperienceMapper implements Mapper<WorkExperienceInfoDto, WorkExperienceInfo> {
+public class WorkExperienceMapper implements Mapper<WorkExperienceInfoDto, WorkExperienceInfo> {
     @Override
     public WorkExperienceInfoDto mapToDto(WorkExperienceInfo entity) {
         return WorkExperienceInfoDto.builder()

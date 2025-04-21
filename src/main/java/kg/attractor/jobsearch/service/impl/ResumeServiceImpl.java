@@ -1,5 +1,6 @@
 package kg.attractor.jobsearch.service.impl;
 
+import kg.attractor.jobsearch.dto.CategoryDto;
 import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
@@ -61,18 +62,7 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public List<ResumeDto> findResumesByCategoryId(Long categoryId) {
         Validator.isValidId(categoryId);
-
-        boolean isCategoryExists = categoryService.checkIfCategoryExistsById(categoryId);
-
-        if (!isCategoryExists)
-            throw new CustomIllegalArgException(
-                    "Category is not exists",
-                    CustomBindingResult.builder()
-                            .className(Category.class.getCanonicalName())
-                            .fieldName("categoryId")
-                            .rejectedValue(categoryId)
-                            .build()
-            );
+        categoryService.findCategoryById(categoryId);
 
         var optionalResume = resumeRepository.findResumesByCategoryId(categoryId);
 

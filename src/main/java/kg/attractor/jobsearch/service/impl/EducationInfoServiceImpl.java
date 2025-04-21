@@ -11,10 +11,7 @@ import kg.attractor.jobsearch.validators.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -38,18 +35,28 @@ public class EducationInfoServiceImpl implements EducationInfoService {
 
     @Override
     public void updateEducationInfo(List<EducationalInfoDto> educationInfosDtos) {
-        List<EducationInfo> educationInfos = educationInfosDtos.stream()
+        List<EducationalInfoDto> nonEmptyEducationInfos = cleanEmptyEducationInfos(educationInfosDtos);
+
+        nonEmptyEducationInfos.stream()
+                .filter(educationInfoDto ->
+                        isEducationInfoBelongToResume(educationInfoDto.getId(), educationInfoDto.getResumeId()))
                 .map(educationInfoMapperDto::mapToEntity)
-                .toList();
-
-        educationInfos.stream()
-                .filter(educationInfo -> isEducationInfoBelongToResume(educationInfo.getId(), educationInfo.getId()))
                 .forEach(educationInfoRepository::save);
+    }
 
-        for (EducationInfo info : educationInfos) {
-            if (isEducationInfoBelongToResume(info.getId(), info.getResume().getId()))
-                educationInfoRepository.save(info);
-        }
+    private List<EducationalInfoDto> cleanEmptyEducationInfos(List<EducationalInfoDto> educationInfosDtos) {
+        educationInfosDtos.removeIf(educationInfoDto -> {
+            if (!Validator.isNotEmptyEducationalInfo(educationInfoDto)) {
+                if (educationInfoDto.getId() == null)
+                    return true;
+
+                educationInfoRepository.deleteById(educationInfoDto.getId());
+                return true;
+            }
+            return false;
+        });
+
+        return educationInfosDtos;
     }
 
     private boolean isEducationInfoBelongToResume(Long id, Long resumeId) {

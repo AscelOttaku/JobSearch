@@ -32,10 +32,6 @@
                         </p>
                     </div>
 
-                    <div class="meta-item">
-                        <i class="bi bi-person"></i>Работодатель: ${resume.userName!''}
-                    </div>
-
                     <#if resume.workExperienceInfoDtos?? && resume.workExperienceInfoDtos?size gt 0>
                         <div class="experience-section">
                             <h3 class="section-title"><i class="bi bi-briefcase"></i>Опыт работы</h3>
