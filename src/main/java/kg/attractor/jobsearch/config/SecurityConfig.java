@@ -73,6 +73,7 @@ public class SecurityConfig {
                                 .requestMatchers(POST, "/vacancies/times").fullyAuthenticated()
 
                                 // Users
+
                                 .requestMatchers(PUT, "/users/updates").hasAnyAuthority(Roles.EMPLOYER.getValue(), Roles.JOB_SEEKER.getValue())
                                 .requestMatchers(POST, "/users/registration").anonymous()
                                 .requestMatchers(GET, "/users/profile").fullyAuthenticated()

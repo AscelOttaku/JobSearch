@@ -50,4 +50,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("select u from User u where u.role.roleName ilike :roleName")
     Page<User> findUsersByRoleRoleNameIgnoreCases(String roleName, Pageable pageable);
+
+    @Query("select u.avatar from User u where u.userId = :userId")
+    Optional<String> findUserAvatarById(Long userId);
 }

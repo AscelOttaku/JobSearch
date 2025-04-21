@@ -1,6 +1,5 @@
 package kg.attractor.jobsearch.repository;
 
-import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.model.Vacancy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -30,13 +30,14 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Long> {
     Page<Vacancy> findUserVacanciesByUserId(Long userId, Pageable pageable);
 
     @Modifying
+    @Transactional
     @Query("update Vacancy v set v.updated = CURRENT_TIMESTAMP where v.id = :vacancyId")
     void updateVacancyTime(@Param("vacancyId") Long vacancyId);
-
-    Long user(User user);
 
     @Query("select v from Vacancy v order by coalesce(v.updated, v.created) desc")
     Page<Vacancy> findAllVacancies(Pageable pageable);
 
     long count();
+
+    List<Vacancy> findVacanciesByUserUserId(Long userId);
 }

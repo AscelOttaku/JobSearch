@@ -238,4 +238,28 @@ public class VacancyServiceImpl implements VacancyService {
     public Long findVacanciesQuantity(Long employerId) {
         return vacancyRepository.count();
     }
+
+    @Override
+    public PageHolder<VacancyDto> findVacanciesByUserId(Long userId, int page, int size) {
+        Page<Vacancy> vacanciesPageHolder = vacancyRepository.findUserVacanciesByUserId(userId, PageRequest.of(page, size));
+
+        return PageHolder.<VacancyDto>builder()
+                .content(vacanciesPageHolder.stream()
+                        .map(vacancyMapper::mapToDto)
+                        .toList())
+                .page(page)
+                .size(vacanciesPageHolder.getSize())
+                .totalPages(vacanciesPageHolder.getTotalPages())
+                .hasNextPage(vacanciesPageHolder.hasNext())
+                .hasPreviousPage(vacanciesPageHolder.hasPrevious())
+                .build();
+    }
+
+    @Override
+    public List<VacancyDto> findVacanciesByUserId(Long userId) {
+        return vacancyRepository.findVacanciesByUserUserId(userId)
+                .stream()
+                .map(vacancyMapper::mapToDto)
+                .toList();
+    }
 }

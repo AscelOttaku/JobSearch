@@ -2,6 +2,7 @@ package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dto.CompanyDto;
 import kg.attractor.jobsearch.dto.PageHolder;
+import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.dto.mapper.impl.CompanyMapper;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.repository.UserRepository;
@@ -34,7 +35,9 @@ public class CompanyServiceImpl implements CompanyService {
                 .toList();
 
         companies.forEach(companyDto ->
-                companyDto.setVacancies(vacancyService.findUserCreatedVacancies(page, size)));
+                companyDto.setVacancies(PageHolder.<VacancyDto>builder()
+                        .content(vacancyService.findVacanciesByUserId(companyDto.getId()))
+                        .build()));
 
         return PageHolder.<CompanyDto>builder()
                 .content(companies)
@@ -52,7 +55,13 @@ public class CompanyServiceImpl implements CompanyService {
                 .map(companyMapper::mapToDto)
                 .orElseThrow(() -> new NoSuchElementException("Company not found"));
 
-        companyDto.setVacancies(vacancyService.findUserCreatedVacancies(page, size));
+        companyDto.setVacancies(vacancyService.findVacanciesByUserId(id, page, size));
         return companyDto;
+    }
+
+    @Override
+    public String findCompanyAvatarById(Long companyId) {
+        return userRepository.findUserAvatarById(companyId)
+                .orElseThrow(() -> new NoSuchElementException("Company avatar not found by id " + companyId));
     }
 }

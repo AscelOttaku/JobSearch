@@ -5,132 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+    <link rel="stylesheet" href="/static/css/profile.css">
 
-        .profile-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .profile-card {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            margin-bottom: 25px;
-            overflow: hidden;
-        }
-
-        .profile-header {
-            padding: 20px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .profile-title {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 0;
-        }
-
-        .item-card {
-            border-left: 4px solid #3498db;
-            transition: all 0.3s ease;
-            margin-bottom: 20px;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .item-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .item-content {
-            padding: 20px;
-        }
-
-        .item-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-
-        .item-meta {
-            margin-bottom: 15px;
-        }
-
-        .meta-row {
-            display: flex;
-            align-items: center;
-            margin-bottom: 8px;
-            font-size: 0.95rem;
-            color: #7f8c8d;
-        }
-
-        .meta-row i {
-            width: 20px;
-            color: #3498db;
-            margin-right: 10px;
-        }
-
-        .item-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 15px;
-            border-top: 1px solid #eee;
-            margin-top: 15px;
-        }
-
-        .item-date {
-            font-size: 0.85rem;
-            color: #95a5a6;
-        }
-
-        .item-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .status-badge {
-            font-size: 0.8rem;
-            font-weight: 500;
-            padding: 5px 10px;
-            border-radius: 20px;
-        }
-
-        .profile-avatar {
-            width: 120px;
-            height: 120px;
-            object-fit: cover;
-            border: 3px solid white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .info-card {
-            transition: all 0.3s ease;
-            height: 100%;
-        }
-
-        .info-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-
-        .btn-action {
-            padding: 5px 12px;
-            font-size: 0.9rem;
-            border-radius: 5px;
-        }
-    </style>
     <title>Job Search | Профиль</title>
     <#include "../layout/navbar.ftlh">
 </head>
@@ -331,7 +207,7 @@
                                                     <a href="/vacancies/update/vacancy/${vacancy.vacancyId}" class="btn btn-action btn-outline-secondary">
                                                         <i class="bi bi-pencil"></i>
                                                     </a>
-                                                    <form action="/vacancies/time?vacancyId=${vacancy.vacancyId}" method="post" class="d-inline">
+                                                    <form action="/vacancies/times?vacancyId=${vacancy.vacancyId}" method="post" class="d-inline">
                                                         <button type="submit" class="btn btn-action btn-outline-secondary">
                                                             <i class="bi bi-arrow-clockwise"></i>
                                                         </button>

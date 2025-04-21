@@ -7,4 +7,6 @@ public interface CompanyService {
     PageHolder<CompanyDto> findAllCompanies(int page, int size);
 
     CompanyDto findCompanyById(Long id, int page, int size);
+
+    String findCompanyAvatarById(Long companyId);
 }

@@ -29,22 +29,22 @@ body {
     margin-bottom: 0;
 }
 
-.list-item {
+.item-card {
     border-left: 4px solid #3498db;
     transition: all 0.3s ease;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     background: white;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
-.list-item:hover {
+.item-card:hover {
     transform: translateY(-3px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
-.list-item-content {
+.item-content {
     padding: 20px;
 }
 
@@ -99,107 +99,26 @@ body {
     border-radius: 20px;
 }
 
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border: 3px solid white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.info-card {
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
 .btn-action {
     padding: 5px 12px;
     font-size: 0.9rem;
     border-radius: 5px;
-}
-
-body {
-    font-size: 18px;
-    line-height: 1.6;
-}
-
-.vacancy-container {
-    max-width: 1200px;
-    margin: 30px auto;
-    padding: 0 20px;
-}
-
-.page-title {
-    font-size: 2.2rem;
-    font-weight: 600;
-    margin-bottom: 30px;
-    color: #212529;
-}
-
-.vacancy-card {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-    padding: 18px;
-    margin-bottom: 18px;
-    border-left: 4px solid #0d6efd;
-    transition: transform 0.2s;
-}
-
-.vacancy-card:hover {
-    transform: translateY(-3px);
-}
-
-.vacancy-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-}
-
-.vacancy-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin: 0;
-    color: #0a58ca;
-}
-
-.vacancy-status {
-    font-size: 1rem;
-    padding: 6px 12px;
-    border-radius: 6px;
-}
-
-.vacancy-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 25px;
-    margin-bottom: 20px;
-}
-
-.meta-item {
-    font-size: 1.1rem;
-    display: flex;
-    align-items: center;
-}
-
-.bi {
-    font-size: 1.2rem;
-    margin-right: 8px;
-    color: #495057;
-}
-
-.vacancy-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid #e9ecef;
-    font-size: 1rem;
-}
-
-.vacancy-actions {
-    display: flex;
-    gap: 15px;
-}
-
-.btn {
-    font-size: 1.1rem;
-    padding: 8px 16px;
-}
-
-.pagination {
-    font-size: 1.1rem;
-}
-
-.page-link {
-    padding: 10px 16px;
 }

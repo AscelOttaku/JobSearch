@@ -51,6 +51,12 @@
                         <a href="/vacancies/update/vacancy/${vacancy.vacancyId}" class="btn btn-sm btn-outline-secondary">
                             <i class="bi bi-pencil"></i> Редактировать
                         </a>
+
+                        <form action="/vacancies/times?vacancyId=${vacancy.vacancyId}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-action btn-outline-secondary">
+                                <i class="bi bi-arrow-clockwise"></i>
+                            </button>
+                        </form>
                     </#if>
                 </div>
             </div>
