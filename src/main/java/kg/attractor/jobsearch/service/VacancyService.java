@@ -33,4 +33,8 @@ public interface VacancyService {
     void updateVacancyDate(Long vacancyId);
 
     Long findVacanciesQuantity(Long employerId);
+
+    PageHolder<VacancyDto> findVacanciesByUserId(Long userId, int page, int size);
+
+    List<VacancyDto> findVacanciesByUserId(Long userId);
 }

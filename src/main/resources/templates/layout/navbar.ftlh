@@ -22,13 +22,13 @@
                                 <i class="bi bi-file-earmark-text me-1"></i> Резюме
                             </a>
                         </li>
+                    <#else>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/companies">
+                                <i class="bi bi-file-earmark-text me-1"></i> Компании
+                            </a>
+                        </li>
                     </#if>
-                <#else>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/companies">
-                            <i class="bi bi-file-earmark-text me-1"></i> Компании
-                        </a>
-                    </li>
                 </#if>
                 <li class="nav-item">
                     <a class="nav-link" href="/users/profile">

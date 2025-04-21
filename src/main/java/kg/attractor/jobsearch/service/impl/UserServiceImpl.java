@@ -1,6 +1,5 @@
 package kg.attractor.jobsearch.service.impl;
 
-import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
@@ -15,12 +14,11 @@ import kg.attractor.jobsearch.util.FileUtil;
 import kg.attractor.jobsearch.validators.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -35,6 +33,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final VacancyService vacancyService;
 
+    @Transactional
     @Override
     public void uploadAvatar(MultipartFile file) throws IOException {
         UserDto userDto = getAuthorizedUser();

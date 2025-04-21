@@ -17,9 +17,11 @@ public class CompanyMapper implements Mapper<CompanyDto, User> {
     @Override
     public CompanyDto mapToDto(User entity) {
         return CompanyDto.builder()
+                .id(entity.getUserId())
                 .name(entity.getName())
                 .email(entity.getEmail())
                 .phone(entity.getPhoneNumber())
+                .avatar(entity.getAvatar())
                 .build();
     }
 

@@ -64,14 +64,14 @@
                                     <i class="bi bi-clock-history form-icon me-2"></i>Опыт от (лет)
                                 </label>
                                 <@spring.formInput "vacancy.expFrom", 'class="form-control" placeholder="0" id="expFrom" type="number"'/>
-                                <@spring.showErrors "<br>" "text-danger small"/>
+                                <@spring.showErrors "vacancy.expFrom" "text-danger small"/>
                             </div>
                             <div class="col-md-6">
                                 <label for="expTo" class="form-label">
                                     <i class="bi bi-clock-history form-icon me-2"></i>Опыт до (лет)
                                 </label>
                                 <@spring.formInput "vacancy.expTo", 'class="form-control" placeholder="5" id="expTo" type="number"'/>
-                                <@spring.showErrors "<br>" "text-danger small"/>
+                                <@spring.showErrors "vacancy.expTo" "text-danger small"/>
                             </div>
                         </div>
 

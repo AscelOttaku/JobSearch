@@ -11,7 +11,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@IsExpFromAndExpToCorrectFormat(message = "Vacancy exp from or expTo is not valid")
+@IsExpFromAndExpToCorrectFormat
 public class VacancyDto {
     private Long vacancyId;
 
