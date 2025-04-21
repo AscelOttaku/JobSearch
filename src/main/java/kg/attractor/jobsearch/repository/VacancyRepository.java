@@ -30,6 +30,7 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Long> {
     Page<Vacancy> findUserVacanciesByUserId(Long userId, Pageable pageable);
 
     @Modifying
+    @Transactional
     @Query("update Vacancy v set v.updated = CURRENT_TIMESTAMP where v.id = :vacancyId")
     void updateVacancyTime(@Param("vacancyId") Long vacancyId);
 
