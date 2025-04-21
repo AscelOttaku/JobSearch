@@ -28,7 +28,7 @@ public class VacancyController {
     public String findAllVacancies(
             Model model,
             @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
-            @RequestParam(value = "size", defaultValue = "2", required = false) Integer size
+            @RequestParam(value = "size", defaultValue = "10", required = false) Integer size
     ) {
         PageHolder<VacancyDto> vacancyDtos = vacancyService.findAllVacancies(page, size);
         model.addAttribute("vacancies", vacancyDtos);

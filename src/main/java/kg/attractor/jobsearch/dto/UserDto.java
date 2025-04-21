@@ -1,13 +1,13 @@
 package kg.attractor.jobsearch.dto;
 
 import jakarta.validation.constraints.*;
+import kg.attractor.jobsearch.annotations.UniqueEmail;
 import kg.attractor.jobsearch.annotations.ValidPassword;
 import lombok.*;
 
 @Builder
 @Getter
 @Setter
-@ValidPassword
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
@@ -35,9 +35,10 @@ public class UserDto {
 
     @NotNull(message = "{null_message}")
     @NotBlank(message = "{blank_message}")
-    @Email(message = "{email_message}")
+    @UniqueEmail
     private String email;
 
+    @ValidPassword
     private String password;
 
     @NotNull(message = "{null_message}")

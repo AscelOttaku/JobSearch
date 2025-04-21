@@ -44,4 +44,10 @@ public class CompanyController {
 
         return FileUtil.getOutputFile(companyAvatar, FileUtil.defineFileType(companyAvatar));
     }
+
+    @GetMapping("company/profile/{companyId}")
+    public String findCompanyById(@PathVariable Long companyId, Model model) {
+        model.addAttribute("company", companyService.findCompanyById(companyId));
+        return "users/company_profile";
+    }
 }

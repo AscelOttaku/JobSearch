@@ -15,7 +15,7 @@
 
 <div class="companies-container">
     <h1 class="page-title">
-        <i class="bi bi-buildings"></i> ${company.name}
+        <a href="/companies/company/profile/${company.id}"><i class="bi bi-buildings"></i> ${company.name}</a>
     </h1>
 
     <div class="company-card">

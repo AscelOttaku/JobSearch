@@ -1,0 +1,118 @@
+:root {
+    --primary-color: #4e73df;
+    --secondary-color: #f8f9fc;
+    --accent-color: #2e59d9;
+    --dark-color: #5a5c69;
+}
+
+body {
+    background-color: var(--secondary-color);
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #333;
+}
+
+.company-header {
+    border-left: 4px solid var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.company-header:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+.company-info h1 {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+.logo-placeholder {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+}
+
+.card {
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.15rem 0.5rem rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+    color: var(--primary-color);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.card-title i {
+    font-size: 1.2rem;
+}
+
+.list-unstyled li {
+    padding: 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--dark-color);
+}
+
+.list-unstyled i {
+    width: 1.5rem;
+    text-align: center;
+    color: var(--primary-color);
+}
+
+
+.about-section {
+    background: white;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 0.15rem 0.5rem rgba(0, 0, 0, 0.05);
+}
+
+.about-section h3 {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--secondary-color);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+
+@media (max-width: 768px) {
+    .company-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .company-logo {
+        margin-bottom: 1rem;
+    }
+
+    .company-info h1 {
+        font-size: 1.75rem;
+    }
+}
+
+.badge-custom {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+}
+
+.social-links a {
+    color: var(--dark-color);
+    font-size: 1.25rem;
+    margin-right: 0.75rem;
+    transition: color 0.3s ease;
+}
+
+.social-links a:hover {
+    color: var(--primary-color);
+}

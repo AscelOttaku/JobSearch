@@ -64,4 +64,11 @@ public class CompanyServiceImpl implements CompanyService {
         return userRepository.findUserAvatarById(companyId)
                 .orElseThrow(() -> new NoSuchElementException("Company avatar not found by id " + companyId));
     }
+
+    @Override
+    public CompanyDto findCompanyById(Long companyId) {
+        return userRepository.findById(companyId)
+                .map(companyMapper::mapToDto)
+                .orElseThrow(() -> new NoSuchElementException("COmpany not found by id " + companyId));
+    }
 }
