@@ -287,4 +287,14 @@ public class UserServiceImpl implements UserService {
                         "Password not found by user id " + userId)
                 );
     }
+
+    @Override
+    public boolean isPhoneNumberExist(String phoneNumber) {
+        return userRepository.findUserByPhoneNumber(phoneNumber).isPresent();
+    }
+
+    @Override
+    public boolean isEmailExist(String email) {
+        return userRepository.findUserByEmail(email).isPresent();
+    }
 }

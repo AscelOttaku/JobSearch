@@ -70,7 +70,7 @@
                     <a class="btn btn-outline-light me-2" href="/auth/login">
                         <i class="bi bi-box-arrow-in-right me-1"></i> Вход
                     </a>
-                    <a class="btn btn-primary" href="/auth/register">
+                    <a class="btn btn-primary" href="/auth/registration">
                         <i class="bi bi-person-plus me-1"></i> Регистрация
                     </a>
                 </#if>

@@ -39,7 +39,7 @@
 
         <div class="custom-form-group">
             <label for="password">Password</label>
-            <@spring.formInput "user.password", 'class="custom-form-control" id="password" placeholder="Enter your password" type="password" autocomplete="new-password" required'/>
+            <@spring.formInput "user.password", 'class="custom-form-control" id="password" type="password" placeholder="Enter your password" autocomplete="new-password" required'/>
             <@spring.showErrors "user.password" "text-danger small"/>
         </div>
 

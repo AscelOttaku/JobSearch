@@ -40,4 +40,8 @@ public interface UserService {
     UserDto findUserByEmail(String email);
 
     String findUserPasswordByUserId(Long userId);
+
+    boolean isPhoneNumberExist(String phoneNumber);
+
+    boolean isEmailExist(String email);
 }
