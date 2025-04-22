@@ -2,6 +2,7 @@ package kg.attractor.jobsearch.service;
 
 import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.VacancyDto;
+import kg.attractor.jobsearch.enums.FilterType;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public interface VacancyService {
 
     void deleteVacancy(Long vacancyId);
 
-    List<VacancyDto> findAllActiveVacancies();
+    PageHolder<VacancyDto> findAllActiveVacancies(int page, int size);
 
     List<VacancyDto> findVacanciesByCategory(Long id);
 
@@ -37,4 +38,6 @@ public interface VacancyService {
     PageHolder<VacancyDto> findVacanciesByUserId(Long userId, int page, int size);
 
     List<VacancyDto> findVacanciesByUserId(Long userId);
+
+    PageHolder<VacancyDto> filterVacanciesBy(FilterType filterType, int page, int size);
 }

@@ -6,7 +6,6 @@ import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.service.VacancyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -51,8 +50,11 @@ public class VacancyController {
 
     @GetMapping("actives")
     @ResponseStatus(HttpStatus.OK)
-    public List<VacancyDto> findAllActiveVacancies() {
-        return vacancyService.findAllActiveVacancies();
+    public PageHolder<VacancyDto> findAllActiveVacancies(
+            @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+            @RequestParam(value = "size", defaultValue = "10", required = false) Integer size
+    ) {
+        return vacancyService.findAllActiveVacancies(page, size);
     }
 
     @GetMapping("categories")

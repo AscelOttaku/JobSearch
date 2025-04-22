@@ -1,4 +1,4 @@
-package kg.attractor.jobsearch.util;
+package kg.attractor.jobsearch.enums;
 
 public enum EntityType {
     RESUMES, CATEGORIES
