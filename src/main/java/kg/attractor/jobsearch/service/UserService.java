@@ -1,5 +1,6 @@
 package kg.attractor.jobsearch.service;
 
+import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.UserDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,4 +40,8 @@ public interface UserService {
     UserDto findUserByEmail(String email);
 
     String findUserPasswordByUserId(Long userId);
+
+    boolean isPhoneNumberExist(String phoneNumber);
+
+    boolean isEmailExist(String email);
 }

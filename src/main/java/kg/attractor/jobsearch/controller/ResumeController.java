@@ -1,7 +1,7 @@
 package kg.attractor.jobsearch.controller;
 
-import jakarta.validation.Valid;
 import kg.attractor.jobsearch.dto.EducationalInfoDto;
+import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.dto.WorkExperienceInfoDto;
 import kg.attractor.jobsearch.service.CategoryService;
@@ -28,19 +28,27 @@ public class ResumeController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public String findAll(Model model) {
-        List<ResumeDto> resumeDtos = resumeService.findAllResumes();
-        model.addAttribute("resumes", resumeDtos);
+    public String findAll(
+            Model model,
+            @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+            @RequestParam(value = "size", defaultValue = "10", required = false) Integer size
+    ) {
+        PageHolder<ResumeDto> resumeDtos = resumeService.findAllResumes(page, size);
+        model.addAttribute("pageResume", resumeDtos);
         return "resumes/resumes";
     }
 
     @GetMapping("users")
     @ResponseStatus(HttpStatus.OK)
-    public String findUserResumes(Model model) {
-        List<ResumeDto> resumeDtos = resumeService
-                .findUserCreatedResumes();
+    public String findUserResumes(
+            Model model,
+            @RequestParam(defaultValue = "0", required = false) Integer page,
+            @RequestParam(defaultValue = "10", required = false) Integer size
+    ) {
+        PageHolder<ResumeDto> pageResume = resumeService
+                .findUserCreatedResumes(page, size);
 
-        model.addAttribute("resumes", resumeDtos);
+        model.addAttribute("pageResume", pageResume);
         return "resumes/resumes";
     }
 

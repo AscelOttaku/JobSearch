@@ -19,8 +19,8 @@ import java.time.format.DateTimeFormatter;
 @RequiredArgsConstructor
 public class ResumeMapper implements Mapper<ResumeDto, Resume> {
     private final CategoryService categoryService;
-    private final WorkExperienceInfoService workExperienceInfoService;
-    private final EducationInfoService educationalInfoService;
+    private final EducationInfoMapper educationInfoMapper;
+    private final WorkExperienceMapper workExperienceMapper;
 
     @Override
     public ResumeDto mapToDto(Resume resume) {
@@ -34,8 +34,12 @@ public class ResumeMapper implements Mapper<ResumeDto, Resume> {
                 .isActive(resume.getIsActive())
                 .created(Util.dateTimeFormat(resume.getCreated()))
                 .updated(Util.dateTimeFormat(resume.getUpdated()))
-                .workExperienceInfoDtos(workExperienceInfoService.findWorkExperienceByResumeId(resume.getId()))
-                .educationInfoDtos(educationalInfoService.findEducationInfosByResumeId(resume.getId()))
+                .workExperienceInfoDtos(resume.getWorkExperienceInfos().stream()
+                        .map(workExperienceMapper::mapToDto)
+                        .toList())
+                .educationInfoDtos(resume.getEducationInfos().stream()
+                        .map(educationInfoMapper::mapToDto)
+                        .toList())
                 .build();
     }
 

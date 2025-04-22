@@ -1,6 +1,6 @@
 package kg.attractor.jobsearch.config;
 
-import kg.attractor.jobsearch.model.Roles;
+import kg.attractor.jobsearch.enums.Roles;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -73,6 +73,7 @@ public class SecurityConfig {
                                 .requestMatchers(POST, "/vacancies/times").fullyAuthenticated()
 
                                 // Users
+
                                 .requestMatchers(PUT, "/users/updates").hasAnyAuthority(Roles.EMPLOYER.getValue(), Roles.JOB_SEEKER.getValue())
                                 .requestMatchers(POST, "/users/registration").anonymous()
                                 .requestMatchers(GET, "/users/profile").fullyAuthenticated()
@@ -82,6 +83,10 @@ public class SecurityConfig {
                                 .requestMatchers("/users/job-seeker/*").hasAuthority(Roles.EMPLOYER.getValue())
                                 .requestMatchers("/users/upload/*").fullyAuthenticated().requestMatchers("/users/avatars").fullyAuthenticated()
                                 .requestMatchers(GET,"/users/**").hasAuthority(Roles.EMPLOYER.getValue())
+
+                                // Companies
+
+                                .requestMatchers(GET, "/companies").hasAuthority(Roles.JOB_SEEKER.getValue())
 
 //                                RespondedApplication Endpoints
 

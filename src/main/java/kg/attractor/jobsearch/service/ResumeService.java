@@ -1,5 +1,6 @@
 package kg.attractor.jobsearch.service;
 
+import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.ResumeDto;
 
 import java.util.List;
@@ -17,11 +18,15 @@ public interface ResumeService {
 
     void deleteResume(Long resumeId);
 
-    List<ResumeDto> findUserCreatedResumes(String userEmail);
+    List<ResumeDto> findUserCreatedResumes(String userEmail, int page, int size);
 
     boolean isResumeExist(Long resumeId);
+
+    PageHolder<ResumeDto> findUserCreatedResumes(int page, int size);
 
     List<ResumeDto> findUserCreatedResumes();
 
     List<Long> findAllResumesIds();
+
+    PageHolder<ResumeDto> findAllResumes(int page, int size);
 }

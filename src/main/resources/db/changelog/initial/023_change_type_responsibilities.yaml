@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 023_change_type_responsibilities.yaml
+      author: Zhanybekov Kanybek
+      changes:
+        - modifyDataType:
+            tableName: work_experience_info
+            columnName: responsibilities
+            newDataType: varchar(500)

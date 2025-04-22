@@ -1,8 +1,10 @@
 package kg.attractor.jobsearch.service.impl;
 
+import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
+import kg.attractor.jobsearch.enums.FilterType;
 import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
 import kg.attractor.jobsearch.exceptions.EntityNotFoundException;
 import kg.attractor.jobsearch.exceptions.VacancyNotFoundException;
@@ -16,11 +18,16 @@ import kg.attractor.jobsearch.service.VacancyService;
 import kg.attractor.jobsearch.validators.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -56,13 +63,13 @@ public class VacancyServiceImpl implements VacancyService {
 
     @Override
     public VacancyDto createdVacancy(VacancyDto vacancyDto) {
-        User authorizedUser = new User();
+        UserDto authorizedUser = new UserDto();
         authorizedUser.setUserId(authorizedUserService.getAuthorizedUserId());
 
+        vacancyDto.setUser(authorizedUser);
         log.info("Create vacancy / user name: {}", authorizedUser.getName());
 
         Vacancy vacancy = vacancyMapper.mapToEntity(vacancyDto);
-        vacancy.setUser(authorizedUser);
 
         return vacancyMapper.mapToDto(vacancyRepository.save(vacancy));
     }
@@ -71,13 +78,13 @@ public class VacancyServiceImpl implements VacancyService {
     public VacancyDto updateVacancy(VacancyDto vacancyDto) {
         Validator.isValidId(vacancyDto.getVacancyId());
 
-        User user = new User();
+        UserDto user = new UserDto();
         user.setUserId(authorizedUserService.getAuthorizedUserId());
 
+        vacancyDto.setUser(user);
         log.info("Updated vacancy / user name: {}", user.getName());
 
         Vacancy vacancy = vacancyMapper.mapToEntity(vacancyDto);
-        vacancy.setUser(user);
 
         return vacancyMapper.mapToDto(vacancyRepository.save(vacancy));
     }
@@ -91,10 +98,12 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public List<VacancyDto> findAllActiveVacancies() {
-        return vacancyRepository.findIsActiveVacancies().stream()
-                .map(vacancyMapper::mapToDto)
-                .toList();
+    public PageHolder<VacancyDto> findAllActiveVacancies(int page, int size) {
+        Page<Vacancy> isActiveVacancies = vacancyRepository.findIsActiveVacanciesSortedByDate(PageRequest.of(page, size));
+
+        PageHolder<VacancyDto> vacancyDtoPageHolder = wrapPageHolder(isActiveVacancies, page, FilterType.NEW);
+        log.warn("FilterType String value: {}", vacancyDtoPageHolder.getFilterType().name());
+        return vacancyDtoPageHolder;
     }
 
     @Override
@@ -142,18 +151,12 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public List<VacancyDto> findAllVacancies() {
-        return vacancyRepository.findAll().stream()
-                .sorted(Comparator.comparing(this::getLastTimeOfVacancy).reversed())
-                .map(vacancyMapper::mapToDto)
-                .toList();
-    }
+    public PageHolder<VacancyDto> findAllVacancies(int page, int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
 
-    private LocalDateTime getLastTimeOfVacancy(Vacancy vacancy) {
-        if (vacancy.getUpdated() == null)
-            return vacancy.getCreated();
+        Page<Vacancy> vacanciesPage = vacancyRepository.findAllVacancies(pageable);
 
-        return vacancy.getUpdated();
+        return wrapPageHolder(vacanciesPage, page, FilterType.NEW);
     }
 
     public boolean isVacancyExistById(Long id) {
@@ -170,13 +173,14 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public List<VacancyDto> findUserCreatedVacancies() {
+    public PageHolder<VacancyDto> findUserCreatedVacancies(int page, int size) {
         Long userId = authorizedUserService.getAuthorizedUserId();
 
-        return vacancyRepository.findUserVacanciesByUserId(userId)
-                .stream()
-                .map(vacancyMapper::mapToDto)
-                .toList();
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Vacancy> vacanciesPage = vacancyRepository.findUserVacanciesByUserId(userId, pageable);
+
+        return wrapPageHolder(vacanciesPage, page, FilterType.NEW);
     }
 
     @Override
@@ -184,7 +188,7 @@ public class VacancyServiceImpl implements VacancyService {
         Long authorizedUserId = authorizedUserService.getAuthorizedUserId();
         VacancyDto vacancyDto = findVacancyById(vacancyId);
 
-        if (!Objects.equals(vacancyDto.getUserId(), authorizedUserId)) {
+        if (!Objects.equals(vacancyDto.getUser().getUserId(), authorizedUserId)) {
             throw new EntityNotFoundException(
                     "User created vacancy by " + vacancyId + " not found",
                     CustomBindingResult.builder()
@@ -198,6 +202,7 @@ public class VacancyServiceImpl implements VacancyService {
         return vacancyDto;
     }
 
+    @Transactional
     @Override
     public void updateVacancyDate(Long vacancyId) {
         UserDto authorizedUser = authorizedUserService.getAuthorizedUser();
@@ -215,5 +220,73 @@ public class VacancyServiceImpl implements VacancyService {
             throw new IllegalArgumentException("user doesn't belongs this vacancy");
 
         vacancyRepository.updateVacancyTime(vacancyId);
+    }
+
+    @Override
+    public Long findVacanciesQuantity(Long employerId) {
+        return vacancyRepository.count();
+    }
+
+    @Override
+    public PageHolder<VacancyDto> findVacanciesByUserId(Long userId, int page, int size) {
+        Page<Vacancy> vacanciesPageHolder = vacancyRepository.findUserVacanciesByUserId(userId, PageRequest.of(page, size));
+
+        return wrapPageHolder(vacanciesPageHolder, page, FilterType.NEW);
+    }
+
+    @Override
+    public List<VacancyDto> findVacanciesByUserId(Long userId) {
+        return vacancyRepository.findVacanciesByUserUserId(userId)
+                .stream()
+                .map(vacancyMapper::mapToDto)
+                .toList();
+    }
+
+    @Override
+    public PageHolder<VacancyDto> filterVacanciesBy(FilterType filterType, int page, int size) {
+        return switch (filterType) {
+            case OLD -> findActiveVacanciesOrderedByDateAsc(page, size);
+            case SALARY_ASC -> wrapPageHolder(vacancyRepository
+                            .findAllActiveVacancies(
+                                    PageRequest.of(
+                                            page, size, Sort.by("salary"
+                                            ))), page, FilterType.SALARY_ASC
+            );
+            case SALARY_DESC -> wrapPageHolder(vacancyRepository
+                    .findAllActiveVacancies(
+                            PageRequest.of(
+                                    page, size, Sort.by("salary")
+                                            .descending())), page, FilterType.SALARY_ASC
+                            );
+            case RESPONSES -> findActiveVacanciesOrderedByResponsesNumbersDesc(page, size);
+            default -> findAllActiveVacancies(page, size);
+        };
+    }
+
+    private PageHolder<VacancyDto> findActiveVacanciesOrderedByDateAsc(int page, int size) {
+        Page<Vacancy> vacanciesFilteredByDate = vacancyRepository.findIsActiveTrueOrderByDateAsc(PageRequest.of(page, size, Sort.by("")));
+
+        return wrapPageHolder(vacanciesFilteredByDate, page, FilterType.OLD);
+    }
+
+    @Override
+    public PageHolder<VacancyDto> findActiveVacanciesOrderedByResponsesNumbersDesc(int page, int size) {
+        Page<Vacancy> vacanciesFilteredByResponses = vacancyRepository.findIsActiveTrueOrderedByResponsesNumberDesc(PageRequest.of(page, size));
+
+        return wrapPageHolder(vacanciesFilteredByResponses, page, FilterType.RESPONSES);
+    }
+
+    private PageHolder<VacancyDto> wrapPageHolder(Page<Vacancy> vacancies, int page, FilterType filterType) {
+        return PageHolder.<VacancyDto>builder()
+                .content(vacancies.stream()
+                        .map(vacancyMapper::mapToDto)
+                        .toList())
+                .page(page)
+                .size(vacancies.getSize())
+                .totalPages(vacancies.getTotalPages())
+                .hasNextPage(vacancies.hasNext())
+                .hasPreviousPage(vacancies.hasPrevious())
+                .filterType(filterType)
+                .build();
     }
 }

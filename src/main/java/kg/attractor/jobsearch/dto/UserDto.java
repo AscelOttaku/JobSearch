@@ -1,13 +1,14 @@
 package kg.attractor.jobsearch.dto;
 
 import jakarta.validation.constraints.*;
+import kg.attractor.jobsearch.annotations.UniqueEmail;
+import kg.attractor.jobsearch.annotations.UniquePhoneNumber;
 import kg.attractor.jobsearch.annotations.ValidPassword;
 import lombok.*;
 
 @Builder
 @Getter
 @Setter
-@ValidPassword
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
@@ -35,9 +36,10 @@ public class UserDto {
 
     @NotNull(message = "{null_message}")
     @NotBlank(message = "{blank_message}")
-    @Email(message = "{email_message}")
+    @UniqueEmail
     private String email;
 
+    @ValidPassword
     private String password;
 
     @NotNull(message = "{null_message}")
@@ -49,6 +51,7 @@ public class UserDto {
             regexp = "^\\+?[0-9\\-\\s]+$",
             message = "{phone_number_pattern_message}"
     )
+    @UniquePhoneNumber
     private String phoneNumber;
 
     private String avatar;

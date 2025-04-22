@@ -1,35 +1,98 @@
 body {
-    background-color: #f8f9fa;
-    padding-top: 0;
-    padding-bottom: 2rem;
+    font-size: 18px;
+    line-height: 1.6;
 }
 
-.vacancy-item {
-    border-left: 3px solid #0d6efd;
-    transition: all 0.3s ease;
-    height: 100%;
+.vacancy-container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
 }
 
-.vacancy-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-}
-
-.card-title {
-    color: #212529;
+.page-title {
+    font-size: 2.2rem;
     font-weight: 600;
+    margin-bottom: 30px;
+    color: #212529;
 }
 
-.card-text {
-    color: #6c757d;
+.vacancy-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    padding: 25px;
+    margin-bottom: 25px;
+    border-left: 4px solid #0d6efd;
+    transition: transform 0.2s;
 }
 
-.badge {
-    font-size: 0.8rem;
-    font-weight: 500;
-    padding: 0.35em 0.65em;
+.vacancy-card:hover {
+    transform: translateY(-3px);
 }
 
-.btn-outline-primary {
-    border-width: 1px;
+.vacancy-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.vacancy-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    color: #0a58ca;
+}
+
+.vacancy-status {
+    font-size: 1rem;
+    padding: 6px 12px;
+    border-radius: 6px;
+}
+
+.vacancy-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+    margin-bottom: 20px;
+}
+
+.meta-item {
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+}
+
+.bi {
+    font-size: 1.2rem;
+    margin-right: 8px;
+    color: #495057;
+}
+
+.vacancy-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e9ecef;
+    font-size: 1rem;
+}
+
+.vacancy-actions {
+    display: flex;
+    gap: 15px;
+}
+
+.btn {
+    font-size: 1.1rem;
+    padding: 8px 16px;
+}
+
+.pagination {
+    font-size: 1.1rem;
+}
+
+.page-link {
+    padding: 10px 16px;
 }

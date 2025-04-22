@@ -3,33 +3,33 @@ package kg.attractor.jobsearch.validators;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import kg.attractor.jobsearch.annotations.ValidPassword;
-import kg.attractor.jobsearch.dto.UserDto;
-import kg.attractor.jobsearch.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Field;
-
 @Service
 @RequiredArgsConstructor
-public class ValidPasswordValidator implements ConstraintValidator<ValidPassword, UserDto> {
-    private final UserService userService;
+public class ValidPasswordValidator implements ConstraintValidator<ValidPassword, String> {
 
     @Override
-    public boolean isValid(UserDto userDto, ConstraintValidatorContext constraintValidatorContext) {
-        String password = userDto.getPassword();
-        Long userId = userDto.getUserId();
-
+    public boolean isValid(String password, ConstraintValidatorContext constraintValidatorContext) {
         if (password == null || password.isBlank()) {
-            String previousPassword = userService.findUserById(userId).getPassword();
-
-            if (previousPassword == null || previousPassword.isBlank())
-                return false;
-
-            userDto.setPassword(previousPassword);
-            return true;
+            constraintValidatorContext.buildConstraintViolationWithTemplate(
+                    "password is null or blank"
+            )
+                    .addPropertyNode("password")
+                    .addConstraintViolation();
+            return false;
         }
 
-        return password.matches("^(?=.*[A-Z])(?=.*\\d).+$");
+        if (!password.matches("^(?=.*[A-Z])(?=.*\\d).+$")) {
+            constraintValidatorContext.buildConstraintViolationWithTemplate(
+                            "password format is incorrect"
+                    )
+                    .addPropertyNode("password")
+                    .addConstraintViolation();
+            return false;
+        }
+
+        return true;
     }
 }

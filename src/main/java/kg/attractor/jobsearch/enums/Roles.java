@@ -1,4 +1,4 @@
-package kg.attractor.jobsearch.model;
+package kg.attractor.jobsearch.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -32,6 +33,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final VacancyService vacancyService;
 
+    @Transactional
     @Override
     public void uploadAvatar(MultipartFile file) throws IOException {
         UserDto userDto = getAuthorizedUser();
@@ -284,5 +286,15 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new NoSuchElementException(
                         "Password not found by user id " + userId)
                 );
+    }
+
+    @Override
+    public boolean isPhoneNumberExist(String phoneNumber) {
+        return userRepository.findUserByPhoneNumber(phoneNumber).isPresent();
+    }
+
+    @Override
+    public boolean isEmailExist(String email) {
+        return userRepository.findUserByEmail(email).isPresent();
     }
 }

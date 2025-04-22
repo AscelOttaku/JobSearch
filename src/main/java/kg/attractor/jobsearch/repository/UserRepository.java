@@ -1,12 +1,13 @@
 package kg.attractor.jobsearch.repository;
 
 import kg.attractor.jobsearch.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +34,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "                WHERE v.id = :vacancyId AND rl.roleName ilike 'JobSeeker'")
     List<User> findRespondedToVacancyUsersByVacancyId(Long vacancyId);
 
-    @Transactional
     @Modifying
     @Query("update User u set u.avatar = :avatar where u.email = :email")
     void updateAvatarByUserEmail(@Param(value = "avatar") String avatar, @Param(value = "email") String email);
@@ -45,4 +45,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "JOIN Vacancy v on v.user.userId = u.userId " +
             "where v.id = :vacancyId")
     Optional<User> findUserByVacancyId(Long vacancyId);
+
+    @Query("select u from User u where u.role.roleName ilike :roleName")
+    Page<User> findUsersByRoleRoleNameIgnoreCases(String roleName, Pageable pageable);
+
+    @Query("select u.avatar from User u where u.userId = :userId")
+    Optional<String> findUserAvatarById(Long userId);
 }

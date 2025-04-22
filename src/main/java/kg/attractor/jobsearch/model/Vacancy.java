@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -22,7 +23,7 @@ public class Vacancy {
     @Column(name = "description", columnDefinition = "clob")
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
@@ -35,9 +36,12 @@ public class Vacancy {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vacancy_user_id", nullable = false)
     private User user;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "vacancy")
+    private List<RespondedApplication> respondedApplications;
 
     private LocalDateTime created;
     private LocalDateTime updated;

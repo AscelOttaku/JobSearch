@@ -1,7 +1,7 @@
 package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dto.WorkExperienceInfoDto;
-import kg.attractor.jobsearch.dto.mapper.impl.WokExperienceMapper;
+import kg.attractor.jobsearch.dto.mapper.impl.WorkExperienceMapper;
 import kg.attractor.jobsearch.exceptions.WorkExperienceNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.WorkExperienceInfo;
@@ -20,7 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService {
     private final WorkExperienceRepository workExperienceRepository;
-    private final WokExperienceMapper workExperienceInfoMapper;
+    private final WorkExperienceMapper workExperienceInfoMapper;
 
     @Override
     public WorkExperienceInfoDto findWorkExperienceById(Long id) {
@@ -38,14 +38,28 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
 
     @Override
     public void updateWorkExperienceInfo(List<WorkExperienceInfoDto> workExperienceInfosDtos) {
-        List<WorkExperienceInfo> workExperienceInfos = workExperienceInfosDtos.stream()
-                .map(workExperienceInfoMapper::mapToEntity)
-                .toList();
+        List<WorkExperienceInfoDto> nonEmptyWorkExperienceInfoDtos = cleanEmptyData(workExperienceInfosDtos);
 
-        workExperienceInfos.stream()
-                .filter(workExperienceInfo ->
-                        isWorkExperienceBelongsToResume(workExperienceInfo.getId(), workExperienceInfo.getResume().getId()))
+        nonEmptyWorkExperienceInfoDtos.stream()
+                .filter(workExperienceInfoDto ->
+                        isWorkExperienceBelongsToResume(workExperienceInfoDto.getId(), workExperienceInfoDto.getResumeId()))
+                .map(workExperienceInfoMapper::mapToEntity)
                 .forEach(workExperienceRepository::save);
+    }
+
+    private List<WorkExperienceInfoDto> cleanEmptyData(List<WorkExperienceInfoDto> workExperienceInfoDtos) {
+        workExperienceInfoDtos.removeIf(workExperienceInfoDto -> {
+            if (!Validator.isNotEmptyWorkExperience(workExperienceInfoDto)) {
+                if (workExperienceInfoDto.getId() == null)
+                    return true;
+
+                workExperienceRepository.deleteById(workExperienceInfoDto.getId());
+                return true;
+            }
+            return false;
+        });
+
+        return workExperienceInfoDtos;
     }
 
     private boolean isWorkExperienceBelongsToResume(Long id, Long resumeId) {

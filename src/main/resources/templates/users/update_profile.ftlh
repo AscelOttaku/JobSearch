@@ -11,83 +11,8 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
         <link rel="stylesheet" href="/css/auth_form.css">
         <link rel="stylesheet" href="/css/auth_failed.css">
-        <style>
-            .profile-avatar {
-                width: 120px;
-                height: 120px;
-                object-fit: cover;
-                object-position: center;
-                border: 3px solid #fff;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            }
+        <link rel="stylesheet" href="/static/css/update_profile.css">
 
-            .avatar-container {
-                width: 120px;
-                height: 120px;
-                margin: 0 auto 20px;
-                position: relative;
-            }
-
-            .avatar-placeholder {
-                width: 100%;
-                height: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background-color: #f0f0f0;
-                color: #6c757d;
-                border-radius: 50%;
-                font-size: 2.5rem;
-            }
-
-            .info-card {
-                transition: all 0.3s ease;
-                height: 100%;
-                border: none;
-                border-radius: 10px;
-                background-color: #fff;
-            }
-
-            .info-card:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            }
-
-            .form-control, .form-select {
-                background-color: #f8f9fa;
-                border: 1px solid #e9ecef;
-                padding: 10px 15px;
-                border-radius: 8px;
-            }
-
-            .form-label {
-                font-weight: 500;
-                color: #495057;
-                margin-bottom: 8px;
-            }
-
-            .card-title {
-                color: #6c757d;
-                font-size: 1.1rem;
-                font-weight: 500;
-                border-bottom: 1px solid #e9ecef;
-                padding-bottom: 10px;
-                margin-bottom: 20px;
-            }
-
-            .btn-primary {
-                background-color: #0d6efd;
-                border: none;
-                padding: 8px 20px;
-                border-radius: 8px;
-                font-weight: 500;
-            }
-
-            .btn-outline-secondary {
-                border-radius: 8px;
-                padding: 8px 20px;
-            }
-        </style>
     </head>
     <body class="bg-light">
     <div class="container py-5">
@@ -113,7 +38,9 @@
                             <div class="col-md-3 text-center">
                                 <div class="avatar-container">
                                     <#if user.avatar??>
-                                        <img src="${user.avatar}" class="profile-avatar rounded-circle" alt="Avatar">
+                                        <img src="/users/avatars"
+                                             class="profile-avatar rounded-circle border border-3 border-white shadow"
+                                             alt="Avatar">
                                     <#else>
                                         <div class="avatar-placeholder">
                                             <i class="bi bi-person-fill"></i>

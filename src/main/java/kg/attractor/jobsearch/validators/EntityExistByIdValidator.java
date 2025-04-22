@@ -4,7 +4,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import kg.attractor.jobsearch.annotations.EntityExistById;
 import kg.attractor.jobsearch.service.EntityExistService;
-import kg.attractor.jobsearch.util.EntityType;
+import kg.attractor.jobsearch.enums.EntityType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

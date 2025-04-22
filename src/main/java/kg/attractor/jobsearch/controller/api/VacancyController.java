@@ -1,6 +1,7 @@
 package kg.attractor.jobsearch.controller.api;
 
 import jakarta.validation.Valid;
+import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.service.VacancyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +50,11 @@ public class VacancyController {
 
     @GetMapping("actives")
     @ResponseStatus(HttpStatus.OK)
-    public List<VacancyDto> findAllActiveVacancies() {
-        return vacancyService.findAllActiveVacancies();
+    public PageHolder<VacancyDto> findAllActiveVacancies(
+            @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+            @RequestParam(value = "size", defaultValue = "10", required = false) Integer size
+    ) {
+        return vacancyService.findAllActiveVacancies(page, size);
     }
 
     @GetMapping("categories")
@@ -67,7 +71,10 @@ public class VacancyController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<VacancyDto> findAllVacancies() {
-        return vacancyService.findAllVacancies();
+    public PageHolder<VacancyDto> findAllVacancies(
+            @RequestParam(name = "page", defaultValue = "0", required = false) Integer page,
+            @RequestParam(name = "size", defaultValue = "10", required = false) Integer size
+    ) {
+        return vacancyService.findAllVacancies(page, size);
     }
 }

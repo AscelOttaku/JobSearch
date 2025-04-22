@@ -24,10 +24,34 @@ public class DateIsBeforeValidator implements ConstraintValidator<IsDateCorrect,
         Optional<LocalDateTime> fromDate = getLocalDateTimeFromObject(dateFrom, arg);
         Optional<LocalDateTime> toDate = getLocalDateTimeFromObject(dateTo, arg);
 
-        if (fromDate.isPresent() && toDate.isPresent())
-            return fromDate.get().isBefore(toDate.get());
+        if (fromDate.isEmpty()) {
+            constraintValidatorContext.buildConstraintViolationWithTemplate(
+                            "fromDate must not be empty"
+                    )
+                    .addPropertyNode("startDate")
+                    .addConstraintViolation();
+            return false;
+        }
 
-        return false;
+        if (toDate.isEmpty()) {
+            constraintValidatorContext.buildConstraintViolationWithTemplate(
+                            "toDate must not be empty"
+                    )
+                    .addPropertyNode("endDate")
+                    .addConstraintViolation();
+            return false;
+        }
+
+        if (!fromDate.get().isBefore(toDate.get())) {
+            constraintValidatorContext.buildConstraintViolationWithTemplate(
+                    "fromDate must be before toDate"
+            )
+                    .addPropertyNode("startDate")
+                    .addConstraintViolation();
+            return false;
+        }
+
+        return true;
     }
 
     private Optional<LocalDateTime> getLocalDateTimeFromObject(String fieldName, Object object) {

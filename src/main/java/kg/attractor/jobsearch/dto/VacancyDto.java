@@ -2,14 +2,18 @@ package kg.attractor.jobsearch.dto;
 
 import jakarta.validation.constraints.*;
 import kg.attractor.jobsearch.annotations.EntityExistById;
-import kg.attractor.jobsearch.util.EntityType;
+import kg.attractor.jobsearch.annotations.IsExpFromAndExpToCorrectFormat;
+import kg.attractor.jobsearch.enums.EntityType;
 import lombok.*;
+
+import java.util.List;
 
 @Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@IsExpFromAndExpToCorrectFormat
 public class VacancyDto {
     private Long vacancyId;
 
@@ -35,25 +39,20 @@ public class VacancyDto {
     @PositiveOrZero(message = "{non_negative_message}")
     private Double salary;
 
-    @NotNull(message = "{null_message}")
     @PositiveOrZero(message = "{min_experience_negative_message}")
-    @Max(value = 5, message = "{max_experience_message}")
+    @Max(value = 5, message = "value max size should be equals 5")
     private Integer expFrom;
 
-    @NotNull(message = "{null_message}")
     @PositiveOrZero(message = "{max_experience_negative_message}")
-    @Max(value = 10, message = "{max_experience_message}")
+    @Max(value = 10, message = "value max size should be equals 10")
     private Integer expTo;
 
     private boolean isActive;
 
-    private Long userId;
+    private UserDto user;
 
     private String created;
     private String updated;
 
-    @AssertTrue(message = "expTo should be bigger")
-    public boolean isExpToBiggerExpFrom() {
-        return expTo.compareTo(expFrom) > 0;
-    }
+    private List<RespondApplicationDto> respondedApplications;
 }

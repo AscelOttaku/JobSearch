@@ -1,9 +1,9 @@
 package kg.attractor.jobsearch.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
+import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.VacancyDto;
-import kg.attractor.jobsearch.repository.VacancyRepository;
+import kg.attractor.jobsearch.enums.FilterType;
 import kg.attractor.jobsearch.service.CategoryService;
 import kg.attractor.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
@@ -26,16 +26,35 @@ public class VacancyController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public String findAllVacancies(Model model) {
-        List<VacancyDto> vacancyDtos = vacancyService.findAllVacancies();
+    public String findAllVacancies(
+            Model model,
+            @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+            @RequestParam(value = "size", defaultValue = "10", required = false) Integer size
+    ) {
+        PageHolder<VacancyDto> vacancyDtos = vacancyService.findAllVacancies(page, size);
         model.addAttribute("vacancies", vacancyDtos);
+        return "vacancies/vacancies";
+    }
+
+    @GetMapping("actives")
+    @ResponseStatus(HttpStatus.OK)
+    public String findAllActiveVacancies(
+            Model model,
+            @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+            @RequestParam(value = "size", defaultValue = "10", required = false) Integer size
+    ) {
+        model.addAttribute("vacancies", vacancyService.findAllActiveVacancies(page, size));
         return "vacancies/vacancies";
     }
 
     @GetMapping("users")
     @ResponseStatus(HttpStatus.OK)
-    public String findUserCreatedVacancies(Model model) {
-        List<VacancyDto> vacancyDtos = vacancyService.findUserCreatedVacancies();
+    public String findUserCreatedVacancies(
+            Model model,
+            @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+            @RequestParam(value = "size", defaultValue = "10", required = false) Integer size
+    ) {
+        PageHolder<VacancyDto> vacancyDtos = vacancyService.findUserCreatedVacancies(page, size);
         model.addAttribute("vacancies", vacancyDtos);
         return "vacancies/vacancies";
     }
@@ -83,7 +102,7 @@ public class VacancyController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("vacancy", vacancyDto);
             model.addAttribute("categories", categoryService.findAllCategories());
-            return "vacancies/new_vacancy";
+            return "vacancies/update_vacancy";
         }
 
         VacancyDto vacancy = vacancyService.updateVacancy(vacancyDto);
@@ -97,5 +116,17 @@ public class VacancyController {
         vacancyService.updateVacancyDate(vacancyId);
 
         return "redirect:/users/profile";
+    }
+
+    @GetMapping("filter")
+    @ResponseStatus(HttpStatus.OK)
+    public String filterVacanciesBy(
+            @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+            @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
+            @RequestParam FilterType filterType,
+            Model model
+    ) {
+        model.addAttribute("vacancies", vacancyService.filterVacanciesBy(filterType, page, size));
+        return "vacancies/vacancies";
     }
 }

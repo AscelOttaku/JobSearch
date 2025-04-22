@@ -142,7 +142,7 @@
                                             <i class="bi bi-calendar-plus form-icon me-2"></i> Дата начала
                                         </label>
                                         <@spring.formInput "resume.educationInfoDtos[${index}].startDate", 'class="form-control" placeholder="ГГГГ-ММ-ДД" id="startDate" type="datetime-local"'/>
-                                        <@spring.showErrors "<br>" "text-danger small"/>
+                                        <@spring.showErrors "resume.educationInfoDtos[${index}].startDate" "text-danger small"/>
                                     </div>
 
                                     <div class="mb-3">
@@ -150,7 +150,7 @@
                                             <i class="bi bi-calendar-minus form-icon me-2"></i> Дата окончания
                                         </label>
                                         <@spring.formInput "resume.educationInfoDtos[${index}].endDate", 'class="form-control" placeholder="ГГГГ-ММ-ДД" id="endDate" type="datetime-local"'/>
-                                        <@spring.showErrors "<br>" "text-danger small"/>
+                                        <@spring.showErrors "resume.educationInfoDtos[${index}].endDate" "text-danger small"/>
                                     </div>
                                 </div>
                             </div>

@@ -5,13 +5,17 @@ import jakarta.validation.Valid;
 import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
 import kg.attractor.jobsearch.exceptions.body.InputElementExceptionBody;
 import kg.attractor.jobsearch.exceptions.body.ValidationExceptionBody;
+import kg.attractor.jobsearch.service.AuthorizedUserService;
 import kg.attractor.jobsearch.service.ErrorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
@@ -24,6 +28,7 @@ import java.util.NoSuchElementException;
 @Valid
 public class GlobalControllerAdvice {
     private final ErrorService errorService;
+    private final AuthorizedUserService authorizedUserService;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -92,5 +97,18 @@ public class GlobalControllerAdvice {
         model.addAttribute("message", ex.getMessage());
         model.addAttribute("details", request);
         return "errors/error";
+    }
+
+    @ModelAttribute
+    public void addUserToModels(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        boolean isUserAuthorized = authentication.getAuthorities().stream()
+                .anyMatch(authority ->
+                        authority.getAuthority().equals("EMPLOYER") ||
+                                authority.getAuthority().equals("JOB_SEEKER"));
+
+        if (isUserAuthorized)
+            model.addAttribute("authorizedUser", authorizedUserService.getAuthorizedUser());
     }
 }

@@ -1,15 +1,16 @@
 package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.service.CategoryService;
+import kg.attractor.jobsearch.service.EntityExistService;
 import kg.attractor.jobsearch.service.ResumeService;
-import kg.attractor.jobsearch.util.EntityType;
+import kg.attractor.jobsearch.enums.EntityType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class EntityExistServiceImpl implements kg.attractor.jobsearch.service.EntityExistService {
+public class EntityExistServiceImpl implements EntityExistService {
     private final ApplicationContext applicationContext;
 
     @Override

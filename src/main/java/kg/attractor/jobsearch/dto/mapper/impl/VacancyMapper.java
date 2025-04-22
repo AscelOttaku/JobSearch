@@ -1,8 +1,12 @@
 package kg.attractor.jobsearch.dto.mapper.impl;
 
+import kg.attractor.jobsearch.dto.RespondApplicationDto;
+import kg.attractor.jobsearch.dto.ResumeDto;
+import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.model.Category;
+import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.model.Vacancy;
 import kg.attractor.jobsearch.service.CategoryService;
@@ -17,9 +21,17 @@ import java.time.format.DateTimeFormatter;
 @RequiredArgsConstructor
 public class VacancyMapper implements Mapper<VacancyDto, Vacancy> {
     private final CategoryService categoryService;
+    private final Mapper<ResumeDto, Resume> resumeMapper;
 
     @Override
     public VacancyDto mapToDto(Vacancy vacancy) {
+
+        UserDto userDto = UserDto.builder()
+                .userId(vacancy.getUser().getUserId())
+                .name(vacancy.getUser().getName())
+                .surname(vacancy.getUser().getSurname())
+                .build();
+
         return VacancyDto.builder()
                 .vacancyId(vacancy.getId())
                 .name(vacancy.getName())
@@ -30,9 +42,15 @@ public class VacancyMapper implements Mapper<VacancyDto, Vacancy> {
                 .expFrom(vacancy.getExpFrom())
                 .expTo(vacancy.getExpTo())
                 .isActive(vacancy.getIsActive())
-                .userId(vacancy.getUser().getUserId())
+                .user(userDto)
                 .created(Util.dateTimeFormat(vacancy.getCreated()))
                 .updated(Util.dateTimeFormat(vacancy.getUpdated()))
+                .respondedApplications(vacancy.getRespondedApplications().stream()
+                        .map(respondedApplication -> RespondApplicationDto.builder()
+                                .resumeDto(resumeMapper.mapToDto(respondedApplication.getResume()))
+                                .confirmation(respondedApplication.getConfirmation())
+                                .build())
+                        .toList())
                 .build();
     }
 
@@ -42,7 +60,7 @@ public class VacancyMapper implements Mapper<VacancyDto, Vacancy> {
         category.setId(vacancyDto.getCategoryId());
 
         User user = new User();
-        user.setUserId(vacancyDto.getUserId());
+        user.setUserId(vacancyDto.getUser().getUserId());
 
         Vacancy vacancy = new Vacancy();
         vacancy.setId(vacancyDto.getVacancyId());
