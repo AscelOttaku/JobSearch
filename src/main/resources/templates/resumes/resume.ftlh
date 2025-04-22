@@ -86,6 +86,12 @@
                             </a>
                         </#if>
                     </div>
+
+                    <div class="resume-actions">
+                        <a href="/users/profile/${resume.userId}" class="btn btn-outline-primary">
+                            <i class="bi bi-eye"></i> Личная информация О Соискателе
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

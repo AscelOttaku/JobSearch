@@ -4,7 +4,9 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import kg.attractor.jobsearch.dto.UserDto;
-import kg.attractor.jobsearch.service.*;
+import kg.attractor.jobsearch.service.AuthorizedUserService;
+import kg.attractor.jobsearch.service.ProfileService;
+import kg.attractor.jobsearch.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -147,5 +149,11 @@ public class UserController {
     @GetMapping("avatars")
     public ResponseEntity<?> getAvatars() throws IOException {
         return userService.getAvatarOfAuthorizedUser();
+    }
+
+    @GetMapping("profile/{userId}")
+    public String getProfile(@PathVariable Long userId, Model model) {
+        model.addAttribute("job_seeker", userService.findUserById(userId));
+        return "users/user_profile";
     }
 }

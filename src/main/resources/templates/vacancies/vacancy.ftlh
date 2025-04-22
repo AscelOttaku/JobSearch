@@ -41,7 +41,7 @@
                 <i class="bi bi-clock-history"></i>Требуемый опыт: ${vacancy.expFrom}-${vacancy.expTo} лет
             </div>
             <div class="meta-item">
-                <i class="bi bi-person"></i>Работодатель: ${vacancy.user.name!''} ${vacancy.user.surname}
+                <a class="text-decoration-none text-primary fw-semibold d-inline-flex align-items-center gap-1" href="/companies/company/profile/${vacancy.user.userId}"><i class="bi bi-person"></i>Работодатель: ${vacancy.user.name!''} ${vacancy.user.surname}</a>
             </div>
             <div class="meta-item">
                 <i class="bi bi-person"></i>Количество откликов: ${vacancy.respondedApplications?size!'0'}
