@@ -45,12 +45,13 @@ public class VacancyMapper implements Mapper<VacancyDto, Vacancy> {
                 .user(userDto)
                 .created(Util.dateTimeFormat(vacancy.getCreated()))
                 .updated(Util.dateTimeFormat(vacancy.getUpdated()))
-                .respondedApplications(vacancy.getRespondedApplications().stream()
-                        .map(respondedApplication -> RespondApplicationDto.builder()
-                                .resumeDto(resumeMapper.mapToDto(respondedApplication.getResume()))
-                                .confirmation(respondedApplication.getConfirmation())
-                                .build())
-                        .toList())
+                .respondedApplications(vacancy.getRespondedApplications() != null ?
+                        vacancy.getRespondedApplications().stream()
+                                .map(respondedApplication -> RespondApplicationDto.builder()
+                                        .resumeDto(resumeMapper.mapToDto(respondedApplication.getResume()))
+                                        .confirmation(respondedApplication.getConfirmation())
+                                        .build())
+                                .toList() : null)
                 .build();
     }
 
