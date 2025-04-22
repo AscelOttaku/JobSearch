@@ -31,7 +31,7 @@ public class ResumeController {
     public String findAll(
             Model model,
             @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
-            @RequestParam(value = "size", defaultValue = "1", required = false) Integer size
+            @RequestParam(value = "size", defaultValue = "10", required = false) Integer size
     ) {
         PageHolder<ResumeDto> resumeDtos = resumeService.findAllResumes(page, size);
         model.addAttribute("pageResume", resumeDtos);

@@ -43,6 +43,9 @@
             <div class="meta-item">
                 <i class="bi bi-person"></i>Работодатель: ${vacancy.user.name!''} ${vacancy.user.surname}
             </div>
+            <div class="meta-item">
+                <i class="bi bi-person"></i>Количество откликов: ${vacancy.respondedApplications?size!'0'}
+            </div>
         </div>
 
         <div class="vacancy-footer">

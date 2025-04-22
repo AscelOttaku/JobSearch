@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -38,6 +39,9 @@ public class Vacancy {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vacancy_user_id", nullable = false)
     private User user;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "vacancy")
+    private List<RespondedApplication> respondedApplications;
 
     private LocalDateTime created;
     private LocalDateTime updated;

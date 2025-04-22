@@ -26,7 +26,7 @@
             <#if company.avatar?? && company.avatar != "">
                 <img src="/companies/avatar/${company.id}" alt="${company.name}" class="company-avatar">
             <#else>
-                <div class="company-avatar-initials">
+                <div class="company-avatar d-flex align-items-center justify-content-center bg-primary text-white fs-4">
                     ${company.name?substring(0, 1)?upper_case}
                 </div>
             </#if>
