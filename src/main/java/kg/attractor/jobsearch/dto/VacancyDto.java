@@ -6,6 +6,8 @@ import kg.attractor.jobsearch.annotations.IsExpFromAndExpToCorrectFormat;
 import kg.attractor.jobsearch.enums.EntityType;
 import lombok.*;
 
+import java.util.List;
+
 @Builder
 @Getter
 @Setter
@@ -51,4 +53,6 @@ public class VacancyDto {
 
     private String created;
     private String updated;
+
+    private List<RespondApplicationDto> respondedApplications;
 }

@@ -242,41 +242,49 @@ public class VacancyServiceImpl implements VacancyService {
     @Override
     public PageHolder<VacancyDto> filterVacanciesBy(FilterType filterType, int page, int size) {
         return switch (filterType) {
-            case OLD -> findActiveVacanciesByDateAsc(page, size);
-            case SALARY_ASC -> findActiveVacanciesBySalaryAsc(page, size);
-            case SALARY_DESC -> findActiveVacanciesBySalaryDesc(page, size);
+            case OLD -> findActiveVacanciesOrderedByDateAsc(page, size);
+            case SALARY_ASC -> findActiveVacanciesOrderedBySalaryAsc(page, size);
+            case SALARY_DESC -> findActiveVacanciesOrderedBySalaryDesc(page, size);
+            case RESPONSES -> findActiveVacanciesOrderedByResponsesNumbersDesc(page, size);
             default -> findAllActiveVacancies(page, size);
         };
     }
 
-    private PageHolder<VacancyDto> findActiveVacanciesBySalaryDesc(int page, int size) {
+    private PageHolder<VacancyDto> findActiveVacanciesOrderedBySalaryDesc(int page, int size) {
         Page<Vacancy> isActiveTrueOrderBySalaryDesc = vacancyRepository.findIsActiveTrueOrderBySalaryDesc(PageRequest.of(page, size));
 
         return wrapPageHolder(isActiveTrueOrderBySalaryDesc, page);
     }
 
-    private PageHolder<VacancyDto> findActiveVacanciesBySalaryAsc(int page, int size) {
+    private PageHolder<VacancyDto> findActiveVacanciesOrderedBySalaryAsc(int page, int size) {
         Page<Vacancy> isActiveTrueOrderBySalaryDesc = vacancyRepository.findIsActiveTrueOrderBySalaryAsc(PageRequest.of(page, size));
 
         return wrapPageHolder(isActiveTrueOrderBySalaryDesc, page);
     }
 
-    private PageHolder<VacancyDto> findActiveVacanciesByDateAsc(int page, int size) {
+    private PageHolder<VacancyDto> findActiveVacanciesOrderedByDateAsc(int page, int size) {
         Page<Vacancy> vacanciesFilteredByDate = vacancyRepository.findIsActiveTrueOrderByDateAsc(PageRequest.of(page, size));
 
         return wrapPageHolder(vacanciesFilteredByDate, page);
     }
 
-    private PageHolder<VacancyDto> wrapPageHolder(Page<Vacancy> isActiveTrueOrderBySalaryDesc, int page) {
+    @Override
+    public PageHolder<VacancyDto> findActiveVacanciesOrderedByResponsesNumbersDesc(int page, int size) {
+        Page<Vacancy> vacanciesFilteredByResponses = vacancyRepository.findIsActiveTrueOrderedByResponsesNumberDesc(PageRequest.of(page, size));
+
+        return wrapPageHolder(vacanciesFilteredByResponses, page);
+    }
+
+    private PageHolder<VacancyDto> wrapPageHolder(Page<Vacancy> vacancies, int page) {
         return PageHolder.<VacancyDto>builder()
-                .content(isActiveTrueOrderBySalaryDesc.stream()
+                .content(vacancies.stream()
                         .map(vacancyMapper::mapToDto)
                         .toList())
                 .page(page)
-                .size(isActiveTrueOrderBySalaryDesc.getSize())
-                .totalPages(isActiveTrueOrderBySalaryDesc.getTotalPages())
-                .hasNextPage(isActiveTrueOrderBySalaryDesc.hasNext())
-                .hasPreviousPage(isActiveTrueOrderBySalaryDesc.hasPrevious())
+                .size(vacancies.getSize())
+                .totalPages(vacancies.getTotalPages())
+                .hasNextPage(vacancies.hasNext())
+                .hasPreviousPage(vacancies.hasPrevious())
                 .build();
     }
 }

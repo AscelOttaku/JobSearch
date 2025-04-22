@@ -34,6 +34,9 @@
                                 <i class="bi bi-currency-dollar"></i> По убыванию зарплаты</a></li>
                         <li><a class="dropdown-item" href="/vacancies/filter?page${vacancies.page}&size=${vacancies.size}&filterType=SALARY_ASC">
                                 <i class="bi bi-currency-dollar"></i> По возрастанию зарплаты</a></li>
+                        <li><a class="dropdown-item" href="/vacancies/filter?page=${vacancies.page}&size=${vacancies.size}&filterType=RESPONSES">
+                                <i class="bi bi-chat-left-dots"></i> По количеству откликов</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -90,17 +93,17 @@
         <nav aria-label="Page navigation" class="mt-4">
             <ul class="pagination justify-content-center">
                 <li class="page-item <#if !vacancies.hasPreviousPage>disabled</#if>">
-                    <a class="page-link" href="/vacancies?page=${vacancies.page - 1}&sort=${currentSort!''}">
+                    <a class="page-link" href="/vacancies?page=${vacancies.page - 1}">
                         &laquo; Назад
                     </a>
                 </li>
                 <#list 1..vacancies.totalPages as pageNum>
                     <li class="page-item <#if vacancies.page == pageNum - 1>active</#if>">
-                        <a class="page-link" href="/vacancies?page=${pageNum - 1}&sort=${currentSort!''}">${pageNum}</a>
+                        <a class="page-link" href="/vacancies?page=${pageNum - 1}">${pageNum}</a>
                     </li>
                 </#list>
                 <li class="page-item <#if !vacancies.hasNextPage>disabled</#if>">
-                    <a class="page-link" href="/vacancies?page=${vacancies.page + 1}&sort=${currentSort!''}">
+                    <a class="page-link" href="/vacancies?page=${vacancies.page + 1}">
                         Вперед &raquo;
                     </a>
                 </li>

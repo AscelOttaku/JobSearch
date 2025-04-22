@@ -49,4 +49,10 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Long> {
 
     @Query("select v from Vacancy v where v.isActive = true order by coalesce(v.updated, v.created) asc")
     Page<Vacancy> findIsActiveTrueOrderByDateAsc(Pageable pageable);
+
+    @Query("select v from Vacancy v " +
+            "where v.isActive = true " +
+            "order by (select count(ra) from RespondedApplication ra " +
+            "where ra.vacancy.id = v.id) desc")
+    Page<Vacancy> findIsActiveTrueOrderedByResponsesNumberDesc(Pageable pageable);
 }
