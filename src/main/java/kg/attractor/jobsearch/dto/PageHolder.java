@@ -1,5 +1,6 @@
 package kg.attractor.jobsearch.dto;
 
+import kg.attractor.jobsearch.enums.FilterType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,4 +17,5 @@ public class PageHolder<T> {
     private Integer totalPages;
     private Boolean hasNextPage;
     private Boolean hasPreviousPage;
+    private FilterType filterType;
 }

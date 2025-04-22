@@ -15,8 +15,8 @@ import java.util.List;
 @Repository
 public interface VacancyRepository extends JpaRepository<Vacancy, Long> {
 
-    @Query("select v from Vacancy v where v.isActive = true")
-    Page<Vacancy> findIsActiveVacancies(Pageable pageable);
+    @Query("select v from Vacancy v where v.isActive = true order by coalesce(v.updated, v.created)")
+    Page<Vacancy> findIsActiveVacanciesSortedByDate(Pageable pageable);
 
     List<Vacancy> findVacanciesByCategoryId(Long categoryId);
 
@@ -41,14 +41,11 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Long> {
 
     List<Vacancy> findVacanciesByUserUserId(Long userId);
 
-    @Query("select v from Vacancy v where v.isActive = true order by v.salary desc")
-    Page<Vacancy> findIsActiveTrueOrderBySalaryDesc(Pageable pageable);
-
-    @Query("select v from Vacancy v where v.isActive = true order by v.salary")
-    Page<Vacancy> findIsActiveTrueOrderBySalaryAsc(Pageable pageable);
-
     @Query("select v from Vacancy v where v.isActive = true order by coalesce(v.updated, v.created) asc")
     Page<Vacancy> findIsActiveTrueOrderByDateAsc(Pageable pageable);
+
+    @Query("select v from Vacancy v where v.isActive = true")
+    Page<Vacancy> findAllActiveVacancies(Pageable pageable);
 
     @Query("select v from Vacancy v " +
             "where v.isActive = true " +

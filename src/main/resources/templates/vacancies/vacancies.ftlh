@@ -22,19 +22,25 @@
         <div class="sorting-controls">
             <div class="sort-dropdown">
                 <div class="dropdown">
-                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="sortDropdown"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-sort-down"></i> Сортировка
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="sortDropdown">
-                        <li><a class="dropdown-item" href="/vacancies/actives?page=${vacancies.page}&size=${vacancies.size}">
+                        <li><a class="dropdown-item"
+                               href="/vacancies/actives?page=${vacancies.page}&size=${vacancies.size}">
                                 <i class="bi bi-arrow-down"></i> Новые сначала</a></li>
-                        <li><a class="dropdown-item" href="/vacancies/filter?page=${vacancies.page}&size=${vacancies.size}&filterType=OLD">
+                        <li><a class="dropdown-item"
+                               href="/vacancies/filter?page=${vacancies.page}&size=${vacancies.size}&filterType=OLD">
                                 <i class="bi bi-arrow-up"></i> Старые сначала</a></li>
-                        <li><a class="dropdown-item" href="/vacancies/filter?page${vacancies.page}&size=${vacancies.size}&filterType=SALARY_DESC">
+                        <li><a class="dropdown-item"
+                               href="/vacancies/filter?page${vacancies.page}&size=${vacancies.size}&filterType=SALARY_DESC">
                                 <i class="bi bi-currency-dollar"></i> По убыванию зарплаты</a></li>
-                        <li><a class="dropdown-item" href="/vacancies/filter?page${vacancies.page}&size=${vacancies.size}&filterType=SALARY_ASC">
+                        <li><a class="dropdown-item"
+                               href="/vacancies/filter?page${vacancies.page}&size=${vacancies.size}&filterType=SALARY_ASC">
                                 <i class="bi bi-currency-dollar"></i> По возрастанию зарплаты</a></li>
-                        <li><a class="dropdown-item" href="/vacancies/filter?page=${vacancies.page}&size=${vacancies.size}&filterType=RESPONSES">
+                        <li><a class="dropdown-item"
+                               href="/vacancies/filter?page=${vacancies.page}&size=${vacancies.size}&filterType=RESPONSES">
                                 <i class="bi bi-chat-left-dots"></i> По количеству откликов</a>
                         </li>
                     </ul>
@@ -74,7 +80,8 @@
                     </a>
 
                     <#if authorizedUser?? && authorizedUser.userId == vacancy.user.userId>
-                        <a href="/vacancies/update/vacancy/${vacancy.vacancyId}" class="btn btn-sm btn-outline-secondary">
+                        <a href="/vacancies/update/vacancy/${vacancy.vacancyId}"
+                           class="btn btn-sm btn-outline-secondary">
                             <i class="bi bi-pencil"></i> Редактировать
                         </a>
 
@@ -92,20 +99,43 @@
     <#if vacancies.totalPages gt 1>
         <nav aria-label="Page navigation" class="mt-4">
             <ul class="pagination justify-content-center">
+                <%-- Back button --%>
                 <li class="page-item <#if !vacancies.hasPreviousPage>disabled</#if>">
-                    <a class="page-link" href="/vacancies?page=${vacancies.page - 1}">
-                        &laquo; Назад
-                    </a>
+                    <#if vacancies.filterType?? && vacancies.filterType.name() != 'NEW'>
+                        <a class="page-link" href="/vacancies/filter?page=${vacancies.page - 1}&size=${vacancies.size}&filterType=${vacancies.filterType.name()}">
+                            &laquo; Назад
+                        </a>
+                    <#else>
+                        <a class="page-link" href="/vacancies?page=${vacancies.page - 1}">
+                            &laquo; Назад
+                        </a>
+                    </#if>
                 </li>
+
                 <#list 1..vacancies.totalPages as pageNum>
                     <li class="page-item <#if vacancies.page == pageNum - 1>active</#if>">
-                        <a class="page-link" href="/vacancies?page=${pageNum - 1}">${pageNum}</a>
+                        <#if vacancies.filterType?? && vacancies.filterType.name() != 'NEW'>
+                            <a class="page-link" href="/vacancies/filter?page=${pageNum - 1}&size=${vacancies.size}&filterType=${vacancies.filterType.name()}">
+                                ${pageNum}
+                            </a>
+                        <#else>
+                            <a class="page-link" href="/vacancies?page=${pageNum - 1}">
+                                ${pageNum}
+                            </a>
+                        </#if>
                     </li>
                 </#list>
+
                 <li class="page-item <#if !vacancies.hasNextPage>disabled</#if>">
-                    <a class="page-link" href="/vacancies?page=${vacancies.page + 1}">
-                        Вперед &raquo;
-                    </a>
+                    <#if vacancies.filterType?? && vacancies.filterType.name() != 'NEW'>
+                        <a class="page-link" href="/vacancies/filter?page=${vacancies.page + 1}&size=${vacancies.size}&filterType=${vacancies.filterType.name()}">
+                            Вперед &raquo;
+                        </a>
+                    <#else>
+                        <a class="page-link" href="/vacancies?page=${vacancies.page + 1}">
+                            Вперед &raquo;
+                        </a>
+                    </#if>
                 </li>
             </ul>
         </nav>

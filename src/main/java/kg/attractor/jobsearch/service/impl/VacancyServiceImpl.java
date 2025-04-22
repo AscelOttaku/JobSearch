@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -98,9 +99,11 @@ public class VacancyServiceImpl implements VacancyService {
 
     @Override
     public PageHolder<VacancyDto> findAllActiveVacancies(int page, int size) {
-        Page<Vacancy> isActiveVacancies = vacancyRepository.findIsActiveVacancies(PageRequest.of(page, size));
+        Page<Vacancy> isActiveVacancies = vacancyRepository.findIsActiveVacanciesSortedByDate(PageRequest.of(page, size));
 
-        return wrapPageHolder(isActiveVacancies, page);
+        PageHolder<VacancyDto> vacancyDtoPageHolder = wrapPageHolder(isActiveVacancies, page, FilterType.NEW);
+        log.warn("FilterType String value: {}", vacancyDtoPageHolder.getFilterType().name());
+        return vacancyDtoPageHolder;
     }
 
     @Override
@@ -153,7 +156,7 @@ public class VacancyServiceImpl implements VacancyService {
 
         Page<Vacancy> vacanciesPage = vacancyRepository.findAllVacancies(pageable);
 
-        return wrapPageHolder(vacanciesPage, page);
+        return wrapPageHolder(vacanciesPage, page, FilterType.NEW);
     }
 
     public boolean isVacancyExistById(Long id) {
@@ -177,7 +180,7 @@ public class VacancyServiceImpl implements VacancyService {
 
         Page<Vacancy> vacanciesPage = vacancyRepository.findUserVacanciesByUserId(userId, pageable);
 
-        return wrapPageHolder(vacanciesPage, page);
+        return wrapPageHolder(vacanciesPage, page, FilterType.NEW);
     }
 
     @Override
@@ -228,7 +231,7 @@ public class VacancyServiceImpl implements VacancyService {
     public PageHolder<VacancyDto> findVacanciesByUserId(Long userId, int page, int size) {
         Page<Vacancy> vacanciesPageHolder = vacancyRepository.findUserVacanciesByUserId(userId, PageRequest.of(page, size));
 
-        return wrapPageHolder(vacanciesPageHolder, page);
+        return wrapPageHolder(vacanciesPageHolder, page, FilterType.NEW);
     }
 
     @Override
@@ -243,39 +246,37 @@ public class VacancyServiceImpl implements VacancyService {
     public PageHolder<VacancyDto> filterVacanciesBy(FilterType filterType, int page, int size) {
         return switch (filterType) {
             case OLD -> findActiveVacanciesOrderedByDateAsc(page, size);
-            case SALARY_ASC -> findActiveVacanciesOrderedBySalaryAsc(page, size);
-            case SALARY_DESC -> findActiveVacanciesOrderedBySalaryDesc(page, size);
+            case SALARY_ASC -> wrapPageHolder(vacancyRepository
+                            .findAllActiveVacancies(
+                                    PageRequest.of(
+                                            page, size, Sort.by("salary"
+                                            ))), page, FilterType.SALARY_ASC
+            );
+            case SALARY_DESC -> wrapPageHolder(vacancyRepository
+                    .findAllActiveVacancies(
+                            PageRequest.of(
+                                    page, size, Sort.by("salary")
+                                            .descending())), page, FilterType.SALARY_ASC
+                            );
             case RESPONSES -> findActiveVacanciesOrderedByResponsesNumbersDesc(page, size);
             default -> findAllActiveVacancies(page, size);
         };
     }
 
-    private PageHolder<VacancyDto> findActiveVacanciesOrderedBySalaryDesc(int page, int size) {
-        Page<Vacancy> isActiveTrueOrderBySalaryDesc = vacancyRepository.findIsActiveTrueOrderBySalaryDesc(PageRequest.of(page, size));
-
-        return wrapPageHolder(isActiveTrueOrderBySalaryDesc, page);
-    }
-
-    private PageHolder<VacancyDto> findActiveVacanciesOrderedBySalaryAsc(int page, int size) {
-        Page<Vacancy> isActiveTrueOrderBySalaryDesc = vacancyRepository.findIsActiveTrueOrderBySalaryAsc(PageRequest.of(page, size));
-
-        return wrapPageHolder(isActiveTrueOrderBySalaryDesc, page);
-    }
-
     private PageHolder<VacancyDto> findActiveVacanciesOrderedByDateAsc(int page, int size) {
-        Page<Vacancy> vacanciesFilteredByDate = vacancyRepository.findIsActiveTrueOrderByDateAsc(PageRequest.of(page, size));
+        Page<Vacancy> vacanciesFilteredByDate = vacancyRepository.findIsActiveTrueOrderByDateAsc(PageRequest.of(page, size, Sort.by("")));
 
-        return wrapPageHolder(vacanciesFilteredByDate, page);
+        return wrapPageHolder(vacanciesFilteredByDate, page, FilterType.OLD);
     }
 
     @Override
     public PageHolder<VacancyDto> findActiveVacanciesOrderedByResponsesNumbersDesc(int page, int size) {
         Page<Vacancy> vacanciesFilteredByResponses = vacancyRepository.findIsActiveTrueOrderedByResponsesNumberDesc(PageRequest.of(page, size));
 
-        return wrapPageHolder(vacanciesFilteredByResponses, page);
+        return wrapPageHolder(vacanciesFilteredByResponses, page, FilterType.RESPONSES);
     }
 
-    private PageHolder<VacancyDto> wrapPageHolder(Page<Vacancy> vacancies, int page) {
+    private PageHolder<VacancyDto> wrapPageHolder(Page<Vacancy> vacancies, int page, FilterType filterType) {
         return PageHolder.<VacancyDto>builder()
                 .content(vacancies.stream()
                         .map(vacancyMapper::mapToDto)
@@ -285,6 +286,7 @@ public class VacancyServiceImpl implements VacancyService {
                 .totalPages(vacancies.getTotalPages())
                 .hasNextPage(vacancies.hasNext())
                 .hasPreviousPage(vacancies.hasPrevious())
+                .filterType(filterType)
                 .build();
     }
 }
