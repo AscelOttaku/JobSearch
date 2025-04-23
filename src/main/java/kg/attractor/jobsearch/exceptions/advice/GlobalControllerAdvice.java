@@ -9,8 +9,10 @@ import kg.attractor.jobsearch.service.AuthorizedUserService;
 import kg.attractor.jobsearch.service.ErrorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -38,10 +40,10 @@ public class GlobalControllerAdvice {
         return errorService.handleValidationException(ex, request);
     }
 
-    @ExceptionHandler(NoSuchElementException.class)
+    @ExceptionHandler({NoSuchElementException.class, UsernameNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleNoSuchElementException(
-            Model model, NoSuchElementException ex, HttpServletRequest request
+            Model model, RuntimeException ex, HttpServletRequest request
     ) {
         model.addAttribute("status", HttpStatus.NOT_FOUND.value());
         model.addAttribute("reason", HttpStatus.NOT_FOUND.getReasonPhrase());
@@ -103,12 +105,7 @@ public class GlobalControllerAdvice {
     public void addUserToModels(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        boolean isUserAuthorized = authentication.getAuthorities().stream()
-                .anyMatch(authority ->
-                        authority.getAuthority().equals("EMPLOYER") ||
-                                authority.getAuthority().equals("JOB_SEEKER"));
-
-        if (isUserAuthorized)
+        if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken))
             model.addAttribute("authorizedUser", authorizedUserService.getAuthorizedUser());
     }
 }

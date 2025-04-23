@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -39,8 +40,8 @@ public class Resume {
     private LocalDateTime updated;
 
     @OneToMany(mappedBy = "resume", fetch = FetchType.LAZY)
-    private List<WorkExperienceInfo> workExperienceInfos;
+    private List<WorkExperienceInfo> workExperienceInfos = new ArrayList<>();
 
     @OneToMany(mappedBy = "resume", fetch = FetchType.LAZY)
-    private List<EducationInfo> educationInfos;
+    private List<EducationInfo> educationInfos = new ArrayList<>();
 }

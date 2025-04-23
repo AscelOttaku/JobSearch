@@ -98,6 +98,10 @@
                                                     <@spring.formInput "user.accountType", 'class="form-control" readonly'/>
                                                     <@spring.showErrors "<br>" "text-danger small"/>
                                                 </div>
+                                                <div class="mb-3">
+                                                    <@spring.formHiddenInput "user.password"/>
+                                                    <@spring.formHiddenInput "user.avatar"/>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

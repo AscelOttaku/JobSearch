@@ -152,8 +152,8 @@ public class UserController {
     }
 
     @GetMapping("profile/{userId}")
-    public String getProfile(@PathVariable Long userId, Model model) {
+    public String getUserInfo(@PathVariable Long userId, Model model) {
         model.addAttribute("job_seeker", userService.findUserById(userId));
-        return "users/user_profile";
+        return "users/contact_info";
     }
 }

@@ -74,23 +74,20 @@
 
                     <div class="d-flex justify-content-between align-items-center mt-4">
                         <small class="text-muted">
-                            <i class="bi bi-calendar"></i>Обновлено: ${resume.updated!resume.created}
+                            <i class="bi bi-calendar"></i> Обновлено: ${resume.updated!resume.created}
                         </small>
-                    </div>
 
-                    <div class="d-flex justify-content-left align-items-left mt-4">
-                        <#if authorizedUser.userId = resume.userId>
-                            <a href="/resumes/update/resume/${resume.id}"
-                               class="btn btn-sm btn-outline-secondary">
-                                <i class="bi bi-pencil"></i>
+                        <div class="d-flex gap-2">
+                            <#if authorizedUser.userId == resume.userId>
+                                <a href="/resumes/update/resume/${resume.id}" class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            </#if>
+
+                            <a href="/users/profile/${resume.userId}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i> Контактные данные
                             </a>
-                        </#if>
-                    </div>
-
-                    <div class="resume-actions">
-                        <a href="/users/profile/${resume.userId}" class="btn btn-outline-primary">
-                            <i class="bi bi-eye"></i> Личная информация О Соискателе
-                        </a>
+                        </div>
                     </div>
                 </div>
             </div>

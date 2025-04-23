@@ -114,26 +114,7 @@ public class UserServiceImpl implements UserService {
                 );
         }
 
-        if (!userPreviousVal.getPhoneNumber().equals(userDto.getPhoneNumber())) {
-            Optional<User> optionalUserFoundByPhoneNumber = userRepository.findUserByPhoneNumber(userDto.getPhoneNumber());
-
-            boolean isUserExistByPhoneNumber = optionalUserFoundByPhoneNumber.isPresent();
-
-            if (isUserExistByPhoneNumber)
-                throw new CustomIllegalArgException(
-                        "param phoneNumber is already exists in data",
-                        CustomBindingResult.builder()
-                                .className(User.class.getSimpleName())
-                                .fieldName("phoneNumber")
-                                .rejectedValue(userDto.getPhoneNumber())
-                                .build()
-                );
-        }
-
         User entity = userMapper.mapToEntity(userDto);
-
-        if (entity.getPassword() == null || entity.getPassword().isBlank())
-            entity.setPassword(findUserPasswordByUserId(userDto.getUserId()));
 
         userPreviousVal.setUserId(userPreviousVal.getUserId());
         userRepository.save(entity);
@@ -262,6 +243,10 @@ public class UserServiceImpl implements UserService {
         return findUserByEmail(userDetails.getUsername());
     }
 
+    private String getAuthorizedUserEmail() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
+
     public UserDetails getAutentificatedUserDetails() {
         return (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
@@ -289,12 +274,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isPhoneNumberExist(String phoneNumber) {
-        return userRepository.findUserByPhoneNumber(phoneNumber).isPresent();
+    public boolean isUserPhoneNumberUnique(String phoneNumber) {
+        String authorizedUserEmail = getAuthorizedUserEmail();
+        Optional<User> userByPhoneNumber = userRepository.findUserByPhoneNumber(phoneNumber);
+
+        return userByPhoneNumber.isEmpty() || Objects.equals(userByPhoneNumber.get().getEmail(), authorizedUserEmail);
     }
 
     @Override
-    public boolean isEmailExist(String email) {
-        return userRepository.findUserByEmail(email).isPresent();
+    public boolean isUserEmailIsUnique(String email) {
+        String authorizedUserEmail = getAuthorizedUserEmail();
+        Optional<User> userByEmail = userRepository.findUserByEmail(email);
+
+        return userByEmail.isEmpty() || Objects.equals(authorizedUserEmail, userByEmail.get().getEmail());
     }
 }

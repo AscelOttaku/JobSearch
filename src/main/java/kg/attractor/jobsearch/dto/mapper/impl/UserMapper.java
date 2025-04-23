@@ -48,6 +48,7 @@ public class UserMapper implements Mapper<UserDto, User> {
         user.setPassword(Util.encodePassword(passwordEncoder, userDto.getPassword()));
         user.setPhoneNumber(userDto.getPhoneNumber());
         user.setAccountType(userDto.getAccountType());
+        user.setAvatar(userDto.getAvatar());
         user.setRole(role);
         user.setEnabled(true);
         return user;

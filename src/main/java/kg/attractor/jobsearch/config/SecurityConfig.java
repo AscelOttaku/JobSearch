@@ -58,12 +58,13 @@ public class SecurityConfig {
 
                                 .requestMatchers(PUT, "/users/updates").hasAnyAuthority(Roles.EMPLOYER.getValue(), Roles.JOB_SEEKER.getValue())
                                 .requestMatchers(POST, "/users/registration").anonymous()
-                                .requestMatchers(GET, "/users/profile").fullyAuthenticated()
+                                .requestMatchers(GET, "/users/profile").authenticated()
                                 .requestMatchers("users/update/profile").fullyAuthenticated()
                                 .requestMatchers("/users/responded/vacancies/*").hasAuthority(Roles.EMPLOYER.getValue())
                                 .requestMatchers("/users/employer/*").hasAuthority(Roles.JOB_SEEKER.getValue())
                                 .requestMatchers("/users/job-seeker/*").hasAuthority(Roles.EMPLOYER.getValue())
                                 .requestMatchers("/users/upload/*").fullyAuthenticated().requestMatchers("/users/avatars").fullyAuthenticated()
+                                .requestMatchers("/users/profile/*").fullyAuthenticated()
                                 .requestMatchers(GET,"/users/**").hasAuthority(Roles.EMPLOYER.getValue())
 
                                 // Companies

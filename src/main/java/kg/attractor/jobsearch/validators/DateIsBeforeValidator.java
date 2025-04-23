@@ -48,6 +48,12 @@ public class DateIsBeforeValidator implements ConstraintValidator<IsDateCorrect,
             )
                     .addPropertyNode("startDate")
                     .addConstraintViolation();
+
+            constraintValidatorContext.buildConstraintViolationWithTemplate(
+                    "toDate must be after fromDate"
+            )
+                    .addPropertyNode("endDate")
+                    .addConstraintViolation();
             return false;
         }
 

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -41,7 +42,7 @@ public class Vacancy {
     private User user;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "vacancy")
-    private List<RespondedApplication> respondedApplications;
+    private List<RespondedApplication> respondedApplications = new ArrayList<>();
 
     private LocalDateTime created;
     private LocalDateTime updated;
