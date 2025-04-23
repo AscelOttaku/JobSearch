@@ -99,7 +99,6 @@
     <#if vacancies.totalPages gt 1>
         <nav aria-label="Page navigation" class="mt-4">
             <ul class="pagination justify-content-center">
-                <%-- Back button --%>
                 <li class="page-item <#if !vacancies.hasPreviousPage>disabled</#if>">
                     <#if vacancies.filterType?? && vacancies.filterType.name() != 'NEW'>
                         <a class="page-link" href="/vacancies/filter?page=${vacancies.page - 1}&size=${vacancies.size}&filterType=${vacancies.filterType.name()}">

@@ -10,11 +10,8 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-import javax.sql.DataSource;
 
 import static org.springframework.http.HttpMethod.*;
 
@@ -25,21 +22,6 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public JdbcUserDetailsManager configureGlobal(DataSource dataSource) {
-        String usersQuery = "select email as username, password, enabled from users " +
-                "where email = ?";
-
-        String authorityQuery = "select email, ROLE from USERS U, ROLES R " +
-                "INNER JOIN ROLES_AUTHORITIES RA ON RA.ROLE_ID = R.ID " +
-                "WHERE U.ROLE_ID = R.ID AND EMAIL = ?";
-
-        JdbcUserDetailsManager userDetailsManager = new JdbcUserDetailsManager(dataSource);
-        userDetailsManager.setUsersByUsernameQuery(usersQuery);
-        userDetailsManager.setAuthoritiesByUsernameQuery(authorityQuery);
-        return userDetailsManager;
     }
 
     @Bean
