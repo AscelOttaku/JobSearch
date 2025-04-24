@@ -34,6 +34,12 @@
                 <div class="vacancy-form">
                     <h2 class="mb-4">Обновить вакансию</h2>
                     <form method="post" action="/vacancies/update/vacancy">
+
+                        <#if _csrf??>
+                            <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
+                                   value="${(_csrf.token)!'csrf-token'}"/>
+                        </#if>
+
                         <@spring.formHiddenInput "vacancy.vacancyId", 'class="form-control", type="hidden", placeholder="Введите название", id="name"'/>
                         <div class="mb-3">
                             <label for="name" class="form-label">

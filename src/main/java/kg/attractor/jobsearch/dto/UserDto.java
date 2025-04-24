@@ -14,7 +14,6 @@ import lombok.*;
 public class UserDto {
     private Long userId;
 
-    @NotNull(message = "{null_message}")
     @NotBlank(message = "{blank_message}")
     @Size(min = 3, max = 30, message = "{3_30_size_message}")
     @Pattern(
@@ -23,7 +22,6 @@ public class UserDto {
     )
     private String name;
 
-    @NotNull(message = "{null_message}")
     @NotBlank(message = "{blank_message}")
     @Size(min = 3, max = 30, message = "{3_30_size_message}")
     @Pattern(regexp = "^\\p{L}+$", message = "{symbol_numbers_pattern_message}")
@@ -34,7 +32,6 @@ public class UserDto {
     @Max(value = 140, message = "{max_140}")
     private Integer age;
 
-    @NotNull(message = "{null_message}")
     @NotBlank(message = "{blank_message}")
     @UniqueEmail
     private String email;
@@ -42,7 +39,6 @@ public class UserDto {
     @ValidPassword
     private String password;
 
-    @NotNull(message = "{null_message}")
     @NotBlank(message = "{blank_message}")
     @Size(min = 12, max = 12,
             message = "{phone_number_size_message}"

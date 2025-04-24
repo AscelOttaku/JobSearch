@@ -6,14 +6,13 @@ import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.service.CategoryService;
-import kg.attractor.jobsearch.service.EducationInfoService;
-import kg.attractor.jobsearch.service.WorkExperienceInfoService;
 import kg.attractor.jobsearch.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +20,7 @@ public class ResumeMapper implements Mapper<ResumeDto, Resume> {
     private final CategoryService categoryService;
     private final EducationInfoMapper educationInfoMapper;
     private final WorkExperienceMapper workExperienceMapper;
+    private final ContactInfoMapper contactInfoMapper;
 
     @Override
     public ResumeDto mapToDto(Resume resume) {
@@ -40,6 +40,9 @@ public class ResumeMapper implements Mapper<ResumeDto, Resume> {
                 .educationInfoDtos(resume.getEducationInfos().stream()
                         .map(educationInfoMapper::mapToDto)
                         .toList())
+                .contactInfos(resume.getContactInfos().stream()
+                        .map(contactInfoMapper::mapToDto)
+                        .collect(Collectors.toList()))
                 .build();
     }
 

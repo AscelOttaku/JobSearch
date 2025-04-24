@@ -25,6 +25,12 @@
                 <div class="vacancy-form">
                     <h2 class="mb-4">Добавить новую вакансию</h2>
                     <form method="post" action="/vacancies/new_vacancy">
+
+                        <#if _csrf??>
+                            <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
+                                   value="${(_csrf.token)!'csrf-token'}"/>
+                        </#if>
+
                         <div class="mb-3">
                             <label for="name" class="form-label">
                                 <i class="bi bi-card-heading form-icon me-2"></i>Название вакансии

@@ -1,16 +1,17 @@
 package kg.attractor.jobsearch.config;
 
 import kg.attractor.jobsearch.enums.Roles;
+import kg.attractor.jobsearch.security.MySimpleAuthenticationHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import static org.springframework.http.HttpMethod.*;
@@ -25,13 +26,18 @@ public class SecurityConfig {
     }
 
     @Bean
+    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+        return new MySimpleAuthenticationHandler();
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .formLogin(form -> form
                         .loginPage("/auth/login")
                         .loginProcessingUrl("/auth/login")
-                        .defaultSuccessUrl("/users/profile")
+                        .successHandler(authenticationSuccessHandler())
                         .failureUrl("/login?error=true")
                         .permitAll())
 
@@ -39,7 +45,6 @@ public class SecurityConfig {
                         .logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout"))
                         .permitAll())
 
-                .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
 
                 .authorizeHttpRequests(authorizeRequests ->

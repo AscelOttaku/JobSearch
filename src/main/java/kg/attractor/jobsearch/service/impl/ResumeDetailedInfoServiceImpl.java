@@ -1,8 +1,6 @@
 package kg.attractor.jobsearch.service.impl;
 
-import kg.attractor.jobsearch.dto.EducationalInfoDto;
-import kg.attractor.jobsearch.dto.ResumeDto;
-import kg.attractor.jobsearch.dto.WorkExperienceInfoDto;
+import kg.attractor.jobsearch.dto.*;
 import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
 import kg.attractor.jobsearch.exceptions.EntityNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
@@ -17,11 +15,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +32,10 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
     private final ResumeService resumeService;
     private final EducationInfoService educationInfoService;
     private final AuthorizedUserService authorizedUserService;
+    private final ContactInfoService contactInfoService;
+    private final ContactTypeService contactTypeService;
 
+    @Transactional
     @Override
     public Long createResume(ResumeDto resumeDto) {
         resumeDto.setUserId(authorizedUserService.getAuthorizedUser().getUserId());
@@ -43,8 +47,11 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
                         educationInfoDto.setResumeId(resumeId));
 
         resumeDto.getWorkExperienceInfoDtos()
-                        .forEach(workExperienceInfoDto ->
-                                workExperienceInfoDto.setResumeId(resumeId));
+                .forEach(workExperienceInfoDto ->
+                        workExperienceInfoDto.setResumeId(resumeId));
+
+        resumeDto.getContactInfos().forEach(contactInfoDto ->
+                contactInfoDto.setResumeId(resumeId));
 
         educationInfoService
                 .createEducationInfos(
@@ -56,9 +63,16 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
                         resumeDto.getWorkExperienceInfoDtos()
                 );
 
+        resumeDto.getContactInfos().forEach(contactInfoDto -> {
+            Long contactTypeId = contactTypeService.createContactType(contactInfoDto.getContactType());
+            contactInfoDto.getContactType().setContactTypeId(contactTypeId);
+            contactInfoService.createContactInfo(contactInfoDto);
+        });
+
         return resumeId;
     }
 
+    @Transactional
     @Override
     public void updateResumeDetailedInfo(ResumeDto resumeDto) {
 
@@ -94,6 +108,13 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
 
         updateWorkExperienceInfo(workExperienceInfoDtos);
         updateEducationalInfo(educationalInfoDtos);
+
+        resumeDto.getContactInfos().forEach(contactInfoDto -> {
+            contactInfoDto.setResumeId(res);
+            Long contactTypeId = contactTypeService.createContactType(contactInfoDto.getContactType());
+            contactInfoDto.getContactType().setContactTypeId(contactTypeId);
+            contactInfoService.createContactInfo(contactInfoDto);
+        });
     }
 
     private void updateEducationalInfo(List<EducationalInfoDto> educationalInfoDtos) {
@@ -116,6 +137,19 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
         ResumeDto resumeDto = new ResumeDto();
         resumeDto.setWorkExperienceInfoDtos(List.of(new WorkExperienceInfoDto()));
         resumeDto.setEducationInfoDtos(List.of(new EducationalInfoDto()));
+
+        List<String> contactTypes = List.of("LINKEDIN", "TELEGRAM", "FACEBOOK", "EMAIL");
+
+        resumeDto.setContactInfos(new ArrayList<>());
+
+        IntStream.range(0, 4).forEach(index ->
+                resumeDto.getContactInfos().add(
+                        ContactInfoDto.builder()
+                                .contactType(ContactTypeDto.builder()
+                                        .type(contactTypes.get(index))
+                                        .build())
+                                .build()
+                ));
 
         model.put("resume", resumeDto);
         return model;

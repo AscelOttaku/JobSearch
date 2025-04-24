@@ -73,7 +73,6 @@ public class ResumeController {
             BindingResult bindingResult,
             Model model
     ) {
-
         resumeValidator.isValid(resumeDto, bindingResult);
 
         if (bindingResult.hasErrors()) {
@@ -90,12 +89,6 @@ public class ResumeController {
     @ResponseStatus(HttpStatus.SEE_OTHER)
     public String updateResumeById(@PathVariable Long resumeId, Model model) {
         ResumeDto resumeDto = resumeService.findResumeById(resumeId);
-
-        if (resumeDto.getWorkExperienceInfoDtos().isEmpty())
-            resumeDto.setWorkExperienceInfoDtos(List.of(new WorkExperienceInfoDto()));
-
-        if (resumeDto.getEducationInfoDtos().isEmpty())
-            resumeDto.setEducationInfoDtos(List.of(new EducationalInfoDto()));
 
         model.addAttribute("resume", resumeDto);
         model.addAttribute("categories", categoryService.findAllCategories());

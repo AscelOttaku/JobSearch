@@ -1,26 +1,7 @@
 <#import "../layout.ftlh" as layout>
+
+<link rel="stylesheet" href="/static/css/resume_form.css">
 <@layout.layout ; spring>
-    <style>
-        .resume-from {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 25px;
-        }
-
-        .form-icon {
-            color: #6c757d;
-        }
-
-        .btn-submit {
-            background-color: #0d6efd;
-            color: white;
-        }
-
-        .btn-submit:hover {
-            background-color: #0b5ed7;
-        }
-    </style>
 
     <div class="container py-5">
         <div class="row justify-content-center">
@@ -28,6 +9,12 @@
                 <div class="resume-from">
                     <h2 class="mb-4">Создать Резюме</h2>
                     <form method="post" action="/resumes/new_resume">
+
+                        <#if _csrf??>
+                            <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
+                                   value="${(_csrf.token)!'csrf-token'}"/>
+                        </#if>
+
                         <div class="mb-3">
                             <label for="name" class="form-label">
                                 <i class="bi bi-card-heading form-icon me-2"></i>Название Резюме
@@ -61,108 +48,156 @@
                             </div>
                         </div>
 
-                      <#list resume.workExperienceInfoDtos as workExperience>
-                          <#assign index = workExperience?index>
-                          <div class="row mb-3">
-                              <div class="col-md-6">
-                                  <div class="mb-3">
-                                      <label for="years" class="form-label">
-                                          <i class="bi bi-calendar-check form-icon me-2"></i> Годы работы (лет)
-                                      </label>
-                                      <@spring.formInput "resume.workExperienceInfoDtos[${index}].years", 'class="form-control" placeholder="Например: 5" id="years" type="number" min="0"'/>
-                                      <@spring.showErrors "<br>" "text-danger small"/>
-                                  </div>
+                        <#list resume.workExperienceInfoDtos as workExperience>
+                            <#assign index = workExperience?index>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="years" class="form-label">
+                                            <i class="bi bi-calendar-check form-icon me-2"></i> Годы работы (лет)
+                                        </label>
+                                        <@spring.formInput "resume.workExperienceInfoDtos[${index}].years", 'class="form-control" placeholder="Например: 5" id="years" type="number" min="0"'/>
+                                        <@spring.showErrors "<br>" "text-danger small"/>
+                                    </div>
 
-                                  <div class="mb-3">
-                                      <label for="companyName" class="form-label">
-                                          <i class="bi bi-building form-icon me-2"></i> Компания
-                                      </label>
-                                      <@spring.formInput "resume.workExperienceInfoDtos[${index}].companyName", 'class="form-control" placeholder="Название компании" id="companyName"'/>
-                                      <@spring.showErrors "<br>" "text-danger small"/>
-                                  </div>
-                              </div>
+                                    <div class="mb-3">
+                                        <label for="companyName" class="form-label">
+                                            <i class="bi bi-building form-icon me-2"></i> Компания
+                                        </label>
+                                        <@spring.formInput "resume.workExperienceInfoDtos[${index}].companyName", 'class="form-control" placeholder="Название компании" id="companyName"'/>
+                                        <@spring.showErrors "<br>" "text-danger small"/>
+                                    </div>
+                                </div>
 
-                              <div class="col-md-6">
-                                  <div class="mb-3">
-                                      <label for="position" class="form-label">
-                                          <i class="bi bi-person-badge form-icon me-2"></i> Должность
-                                      </label>
-                                      <@spring.formInput "resume.workExperienceInfoDtos[${index}].position", 'class="form-control" placeholder="Ваша должность" id="position"'/>
-                                      <@spring.showErrors "<br>" "text-danger small"/>
-                                  </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="position" class="form-label">
+                                            <i class="bi bi-person-badge form-icon me-2"></i> Должность
+                                        </label>
+                                        <@spring.formInput "resume.workExperienceInfoDtos[${index}].position", 'class="form-control" placeholder="Ваша должность" id="position"'/>
+                                        <@spring.showErrors "<br>" "text-danger small"/>
+                                    </div>
 
-                                  <div class="mb-3">
-                                      <label for="responsibilities" class="form-label">
-                                          <i class="bi bi-list-task form-icon me-2"></i> Обязанности
-                                      </label>
-                                      <@spring.formTextarea "resume.workExperienceInfoDtos[${index}].responsibilities", 'class="form-control" placeholder="Ваши основные обязанности" id="responsibilities" rows="3"'/>
-                                      <@spring.showErrors "<br>" "text-danger small"/>
-                                  </div>
-                              </div>
-                          </div>
-                      </#list>
+                                    <div class="mb-3">
+                                        <label for="responsibilities" class="form-label">
+                                            <i class="bi bi-list-task form-icon me-2"></i> Обязанности
+                                        </label>
+                                        <@spring.formTextarea "resume.workExperienceInfoDtos[${index}].responsibilities", 'class="form-control" placeholder="Ваши основные обязанности" id="responsibilities" rows="3"'/>
+                                        <@spring.showErrors "<br>" "text-danger small"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </#list>
 
                         <#list resume.educationInfoDtos as educationInfo>
                             <#assign index = educationInfo?index>
-                           <div class="row mb-3">
-                               <div class="col-md-6">
-                                   <div class="mb-3">
-                                       <label for="degree" class="form-label">
-                                           <i class="bi bi-award form-icon me-2">Образование</i>
-                                       </label>
-                                       <@spring.formInput "resume.educationInfoDtos[${index}].degree", 'class="form-control" placeholder="Образование" id="degree"'/>
-                                       <@spring.showErrors "<br>" "text-danger small"/>
-                                   </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="degree" class="form-label">
+                                            <i class="bi bi-award form-icon me-2">Образование</i>
+                                        </label>
+                                        <@spring.formInput "resume.educationInfoDtos[${index}].degree", 'class="form-control" placeholder="Образование" id="degree"'/>
+                                        <@spring.showErrors "<br>" "text-danger small"/>
+                                    </div>
 
-                                   <div class="mb-3">
-                                       <label for="institution" class="form-label">
-                                           <i class="bi bi-journal-bookmark form-icon me-2"></i> Где Учился
-                                       </label>
-                                       <@spring.formInput "resume.educationInfoDtos[${index}].institution", 'class="form-control" placeholder="Институт" id="institution"'/>
-                                       <@spring.showErrors "<br>" "text-danger small"/>
-                                   </div>
+                                    <div class="mb-3">
+                                        <label for="institution" class="form-label">
+                                            <i class="bi bi-journal-bookmark form-icon me-2"></i> Где Учился
+                                        </label>
+                                        <@spring.formInput "resume.educationInfoDtos[${index}].institution", 'class="form-control" placeholder="Институт" id="institution"'/>
+                                        <@spring.showErrors "<br>" "text-danger small"/>
+                                    </div>
 
-                                   <div class="mb-3">
-                                       <label for="program" class="form-label">
-                                           <i class="bi bi-journal-bookmark form-icon me-2"></i> Программа обучение
-                                       </label>
-                                       <@spring.formInput "resume.educationInfoDtos[${index}].program", 'class="form-control" placeholder="Программа обучение" id="program"'/>
-                                       <@spring.showErrors "<br>" "text-danger small"/>
-                                   </div>
-                               </div>
+                                    <div class="mb-3">
+                                        <label for="program" class="form-label">
+                                            <i class="bi bi-journal-bookmark form-icon me-2"></i> Программа обучение
+                                        </label>
+                                        <@spring.formInput "resume.educationInfoDtos[${index}].program", 'class="form-control" placeholder="Программа обучение" id="program"'/>
+                                        <@spring.showErrors "<br>" "text-danger small"/>
+                                    </div>
+                                </div>
 
-                               <div class="col-md-6">
-                                   <div class="mb-3">
-                                       <label for="startDate" class="form-label">
-                                           <i class="bi bi-calendar-plus form-icon me-2"></i> Дата начала
-                                       </label>
-                                       <@spring.formInput "resume.educationInfoDtos[${index}].startDate", 'class="form-control" placeholder="ГГГГ-ММ-ДД" id="startDate" type="datetime-local"'/>
-                                       <@spring.showErrors "<br>" "text-danger small"/>
-                                   </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="startDate" class="form-label">
+                                            <i class="bi bi-calendar-plus form-icon me-2"></i> Дата начала
+                                        </label>
+                                        <@spring.formInput "resume.educationInfoDtos[${index}].startDate", 'class="form-control" placeholder="ГГГГ-ММ-ДД" id="startDate" type="datetime-local"'/>
+                                        <@spring.showErrors "<br>" "text-danger small"/>
+                                    </div>
 
-                                   <div class="mb-3">
-                                       <label for="endDate" class="form-label">
-                                           <i class="bi bi-calendar-minus form-icon me-2"></i> Дата окончания
-                                       </label>
-                                       <@spring.formInput "resume.educationInfoDtos[${index}].endDate", 'class="form-control" placeholder="ГГГГ-ММ-ДД" id="endDate" type="datetime-local"'/>
-                                       <@spring.showErrors "<br>" "text-danger small"/>
-                                   </div>
-                               </div>
-                           </div>
-                       </#list>
+                                    <div class="mb-3">
+                                        <label for="endDate" class="form-label">
+                                            <i class="bi bi-calendar-minus form-icon me-2"></i> Дата окончания
+                                        </label>
+                                        <@spring.formInput "resume.educationInfoDtos[${index}].endDate", 'class="form-control" placeholder="ГГГГ-ММ-ДД" id="endDate" type="datetime-local"'/>
+                                        <@spring.showErrors "<br>" "text-danger small"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </#list>
 
-                        <div class="mb-4 form-check form-switch">
-                            <input type="checkbox" class="form-check-input" role="switch"
-                                   id="isActive"
-                                   name="isActive" ${(resume.isActive!true)?then('checked', '')}>
-                            <label class="form-check-label" for="active">
-                                <i class="bi bi-power form-icon me-2"></i>
-                                Вакансия активна
+                        <div class="row mb-3">
+                            <label for="category.id" class="form-label">
+                                <i class="bi bi-people form-icon me-2"></i>Социальные сети
                             </label>
-                        </div>
+                            <#list resume.contactInfos as contact>
+                            <div class="col-md-6 mb-3">
+                                <div class="social-input-group">
+                                    <div class="input-group">
+                                                <span class="input-group-text">
+                                                <#if contact.contactType.type == "EMAIL">
+                                                    <i class="bi bi-envelope-fill social-icon email-icon"></i>
+                                                <#elseif contact.contactType.type == "TELEGRAM">
+                                                    <i class="bi bi-telegram social-icon telegram-icon"></i>
+                                                <#elseif contact.contactType.type == "FACEBOOK">
+                                                    <i class="bi bi-facebook social-icon facebook-icon"></i>
+                                                <#elseif contact.contactType.type == "LINKEDIN">
+                                                    <i class="bi bi-linkedin social-icon linkedin-icon"></i>
+                                                </#if>
+                                                </span>
+                                        <#if contact.contactType.type == "EMAIL">
+                                        <@spring.formInput "resume.contactInfos[${contact?index}].value"
+                                        'class="form-control" placeholder="Email address"' />
+                                        <@spring.formHiddenInput "resume.contactInfos[${contact?index}].contactType.type"/>
+                                        <div class="mb-3">
 
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-submit btn-lg">Сохранить Резюме</button>
+                                            <#elseif contact.contactType.type == "TELEGRAM">
+                                                <@spring.formInput "resume.contactInfos[${contact?index}].value"
+                                                'class="form-control" placeholder="Telegram username"' />
+                                                <@spring.formHiddenInput "resume.contactInfos[${contact?index}].contactType.type"/>
+
+                                            <#elseif contact.contactType.type == "FACEBOOK">
+                                                <@spring.formInput "resume.contactInfos[${contact?index}].value"
+                                                'class="form-control" placeholder="Facebook profile"' />
+                                                <@spring.formHiddenInput "resume.contactInfos[${contact?index}].contactType.type"/>
+
+                                            <#elseif contact.contactType.type == "LINKEDIN">
+                                                <@spring.formInput "resume.contactInfos[${contact?index}].value"
+                                                'class="form-control" placeholder="LinkedIn profile"' />
+                                                <@spring.formHiddenInput "resume.contactInfos[${contact?index}].contactType.type"/>
+                                            </#if>
+                                        </div>
+                                        <@spring.showErrors "<br>" "text-danger small mt-1"/>
+                                    </div>
+                                </div>
+                                </#list>
+                            </div>
+
+                            <div class="mb-4 form-check form-switch">
+                                <input type="checkbox" class="form-check-input" role="switch"
+                                       id="isActive"
+                                       name="isActive" ${(resume.isActive!true)?then('checked', '')}>
+                                <label class="form-check-label" for="active">
+                                    <i class="bi bi-power form-icon me-2"></i>
+                                    Вакансия активна
+                                </label>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">Сохранить Резюме</button>
+                            </div>
                         </div>
                     </form>
                 </div>

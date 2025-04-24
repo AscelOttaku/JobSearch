@@ -16,12 +16,11 @@ import java.util.List;
 public class ResumeDto {
     private Long id;
 
-    @NotNull(message = "{null_message}")
     @NotBlank(message = "{blank_message}")
     @Size(min = 3, max = 40, message = "{3_30_size_message}")
     @Pattern(
-            regexp = "^[a-zA-Zа-яА-ЯёЁ ]+$",
-            message = "{resume_name}"
+            regexp = "^[\\p{L}\\d ]+$",
+            message = "symbols are not allowed"
     )
     private String name;
 
@@ -43,4 +42,5 @@ public class ResumeDto {
 
     private List<@Valid EducationalInfoDto> educationInfoDtos;
     private List<@Valid WorkExperienceInfoDto> workExperienceInfoDtos;
+    private List<@Valid ContactInfoDto> contactInfos;
 }

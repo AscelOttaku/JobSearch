@@ -17,7 +17,6 @@ import java.util.List;
 public class VacancyDto {
     private Long vacancyId;
 
-    @NotNull(message = "{null_message}")
     @NotBlank(message = "{blank_message}")
     @Size(min = 3, max = 30, message = "{3_30_size_message}")
     @Pattern(

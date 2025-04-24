@@ -62,8 +62,18 @@
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="/logout"><i class="bi bi-box-arrow-right me-2"></i>Выйти</a>
-                            </li>
+                            <#if _csrf??>
+                                <form action="/logout" method="post">
+                                    <input type="hidden" name="${(_csrf.parameterName)!'csrf'}"
+                                           value="${(_csrf.token)!'--no-token--'}"/>
+                                    <button type="submit" class="btn btn-outline-info m-2"
+                                            id="logout">Logout
+                                    </button>
+                                </form>
+                            <#else>
+                                <a href="/logout" class="btn btn-outline-info m-2"
+                                   id="logout">Logout</a>
+                            </#if>
                         </ul>
                     </div>
                 <#else>

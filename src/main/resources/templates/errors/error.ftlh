@@ -92,7 +92,6 @@
             font-size: 16px;
         }
 
-        /* {{ if show_details }} */
         .details {
             list-style: none;
             padding-left: 0;
@@ -109,8 +108,6 @@
             font-weight: normal;
             padding-left: 7px;
         }
-
-        /* {{ end }} */
 
         @media screen and (max-width: 768px) {
             main {

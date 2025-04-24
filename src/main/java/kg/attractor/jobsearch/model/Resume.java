@@ -44,4 +44,7 @@ public class Resume {
 
     @OneToMany(mappedBy = "resume", fetch = FetchType.LAZY)
     private List<EducationInfo> educationInfos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "resume", fetch = FetchType.LAZY)
+    private List<ContactInfo> contactInfos = new ArrayList<>();
 }

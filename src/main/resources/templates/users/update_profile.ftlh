@@ -19,6 +19,12 @@
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <form method="post" action="/users/updates/profile" class="card border-0 shadow-sm rounded-3 mb-4">
+
+                    <#if _csrf??>
+                        <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
+                               value="${(_csrf.token)!'csrf-token'}"/>
+                    </#if>
+
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <div>

@@ -7,6 +7,24 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/static/css/detailed_resume.css">
+    <style>
+        .contact-icon {
+            font-size: 1.2rem;
+            margin-right: 8px;
+        }
+        .email-icon {
+            color: #d44638;
+        }
+        .telegram-icon {
+            color: #0088cc;
+        }
+        .facebook-icon {
+            color: #1877f2;
+        }
+        .linkedin-icon {
+            color: #0a66c2;
+        }
+    </style>
 </head>
 <body>
 <#include "../layout/navbar.ftlh">
@@ -31,6 +49,34 @@
                             <i class="bi bi-cash-coin"></i><strong>Ожидаемая зарплата:</strong> ${resume.salary} KGS
                         </p>
                     </div>
+
+                    <!-- Contact Information Section -->
+                    <#if resume.contactInfos?? && resume.contactInfos?size gt 0>
+                        <div class="contact-section mb-4">
+                            <h3 class="section-title"><i class="bi bi-people"></i> Контактная информация</h3>
+                            <div class="info-block">
+                                <#list resume.contactInfos as contact>
+                                    <#if contact.value?? && contact.value?has_content>
+                                        <p>
+                                            <#if contact.contactType.type == "EMAIL">
+                                                <i class="bi bi-envelope-fill contact-icon email-icon"></i>
+                                                <strong>Email:</strong> ${contact.value}
+                                            <#elseif contact.contactType.type == "TELEGRAM">
+                                                <i class="bi bi-telegram contact-icon telegram-icon"></i>
+                                                <strong>Telegram:</strong> ${contact.value}
+                                            <#elseif contact.contactType.type == "FACEBOOK">
+                                                <i class="bi bi-facebook contact-icon facebook-icon"></i>
+                                                <strong>Facebook:</strong> ${contact.value}
+                                            <#elseif contact.contactType.type == "LINKEDIN">
+                                                <i class="bi bi-linkedin contact-icon linkedin-icon"></i>
+                                                <strong>LinkedIn:</strong> ${contact.value}
+                                            </#if>
+                                        </p>
+                                    </#if>
+                                </#list>
+                            </div>
+                        </div>
+                    </#if>
 
                     <#if resume.workExperienceInfoDtos?? && resume.workExperienceInfoDtos?size gt 0>
                         <div class="experience-section">

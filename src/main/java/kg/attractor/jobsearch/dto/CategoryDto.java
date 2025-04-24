@@ -13,7 +13,6 @@ import lombok.Getter;
 public class CategoryDto {
     private Long id;
 
-    @NotNull(message = "{null_message}")
     @NotBlank(message = "{blank_message}")
     @Size(min = 2, max = 50, message = "{category_name_size_message}")
     @Pattern(
