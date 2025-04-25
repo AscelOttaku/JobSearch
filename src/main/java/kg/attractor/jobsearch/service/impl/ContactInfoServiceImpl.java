@@ -15,9 +15,17 @@ public class ContactInfoServiceImpl implements ContactInfoService {
 
     @Override
     public void createContactInfo(ContactInfoDto contactInfoDto) {
-        if (contactInfoDto.getValue() == null || contactInfoDto.getValue().isBlank())
+        if (contactInfoDto.getValue() == null || contactInfoDto.getValue().isBlank()) {
+            if (contactInfoDto.getContactInfoId() != null)
+                deleteContactInfoById(contactInfoDto.getContactInfoId());
+
             return;
+        }
 
         contactInfoRepository.save(contactInfoMapper.mapToEntity(contactInfoDto));
+    }
+
+    public void deleteContactInfoById(Long contactInfoId) {
+        contactInfoRepository.deleteById(contactInfoId);
     }
 }

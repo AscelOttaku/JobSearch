@@ -141,7 +141,8 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
 
         resumeDto.setContactInfos(new ArrayList<>());
 
-        IntStream.range(0, 5).forEach(index -> resumeDto.getContactInfos().add(contactTypes.get(index)));
+        IntStream.range(0, 5).forEach(index ->
+                resumeDto.getContactInfos().add(contactTypes.get(index)));
 
         model.put("resume", resumeDto);
         return model;

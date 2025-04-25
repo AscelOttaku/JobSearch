@@ -72,17 +72,23 @@ public class ResumeServiceImpl implements ResumeService {
                     .filter(contactType -> !resumesContactTypes.contains(contactType.getType()))
                     .toList();
 
-            resumeDto.getContactInfos().addAll(
-                    nonExistContactTypes.stream()
-                            .map(contactTypeDto -> ContactInfoDto.builder()
-                                    .contactType(contactTypeDto)
-                                    .build())
-                            .toList()
-            );
+            List<ContactInfoDto> contactInfos = nonExistContactTypes.stream()
+                    .map(contactTypeDto -> ContactInfoDto.builder()
+                            .contactType(contactTypeDto)
+                            .build())
+                    .toList();
+
+            contactInfos.forEach(contactInfoDto -> {
+                if (contactInfoDto.getContactType().getType().equals("PHONE_NUMBER"))
+                    contactInfoDto.setValue("+996");
+            });
+
+            resumeDto.getContactInfos().addAll(contactInfos);
         }
 
         return resumeDto;
     }
+
 
     @Override
     public List<ResumeDto> findResumesByCategoryId(Long categoryId) {

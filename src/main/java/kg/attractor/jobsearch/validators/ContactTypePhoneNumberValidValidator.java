@@ -17,7 +17,7 @@ public class ContactTypePhoneNumberValidValidator implements ConstraintValidator
             if (value == null || value.isBlank())
                 return true;
 
-            if (!value.matches("^\\+?[0-9\\-\\s]+$")) {
+            if (!value.matches("^\\+?[0-9\\-\\s]+$") || value.length() != 13) {
                 constraintValidatorContext.buildConstraintViolationWithTemplate(
                         "phone number is not valid"
                 )
