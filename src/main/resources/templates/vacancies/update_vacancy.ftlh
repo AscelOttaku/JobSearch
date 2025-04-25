@@ -17,10 +17,12 @@
         .btn-submit:hover {
             background-color: #0b5ed7;
         }
+        .is-invalid {
+            border-color: #dc3545;
+        }
     </style>
 
     <div class="container py-5">
-
         <#if spring.hasGlobalErrors?? && spring.hasGlobalErrors("vacancy")>
             <div class="text-danger small">
                 <#list spring.globalErrors("vacancy") as err>
@@ -36,11 +38,11 @@
                     <form method="post" action="/vacancies/update/vacancy">
 
                         <#if _csrf??>
-                            <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
-                                   value="${(_csrf.token)!'csrf-token'}"/>
+                            <input type="hidden" name="${(_csrf.parameterName)!}" value="${(_csrf.token)!}"/>
                         </#if>
 
-                        <@spring.formHiddenInput "vacancy.vacancyId", 'class="form-control", type="hidden", placeholder="Введите название", id="name"'/>
+                        <@spring.formHiddenInput "vacancy.vacancyId"/>
+
                         <div class="mb-3">
                             <label for="name" class="form-label">
                                 <i class="bi bi-card-heading form-icon me-2"></i>Название вакансии
@@ -54,16 +56,18 @@
                                 <label for="categoryId" class="form-label">
                                     <i class="bi bi-briefcase form-icon me-2"></i>Категория
                                 </label>
-                                <select class="form-select" id="categoryId" name="categoryId">
+                                <@spring.bind "vacancy.categoryId"/>
+                                <select class="form-select ${(spring.status.error)?string('is-invalid','')}"
+                                        id="categoryId" name="${spring.status.expression}">
                                     <option value="">Выберите категорию</option>
                                     <#list categories as category>
                                         <option value="${category.id}"
                                                 ${(vacancy.categoryId?? && vacancy.categoryId == category.id)?string('selected','')}>
                                             ${category.name}
                                         </option>
-                                        <@spring.showErrors "vacancy.categoryId" "text-danger small"/>
                                     </#list>
                                 </select>
+                                <@spring.showErrors "<br>" "text-danger small"/>
                             </div>
                             <div class="col-md-6">
                                 <label for="salary" class="form-label">
@@ -80,14 +84,14 @@
                                     <i class="bi bi-clock-history form-icon me-2"></i>Опыт от (лет)
                                 </label>
                                 <@spring.formInput "vacancy.expFrom", 'class="form-control" placeholder="0" id="expFrom" type="number"'/>
-                                <@spring.showErrors "vacancy.expFrom" "text-danger small"/>
+                                <@spring.showErrors "<br>" "text-danger small"/>
                             </div>
                             <div class="col-md-6">
                                 <label for="expTo" class="form-label">
                                     <i class="bi bi-clock-history form-icon me-2"></i>Опыт до (лет)
                                 </label>
                                 <@spring.formInput "vacancy.expTo", 'class="form-control" placeholder="5" id="expTo" type="number"'/>
-                                <@spring.showErrors "vacancy.expTo" "text-danger small"/>
+                                <@spring.showErrors "<br>" "text-danger small"/>
                             </div>
                         </div>
 

@@ -1,10 +1,8 @@
 package kg.attractor.jobsearch.service.impl;
 
-import io.swagger.v3.oas.annotations.info.Contact;
 import kg.attractor.jobsearch.dto.*;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.dto.mapper.impl.ResumeMapper;
-import kg.attractor.jobsearch.enums.ContactTypes;
 import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
 import kg.attractor.jobsearch.exceptions.ResumeNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
@@ -19,7 +17,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -34,6 +31,7 @@ public class ResumeServiceImpl implements ResumeService {
     private final UserService userService;
     private final ResumeMapper resumeMapper;
     private final AuthorizedUserService authorizedUserService;
+    private final ContactTypeService contactTypeService;
 
     @Override
     public List<ResumeDto> findAllResumes() {
@@ -63,22 +61,21 @@ public class ResumeServiceImpl implements ResumeService {
         if (resumeDto.getEducationInfoDtos().isEmpty())
             resumeDto.setEducationInfoDtos(List.of(new EducationalInfoDto()));
 
-        if (resumeDto.getContactInfos().size() < 4) {
+        if (resumeDto.getContactInfos().size() < 5) {
             String resumesContactTypes = resumeDto.getContactInfos()
                     .stream()
                     .map(contactInfoDto -> contactInfoDto.getContactType().getType())
                     .collect(Collectors.joining(", "));
 
-            List<ContactTypes> nonExistContactTypes = Arrays.stream(ContactTypes.values())
-                    .filter(contactTypes -> !resumesContactTypes.contains(contactTypes.name()))
+            List<ContactTypeDto> nonExistContactTypes = contactTypeService.findAllContactTypes()
+                    .stream()
+                    .filter(contactType -> !resumesContactTypes.contains(contactType.getType()))
                     .toList();
 
             resumeDto.getContactInfos().addAll(
                     nonExistContactTypes.stream()
-                            .map(contactTypes -> ContactInfoDto.builder()
-                                    .contactType(ContactTypeDto.builder()
-                                            .type(contactTypes.name())
-                                            .build())
+                            .map(contactTypeDto -> ContactInfoDto.builder()
+                                    .contactType(contactTypeDto)
                                     .build())
                             .toList()
             );

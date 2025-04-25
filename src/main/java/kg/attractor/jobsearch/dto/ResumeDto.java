@@ -1,9 +1,11 @@
 package kg.attractor.jobsearch.dto;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
-import kg.attractor.jobsearch.annotations.EntityExistById;
-import kg.attractor.jobsearch.enums.EntityType;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
+import kg.attractor.jobsearch.annotations.IsCategoryIdExists;
 import lombok.*;
 
 import java.util.List;
@@ -22,13 +24,12 @@ public class ResumeDto {
             regexp = "^[\\p{L}\\d ]+$",
             message = "symbols are not allowed"
     )
+
     private String name;
 
     private Long userId;
 
-    @NotNull(message = "Category id cannot be null")
-    @Positive(message = "{category_id_positive_message}")
-    @EntityExistById(message = "{category_does't_exist}", entityType = EntityType.CATEGORIES)
+    @IsCategoryIdExists
     private Long categoryId;
 
     private String categoryName;

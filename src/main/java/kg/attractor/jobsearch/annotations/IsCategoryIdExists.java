@@ -2,7 +2,7 @@ package kg.attractor.jobsearch.annotations;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-import kg.attractor.jobsearch.validators.UniqueCategoryValidator;
+import kg.attractor.jobsearch.validators.IsCategoryIdExistsValidator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,9 +11,9 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-@Constraint(validatedBy = UniqueCategoryValidator.class)
-public @interface UniqueCategory {
-    String message() default "value is already exists";
+@Constraint(validatedBy = IsCategoryIdExistsValidator.class)
+public @interface IsCategoryIdExists {
+    String message() default "category is not exists";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

@@ -24,6 +24,9 @@
         .linkedin-icon {
             color: #0a66c2;
         }
+        .phone-icon {
+            color: #25d366;
+        }
     </style>
 </head>
 <body>
@@ -49,34 +52,6 @@
                             <i class="bi bi-cash-coin"></i><strong>Ожидаемая зарплата:</strong> ${resume.salary} KGS
                         </p>
                     </div>
-
-                    <!-- Contact Information Section -->
-                    <#if resume.contactInfos?? && resume.contactInfos?size gt 0>
-                        <div class="contact-section mb-4">
-                            <h3 class="section-title"><i class="bi bi-people"></i> Контактная информация</h3>
-                            <div class="info-block">
-                                <#list resume.contactInfos as contact>
-                                    <#if contact.value?? && contact.value?has_content>
-                                        <p>
-                                            <#if contact.contactType.type == "EMAIL">
-                                                <i class="bi bi-envelope-fill contact-icon email-icon"></i>
-                                                <strong>Email:</strong> ${contact.value}
-                                            <#elseif contact.contactType.type == "TELEGRAM">
-                                                <i class="bi bi-telegram contact-icon telegram-icon"></i>
-                                                <strong>Telegram:</strong> ${contact.value}
-                                            <#elseif contact.contactType.type == "FACEBOOK">
-                                                <i class="bi bi-facebook contact-icon facebook-icon"></i>
-                                                <strong>Facebook:</strong> ${contact.value}
-                                            <#elseif contact.contactType.type == "LINKEDIN">
-                                                <i class="bi bi-linkedin contact-icon linkedin-icon"></i>
-                                                <strong>LinkedIn:</strong> ${contact.value}
-                                            </#if>
-                                        </p>
-                                    </#if>
-                                </#list>
-                            </div>
-                        </div>
-                    </#if>
 
                     <#if resume.workExperienceInfoDtos?? && resume.workExperienceInfoDtos?size gt 0>
                         <div class="experience-section">
@@ -118,6 +93,36 @@
                         </div>
                     </#if>
 
+                    <#if resume.contactInfos?? && resume.contactInfos?size gt 0>
+                        <div class="contact-section mb-4">
+                            <h3 class="section-title"><i class="bi bi-people"></i> Контактная информация</h3>
+                            <div class="info-block">
+                                <#list resume.contactInfos as contact>
+                                    <#if contact.value?? && contact.value?has_content>
+                                        <p>
+                                            <#if contact.contactType.type == "EMAIL">
+                                                <i class="bi bi-envelope-fill contact-icon email-icon"></i>
+                                                <strong>Email:</strong> ${contact.value}
+                                            <#elseif contact.contactType.type == "TELEGRAM">
+                                                <i class="bi bi-telegram contact-icon telegram-icon"></i>
+                                                <strong>Telegram:</strong> ${contact.value}
+                                            <#elseif contact.contactType.type == "FACEBOOK">
+                                                <i class="bi bi-facebook contact-icon facebook-icon"></i>
+                                                <strong>Facebook:</strong> ${contact.value}
+                                            <#elseif contact.contactType.type == "LINKEDIN">
+                                                <i class="bi bi-linkedin contact-icon linkedin-icon"></i>
+                                                <strong>LinkedIn:</strong> ${contact.value}
+                                            <#elseif contact.contactType.type == "PHONE_NUMBER">
+                                                <i class="bi bi-telephone-fill contact-icon phone-icon"></i>
+                                                <strong>Телефон:</strong> ${contact.value}
+                                            </#if>
+                                        </p>
+                                    </#if>
+                                </#list>
+                            </div>
+                        </div>
+                    </#if>
+
                     <div class="d-flex justify-content-between align-items-center mt-4">
                         <small class="text-muted">
                             <i class="bi bi-calendar"></i> Обновлено: ${resume.updated!resume.created}
@@ -131,7 +136,7 @@
                             </#if>
 
                             <a href="/users/profile/${resume.userId}" class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-eye"></i> Контактные данные
+                                <i class="bi bi-eye"></i> Дополнительная Информация
                             </a>
                         </div>
                     </div>

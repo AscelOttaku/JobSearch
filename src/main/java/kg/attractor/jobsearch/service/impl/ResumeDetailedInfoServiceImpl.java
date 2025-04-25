@@ -63,11 +63,7 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
                         resumeDto.getWorkExperienceInfoDtos()
                 );
 
-        resumeDto.getContactInfos().forEach(contactInfoDto -> {
-            Long contactTypeId = contactTypeService.createContactType(contactInfoDto.getContactType());
-            contactInfoDto.getContactType().setContactTypeId(contactTypeId);
-            contactInfoService.createContactInfo(contactInfoDto);
-        });
+        resumeDto.getContactInfos().forEach(contactInfoService::createContactInfo);
 
         return resumeId;
     }
@@ -111,8 +107,6 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
 
         resumeDto.getContactInfos().forEach(contactInfoDto -> {
             contactInfoDto.setResumeId(res);
-            Long contactTypeId = contactTypeService.createContactType(contactInfoDto.getContactType());
-            contactInfoDto.getContactType().setContactTypeId(contactTypeId);
             contactInfoService.createContactInfo(contactInfoDto);
         });
     }
@@ -138,18 +132,16 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
         resumeDto.setWorkExperienceInfoDtos(List.of(new WorkExperienceInfoDto()));
         resumeDto.setEducationInfoDtos(List.of(new EducationalInfoDto()));
 
-        List<String> contactTypes = List.of("LINKEDIN", "TELEGRAM", "FACEBOOK", "EMAIL");
+        List<ContactInfoDto> contactTypes = contactTypeService.findAllContactTypes()
+                .stream()
+                .map(contactTypeDto -> ContactInfoDto.builder()
+                        .contactType(contactTypeDto)
+                        .build())
+                .toList();
 
         resumeDto.setContactInfos(new ArrayList<>());
 
-        IntStream.range(0, 4).forEach(index ->
-                resumeDto.getContactInfos().add(
-                        ContactInfoDto.builder()
-                                .contactType(ContactTypeDto.builder()
-                                        .type(contactTypes.get(index))
-                                        .build())
-                                .build()
-                ));
+        IntStream.range(0, 5).forEach(index -> resumeDto.getContactInfos().add(contactTypes.get(index)));
 
         model.put("resume", resumeDto);
         return model;

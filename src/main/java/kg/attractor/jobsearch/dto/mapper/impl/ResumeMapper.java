@@ -65,7 +65,7 @@ public class ResumeMapper implements Mapper<ResumeDto, Resume> {
                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) :
                 LocalDateTime.now());
         resume.setUpdated(resumeDto.getUpdated() != null ?
-                LocalDateTime.parse(resumeDto.getUpdated()) : null);
+                LocalDateTime.parse(resumeDto.getUpdated()) : resume.getCreated());
         return resume;
     }
 }

@@ -23,22 +23,26 @@
                             <@spring.showErrors "<br>" "text-danger small"/>
                         </div>
 
+                        <div class="mb-4">
+                            <label for="categoryId" class="form-label">
+                                <i class="bi bi-briefcase form-icon me-2"></i>Категория
+                            </label>
+                            <@spring.bind "resume.categoryId"/>
+                            <select class="form-select ${(spring.status.error)?string('is-invalid','')}"
+                                    id="categoryId"
+                                    name="${spring.status.expression}">
+                                <option value="0">Выберите категорию</option>
+                                <#list categories as category>
+                                    <option value="${category.id}"
+                                            ${(resume.categoryId?? && resume.categoryId == category.id)?string('selected','')}>
+                                        ${category.name}
+                                    </option>
+                                </#list>
+                            </select>
+                            <@spring.showErrors "<br>" "text-danger small"/>
+                        </div>
+
                         <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="category.id" class="form-label">
-                                    <i class="bi bi-briefcase form-icon me-2"></i>Категория
-                                </label>
-                                <select class="form-select" id="" name="categoryId">
-                                    <option value="category.id">Выберите категорию</option>
-                                    <#list categories as category>
-                                        <option value="${category.id}"
-                                                ${(resume.categoryId?? && resume.categoryId == category.id)?string('selected','')}>
-                                            ${category.name}
-                                        </option>
-                                    </#list>
-                                </select>
-                                <@spring.showErrors "<br>" "text-danger small"/>
-                            </div>
                             <div class="col-md-6">
                                 <label for="salary" class="form-label">
                                     <i class="bi bi-cash-coin form-icon me-2"></i>Ожидаемое Зарплата (KGS)
@@ -95,7 +99,7 @@
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="degree" class="form-label">
-                                            <i class="bi bi-award form-icon me-2">Образование</i>
+                                            <i class="bi bi-award form-icon me-2"></i> Образование
                                         </label>
                                         <@spring.formInput "resume.educationInfoDtos[${index}].degree", 'class="form-control" placeholder="Образование" id="degree"'/>
                                         <@spring.showErrors "<br>" "text-danger small"/>
@@ -143,10 +147,10 @@
                                 <i class="bi bi-people form-icon me-2"></i>Социальные сети
                             </label>
                             <#list resume.contactInfos as contact>
-                            <div class="col-md-6 mb-3">
-                                <div class="social-input-group">
-                                    <div class="input-group">
-                                                <span class="input-group-text">
+                                <div class="col-md-6 mb-3">
+                                    <div class="social-input-group">
+                                        <div class="input-group">
+                                            <span class="input-group-text">
                                                 <#if contact.contactType.type == "EMAIL">
                                                     <i class="bi bi-envelope-fill social-icon email-icon"></i>
                                                 <#elseif contact.contactType.type == "TELEGRAM">
@@ -155,49 +159,50 @@
                                                     <i class="bi bi-facebook social-icon facebook-icon"></i>
                                                 <#elseif contact.contactType.type == "LINKEDIN">
                                                     <i class="bi bi-linkedin social-icon linkedin-icon"></i>
+                                                <#elseif contact.contactType.type == "PHONE_NUMBER">
+                                                    <i class="bi bi-telephone-fill social-icon phone-icon"></i>
                                                 </#if>
-                                                </span>
-                                        <#if contact.contactType.type == "EMAIL">
-                                        <@spring.formInput "resume.contactInfos[${contact?index}].value"
-                                        'class="form-control" placeholder="Email address"' />
-                                        <@spring.formHiddenInput "resume.contactInfos[${contact?index}].contactType.type"/>
-                                        <div class="mb-3">
-
+                                            </span>
+                                            <#if contact.contactType.type == "EMAIL">
+                                                <@spring.formInput "resume.contactInfos[${contact?index}].value"
+                                                'class="form-control" placeholder="Email address"' />
+                                                <@spring.formHiddenInput "resume.contactInfos[${contact?index}].contactType.type"/>
                                             <#elseif contact.contactType.type == "TELEGRAM">
                                                 <@spring.formInput "resume.contactInfos[${contact?index}].value"
                                                 'class="form-control" placeholder="Telegram username"' />
                                                 <@spring.formHiddenInput "resume.contactInfos[${contact?index}].contactType.type"/>
-
                                             <#elseif contact.contactType.type == "FACEBOOK">
                                                 <@spring.formInput "resume.contactInfos[${contact?index}].value"
                                                 'class="form-control" placeholder="Facebook profile"' />
                                                 <@spring.formHiddenInput "resume.contactInfos[${contact?index}].contactType.type"/>
-
                                             <#elseif contact.contactType.type == "LINKEDIN">
                                                 <@spring.formInput "resume.contactInfos[${contact?index}].value"
                                                 'class="form-control" placeholder="LinkedIn profile"' />
+                                                <@spring.formHiddenInput "resume.contactInfos[${contact?index}].contactType.type"/>
+                                            <#elseif contact.contactType.type == "PHONE_NUMBER">
+                                                <@spring.formInput "resume.contactInfos[${contact?index}].value"
+                                                'class="form-control" placeholder="Phone Number"' />
                                                 <@spring.formHiddenInput "resume.contactInfos[${contact?index}].contactType.type"/>
                                             </#if>
                                         </div>
                                         <@spring.showErrors "<br>" "text-danger small mt-1"/>
                                     </div>
                                 </div>
-                                </#list>
-                            </div>
+                            </#list>
+                        </div>
 
-                            <div class="mb-4 form-check form-switch">
-                                <input type="checkbox" class="form-check-input" role="switch"
-                                       id="isActive"
-                                       name="isActive" ${(resume.isActive!true)?then('checked', '')}>
-                                <label class="form-check-label" for="active">
-                                    <i class="bi bi-power form-icon me-2"></i>
-                                    Вакансия активна
-                                </label>
-                            </div>
+                        <div class="mb-4 form-check form-switch">
+                            <input type="checkbox" class="form-check-input" role="switch"
+                                   id="isActive"
+                                   name="isActive" ${(resume.isActive!true)?then('checked', '')}>
+                            <label class="form-check-label" for="active">
+                                <i class="bi bi-power form-icon me-2"></i>
+                                Вакансия активна
+                            </label>
+                        </div>
 
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary btn-lg">Сохранить Резюме</button>
-                            </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Сохранить Резюме</button>
                         </div>
                     </form>
                 </div>

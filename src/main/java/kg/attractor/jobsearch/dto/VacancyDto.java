@@ -29,7 +29,6 @@ public class VacancyDto {
 
     @NotNull(message = "{null_message}")
     @Positive(message = "{positive_number_message}")
-    @EntityExistById(message = "{category_does't_exist}", entityType = EntityType.CATEGORIES)
     private Long categoryId;
 
     private String categoryName;

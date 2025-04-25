@@ -1,10 +1,9 @@
 package kg.attractor.jobsearch.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import kg.attractor.jobsearch.annotations.UniqueCategory;
+import kg.attractor.jobsearch.annotations.IsCategoryNameExists;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -20,7 +19,7 @@ public class CategoryDto {
             message = "{symbol_numbers_pattern_message}"
     )
 
-    @UniqueCategory(message = "category name is already exists")
+    @IsCategoryNameExists(message = "category name is already exists")
     private String name;
 
     private Long parentId;

@@ -52,12 +52,12 @@ public class SecurityConfig {
 
                                 //Vacancies Endpoints
 
+                                .requestMatchers(POST, "/vacancies/times?vacancyId=**").hasAnyAuthority(Roles.EMPLOYER.getValue())
                                 .requestMatchers(GET, "/vacancies/new_vacancy").hasAuthority(Roles.EMPLOYER.getValue())
                                 .requestMatchers(GET, "/vacancies/update/vacancy/*").hasAnyAuthority(Roles.EMPLOYER.getValue())
                                 .requestMatchers(PUT, "/vacancies/redactor-vacancies").hasAuthority(Roles.EMPLOYER.getValue())
                                 .requestMatchers(DELETE, "/vacancies/delete_vacancies").hasAuthority(Roles.EMPLOYER.getValue())
                                 .requestMatchers("/vacancies/users/responded_vacancies").hasAuthority(Roles.EMPLOYER.getValue())
-                                .requestMatchers(POST, "/vacancies/times").fullyAuthenticated()
 
                                 // Users
 

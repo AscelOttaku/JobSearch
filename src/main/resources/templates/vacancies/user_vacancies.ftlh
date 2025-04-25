@@ -28,19 +28,19 @@
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="sortDropdown">
                         <li><a class="dropdown-item"
-                               href="/vacancies/actives?page=${vacancies.page}&size=${vacancies.size}">
+                               href="/vacancies/users?page=${vacancies.page}&size=${vacancies.size}">
                                 <i class="bi bi-arrow-down"></i> Новые сначала</a></li>
                         <li><a class="dropdown-item"
-                               href="/vacancies/filtered?page=${vacancies.page}&size=${vacancies.size}&filterType=OLD">
+                               href="/vacancies/users/filtered?page=${vacancies.page}&size=${vacancies.size}&filterType=OLD">
                                 <i class="bi bi-arrow-up"></i> Старые сначала</a></li>
                         <li><a class="dropdown-item"
-                               href="/vacancies/filtered?page${vacancies.page}&size=${vacancies.size}&filterType=SALARY_DESC">
+                               href="/vacancies/users/filtered?page${vacancies.page}&size=${vacancies.size}&filterType=SALARY_DESC">
                                 <i class="bi bi-currency-dollar"></i> По убыванию зарплаты</a></li>
                         <li><a class="dropdown-item"
-                               href="/vacancies/filtered?page${vacancies.page}&size=${vacancies.size}&filterType=SALARY_ASC">
+                               href="/vacancies/users/filtered?page${vacancies.page}&size=${vacancies.size}&filterType=SALARY_ASC">
                                 <i class="bi bi-currency-dollar"></i> По возрастанию зарплаты</a></li>
                         <li><a class="dropdown-item"
-                               href="/vacancies/filtered?page=${vacancies.page}&size=${vacancies.size}&filterType=RESPONSES">
+                               href="/vacancies/users/filtered?page=${vacancies.page}&size=${vacancies.size}&filterType=RESPONSES">
                                 <i class="bi bi-chat-left-dots"></i> По количеству откликов</a>
                         </li>
                     </ul>
@@ -86,7 +86,6 @@
                         </a>
 
                         <form action="/vacancies/times?vacancyId=${vacancy.vacancyId}" method="post" class="d-inline">
-
                             <#if _csrf??>
                                 <input type="hidden" name="${(_csrf.parameterName)!}" value="${(_csrf.token)!}"/>
                             </#if>
@@ -106,11 +105,11 @@
             <ul class="pagination justify-content-center">
                 <li class="page-item <#if !vacancies.hasPreviousPage>disabled</#if>">
                     <#if vacancies.filterType?? && vacancies.filterType.name() != 'NEW'>
-                        <a class="page-link" href="/vacancies/filtered?page=${vacancies.page - 1}&size=${vacancies.size}&filterType=${vacancies.filterType.name()}">
+                        <a class="page-link" href="/vacancies/users/filtered?page=${vacancies.page - 1}&size=${vacancies.size}&filterType=${vacancies.filterType.name()}">
                             &laquo; Назад
                         </a>
                     <#else>
-                        <a class="page-link" href="/vacancies?page=${vacancies.page - 1}">
+                        <a class="page-link" href="/vacancies/users?page=${vacancies.page - 1}">
                             &laquo; Назад
                         </a>
                     </#if>
@@ -119,11 +118,11 @@
                 <#list 1..vacancies.totalPages as pageNum>
                     <li class="page-item <#if vacancies.page == pageNum - 1>active</#if>">
                         <#if vacancies.filterType?? && vacancies.filterType.name() != 'NEW'>
-                            <a class="page-link" href="/vacancies/filtered?page=${pageNum - 1}&size=${vacancies.size}&filterType=${vacancies.filterType.name()}">
+                            <a class="page-link" href="/vacancies/users/filtered?page=${pageNum - 1}&size=${vacancies.size}&filterType=${vacancies.filterType.name()}">
                                 ${pageNum}
                             </a>
                         <#else>
-                            <a class="page-link" href="/vacancies?page=${pageNum - 1}">
+                            <a class="page-link" href="/vacancies/users?page=${pageNum - 1}">
                                 ${pageNum}
                             </a>
                         </#if>
@@ -132,11 +131,11 @@
 
                 <li class="page-item <#if !vacancies.hasNextPage>disabled</#if>">
                     <#if vacancies.filterType?? && vacancies.filterType.name() != 'NEW'>
-                        <a class="page-link" href="/vacancies/filtered?page=${vacancies.page + 1}&size=${vacancies.size}&filterType=${vacancies.filterType.name()}">
+                        <a class="page-link" href="/vacancies/users/filtered?page=${vacancies.page + 1}&size=${vacancies.size}&filterType=${vacancies.filterType.name()}">
                             Вперед &raquo;
                         </a>
                     <#else>
-                        <a class="page-link" href="/vacancies?page=${vacancies.page + 1}">
+                        <a class="page-link" href="/vacancies/users?page=${vacancies.page + 1}">
                             Вперед &raquo;
                         </a>
                     </#if>

@@ -18,10 +18,6 @@ public class ContactInfoServiceImpl implements ContactInfoService {
         if (contactInfoDto.getValue() == null || contactInfoDto.getValue().isBlank())
             return;
 
-        if (contactInfoDto.getContactType().getType().equalsIgnoreCase("email") &&
-                !contactInfoDto.getValue().contains("@"))
-            return;
-
         contactInfoRepository.save(contactInfoMapper.mapToEntity(contactInfoDto));
     }
 }

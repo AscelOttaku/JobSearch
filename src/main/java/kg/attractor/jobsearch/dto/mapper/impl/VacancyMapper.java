@@ -46,11 +46,11 @@ public class VacancyMapper implements Mapper<VacancyDto, Vacancy> {
                 .created(Util.dateTimeFormat(vacancy.getCreated()))
                 .updated(Util.dateTimeFormat(vacancy.getUpdated()))
                 .respondedApplications(vacancy.getRespondedApplications().stream()
-                                .map(respondedApplication -> RespondApplicationDto.builder()
-                                        .resumeDto(resumeMapper.mapToDto(respondedApplication.getResume()))
-                                        .confirmation(respondedApplication.getConfirmation())
-                                        .build())
-                                .toList())
+                        .map(respondedApplication -> RespondApplicationDto.builder()
+                                .resumeDto(resumeMapper.mapToDto(respondedApplication.getResume()))
+                                .confirmation(respondedApplication.getConfirmation())
+                                .build())
+                        .toList())
                 .build();
     }
 
@@ -74,6 +74,10 @@ public class VacancyMapper implements Mapper<VacancyDto, Vacancy> {
         vacancy.setUser(user);
         vacancy.setCreated(vacancyDto.getCreated() != null ?
                 LocalDateTime.parse(vacancyDto.getCreated(),
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) :
+                LocalDateTime.now());
+        vacancy.setUpdated(vacancyDto.getUpdated() != null ?
+                LocalDateTime.parse(vacancyDto.getUpdated(),
                         DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) :
                 LocalDateTime.now());
         return vacancy;

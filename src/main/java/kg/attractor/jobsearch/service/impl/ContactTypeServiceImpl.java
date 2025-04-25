@@ -2,12 +2,12 @@ package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dto.ContactTypeDto;
 import kg.attractor.jobsearch.dto.mapper.impl.ContactTypeMapper;
-import kg.attractor.jobsearch.model.ContactType;
 import kg.attractor.jobsearch.repository.ContactTypeRepository;
 import kg.attractor.jobsearch.service.ContactTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -29,8 +29,10 @@ public class ContactTypeServiceImpl implements ContactTypeService {
     }
 
     @Override
-    public Long createContactType(ContactTypeDto contactTypeDto) {
-        return contactTypeRepository.save(contactTypeMapper.mapToEntity(contactTypeDto))
-                .getId();
+    public List<ContactTypeDto> findAllContactTypes() {
+        return contactTypeRepository.findAll()
+                .stream()
+                .map(contactTypeMapper::mapToDto)
+                .toList();
     }
 }

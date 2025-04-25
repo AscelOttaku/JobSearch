@@ -44,7 +44,9 @@
                                 <label for="categoryId" class="form-label">
                                     <i class="bi bi-briefcase form-icon me-2"></i>Категория
                                 </label>
-                                <select class="form-select" id="categoryId" name="categoryId">
+                                <@spring.bind "vacancy.categoryId"/>
+                                <select class="form-select ${(spring.status.error)?string('is-invalid','')}"
+                                        id="categoryId" name="${spring.status.expression}">
                                     <option value="">Выберите категорию</option>
                                     <#list categories as category>
                                         <option value="${category.id}"
