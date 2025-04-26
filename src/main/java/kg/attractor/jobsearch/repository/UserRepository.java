@@ -51,4 +51,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("select u.avatar from User u where u.userId = :userId")
     Optional<String> findUserAvatarById(Long userId);
+
+    Optional<User> findUserByResetPasswordToken(String token);
 }

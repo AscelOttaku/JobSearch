@@ -1,5 +1,7 @@
 package kg.attractor.jobsearch.service.impl;
 
+import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
@@ -11,12 +13,14 @@ import kg.attractor.jobsearch.repository.UserRepository;
 import kg.attractor.jobsearch.service.UserService;
 import kg.attractor.jobsearch.service.VacancyService;
 import kg.attractor.jobsearch.util.FileUtil;
+import kg.attractor.jobsearch.util.Util;
 import kg.attractor.jobsearch.validators.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,6 +36,8 @@ public class UserServiceImpl implements UserService {
     private final Mapper<UserDto, User> userMapper;
     private final UserRepository userRepository;
     private final VacancyService vacancyService;
+    private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     @Transactional
     @Override
@@ -254,5 +260,39 @@ public class UserServiceImpl implements UserService {
         Optional<User> userByEmail = userRepository.findUserByEmail(email);
 
         return userByEmail.isEmpty() || Objects.equals(authorizedUserEmail, userByEmail.get().getEmail());
+    }
+
+    private void updateResetPasswordToken(String token, String email) {
+        User user = userRepository.findUserByEmail(email)
+                .orElseThrow(() -> new NoSuchElementException("User not found by email " + email));
+
+        user.setResetPasswordToken(token);
+        userRepository.saveAndFlush(user);
+    }
+
+    @Override
+    public User findUserByPasswordResetToken(String token) {
+        return userRepository.findUserByResetPasswordToken(token)
+                .orElseThrow(() -> new NoSuchElementException("user not found by token " + token));
+    }
+
+    @Override
+    public void updatePassword(User user, String newPassword) {
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setResetPasswordToken(null);
+        userRepository.saveAndFlush(user);
+    }
+
+    @Override
+    public void makeResetPasswordLink(HttpServletRequest request) throws MessagingException {
+        String email = request.getParameter("email");
+        Validator.isValidEmail(email);
+
+        String token = UUID.randomUUID().toString();
+
+        updateResetPasswordToken(token, email);
+        String resetPasswordLink = Util.getSiteUrl(request) + "/auth/reset_password?token=" + token;
+
+        emailService.sendEmail(email, resetPasswordLink);
     }
 }

@@ -65,6 +65,12 @@
             <div class="signup-link">
                 <p>Don't have an account? <a href="/auth/registration">Sign up</a></p>
             </div>
+
+            <div class="text-center mt-3">
+                <a href="/auth/forgot_password" class="btn btn-dark" style="text-decoration: none; font-weight: bold;">
+                    Forgot password?
+                </a>
+            </div>
         </div>
     </div>
 </@layout.layout>

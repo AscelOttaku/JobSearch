@@ -25,6 +25,16 @@ public class Validator {
         );
     }
 
+    public static void isValidEmail(String email) {
+        if (!email.contains("@") || !email.contains("."))
+            throw new IllegalArgumentException("email is not valid");
+    }
+
+    public static void notBlank(String arg) {
+        if (arg == null || arg.isBlank())
+            throw new IllegalArgumentException("argument is blank");
+    }
+
     public static boolean isNotEmptyWorkExperience(WorkExperienceInfoDto workExperienceInfoDto) {
         return workExperienceInfoDto.getYears() != null ||
                 workExperienceInfoDto.getPosition() != null && !workExperienceInfoDto.getPosition().isBlank() ||

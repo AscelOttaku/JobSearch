@@ -16,8 +16,13 @@ public class UniqueEmailValidator implements ConstraintValidator<UniqueEmail, St
 
     @Override
     public boolean isValid(String email, ConstraintValidatorContext constraintValidatorContext) {
-        boolean emailExist = userService.isUserEmailIsUnique(email);
-        log.info("Email exist: {}", emailExist);
-        return emailExist;
+
+        if (email.contains("@") && email.contains(".")) {
+            boolean emailExist = userService.isUserEmailIsUnique(email);
+            log.info("Email exist: {}", emailExist);
+            return emailExist;
+        }
+
+        return false;
     }
 }

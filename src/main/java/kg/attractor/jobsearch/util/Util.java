@@ -1,5 +1,6 @@
 package kg.attractor.jobsearch.util;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.text.CaseUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -45,5 +46,10 @@ public class Util {
         } catch (NumberFormatException e) {
             return Optional.empty();
         }
+    }
+
+    public static String getSiteUrl(HttpServletRequest request) {
+        String siteUrl = request.getRequestURL().toString();
+        return siteUrl.replace(request.getRequestURI(), "");
     }
 }

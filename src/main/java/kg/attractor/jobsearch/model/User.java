@@ -1,11 +1,8 @@
 package kg.attractor.jobsearch.model;
 
-import jakarta.persistence.Table;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.io.Serializable;
 
 @Getter
 @Setter
@@ -48,6 +45,9 @@ public class User {
 
     @Column(name = "enabled", nullable = false)
     private boolean enabled;
+
+    @Column(name = "reset_password_token")
+    private String resetPasswordToken;
 
     @PostLoad
     public void postLoad() {
