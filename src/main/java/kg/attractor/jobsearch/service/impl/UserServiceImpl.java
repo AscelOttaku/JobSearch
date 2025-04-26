@@ -52,17 +52,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public void createUser(UserDto userDto) {
 
-        String accountType = userDto.getAccountType();
-        if (accountType == null || accountType.isBlank())
-            throw new CustomIllegalArgException(
-                    "account type is null or blank",
-                    CustomBindingResult.builder()
-                            .className(User.class.getSimpleName())
-                            .fieldName("accountType")
-                            .rejectedValue(accountType)
-                            .build()
-            );
-
         if (!userDto.getAccountType().equalsIgnoreCase("jobSeeker") &&
                 !userDto.getAccountType().equalsIgnoreCase("employer"))
             throw new CustomIllegalArgException(
@@ -74,44 +63,22 @@ public class UserServiceImpl implements UserService {
                             .build()
             );
 
-        userRepository.findUserByEmail(userDto.getEmail())
-                .ifPresent(user -> {
-                    throw new CustomIllegalArgException(
-                        "email is already exists",
-                        CustomBindingResult.builder()
-                                .className(User.class.getSimpleName())
-                                .fieldName("email")
-                                .rejectedValue(userDto.getEmail())
-                                .build());
-                });
-
-        userRepository.findUserByPhoneNumber(userDto.getPhoneNumber())
-                .ifPresent(user -> {
-                    throw new CustomIllegalArgException(
-                        "phone number is already exists",
-                        CustomBindingResult.builder()
-                                .className(User.class.getSimpleName())
-                                .fieldName("phoneNumber")
-                                .rejectedValue(userDto.getPhoneNumber())
-                                .build());
-                });
-
         userRepository.save(userMapper.mapToEntity(userDto));
     }
 
     @Override
-    public void updateUser(UserDto userDto, UserDetails userDetails) {
-        UserDto userPreviousVal = findUserByEmail(userDetails.getUsername());
+    public void updateUser(UserDto userDto) {
+        UserDto userPreviousVal = getAuthorizedUser();
 
         if (!userDto.getEmail().equals(userPreviousVal.getEmail())) {
-                throw new CustomIllegalArgException(
-                        "param email cannot be changed",
-                        CustomBindingResult.builder()
-                                .className(User.class.getSimpleName())
-                                .fieldName("email")
-                                .rejectedValue(userDto.getEmail())
-                                .build()
-                );
+            throw new CustomIllegalArgException(
+                    "param email cannot be changed",
+                    CustomBindingResult.builder()
+                            .className(User.class.getSimpleName())
+                            .fieldName("email")
+                            .rejectedValue(userDto.getEmail())
+                            .build()
+            );
         }
 
         User entity = userMapper.mapToEntity(userDto);

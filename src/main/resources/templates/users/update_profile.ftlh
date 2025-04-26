@@ -12,7 +12,6 @@
         <link rel="stylesheet" href="/css/auth_form.css">
         <link rel="stylesheet" href="/css/auth_failed.css">
         <link rel="stylesheet" href="/static/css/update_profile.css">
-
     </head>
     <body class="bg-light">
     <div class="container py-5">
@@ -65,12 +64,12 @@
                                                 </h5>
                                                 <div class="mb-3">
                                                     <label class="form-label">Имя</label>
-                                                    <@spring.formInput "user.name", 'class="form-control" placeholder="Введите имя" required'/>
+                                                    <@spring.formInput "user.name", 'class="form-control" placeholder="Введите имя" '/>
                                                     <@spring.showErrors "<br>" "text-danger small"/>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Фамилия</label>
-                                                    <@spring.formInput "user.surname", 'class="form-control" placeholder="Введите фамилию" required'/>
+                                                    <@spring.formInput "user.surname", 'class="form-control" placeholder="Введите фамилию" '/>
                                                     <@spring.showErrors "<br>" "text-danger small"/>
                                                 </div>
                                                 <div class="mb-3">
@@ -90,7 +89,7 @@
                                                 </h5>
                                                 <div class="mb-3">
                                                     <label class="form-label">Email</label>
-                                                    <@spring.formInput "user.email", 'class="form-control" placeholder="Введите email" type="email" required'/>
+                                                    <@spring.formInput "user.email", 'class="form-control" placeholder="Введите email" type="email" '/>
                                                     <@spring.showErrors "<br>" "text-danger small"/>
                                                 </div>
                                                 <div class="mb-3">

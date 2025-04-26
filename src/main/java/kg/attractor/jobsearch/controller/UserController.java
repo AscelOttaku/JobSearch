@@ -138,11 +138,8 @@ public class UserController {
 
     @PostMapping("/updates/profile")
     @ResponseStatus(HttpStatus.SEE_OTHER)
-    public String updateUser(
-            @ModelAttribute @Valid UserDto userDto,
-            @AuthenticationPrincipal UserDetails userDetails
-    ) {
-        userService.updateUser(userDto, userDetails);
+    public String updateUser(@ModelAttribute @Valid UserDto userDto) {
+        userService.updateUser(userDto);
         return "redirect:/users/profile";
     }
 

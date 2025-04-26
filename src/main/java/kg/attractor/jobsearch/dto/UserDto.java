@@ -6,9 +6,9 @@ import kg.attractor.jobsearch.annotations.UniquePhoneNumber;
 import kg.attractor.jobsearch.annotations.ValidPassword;
 import lombok.*;
 
-@Builder
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {

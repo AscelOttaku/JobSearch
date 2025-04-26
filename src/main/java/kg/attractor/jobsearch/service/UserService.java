@@ -2,7 +2,6 @@ package kg.attractor.jobsearch.service;
 
 import kg.attractor.jobsearch.dto.UserDto;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -16,7 +15,7 @@ public interface UserService {
 
     void createUser(UserDto userDto);
 
-    void updateUser(UserDto userDto, UserDetails userDetails);
+    void updateUser(UserDto userDto);
 
     UserDto findJobSeekerByEmail(String userEmail);
 
