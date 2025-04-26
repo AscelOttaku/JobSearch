@@ -60,7 +60,7 @@ public class ResumeMapper implements Mapper<ResumeDto, Resume> {
         resume.setCategory(category);
         resume.setUser(user);
         resume.setSalary(resumeDto.getSalary());
-        resume.setIsActive(resumeDto.getIsActive());
+        resume.setIsActive(resumeDto.isActive());
         resume.setCreated(resumeDto.getCreated() != null ? LocalDateTime.parse(resumeDto.getCreated(),
                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) :
                 LocalDateTime.now());

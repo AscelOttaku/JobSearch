@@ -17,9 +17,9 @@ public class ContactInfoValidEmailFormatValidator implements ConstraintValidator
             if (value == null || value.isBlank())
                 return true;
 
-            if (!(value.contains("@") && value.contains("."))) {
+            if (!(value.contains("@") && value.contains("gmail.com"))) {
                 constraintValidatorContext.buildConstraintViolationWithTemplate(
-                        "email is not contains @ or point its not allowed"
+                        "email is not contains @ or (gmail.com) its not allowed"
                 )
                         .addPropertyNode("value")
                         .addConstraintViolation();

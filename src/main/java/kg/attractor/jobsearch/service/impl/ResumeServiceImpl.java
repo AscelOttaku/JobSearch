@@ -67,19 +67,17 @@ public class ResumeServiceImpl implements ResumeService {
                     .map(contactInfoDto -> contactInfoDto.getContactType().getType())
                     .collect(Collectors.joining(", "));
 
-            List<ContactTypeDto> nonExistContactTypes = contactTypeService.findAllContactTypes()
+            List<ContactInfoDto> contactInfos = contactTypeService.findAllContactTypes()
                     .stream()
                     .filter(contactType -> !resumesContactTypes.contains(contactType.getType()))
-                    .toList();
-
-            List<ContactInfoDto> contactInfos = nonExistContactTypes.stream()
                     .map(contactTypeDto -> ContactInfoDto.builder()
                             .contactType(contactTypeDto)
                             .build())
                     .toList();
 
             contactInfos.forEach(contactInfoDto -> {
-                if (contactInfoDto.getContactType().getType().equals("PHONE_NUMBER"))
+                String phoneNumberType = contactInfoDto.getContactType().getType();
+                if (phoneNumberType.equals("PHONE_NUMBER") && contactInfoDto.getValue() == null)
                     contactInfoDto.setValue("+996");
             });
 

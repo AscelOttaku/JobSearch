@@ -1,9 +1,9 @@
 package kg.attractor.jobsearch.exceptions;
 
-import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
+import java.util.NoSuchElementException;
 
-public class UserNotFoundException extends EntityNotFoundException {
-    public UserNotFoundException(String message, CustomBindingResult bindingResult) {
-        super(message, bindingResult);
+public class UserNotFoundException extends NoSuchElementException {
+    public UserNotFoundException(String message) {
+        super(message);
     }
 }

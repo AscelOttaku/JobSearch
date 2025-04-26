@@ -21,8 +21,8 @@
         <div class="resume-card">
             <div class="resume-header">
                 <h2 class="resume-title">${resume.name}</h2>
-                <span class="resume-status ${resume.isActive?string('text-bg-success', 'text-bg-secondary')}">
-                    ${resume.isActive?string('Активно', 'Неактивно')}
+                <span class="resume-status ${resume.active?string('text-bg-success', 'text-bg-secondary')}">
+                    ${resume.active?string('Активно', 'Неактивно')}
                 </span>
             </div>
 

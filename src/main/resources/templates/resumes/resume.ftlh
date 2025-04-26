@@ -39,8 +39,8 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start mb-4">
                         <h1 class="card-title">${resume.name}</h1>
-                        <span class="badge ${resume.isActive?string('bg-success', 'bg-secondary')}">
-                            ${resume.isActive?string('Активно', 'Неактивно')}
+                        <span class="badge ${resume.active?string('bg-success', 'bg-secondary')}">
+                            ${resume.active?string('Активно', 'Неактивно')}
                         </span>
                     </div>
 
@@ -112,7 +112,7 @@
                                             <#elseif contact.contactType.type == "LINKEDIN">
                                                 <i class="bi bi-linkedin contact-icon linkedin-icon"></i>
                                                 <strong>LinkedIn:</strong> ${contact.value}
-                                            <#elseif contact.contactType.type == "PHONE_NUMBER">
+                                            <#elseif contact.contactType.type == "PHONE_NUMBER" && contact.value != '+996'>
                                                 <i class="bi bi-telephone-fill contact-icon phone-icon"></i>
                                                 <strong>Телефон:</strong> ${contact.value}
                                             </#if>

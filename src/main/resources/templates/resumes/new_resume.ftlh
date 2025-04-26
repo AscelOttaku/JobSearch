@@ -127,74 +127,66 @@
                                         <label for="startDate" class="form-label">
                                             <i class="bi bi-calendar-plus form-icon me-2"></i> Дата начала
                                         </label>
-                                        <@spring.formInput "resume.educationInfoDtos[${index}].startDate", 'class="form-control" placeholder="ГГГГ-ММ-ДД" id="startDate" type="datetime-local"'/>
+                                        <@spring.formInput "resume.educationInfoDtos[${index}].startDate", 'class="form-control" type="date" placeholder="ГГГГ-ММ-ДД hh:MM:dd" id="startDate"'/>
                                         <@spring.showErrors "<br>" "text-danger small"/>
                                     </div>
 
-                                    <div class="mb-3">
-                                        <label for="endDate" class="form-label">
-                                            <i class="bi bi-calendar-minus form-icon me-2"></i> Дата окончания
-                                        </label>
-                                        <@spring.formInput "resume.educationInfoDtos[${index}].endDate", 'class="form-control" placeholder="ГГГГ-ММ-ДД" id="endDate" type="datetime-local"'/>
+                                  <div class="mb-3">
+                                     <label for="endDate" class="form-label">
+                                     <i class="bi bi-calendar-minus form-icon me-2"></i> Дата окончания
+                                              </label>
+                                        <@spring.formInput "resume.educationInfoDtos[${index}].endDate", 'class="form-control" placeholder="ГГГГ-ММ-ДД hh:MM:dd" id="endDate" type="date"'/>
                                         <@spring.showErrors "<br>" "text-danger small"/>
                                     </div>
                                 </div>
                             </div>
                         </#list>
 
-                        <div class="row mb-3">
-                            <label for="category.id" class="form-label">
+                        <div class="mb-3">
+                            <label class="form-label">
                                 <i class="bi bi-people form-icon me-2"></i>Социальные сети
                             </label>
-                            <#list resume.contactInfos as contact>
-                                <div class="col-md-6 mb-3">
-                                    <div class="social-input-group">
-                                        <div class="input-group">
-                                            <span class="input-group-text">
-                                                <#if contact.contactType.type == "EMAIL">
-                                                    <i class="bi bi-envelope-fill social-icon email-icon"></i>
-                                                <#elseif contact.contactType.type == "TELEGRAM">
-                                                    <i class="bi bi-telegram social-icon telegram-icon"></i>
-                                                <#elseif contact.contactType.type == "FACEBOOK">
-                                                    <i class="bi bi-facebook social-icon facebook-icon"></i>
-                                                <#elseif contact.contactType.type == "LINKEDIN">
-                                                    <i class="bi bi-linkedin social-icon linkedin-icon"></i>
-                                                <#elseif contact.contactType.type == "PHONE_NUMBER">
-                                                    <i class="bi bi-telephone-fill social-icon phone-icon"></i>
-                                                </#if>
-                                            </span>
-                                            <#if contact.contactType.type == "EMAIL">
-                                                <@spring.formInput "resume.contactInfos[${contact?index}].value"
-                                                'class="form-control" placeholder="Email address"' />
-                                                <@spring.formHiddenInput "resume.contactInfos[${contact?index}].contactType.type"/>
-                                            <#elseif contact.contactType.type == "TELEGRAM">
-                                                <@spring.formInput "resume.contactInfos[${contact?index}].value"
-                                                'class="form-control" placeholder="Telegram username"' />
-                                                <@spring.formHiddenInput "resume.contactInfos[${contact?index}].contactType.type"/>
-                                            <#elseif contact.contactType.type == "FACEBOOK">
-                                                <@spring.formInput "resume.contactInfos[${contact?index}].value"
-                                                'class="form-control" placeholder="Facebook profile"' />
-                                                <@spring.formHiddenInput "resume.contactInfos[${contact?index}].contactType.type"/>
-                                            <#elseif contact.contactType.type == "LINKEDIN">
-                                                <@spring.formInput "resume.contactInfos[${contact?index}].value"
-                                                'class="form-control" placeholder="LinkedIn profile"' />
-                                                <@spring.formHiddenInput "resume.contactInfos[${contact?index}].contactType.type"/>
-                                            <#elseif contact.contactType.type == "PHONE_NUMBER">
-                                                <@spring.formInput "resume.contactInfos[${contact?index}].value"
-                                                'class="form-control" placeholder="Phone Number"' />
-                                                <@spring.formHiddenInput "resume.contactInfos[${contact?index}].contactType.type"/>
-                                            </#if>
+                            <div class="d-flex flex-wrap gap-2">
+                                <#list resume.contactInfos as contact>
+                                    <@spring.formHiddenInput "resume.contactInfos[${contact_index}].contactInfoId" 'class="form-control"'/>
+                                    <@spring.formHiddenInput "resume.contactInfos[${contact_index}].contactType.contactTypeId" 'class="form-control"'/>
+                                    <div class="flex-grow-1" style="min-width: calc(50% - 10px);">
+                                        <div class="social-input-group">
+                                            <div class="input-group">
+                        <span class="input-group-text">
+                            <#if contact.contactType.type == "EMAIL">
+                                <i class="bi bi-envelope-fill social-icon email-icon"></i>
+                            <#elseif contact.contactType.type == "TELEGRAM">
+                                <i class="bi bi-telegram social-icon telegram-icon"></i>
+                            <#elseif contact.contactType.type == "FACEBOOK">
+                                <i class="bi bi-facebook social-icon facebook-icon"></i>
+                            <#elseif contact.contactType.type == "LINKEDIN">
+                                <i class="bi bi-linkedin social-icon linkedin-icon"></i>
+                            <#elseif contact.contactType.type == "PHONE_NUMBER">
+                                <i class="bi bi-telephone-fill social-icon phone-icon"></i>
+                            </#if>
+                        </span>
+                                                <@spring.formHiddenInput "resume.contactInfos[${contact?index}].contactType.type" />
+                                                <@spring.formInput "resume.contactInfos[${contact?index}].value" 'class="form-control" placeholder="${contact.contactType.type?switch(
+                                                "EMAIL", "Email address",
+                                                "TELEGRAM", "Telegram username",
+                                                "FACEBOOK", "Facebook profile",
+                                                "LINKEDIN", "LinkedIn profile",
+                                                "PHONE_NUMBER", "Phone Number",
+                                                "Введите контакт"
+                                                )}"'/>
+                                            </div>
+                                            <@spring.showErrors "resume.contactInfos[${contact?index}].value" "text-danger small" />
                                         </div>
-                                        <@spring.showErrors "<br>" "text-danger small mt-1"/>
                                     </div>
-                                </div>
-                            </#list>
+                                </#list>
+                            </div>
                         </div>
 
                         <div class="mb-4 form-check form-switch">
                             <input type="checkbox" class="form-check-input" role="switch"
-                                   id="isActive"
-                                   name="isActive" ${(resume.isActive!true)?then('checked', '')}>
+                                   id="active"
+                                   name="active" ${(resume.active!true)?then('checked', '')}>
                             <label class="form-check-label" for="active">
                                 <i class="bi bi-power form-icon me-2"></i>
                                 Вакансия активна

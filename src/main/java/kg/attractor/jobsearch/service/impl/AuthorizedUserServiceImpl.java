@@ -38,7 +38,7 @@ public class AuthorizedUserServiceImpl implements AuthorizedUserService {
                 ));
     }
 
-    private Authentication getAuthentication() {
+    public Authentication getAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
     }
 

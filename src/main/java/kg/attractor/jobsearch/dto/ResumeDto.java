@@ -20,11 +20,6 @@ public class ResumeDto {
 
     @NotBlank(message = "{blank_message}")
     @Size(min = 3, max = 40, message = "{3_30_size_message}")
-    @Pattern(
-            regexp = "^[\\p{L}\\d ]+$",
-            message = "symbols are not allowed"
-    )
-
     private String name;
 
     private Long userId;
@@ -37,7 +32,7 @@ public class ResumeDto {
     @PositiveOrZero(message = "{non_negative_message}")
     private double salary;
 
-    private Boolean isActive;
+    private boolean isActive;
     private String created;
     private String updated;
 

@@ -332,11 +332,14 @@
                 <h1>${status}</h1>
                 <h2><span data-l10n>UH OH</span>! <span data-l10n>${reason}</span></h2>
 
+                <ul class="details">
+                    <#if message??>
+                        <li><span><span data-l10n>Message</span>:</span> <code>${message}</code></li>
+                    </#if>
+                </ul>
+
                 <#if details??>
                     <ul class="details">
-                        <#if message??>
-                            <li><span><span data-l10n>Message</span>:</span> <code>${message}</code></li>
-                        </#if>
                         <#if details.serverName??>
                             <li><span><span data-l10n>Host</span>:</span> <code>${details.serverName}</code></li>
                         </#if>

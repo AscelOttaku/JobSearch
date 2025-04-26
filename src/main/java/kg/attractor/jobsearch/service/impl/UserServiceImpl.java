@@ -76,17 +76,10 @@ public class UserServiceImpl implements UserService {
     public void updateUser(UserDto userDto) {
         UserDto userPreviousVal = getAuthorizedUser();
 
-        if (!userDto.getEmail().equals(userPreviousVal.getEmail())) {
-            throw new CustomIllegalArgException(
-                    "param email cannot be changed",
-                    CustomBindingResult.builder()
-                            .className(User.class.getSimpleName())
-                            .fieldName("email")
-                            .rejectedValue(userDto.getEmail())
-                            .build()
-            );
-        }
+        if (!userDto.getEmail().equals(userPreviousVal.getEmail()))
+            throw new IllegalArgumentException("param email cannot be changed");
 
+        userDto.setAccountType(userPreviousVal.getAccountType());
         User entity = userMapper.mapToEntity(userDto);
 
         userPreviousVal.setUserId(userPreviousVal.getUserId());
@@ -97,28 +90,14 @@ public class UserServiceImpl implements UserService {
     public UserDto findJobSeekerByEmail(String userEmail) {
         var optionalUser = userRepository.findJobSeekerByEmail(userEmail);
         return optionalUser.map(userMapper::mapToDto)
-                .orElseThrow(() -> new UserNotFoundException(
-                        "Job Seeker not found By Email: " + userEmail,
-                        CustomBindingResult.builder()
-                                .className(User.class.getSimpleName())
-                                .fieldName("email")
-                                .rejectedValue(userEmail)
-                                .build()
-                ));
+                .orElseThrow(() -> new UserNotFoundException("Job Seeker not found By Email: " + userEmail));
     }
 
     @Override
     public UserDto findEmployerByEmail(String employerEmail) {
         var optionalUser = userRepository.findEmployerByEmail(employerEmail);
         return optionalUser.map(userMapper::mapToDto).orElseThrow(() ->
-                new UserNotFoundException(
-                        "Employer not found By email: " + employerEmail,
-                        CustomBindingResult.builder()
-                                .className(User.class.getSimpleName())
-                                .fieldName("email")
-                                .rejectedValue(employerEmail)
-                                .build()
-                ));
+                new UserNotFoundException("Employer not found By email: " + employerEmail));
     }
 
     @Override
@@ -133,14 +112,7 @@ public class UserServiceImpl implements UserService {
         var optionalUser = userRepository.findUserByEmail(email);
 
         return optionalUser.map(userMapper::mapToDto)
-                .orElseThrow(() -> new UserNotFoundException(
-                        "User not found by Email: " + email,
-                        CustomBindingResult.builder()
-                                .className(User.class.getSimpleName())
-                                .fieldName("email")
-                                .rejectedValue(email)
-                                .build()
-                ));
+                .orElseThrow(() -> new UserNotFoundException("User not found by Email: " + email));
     }
 
     @Override
@@ -148,29 +120,13 @@ public class UserServiceImpl implements UserService {
         var optionalUser = userRepository.findUserByPhoneNumber(phoneNumber);
 
         return optionalUser.map(userMapper::mapToDto)
-                .orElseThrow(() -> new UserNotFoundException(
-                        "User not found by PhoneNumber: " + phoneNumber,
-                        CustomBindingResult.builder()
-                                .className(User.class.getSimpleName())
-                                .fieldName("phoneNumber")
-                                .rejectedValue(phoneNumber)
-                                .build()
-                ));
+                .orElseThrow(() -> new UserNotFoundException("User not found by PhoneNumber: " + phoneNumber));
     }
 
     @Override
     public void isUserExistByEmail(String email) {
-        boolean res = userRepository.findUserByEmail(email).isPresent();
-
-        if (!res)
-            throw new UserNotFoundException(
-                    "User not found by Email: " + email,
-                    CustomBindingResult.builder()
-                            .className(User.class.getSimpleName())
-                            .fieldName("email")
-                            .rejectedValue(email)
-                            .build()
-            );
+        userRepository.findUserByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found by Email: " + email));
     }
 
     @Override
@@ -228,14 +184,7 @@ public class UserServiceImpl implements UserService {
     public UserDto findUserById(Long userId) {
         return userRepository.findById(userId)
                 .map(userMapper::mapToDto)
-                .orElseThrow(() -> new UserNotFoundException(
-                        "User not found by id " + userId,
-                        CustomBindingResult.builder()
-                                .className(User.class.getSimpleName())
-                                .fieldName("userId")
-                                .rejectedValue(userId)
-                                .build()
-                ));
+                .orElseThrow(() -> new UserNotFoundException("User not found by id " + userId));
     }
 
     @Override

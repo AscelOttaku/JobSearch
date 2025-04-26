@@ -100,7 +100,7 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Тип аккаунта</label>
-                                                    <@spring.formInput "user.accountType", 'class="form-control" readonly'/>
+                                                    <@spring.formInput "user.accountType", 'class="form-control"'/>
                                                     <@spring.showErrors "<br>" "text-danger small"/>
                                                 </div>
                                                 <div class="mb-3">
@@ -117,6 +117,11 @@
                 </form>
 
                 <form method="post" action="/users/upload/avatars" enctype="multipart/form-data" class="mt-3">
+                    <#if _csrf??>
+                        <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
+                               value="${(_csrf.token)!'csrf-token'}"/>
+                    </#if>
+
                     <div class="input-group">
                         <input type="file" name="file" class="form-control" id="fileInput">
                         <button class="btn btn-outline-secondary" type="submit">

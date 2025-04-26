@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @Constraint(validatedBy = UniqueEmailValidator.class)
-public @interface UniqueEmail {
+public @interface UniqueUserEmail {
     String message() default "email should be unique";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};

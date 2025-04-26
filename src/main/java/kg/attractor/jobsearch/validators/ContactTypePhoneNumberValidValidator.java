@@ -14,7 +14,7 @@ public class ContactTypePhoneNumberValidValidator implements ConstraintValidator
 
             String value = contactInfoDto.getValue();
 
-            if (value == null || value.isBlank())
+            if (value == null || value.isBlank() || value.equals("+996"))
                 return true;
 
             if (!value.matches("^\\+?[0-9\\-\\s]+$") || value.length() != 13) {

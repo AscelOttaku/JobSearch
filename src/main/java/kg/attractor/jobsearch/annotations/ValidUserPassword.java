@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @Constraint(validatedBy = ValidPasswordValidator.class)
-public @interface ValidPassword {
+public @interface ValidUserPassword {
     String message() default "illegal password";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
