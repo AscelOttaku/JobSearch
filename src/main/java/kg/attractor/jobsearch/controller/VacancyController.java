@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.enums.FilterType;
-import kg.attractor.jobsearch.exceptions.VacancyNotFoundException;
 import kg.attractor.jobsearch.service.CategoryService;
 import kg.attractor.jobsearch.service.VacanciesFilterService;
 import kg.attractor.jobsearch.service.VacancyService;
@@ -15,8 +14,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Controller("vacancyController")
 @RequestMapping("/vacancies")

@@ -136,7 +136,16 @@ public class UserController {
 
     @PostMapping("/updates/profile")
     @ResponseStatus(HttpStatus.SEE_OTHER)
-    public String updateUser(@ModelAttribute @Valid UserDto userDto) {
+    public String updateUser(
+            @ModelAttribute("user") @Valid UserDto userDto,
+            BindingResult bindingResult,
+            Model model
+    ) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("user", userDto);
+            return "users/update_profile";
+        }
+
         userService.updateUser(userDto);
         return "redirect:/users/profile";
     }
