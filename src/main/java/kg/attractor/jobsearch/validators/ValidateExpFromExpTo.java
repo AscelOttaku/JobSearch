@@ -29,11 +29,17 @@ public class ValidateExpFromExpTo implements ConstraintValidator<IsExpFromAndExp
         if (!isValid)
             return false;
 
-        if (vacancyDto.getExpFrom().compareTo(vacancyDto.getExpTo()) > 0) {
+        if (vacancyDto.getExpFrom().compareTo(vacancyDto.getExpTo()) >= 0) {
             constraintValidatorContext.buildConstraintViolationWithTemplate(
                     "expFrom must be less than expTo"
             )
                     .addPropertyNode("expFrom")
+                    .addConstraintViolation();
+
+            constraintValidatorContext.buildConstraintViolationWithTemplate(
+                    "expTo must be greater than expFrom"
+            )
+                    .addPropertyNode("expTo")
                     .addConstraintViolation();
             return false;
         }

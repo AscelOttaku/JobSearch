@@ -1,9 +1,7 @@
 package kg.attractor.jobsearch.controller;
 
-import kg.attractor.jobsearch.dto.EducationalInfoDto;
 import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.ResumeDto;
-import kg.attractor.jobsearch.dto.WorkExperienceInfoDto;
 import kg.attractor.jobsearch.service.CategoryService;
 import kg.attractor.jobsearch.service.ResumeDetailedInfoService;
 import kg.attractor.jobsearch.service.ResumeService;
@@ -14,8 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("resumes")
@@ -49,7 +45,7 @@ public class ResumeController {
                 .findUserCreatedResumes(page, size);
 
         model.addAttribute("pageResume", pageResume);
-        return "resumes/resumes";
+        return "resumes/user_resumes";
     }
 
     @GetMapping("{resumeId}")
@@ -73,7 +69,6 @@ public class ResumeController {
             BindingResult bindingResult,
             Model model
     ) {
-
         resumeValidator.isValid(resumeDto, bindingResult);
 
         if (bindingResult.hasErrors()) {
@@ -90,12 +85,6 @@ public class ResumeController {
     @ResponseStatus(HttpStatus.SEE_OTHER)
     public String updateResumeById(@PathVariable Long resumeId, Model model) {
         ResumeDto resumeDto = resumeService.findResumeById(resumeId);
-
-        if (resumeDto.getWorkExperienceInfoDtos().isEmpty())
-            resumeDto.setWorkExperienceInfoDtos(List.of(new WorkExperienceInfoDto()));
-
-        if (resumeDto.getEducationInfoDtos().isEmpty())
-            resumeDto.setEducationInfoDtos(List.of(new EducationalInfoDto()));
 
         model.addAttribute("resume", resumeDto);
         model.addAttribute("categories", categoryService.findAllCategories());

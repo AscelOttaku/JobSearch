@@ -34,4 +34,6 @@ public class ProfileServiceImpl implements ProfileService {
         model.put("responses", respondService.findAllActiveResponsesByUserId(userDto.getUserId()));
         return model;
     }
+
+
 }

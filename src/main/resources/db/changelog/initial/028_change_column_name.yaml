@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 028_change_column_name.yaml
+      author: Zhanybekov Kanybek
+      changes:
+        - renameColumn:
+            tableName: contact_info
+            oldColumnName: "value"
+            newColumnName: "contact_value"

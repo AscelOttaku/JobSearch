@@ -38,8 +38,4 @@ public interface VacancyService {
     PageHolder<VacancyDto> findVacanciesByUserId(Long userId, int page, int size);
 
     List<VacancyDto> findVacanciesByUserId(Long userId);
-
-    PageHolder<VacancyDto> filterVacanciesBy(FilterType filterType, int page, int size);
-
-    PageHolder<VacancyDto> findActiveVacanciesOrderedByResponsesNumbersDesc(int page, int size);
 }

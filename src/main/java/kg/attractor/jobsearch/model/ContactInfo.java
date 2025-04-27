@@ -23,6 +23,6 @@ public class ContactInfo {
     @JoinColumn(name = "resume_id")
     private Resume resume;
 
-    @Column(name = "value", nullable = false)
-    private String value;
+    @Column(name = "contact_value", nullable = false)
+    private String contactValue;
 }

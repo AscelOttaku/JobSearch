@@ -24,6 +24,20 @@ spring:
     init:
       mode: always
 
+  mail:
+    host: smtp.gmail.com
+    username: zhanybek20065732@gmail.com
+    password: xmqh zdnf kjld qdkh
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth:
+            true
+          starttls:
+            enable: true
+
+
 
 logging:
   level:

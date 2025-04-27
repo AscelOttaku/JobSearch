@@ -12,13 +12,18 @@
         <link rel="stylesheet" href="/css/auth_form.css">
         <link rel="stylesheet" href="/css/auth_failed.css">
         <link rel="stylesheet" href="/static/css/update_profile.css">
-
     </head>
     <body class="bg-light">
     <div class="container py-5">
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <form method="post" action="/users/updates/profile" class="card border-0 shadow-sm rounded-3 mb-4">
+
+                    <#if _csrf??>
+                        <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
+                               value="${(_csrf.token)!'csrf-token'}"/>
+                    </#if>
+
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <div>
@@ -59,12 +64,12 @@
                                                 </h5>
                                                 <div class="mb-3">
                                                     <label class="form-label">Имя</label>
-                                                    <@spring.formInput "user.name", 'class="form-control" placeholder="Введите имя" required'/>
+                                                    <@spring.formInput "user.name", 'class="form-control" placeholder="Введите имя" '/>
                                                     <@spring.showErrors "<br>" "text-danger small"/>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Фамилия</label>
-                                                    <@spring.formInput "user.surname", 'class="form-control" placeholder="Введите фамилию" required'/>
+                                                    <@spring.formInput "user.surname", 'class="form-control" placeholder="Введите фамилию" '/>
                                                     <@spring.showErrors "<br>" "text-danger small"/>
                                                 </div>
                                                 <div class="mb-3">
@@ -84,7 +89,7 @@
                                                 </h5>
                                                 <div class="mb-3">
                                                     <label class="form-label">Email</label>
-                                                    <@spring.formInput "user.email", 'class="form-control" placeholder="Введите email" type="email" required'/>
+                                                    <@spring.formInput "user.email", 'class="form-control" placeholder="Введите email" type="email" '/>
                                                     <@spring.showErrors "<br>" "text-danger small"/>
                                                 </div>
                                                 <div class="mb-3">
@@ -95,8 +100,12 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Тип аккаунта</label>
-                                                    <@spring.formInput "user.accountType", 'class="form-control" readonly'/>
+                                                    <@spring.formInput "user.accountType", 'class="form-control"'/>
                                                     <@spring.showErrors "<br>" "text-danger small"/>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <@spring.formHiddenInput "user.password"/>
+                                                    <@spring.formHiddenInput "user.avatar"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -108,6 +117,11 @@
                 </form>
 
                 <form method="post" action="/users/upload/avatars" enctype="multipart/form-data" class="mt-3">
+                    <#if _csrf??>
+                        <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
+                               value="${(_csrf.token)!'csrf-token'}"/>
+                    </#if>
+
                     <div class="input-group">
                         <input type="file" name="file" class="form-control" id="fileInput">
                         <button class="btn btn-outline-secondary" type="submit">

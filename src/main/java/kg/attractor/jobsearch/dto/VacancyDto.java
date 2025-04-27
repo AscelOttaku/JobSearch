@@ -17,7 +17,6 @@ import java.util.List;
 public class VacancyDto {
     private Long vacancyId;
 
-    @NotNull(message = "{null_message}")
     @NotBlank(message = "{blank_message}")
     @Size(min = 3, max = 30, message = "{3_30_size_message}")
     @Pattern(
@@ -30,7 +29,6 @@ public class VacancyDto {
 
     @NotNull(message = "{null_message}")
     @Positive(message = "{positive_number_message}")
-    @EntityExistById(message = "{category_does't_exist}", entityType = EntityType.CATEGORIES)
     private Long categoryId;
 
     private String categoryName;

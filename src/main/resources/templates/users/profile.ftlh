@@ -93,14 +93,14 @@
                     <div>
                         <#if user.accountType == "JOB_SEEKER">
                             <a href="/resumes/users" class="btn btn-outline-primary me-2">
-                                <i class="bi bi-collection me-2"></i>Все резюме
+                                <i class="bi bi-collection me-2"></i>Все Созданные резюме
                             </a>
                             <a href="/resumes/new_resume" class="btn btn-primary">
                                 <i class="bi bi-plus-circle me-2"></i>Создать
                             </a>
                         <#elseif user.accountType == "EMPLOYER">
                             <a href="/vacancies/users" class="btn btn-outline-primary me-2">
-                                <i class="bi bi-collection me-2"></i>Все вакансии
+                                <i class="bi bi-collection me-2"></i>Все Созданные вакансии
                             </a>
                             <a href="/vacancies/new_vacancy" class="btn btn-primary">
                                 <i class="bi bi-plus-circle me-2"></i>Создать
@@ -208,6 +208,11 @@
                                                         <i class="bi bi-pencil"></i>
                                                     </a>
                                                     <form action="/vacancies/times?vacancyId=${vacancy.vacancyId}" method="post" class="d-inline">
+
+                                                        <#if _csrf??>
+                                                            <input type="hidden" name="${(_csrf.parameterName)!}" value="${(_csrf.token)!}"/>
+                                                        </#if>
+
                                                         <button type="submit" class="btn btn-action btn-outline-secondary">
                                                             <i class="bi bi-arrow-clockwise"></i>
                                                         </button>

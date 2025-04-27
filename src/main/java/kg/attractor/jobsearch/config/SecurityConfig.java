@@ -1,20 +1,18 @@
 package kg.attractor.jobsearch.config;
 
 import kg.attractor.jobsearch.enums.Roles;
+import kg.attractor.jobsearch.security.MySimpleAuthenticationHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-import javax.sql.DataSource;
 
 import static org.springframework.http.HttpMethod.*;
 
@@ -28,18 +26,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public JdbcUserDetailsManager configureGlobal(DataSource dataSource) {
-        String usersQuery = "select email as username, password, enabled from users " +
-                "where email = ?";
-
-        String authorityQuery = "select email, ROLE from USERS U, ROLES R " +
-                "INNER JOIN ROLES_AUTHORITIES RA ON RA.ROLE_ID = R.ID " +
-                "WHERE U.ROLE_ID = R.ID AND EMAIL = ?";
-
-        JdbcUserDetailsManager userDetailsManager = new JdbcUserDetailsManager(dataSource);
-        userDetailsManager.setUsersByUsernameQuery(usersQuery);
-        userDetailsManager.setAuthoritiesByUsernameQuery(authorityQuery);
-        return userDetailsManager;
+    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+        return new MySimpleAuthenticationHandler();
     }
 
     @Bean
@@ -49,15 +37,14 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/auth/login")
                         .loginProcessingUrl("/auth/login")
-                        .defaultSuccessUrl("/users/profile")
-                        .failureUrl("/login?error=true")
+                        .successHandler(authenticationSuccessHandler())
+                        .failureUrl("/auth/login?error=true")
                         .permitAll())
 
                 .logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout"))
                         .permitAll())
 
-                .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
 
                 .authorizeHttpRequests(authorizeRequests ->
@@ -65,23 +52,25 @@ public class SecurityConfig {
 
                                 //Vacancies Endpoints
 
+                                .requestMatchers(POST, "/vacancies/times?vacancyId=**").hasAnyAuthority(Roles.EMPLOYER.getValue())
                                 .requestMatchers(GET, "/vacancies/new_vacancy").hasAuthority(Roles.EMPLOYER.getValue())
                                 .requestMatchers(GET, "/vacancies/update/vacancy/*").hasAnyAuthority(Roles.EMPLOYER.getValue())
                                 .requestMatchers(PUT, "/vacancies/redactor-vacancies").hasAuthority(Roles.EMPLOYER.getValue())
                                 .requestMatchers(DELETE, "/vacancies/delete_vacancies").hasAuthority(Roles.EMPLOYER.getValue())
                                 .requestMatchers("/vacancies/users/responded_vacancies").hasAuthority(Roles.EMPLOYER.getValue())
-                                .requestMatchers(POST, "/vacancies/times").fullyAuthenticated()
 
                                 // Users
 
                                 .requestMatchers(PUT, "/users/updates").hasAnyAuthority(Roles.EMPLOYER.getValue(), Roles.JOB_SEEKER.getValue())
                                 .requestMatchers(POST, "/users/registration").anonymous()
-                                .requestMatchers(GET, "/users/profile").fullyAuthenticated()
-                                .requestMatchers("users/update/profile").fullyAuthenticated()
+                                .requestMatchers(GET, "/users/profile").authenticated()
+                                .requestMatchers("/users/update/profile").fullyAuthenticated()
+                                .requestMatchers(POST, "/users/upload/avatars").hasAnyAuthority(Roles.EMPLOYER.getValue(), Roles.JOB_SEEKER.getValue())
                                 .requestMatchers("/users/responded/vacancies/*").hasAuthority(Roles.EMPLOYER.getValue())
                                 .requestMatchers("/users/employer/*").hasAuthority(Roles.JOB_SEEKER.getValue())
                                 .requestMatchers("/users/job-seeker/*").hasAuthority(Roles.EMPLOYER.getValue())
                                 .requestMatchers("/users/upload/*").fullyAuthenticated().requestMatchers("/users/avatars").fullyAuthenticated()
+                                .requestMatchers("/users/profile/*").fullyAuthenticated()
                                 .requestMatchers(GET,"/users/**").hasAuthority(Roles.EMPLOYER.getValue())
 
                                 // Companies

@@ -1,20 +1,15 @@
 package kg.attractor.jobsearch.service.impl;
 
-import kg.attractor.jobsearch.dto.CategoryDto;
-import kg.attractor.jobsearch.dto.PageHolder;
-import kg.attractor.jobsearch.dto.ResumeDto;
+import kg.attractor.jobsearch.dto.*;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.dto.mapper.impl.ResumeMapper;
 import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
 import kg.attractor.jobsearch.exceptions.ResumeNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
-import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.repository.ResumeRepository;
-import kg.attractor.jobsearch.service.AuthorizedUserService;
-import kg.attractor.jobsearch.service.ResumeService;
-import kg.attractor.jobsearch.service.UserService;
+import kg.attractor.jobsearch.service.*;
 import kg.attractor.jobsearch.validators.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -35,6 +31,7 @@ public class ResumeServiceImpl implements ResumeService {
     private final UserService userService;
     private final ResumeMapper resumeMapper;
     private final AuthorizedUserService authorizedUserService;
+    private final ContactTypeService contactTypeService;
 
     @Override
     public List<ResumeDto> findAllResumes() {
@@ -47,7 +44,7 @@ public class ResumeServiceImpl implements ResumeService {
     public ResumeDto findResumeById(Long id) {
         Validator.isValidId(id);
 
-        return resumeRepository.findById(id)
+        ResumeDto resumeDto = resumeRepository.findById(id)
                 .map(mapper::mapToDto)
                 .orElseThrow(() -> new ResumeNotFoundException(
                         "Resume by id is not found ",
@@ -57,7 +54,39 @@ public class ResumeServiceImpl implements ResumeService {
                                 .rejectedValue(id)
                                 .build()
                 ));
+
+        if (resumeDto.getWorkExperienceInfoDtos().isEmpty())
+            resumeDto.setWorkExperienceInfoDtos(List.of(new WorkExperienceInfoDto()));
+
+        if (resumeDto.getEducationInfoDtos().isEmpty())
+            resumeDto.setEducationInfoDtos(List.of(new EducationalInfoDto()));
+
+        if (resumeDto.getContactInfos().size() < 5) {
+            String resumesContactTypes = resumeDto.getContactInfos()
+                    .stream()
+                    .map(contactInfoDto -> contactInfoDto.getContactType().getType())
+                    .collect(Collectors.joining(", "));
+
+            List<ContactInfoDto> contactInfos = contactTypeService.findAllContactTypes()
+                    .stream()
+                    .filter(contactType -> !resumesContactTypes.contains(contactType.getType()))
+                    .map(contactTypeDto -> ContactInfoDto.builder()
+                            .contactType(contactTypeDto)
+                            .build())
+                    .toList();
+
+            contactInfos.forEach(contactInfoDto -> {
+                String phoneNumberType = contactInfoDto.getContactType().getType();
+                if (phoneNumberType.equals("PHONE_NUMBER") && contactInfoDto.getValue() == null)
+                    contactInfoDto.setValue("+996");
+            });
+
+            resumeDto.getContactInfos().addAll(contactInfos);
+        }
+
+        return resumeDto;
     }
+
 
     @Override
     public List<ResumeDto> findResumesByCategoryId(Long categoryId) {

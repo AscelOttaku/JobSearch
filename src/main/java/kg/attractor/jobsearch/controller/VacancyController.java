@@ -5,6 +5,7 @@ import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.enums.FilterType;
 import kg.attractor.jobsearch.service.CategoryService;
+import kg.attractor.jobsearch.service.VacanciesFilterService;
 import kg.attractor.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +15,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Controller("vacancyController")
 @RequestMapping("/vacancies")
 @Slf4j
@@ -23,6 +22,7 @@ import java.util.List;
 public class VacancyController {
     private final VacancyService vacancyService;
     private final CategoryService categoryService;
+    private final VacanciesFilterService vacanciesFilterService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -41,7 +41,7 @@ public class VacancyController {
     public String findAllActiveVacancies(
             Model model,
             @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
-            @RequestParam(value = "size", defaultValue = "10", required = false) Integer size
+            @RequestParam(value = "size", defaultValue = "20", required = false) Integer size
     ) {
         model.addAttribute("vacancies", vacancyService.findAllActiveVacancies(page, size));
         return "vacancies/vacancies";
@@ -56,7 +56,7 @@ public class VacancyController {
     ) {
         PageHolder<VacancyDto> vacancyDtos = vacancyService.findUserCreatedVacancies(page, size);
         model.addAttribute("vacancies", vacancyDtos);
-        return "vacancies/vacancies";
+        return "vacancies/user_vacancies";
     }
 
     @GetMapping("{vacancyId}")
@@ -118,7 +118,7 @@ public class VacancyController {
         return "redirect:/users/profile";
     }
 
-    @GetMapping("filter")
+    @GetMapping("filtered")
     @ResponseStatus(HttpStatus.OK)
     public String filterVacanciesBy(
             @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
@@ -126,7 +126,19 @@ public class VacancyController {
             @RequestParam FilterType filterType,
             Model model
     ) {
-        model.addAttribute("vacancies", vacancyService.filterVacanciesBy(filterType, page, size));
+        model.addAttribute("vacancies", vacanciesFilterService.filterVacanciesBy(filterType, page, size));
         return "vacancies/vacancies";
+    }
+
+    @GetMapping("users/filtered")
+    @ResponseStatus(HttpStatus.OK)
+    public String filterUsersVacancies(
+            @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+            @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
+            @RequestParam FilterType filterType,
+            Model model
+    ) {
+        model.addAttribute("vacancies", vacanciesFilterService.filterUserCreatedVacanciesBy(filterType, page, size));
+        return "vacancies/user_vacancies";
     }
 }

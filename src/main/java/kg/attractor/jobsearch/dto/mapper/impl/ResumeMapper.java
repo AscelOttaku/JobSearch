@@ -6,14 +6,13 @@ import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.service.CategoryService;
-import kg.attractor.jobsearch.service.EducationInfoService;
-import kg.attractor.jobsearch.service.WorkExperienceInfoService;
 import kg.attractor.jobsearch.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +20,7 @@ public class ResumeMapper implements Mapper<ResumeDto, Resume> {
     private final CategoryService categoryService;
     private final EducationInfoMapper educationInfoMapper;
     private final WorkExperienceMapper workExperienceMapper;
+    private final ContactInfoMapper contactInfoMapper;
 
     @Override
     public ResumeDto mapToDto(Resume resume) {
@@ -40,6 +40,9 @@ public class ResumeMapper implements Mapper<ResumeDto, Resume> {
                 .educationInfoDtos(resume.getEducationInfos().stream()
                         .map(educationInfoMapper::mapToDto)
                         .toList())
+                .contactInfos(resume.getContactInfos().stream()
+                        .map(contactInfoMapper::mapToDto)
+                        .collect(Collectors.toList()))
                 .build();
     }
 
@@ -57,12 +60,12 @@ public class ResumeMapper implements Mapper<ResumeDto, Resume> {
         resume.setCategory(category);
         resume.setUser(user);
         resume.setSalary(resumeDto.getSalary());
-        resume.setIsActive(resumeDto.getIsActive());
+        resume.setIsActive(resumeDto.isActive());
         resume.setCreated(resumeDto.getCreated() != null ? LocalDateTime.parse(resumeDto.getCreated(),
                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) :
                 LocalDateTime.now());
         resume.setUpdated(resumeDto.getUpdated() != null ?
-                LocalDateTime.parse(resumeDto.getUpdated()) : null);
+                LocalDateTime.parse(resumeDto.getUpdated()) : resume.getCreated());
         return resume;
     }
 }

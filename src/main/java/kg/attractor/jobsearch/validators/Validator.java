@@ -4,7 +4,6 @@ import kg.attractor.jobsearch.dto.EducationalInfoDto;
 import kg.attractor.jobsearch.dto.WorkExperienceInfoDto;
 import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
-import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.model.Vacancy;
 import lombok.experimental.UtilityClass;
 
@@ -26,12 +25,14 @@ public class Validator {
         );
     }
 
-    public static boolean isValidUserAccountType(User user) {
-        return user.getAccountType().equalsIgnoreCase("jobSeeker");
+    public static void isValidEmail(String email) {
+        if (!email.contains("@") || !email.contains("."))
+            throw new IllegalArgumentException("email is not valid");
     }
 
-    public boolean isStringNotValid(String arg) {
-        return arg == null || arg.isBlank();
+    public static void notBlank(String arg) {
+        if (arg == null || arg.isBlank())
+            throw new IllegalArgumentException("argument is blank");
     }
 
     public static boolean isNotEmptyWorkExperience(WorkExperienceInfoDto workExperienceInfoDto) {

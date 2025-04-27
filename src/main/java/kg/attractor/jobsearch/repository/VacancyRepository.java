@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 public interface VacancyRepository extends JpaRepository<Vacancy, Long> {
 
-    @Query("select v from Vacancy v where v.isActive = true order by coalesce(v.updated, v.created)")
+    @Query("select v from Vacancy v where v.isActive = true order by coalesce(v.updated, v.created) desc")
     Page<Vacancy> findIsActiveVacanciesSortedByDate(Pageable pageable);
 
     List<Vacancy> findVacanciesByCategoryId(Long categoryId);
@@ -25,8 +25,7 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Long> {
     @Query("select v from Vacancy v " +
             "join Role r on r.id = v.user.role.id " +
             "where v.user.userId = :userId and " +
-            "r.roleName ilike 'EMPLOYER' " +
-            "order by coalesce(v.updated, v.created) desc")
+            "r.roleName ilike 'EMPLOYER'")
     Page<Vacancy> findUserVacanciesByUserId(Long userId, Pageable pageable);
 
     @Modifying
@@ -51,5 +50,15 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Long> {
             "where v.isActive = true " +
             "order by (select count(ra) from RespondedApplication ra " +
             "where ra.vacancy.id = v.id) desc")
-    Page<Vacancy> findIsActiveTrueOrderedByResponsesNumberDesc(Pageable pageable);
+    Page<Vacancy> findActiveVacanciesOrderedByResponsesNumberDes(Pageable pageable);
+
+    @Query("select v from Vacancy v " +
+            "left join User u on u.userId = v.user.userId " +
+            "left join Role r on r.id = v.user.role.id " +
+            "where v.user.userId = :userId and r.roleName " +
+            "like 'EMPLOYER'" +
+            " order by " +
+            "(select count(ra) from RespondedApplication ra " +
+            "where ra.vacancy.id = v.id) desc")
+    Page<Vacancy> findUserVacanciesOrderedByResponsesNumberDesc(Long userId, Pageable pageable);
 }

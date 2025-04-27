@@ -26,6 +26,8 @@ public class EducationalInfoDto {
 
     @NotBlank(message = "{blank_message}")
     private String institution;
+
+    @NotBlank(message = "{blank_message}")
     private String program;
 
     @NotNull(message = "{null_message}")

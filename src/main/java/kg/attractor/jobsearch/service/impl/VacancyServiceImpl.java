@@ -4,6 +4,7 @@ import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
+import kg.attractor.jobsearch.dto.mapper.impl.PageHolderWrapper;
 import kg.attractor.jobsearch.enums.FilterType;
 import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
 import kg.attractor.jobsearch.exceptions.EntityNotFoundException;
@@ -37,6 +38,7 @@ public class VacancyServiceImpl implements VacancyService {
     private final VacancyRepository vacancyRepository;
     private final CategoryService categoryService;
     private final AuthorizedUserService authorizedUserService;
+    private final PageHolderWrapper pageHolderWrapper;
 
     @Override
     public VacancyDto findVacancyById(Long vacancyId) {
@@ -101,7 +103,7 @@ public class VacancyServiceImpl implements VacancyService {
     public PageHolder<VacancyDto> findAllActiveVacancies(int page, int size) {
         Page<Vacancy> isActiveVacancies = vacancyRepository.findIsActiveVacanciesSortedByDate(PageRequest.of(page, size));
 
-        PageHolder<VacancyDto> vacancyDtoPageHolder = wrapPageHolder(isActiveVacancies, page, FilterType.NEW);
+        PageHolder<VacancyDto> vacancyDtoPageHolder = pageHolderWrapper.wrapPageHolder(isActiveVacancies, page, FilterType.NEW);
         log.warn("FilterType String value: {}", vacancyDtoPageHolder.getFilterType().name());
         return vacancyDtoPageHolder;
     }
@@ -156,7 +158,7 @@ public class VacancyServiceImpl implements VacancyService {
 
         Page<Vacancy> vacanciesPage = vacancyRepository.findAllVacancies(pageable);
 
-        return wrapPageHolder(vacanciesPage, page, FilterType.NEW);
+        return pageHolderWrapper.wrapPageHolder(vacanciesPage, page, FilterType.NEW);
     }
 
     public boolean isVacancyExistById(Long id) {
@@ -176,11 +178,11 @@ public class VacancyServiceImpl implements VacancyService {
     public PageHolder<VacancyDto> findUserCreatedVacancies(int page, int size) {
         Long userId = authorizedUserService.getAuthorizedUserId();
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("updated").descending());
 
         Page<Vacancy> vacanciesPage = vacancyRepository.findUserVacanciesByUserId(userId, pageable);
 
-        return wrapPageHolder(vacanciesPage, page, FilterType.NEW);
+        return pageHolderWrapper.wrapPageHolder(vacanciesPage, page, FilterType.NEW);
     }
 
     @Override
@@ -231,7 +233,7 @@ public class VacancyServiceImpl implements VacancyService {
     public PageHolder<VacancyDto> findVacanciesByUserId(Long userId, int page, int size) {
         Page<Vacancy> vacanciesPageHolder = vacancyRepository.findUserVacanciesByUserId(userId, PageRequest.of(page, size));
 
-        return wrapPageHolder(vacanciesPageHolder, page, FilterType.NEW);
+        return pageHolderWrapper.wrapPageHolder(vacanciesPageHolder, page, FilterType.NEW);
     }
 
     @Override
@@ -240,53 +242,5 @@ public class VacancyServiceImpl implements VacancyService {
                 .stream()
                 .map(vacancyMapper::mapToDto)
                 .toList();
-    }
-
-    @Override
-    public PageHolder<VacancyDto> filterVacanciesBy(FilterType filterType, int page, int size) {
-        return switch (filterType) {
-            case OLD -> findActiveVacanciesOrderedByDateAsc(page, size);
-            case SALARY_ASC -> wrapPageHolder(vacancyRepository
-                            .findAllActiveVacancies(
-                                    PageRequest.of(
-                                            page, size, Sort.by("salary"
-                                            ))), page, FilterType.SALARY_ASC
-            );
-            case SALARY_DESC -> wrapPageHolder(vacancyRepository
-                    .findAllActiveVacancies(
-                            PageRequest.of(
-                                    page, size, Sort.by("salary")
-                                            .descending())), page, FilterType.SALARY_ASC
-                            );
-            case RESPONSES -> findActiveVacanciesOrderedByResponsesNumbersDesc(page, size);
-            default -> findAllActiveVacancies(page, size);
-        };
-    }
-
-    private PageHolder<VacancyDto> findActiveVacanciesOrderedByDateAsc(int page, int size) {
-        Page<Vacancy> vacanciesFilteredByDate = vacancyRepository.findIsActiveTrueOrderByDateAsc(PageRequest.of(page, size, Sort.by("")));
-
-        return wrapPageHolder(vacanciesFilteredByDate, page, FilterType.OLD);
-    }
-
-    @Override
-    public PageHolder<VacancyDto> findActiveVacanciesOrderedByResponsesNumbersDesc(int page, int size) {
-        Page<Vacancy> vacanciesFilteredByResponses = vacancyRepository.findIsActiveTrueOrderedByResponsesNumberDesc(PageRequest.of(page, size));
-
-        return wrapPageHolder(vacanciesFilteredByResponses, page, FilterType.RESPONSES);
-    }
-
-    private PageHolder<VacancyDto> wrapPageHolder(Page<Vacancy> vacancies, int page, FilterType filterType) {
-        return PageHolder.<VacancyDto>builder()
-                .content(vacancies.stream()
-                        .map(vacancyMapper::mapToDto)
-                        .toList())
-                .page(page)
-                .size(vacancies.getSize())
-                .totalPages(vacancies.getTotalPages())
-                .hasNextPage(vacancies.hasNext())
-                .hasPreviousPage(vacancies.hasPrevious())
-                .filterType(filterType)
-                .build();
     }
 }

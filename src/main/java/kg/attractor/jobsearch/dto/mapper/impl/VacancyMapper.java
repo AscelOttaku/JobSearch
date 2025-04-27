@@ -76,6 +76,10 @@ public class VacancyMapper implements Mapper<VacancyDto, Vacancy> {
                 LocalDateTime.parse(vacancyDto.getCreated(),
                         DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) :
                 LocalDateTime.now());
+        vacancy.setUpdated(vacancyDto.getUpdated() != null ?
+                LocalDateTime.parse(vacancyDto.getUpdated(),
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) :
+                LocalDateTime.now());
         return vacancy;
     }
 }

@@ -13,6 +13,10 @@
     </div>
 
     <form method="post" action="/users/registration" id="registerForm">
+        <#if _csrf??>
+            <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
+                   value="${(_csrf.token)!'csrf-token'}"/>
+        </#if>
         <div class="custom-form-group">
             <label for="name">First Name</label>
             <@spring.formInput "user.name", 'class="custom-form-control" id="name" placeholder="John" required'/>

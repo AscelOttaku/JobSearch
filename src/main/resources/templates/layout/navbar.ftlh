@@ -38,7 +38,7 @@
             </ul>
 
             <div class="d-flex">
-                <form class="d-flex me-3" action="/search" method="get">
+                <form class="d-flex me-3" action="#" method="get">
                     <div class="input-group">
                         <input class="form-control" type="search" name="query" placeholder="Поиск..."
                                aria-label="Search">
@@ -62,17 +62,34 @@
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="/logout"><i class="bi bi-box-arrow-right me-2"></i>Выйти</a>
-                            </li>
+                            <#if _csrf??>
+                                <form action="/logout" method="post">
+                                    <input type="hidden" name="${(_csrf.parameterName)!'csrf'}"
+                                           value="${(_csrf.token)!'--no-token--'}"/>
+                                    <button type="submit" class="btn btn-outline-info m-2"
+                                            id="logout">Logout
+                                    </button>
+                                </form>
+                            <#else>
+                                <a href="/logout" class="btn btn-outline-info m-2"
+                                   id="logout">Logout</a>
+                            </#if>
                         </ul>
                     </div>
                 <#else>
-                    <a class="btn btn-outline-light me-2" href="/auth/login">
-                        <i class="bi bi-box-arrow-in-right me-1"></i> Вход
-                    </a>
-                    <a class="btn btn-primary" href="/auth/registration">
-                        <i class="bi bi-person-plus me-1"></i> Регистрация
-                    </a>
+                    <#if !authorizedUser??>
+                        <a class="btn btn-outline-light me-2" href="/auth/login">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Login
+                        </a>
+
+                        <a class="btn btn-primary" href="/auth/registration">
+                            <i class="bi bi-person-plus me-1"></i> Регистрация
+                        </a>
+                    <#else>
+                        <a class="btn btn-outline-light me-2" href="/auth/logout">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Logout
+                        </a>
+                    </#if>
                 </#if>
             </div>
         </div>

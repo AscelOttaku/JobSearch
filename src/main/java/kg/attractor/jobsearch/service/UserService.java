@@ -1,9 +1,10 @@
 package kg.attractor.jobsearch.service;
 
-import kg.attractor.jobsearch.dto.PageHolder;
+import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 import kg.attractor.jobsearch.dto.UserDto;
+import kg.attractor.jobsearch.model.User;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -17,7 +18,7 @@ public interface UserService {
 
     void createUser(UserDto userDto);
 
-    void updateUser(UserDto userDto, UserDetails userDetails);
+    void updateUser(UserDto userDto);
 
     UserDto findJobSeekerByEmail(String userEmail);
 
@@ -41,7 +42,13 @@ public interface UserService {
 
     String findUserPasswordByUserId(Long userId);
 
-    boolean isPhoneNumberExist(String phoneNumber);
+    boolean isUserPhoneNumberUnique(String phoneNumber);
 
-    boolean isEmailExist(String email);
+    boolean isUserEmailIsUnique(String email);
+
+    User findUserByPasswordResetToken(String token);
+
+    void updatePassword(User user, String newPassword);
+
+    void makeResetPasswordLink(HttpServletRequest request) throws MessagingException;
 }

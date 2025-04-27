@@ -7,6 +7,27 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/static/css/detailed_resume.css">
+    <style>
+        .contact-icon {
+            font-size: 1.2rem;
+            margin-right: 8px;
+        }
+        .email-icon {
+            color: #d44638;
+        }
+        .telegram-icon {
+            color: #0088cc;
+        }
+        .facebook-icon {
+            color: #1877f2;
+        }
+        .linkedin-icon {
+            color: #0a66c2;
+        }
+        .phone-icon {
+            color: #25d366;
+        }
+    </style>
 </head>
 <body>
 <#include "../layout/navbar.ftlh">
@@ -18,8 +39,8 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start mb-4">
                         <h1 class="card-title">${resume.name}</h1>
-                        <span class="badge ${resume.isActive?string('bg-success', 'bg-secondary')}">
-                            ${resume.isActive?string('Активно', 'Неактивно')}
+                        <span class="badge ${resume.active?string('bg-success', 'bg-secondary')}">
+                            ${resume.active?string('Активно', 'Неактивно')}
                         </span>
                     </div>
 
@@ -72,19 +93,52 @@
                         </div>
                     </#if>
 
+                    <#if resume.contactInfos?? && resume.contactInfos?size gt 0>
+                        <div class="contact-section mb-4">
+                            <h3 class="section-title"><i class="bi bi-people"></i> Контактная информация</h3>
+                            <div class="info-block">
+                                <#list resume.contactInfos as contact>
+                                    <#if contact.value?? && contact.value?has_content>
+                                        <p>
+                                            <#if contact.contactType.type == "EMAIL">
+                                                <i class="bi bi-envelope-fill contact-icon email-icon"></i>
+                                                <strong>Email:</strong> ${contact.value}
+                                            <#elseif contact.contactType.type == "TELEGRAM">
+                                                <i class="bi bi-telegram contact-icon telegram-icon"></i>
+                                                <strong>Telegram:</strong> ${contact.value}
+                                            <#elseif contact.contactType.type == "FACEBOOK">
+                                                <i class="bi bi-facebook contact-icon facebook-icon"></i>
+                                                <strong>Facebook:</strong> ${contact.value}
+                                            <#elseif contact.contactType.type == "LINKEDIN">
+                                                <i class="bi bi-linkedin contact-icon linkedin-icon"></i>
+                                                <strong>LinkedIn:</strong> ${contact.value}
+                                            <#elseif contact.contactType.type == "PHONE_NUMBER" && contact.value != '+996'>
+                                                <i class="bi bi-telephone-fill contact-icon phone-icon"></i>
+                                                <strong>Телефон:</strong> ${contact.value}
+                                            </#if>
+                                        </p>
+                                    </#if>
+                                </#list>
+                            </div>
+                        </div>
+                    </#if>
+
                     <div class="d-flex justify-content-between align-items-center mt-4">
                         <small class="text-muted">
-                            <i class="bi bi-calendar"></i>Обновлено: ${resume.updated!resume.created}
+                            <i class="bi bi-calendar"></i> Обновлено: ${resume.updated!resume.created}
                         </small>
-                    </div>
 
-                    <div class="d-flex justify-content-left align-items-left mt-4">
-                        <#if authorizedUser.userId = resume.userId>
-                            <a href="/resumes/update/resume/${resume.id}"
-                               class="btn btn-sm btn-outline-secondary">
-                                <i class="bi bi-pencil"></i>
+                        <div class="d-flex gap-2">
+                            <#if authorizedUser.userId == resume.userId>
+                                <a href="/resumes/update/resume/${resume.id}" class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            </#if>
+
+                            <a href="/users/profile/${resume.userId}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i> Дополнительная Информация
                             </a>
-                        </#if>
+                        </div>
                     </div>
                 </div>
             </div>

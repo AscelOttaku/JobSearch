@@ -2,7 +2,7 @@ package kg.attractor.jobsearch.annotations;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-import kg.attractor.jobsearch.validators.UniqPhoneNumberValidator;
+import kg.attractor.jobsearch.validators.IsCategoryIdExistsValidator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,9 +11,9 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-@Constraint(validatedBy = UniqPhoneNumberValidator.class)
-public @interface UniquePhoneNumber {
-    String message() default "Phone number is not unique";
+@Constraint(validatedBy = IsCategoryIdExistsValidator.class)
+public @interface IsCategoryIdExists {
+    String message() default "category is not exists";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
