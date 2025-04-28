@@ -139,6 +139,11 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
                         .build())
                 .toList();
 
+        contactTypes.forEach(contactInfoDto -> {
+            if (contactInfoDto.getContactType().getType().equals("PHONE_NUMBER"))
+                contactInfoDto.setContactValue("+996");
+        });
+
         resumeDto.setContactInfos(new ArrayList<>());
 
         IntStream.range(0, 5).forEach(index ->

@@ -98,23 +98,23 @@
                             <h3 class="section-title"><i class="bi bi-people"></i> Контактная информация</h3>
                             <div class="info-block">
                                 <#list resume.contactInfos as contact>
-                                    <#if contact.value?? && contact.value?has_content>
+                                    <#if contact.contactValue?? && contact.contactValue?has_content>
                                         <p>
                                             <#if contact.contactType.type == "EMAIL">
                                                 <i class="bi bi-envelope-fill contact-icon email-icon"></i>
-                                                <strong>Email:</strong> ${contact.value}
+                                                <strong>Email:</strong> ${contact.contactValue}
                                             <#elseif contact.contactType.type == "TELEGRAM">
                                                 <i class="bi bi-telegram contact-icon telegram-icon"></i>
-                                                <strong>Telegram:</strong> ${contact.value}
+                                                <strong>Telegram:</strong> ${contact.contactValue}
                                             <#elseif contact.contactType.type == "FACEBOOK">
                                                 <i class="bi bi-facebook contact-icon facebook-icon"></i>
-                                                <strong>Facebook:</strong> ${contact.value}
+                                                <strong>Facebook:</strong> ${contact.contactValue}
                                             <#elseif contact.contactType.type == "LINKEDIN">
                                                 <i class="bi bi-linkedin contact-icon linkedin-icon"></i>
-                                                <strong>LinkedIn:</strong> ${contact.value}
-                                            <#elseif contact.contactType.type == "PHONE_NUMBER" && contact.value != '+996'>
+                                                <strong>LinkedIn:</strong> ${contact.contactValue}
+                                            <#elseif contact.contactType.type == "PHONE_NUMBER" && contact.contactValue != '+996'>
                                                 <i class="bi bi-telephone-fill contact-icon phone-icon"></i>
-                                                <strong>Телефон:</strong> ${contact.value}
+                                                <strong>Телефон:</strong> ${contact.contactValue}
                                             </#if>
                                         </p>
                                     </#if>

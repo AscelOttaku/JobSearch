@@ -77,8 +77,8 @@ public class ResumeServiceImpl implements ResumeService {
 
             contactInfos.forEach(contactInfoDto -> {
                 String phoneNumberType = contactInfoDto.getContactType().getType();
-                if (phoneNumberType.equals("PHONE_NUMBER") && contactInfoDto.getValue() == null)
-                    contactInfoDto.setValue("+996");
+                if (phoneNumberType.equals("PHONE_NUMBER") && contactInfoDto.getContactValue() == null)
+                    contactInfoDto.setContactValue("+996");
             });
 
             resumeDto.getContactInfos().addAll(contactInfos);

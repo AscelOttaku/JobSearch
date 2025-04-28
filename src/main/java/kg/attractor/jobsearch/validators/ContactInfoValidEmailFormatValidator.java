@@ -12,7 +12,7 @@ public class ContactInfoValidEmailFormatValidator implements ConstraintValidator
         if (contactInfoDto.getContactType().getType().equals("EMAIL")) {
             constraintValidatorContext.disableDefaultConstraintViolation();
 
-            String value = contactInfoDto.getValue();
+            String value = contactInfoDto.getContactValue();
 
             if (value == null || value.isBlank())
                 return true;
@@ -21,7 +21,7 @@ public class ContactInfoValidEmailFormatValidator implements ConstraintValidator
                 constraintValidatorContext.buildConstraintViolationWithTemplate(
                         "email is not contains @ or (gmail.com) its not allowed"
                 )
-                        .addPropertyNode("value")
+                        .addPropertyNode("contactValue")
                         .addConstraintViolation();
                 return false;
             }

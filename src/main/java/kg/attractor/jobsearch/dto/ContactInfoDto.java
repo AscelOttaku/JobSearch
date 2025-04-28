@@ -20,5 +20,5 @@ public class ContactInfoDto {
     private ContactTypeDto contactType;
 
     private Long resumeId;
-    private String value;
+    private String contactValue;
 }

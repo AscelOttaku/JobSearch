@@ -15,8 +15,8 @@ public class ContactInfoServiceImpl implements ContactInfoService {
 
     @Override
     public void createContactInfo(ContactInfoDto contactInfoDto) {
-        if (contactInfoDto.getValue() == null || contactInfoDto.getValue().isBlank() ||
-                contactInfoDto.getValue().equals("+996")
+        if (contactInfoDto.getContactValue() == null || contactInfoDto.getContactValue().isBlank() ||
+                contactInfoDto.getContactValue().equals("+996")
         ) {
             if (contactInfoDto.getId() != null)
                 deleteContactInfoById(contactInfoDto.getId());
