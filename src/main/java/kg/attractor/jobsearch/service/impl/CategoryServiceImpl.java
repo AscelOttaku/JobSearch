@@ -1,7 +1,7 @@
 package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dto.CategoryDto;
-import kg.attractor.jobsearch.dto.mapper.impl.CategoryMapper;
+import kg.attractor.jobsearch.dto.mapper.CategoryMapper;
 import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.repository.CategoryRepository;
 import kg.attractor.jobsearch.service.CategoryService;

@@ -1,7 +1,7 @@
 package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dto.WorkExperienceInfoDto;
-import kg.attractor.jobsearch.dto.mapper.impl.WorkExperienceMapper;
+import kg.attractor.jobsearch.dto.mapper.WorkExperienceMapper;
 import kg.attractor.jobsearch.exceptions.WorkExperienceNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.WorkExperienceInfo;

@@ -1,7 +1,10 @@
 package kg.attractor.jobsearch.dto.mapper.impl;
 
 import kg.attractor.jobsearch.dto.ResumeDto;
+import kg.attractor.jobsearch.dto.mapper.ContactInfoMapper;
+import kg.attractor.jobsearch.dto.mapper.EducationInfoMapper;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
+import kg.attractor.jobsearch.dto.mapper.WorkExperienceMapper;
 import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.model.User;

@@ -20,7 +20,7 @@ public class CompanyMapper implements Mapper<CompanyDto, User> {
                 .id(entity.getUserId())
                 .name(entity.getName())
                 .email(entity.getEmail())
-                .phone(entity.getPhoneNumber())
+                .phoneNumber(entity.getPhoneNumber())
                 .avatar(entity.getAvatar())
                 .build();
     }
@@ -38,7 +38,7 @@ public class CompanyMapper implements Mapper<CompanyDto, User> {
         user.setSurname(userDto.getName());
         user.setAge(userDto.getAge());
         user.setEmail(dto.getEmail());
-        user.setPhoneNumber(dto.getPhone());
+        user.setPhoneNumber(dto.getPhoneNumber());
         user.setPassword(userDto.getPassword());
         user.setAvatar(dto.getAvatar());
         user.setRole(role);

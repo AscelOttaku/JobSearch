@@ -1,7 +1,7 @@
 package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dto.EducationalInfoDto;
-import kg.attractor.jobsearch.dto.mapper.impl.EducationInfoMapper;
+import kg.attractor.jobsearch.dto.mapper.EducationInfoMapper;
 import kg.attractor.jobsearch.exceptions.EducationInfoNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.EducationInfo;
@@ -11,7 +11,10 @@ import kg.attractor.jobsearch.validators.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

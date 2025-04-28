@@ -14,7 +14,7 @@ import lombok.*;
 @NoArgsConstructor
 public class ContactInfoDto {
 
-    private Long contactInfoId;
+    private Long id;
 
     @Valid
     private ContactTypeDto contactType;

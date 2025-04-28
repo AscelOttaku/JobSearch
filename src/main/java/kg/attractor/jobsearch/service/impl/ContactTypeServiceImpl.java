@@ -1,7 +1,7 @@
 package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dto.ContactTypeDto;
-import kg.attractor.jobsearch.dto.mapper.impl.ContactTypeMapper;
+import kg.attractor.jobsearch.dto.mapper.ContactTypeMapper;
 import kg.attractor.jobsearch.repository.ContactTypeRepository;
 import kg.attractor.jobsearch.service.ContactTypeService;
 import lombok.RequiredArgsConstructor;
