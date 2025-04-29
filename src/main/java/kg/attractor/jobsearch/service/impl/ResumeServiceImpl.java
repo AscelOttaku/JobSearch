@@ -2,12 +2,12 @@ package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dto.*;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
+import kg.attractor.jobsearch.dto.mapper.impl.PageHolderWrapper;
 import kg.attractor.jobsearch.dto.mapper.impl.ResumeMapper;
-import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
+import kg.attractor.jobsearch.enums.Roles;
 import kg.attractor.jobsearch.exceptions.ResumeNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.Resume;
-import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.repository.ResumeRepository;
 import kg.attractor.jobsearch.service.*;
 import kg.attractor.jobsearch.validators.Validator;
@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -28,10 +29,10 @@ public class ResumeServiceImpl implements ResumeService {
     private final Mapper<ResumeDto, Resume> mapper;
     private final ResumeRepository resumeRepository;
     private final CategoryServiceImpl categoryService;
-    private final UserService userService;
     private final ResumeMapper resumeMapper;
     private final AuthorizedUserService authorizedUserService;
     private final ContactTypeService contactTypeService;
+    private final PageHolderWrapper pageHolderWrapper;
 
     @Override
     public List<ResumeDto> findAllResumes() {
@@ -112,40 +113,28 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public void deleteResume(Long resumeId) {
+    public void deleteResumeById(Long resumeId) {
         Validator.isValidId(resumeId);
 
-        if (!Objects.equals(resumeId, authorizedUserService.getAuthorizedUser().getUserId()))
-            throw new CustomIllegalArgException(
-                    "Resume doesn't belongs to authorized user",
-                    CustomBindingResult.builder()
-                            .className(Resume.class.getSimpleName())
-                            .fieldName("resumeId")
-                            .rejectedValue(resumeId)
-                            .build()
-            );
+        Resume resume = resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new NoSuchElementException("Resume not found by id " + resumeId));
+
+        if (!Objects.equals(resume.getUser().getUserId(), authorizedUserService.getAuthorizedUser().getUserId()))
+            throw new IllegalArgumentException("Resume doesn't belongs to authorized user");
 
         resumeRepository.deleteById(resumeId);
     }
 
     @Override
-    public List<ResumeDto> findUserCreatedResumes(String userEmail, int page, int size) {
-        var getUser = userService.findUserByEmail(userEmail);
+    public PageHolder<ResumeDto> findUserCreatedActiveResumes(int page, int size) {
+        var authUser = authorizedUserService.getAuthorizedUser();
 
-        if (!getUser.getAccountType().equalsIgnoreCase("jobSeeker"))
-            throw new CustomIllegalArgException(
-                    "User account type is not valid",
-                    CustomBindingResult.builder()
-                            .className(User.class.getCanonicalName())
-                            .fieldName("accountType")
-                            .rejectedValue(getUser.getAccountType())
-                            .build()
-            );
+        if (!authUser.getAccountType().equals(Roles.JOB_SEEKER.getValue()))
+            throw new IllegalArgumentException("User account type is not valid");
 
-        return resumeRepository.findResumeByUserId(getUser.getUserId(), PageRequest.of(page, size))
-                .stream()
-                .map(resumeMapper::mapToDto)
-                .toList();
+        Page<Resume> activeResumesByUserId = resumeRepository.findActiveResumesByUserId(authUser.getUserId(), PageRequest.of(page, size));
+
+        return pageHolderWrapper.wrapPageHolderResumes(activeResumesByUserId, page);
     }
 
     @Override
@@ -155,20 +144,14 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public PageHolder<ResumeDto> findUserCreatedResumes(int page, int size) {
-        Long userId = authorizedUserService.getAuthorizedUserId();
+        var authUser = authorizedUserService.getAuthorizedUser();
 
-        Page<Resume> resumesPage = resumeRepository.findResumeByUserId(userId, PageRequest.of(page, size));
+        if (!authUser.getAccountType().equalsIgnoreCase("job_seeker"))
+            throw new IllegalArgumentException("User account type is not valid");
 
-        return PageHolder.<ResumeDto>builder()
-                .content(resumesPage.stream()
-                        .map(resumeMapper::mapToDto)
-                        .toList())
-                .page(page)
-                .size(size)
-                .totalPages(resumesPage.getTotalPages())
-                .hasNextPage(resumesPage.hasNext())
-                .hasPreviousPage(resumesPage.hasPrevious())
-                .build();
+        Page<Resume> resumesPage = resumeRepository.findResumeByUserId(authUser.getUserId(), PageRequest.of(page, size));
+
+        return pageHolderWrapper.wrapPageHolderResumes(resumesPage, page);
     }
 
     @Override

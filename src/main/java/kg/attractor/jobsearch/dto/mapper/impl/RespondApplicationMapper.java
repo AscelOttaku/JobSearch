@@ -1,36 +1,36 @@
 package kg.attractor.jobsearch.dto.mapper.impl;
 
 import kg.attractor.jobsearch.dto.RespondApplicationDto;
-import kg.attractor.jobsearch.dto.ResumeDto;
-import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.model.RespondedApplication;
-import kg.attractor.jobsearch.model.Resume;
-import kg.attractor.jobsearch.model.Vacancy;
+import kg.attractor.jobsearch.service.ResumeService;
+import kg.attractor.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class RespondApplicationMapper implements Mapper<RespondApplicationDto, RespondedApplication> {
-    private final Mapper<ResumeDto, Resume> resumeMapper;
-    private final Mapper<VacancyDto, Vacancy> vacancyMapper;
+    private final ResumeService resumeService;
+    private final ResumeMapper resumeMapper;
+    private final VacancyMapper vacancyMapper;
+    private final VacancyService vacancyService;
 
     @Override
-    public RespondApplicationDto mapToDto(RespondedApplication entity) {
+    public RespondApplicationDto mapToDto(RespondedApplication respondApplication) {
         return RespondApplicationDto.builder()
-                .resumeDto(resumeMapper.mapToDto(entity.getResume()))
-                .vacancyDto(vacancyMapper.mapToDto(entity.getVacancy()))
-                .confirmation(entity.getConfirmation())
+                .resumeId(respondApplication.getResume().getId())
+                .vacancyId(respondApplication.getVacancy().getId())
+                .confirmation(respondApplication.getConfirmation())
                 .build();
     }
 
     @Override
     public RespondedApplication mapToEntity(RespondApplicationDto dto) {
         RespondedApplication entity = new RespondedApplication();
-        entity.setResume(resumeMapper.mapToEntity(dto.getResumeDto()));
-        entity.setVacancy(vacancyMapper.mapToEntity(dto.getVacancyDto()));
-        entity.setConfirmation(dto.isConfirmation());
+        entity.setResume(resumeMapper.mapToEntity(resumeService.findResumeById(dto.getResumeId())));
+        entity.setVacancy(vacancyMapper.mapToEntity(vacancyService.findVacancyById(dto.getVacancyId())));
+        entity.setConfirmation(dto.getConfirmation());
         return entity;
     }
 }

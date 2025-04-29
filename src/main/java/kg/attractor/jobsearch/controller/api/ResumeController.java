@@ -1,12 +1,12 @@
 package kg.attractor.jobsearch.controller.api;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
 import kg.attractor.jobsearch.annotations.EntityExistById;
+import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.ResumeDto;
+import kg.attractor.jobsearch.enums.EntityType;
 import kg.attractor.jobsearch.service.ResumeDetailedInfoService;
 import kg.attractor.jobsearch.service.ResumeService;
-import kg.attractor.jobsearch.enums.EntityType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -61,19 +61,16 @@ public class ResumeController {
     @DeleteMapping("{resumeId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteResume(@PathVariable Long resumeId) {
-        resumeService.deleteResume(resumeId);
+        resumeService.deleteResumeById(resumeId);
     }
 
     @GetMapping("users")
     @ResponseStatus(HttpStatus.OK)
-    public List<ResumeDto> findUserCreatedResumes(
-            @RequestParam(name = "email")
-            @Email(message = "{email_message}")
-            String userEmail,
+    public PageHolder<ResumeDto> findUserCreatedResumes(
             @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
             @RequestParam(value = "size", defaultValue = "10", required = false) Integer size
     ) {
-        return resumeService.findUserCreatedResumes(userEmail, page, size);
+        return resumeService.findUserCreatedResumes(page, size);
     }
 
     @GetMapping("{resumeId}")

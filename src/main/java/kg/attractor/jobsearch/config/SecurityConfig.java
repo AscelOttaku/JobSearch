@@ -64,7 +64,7 @@ public class SecurityConfig {
                                 .requestMatchers(PUT, "/users/updates").hasAnyAuthority(Roles.EMPLOYER.getValue(), Roles.JOB_SEEKER.getValue())
                                 .requestMatchers(POST, "/users/registration").anonymous()
                                 .requestMatchers(GET, "/users/profile").authenticated()
-                                .requestMatchers("/users/update/profile").fullyAuthenticated()
+                                .requestMatchers("/users/update/pro file").fullyAuthenticated()
                                 .requestMatchers(POST, "/users/upload/avatars").hasAnyAuthority(Roles.EMPLOYER.getValue(), Roles.JOB_SEEKER.getValue())
                                 .requestMatchers("/users/responded/vacancies/*").hasAuthority(Roles.EMPLOYER.getValue())
                                 .requestMatchers("/users/employer/*").hasAuthority(Roles.JOB_SEEKER.getValue())
@@ -75,7 +75,7 @@ public class SecurityConfig {
 
                                 // Companies
 
-                                .requestMatchers(GET, "/companies").hasAuthority(Roles.JOB_SEEKER.getValue())
+                                 .requestMatchers(GET, "/companies").hasAuthority(Roles.JOB_SEEKER.getValue())
 
 //                                RespondedApplication Endpoints
 
@@ -89,6 +89,7 @@ public class SecurityConfig {
                                 .requestMatchers(PUT, "/resumes/*").hasAuthority(Roles.JOB_SEEKER.getValue())
                                 .requestMatchers(DELETE, "/resumes/*").hasAuthority(Roles.JOB_SEEKER.getValue())
                                 .requestMatchers(GET, "/resumes/update/resume/*") .hasAnyAuthority(Roles.JOB_SEEKER.getValue())
+                                .requestMatchers(GET, "/resumes/users/actives").fullyAuthenticated()
                                 .requestMatchers("/resumes/*").authenticated()
 
                                 //All Other Endpoints

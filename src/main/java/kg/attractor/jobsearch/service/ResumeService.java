@@ -16,9 +16,9 @@ public interface ResumeService {
 
     ResumeDto createResume(ResumeDto resumeDto);
 
-    void deleteResume(Long resumeId);
+    void deleteResumeById(Long resumeId);
 
-    List<ResumeDto> findUserCreatedResumes(String userEmail, int page, int size);
+    PageHolder<ResumeDto> findUserCreatedActiveResumes(int page, int size);
 
     boolean isResumeExist(Long resumeId);
 
