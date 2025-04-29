@@ -1,9 +1,7 @@
 package kg.attractor.jobsearch.dto;
 
 import jakarta.validation.constraints.*;
-import kg.attractor.jobsearch.annotations.EntityExistById;
 import kg.attractor.jobsearch.annotations.IsExpFromAndExpToCorrectFormat;
-import kg.attractor.jobsearch.enums.EntityType;
 import lombok.*;
 
 import java.util.List;

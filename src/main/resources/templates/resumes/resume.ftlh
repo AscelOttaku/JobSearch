@@ -133,6 +133,16 @@
                                 <a href="/resumes/update/resume/${resume.id}" class="btn btn-sm btn-outline-secondary">
                                     <i class="bi bi-pencil"></i>
                                 </a>
+
+                                <form method="post" action="/resumes/${resume.id}" class="mb-0">
+                                    <#if _csrf??>
+                                        <input type="hidden" name="${(_csrf.parameterName)!}" value="${(_csrf.token)!}"/>
+                                    </#if>
+                                    <input type="hidden" name="_method" value="delete"/>
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="bi bi-trash-fill text-white me-1"></i> Удалить
+                                    </button>
+                                </form>
                             </#if>
 
                             <a href="/users/profile/${resume.userId}" class="btn btn-sm btn-outline-primary">

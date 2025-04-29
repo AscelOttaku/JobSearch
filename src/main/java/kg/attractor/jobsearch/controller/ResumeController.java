@@ -2,9 +2,11 @@ package kg.attractor.jobsearch.controller;
 
 import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.ResumeDto;
+import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.service.CategoryService;
 import kg.attractor.jobsearch.service.ResumeDetailedInfoService;
 import kg.attractor.jobsearch.service.ResumeService;
+import kg.attractor.jobsearch.service.VacancyService;
 import kg.attractor.jobsearch.validators.ResumeValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,7 @@ public class ResumeController {
     private final ResumeDetailedInfoService resumeDetailedInfoService;
     private final CategoryService categoryService;
     private final ResumeValidator resumeValidator;
+    private final VacancyService vacancyService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -46,6 +49,22 @@ public class ResumeController {
 
         model.addAttribute("pageResume", pageResume);
         return "resumes/user_resumes";
+    }
+
+    @GetMapping("users/actives")
+    @ResponseStatus(HttpStatus.OK)
+    public String findUserActiveResumes(
+            Model model,
+            @RequestParam Long vacancyId,
+            @RequestParam(defaultValue = "0", required = false) Integer page,
+            @RequestParam(defaultValue = "5", required = false) Integer size
+    ) {
+        PageHolder<ResumeDto> pageResume = resumeService
+                .findUserCreatedActiveResumes(page, size);
+
+        model.addAttribute("vacancy", vacancyService.findVacancyById(vacancyId));
+        model.addAttribute("pageResume", pageResume);
+        return "vacancies/vacancy";
     }
 
     @GetMapping("{resumeId}")
@@ -107,6 +126,13 @@ public class ResumeController {
 
         resumeDetailedInfoService.updateResumeDetailedInfo(resumeDto);
         return "redirect:/resumes/" + resumeDto.getId();
+    }
+
+    @DeleteMapping("{resumeId}")
+    @ResponseStatus(HttpStatus.SEE_OTHER)
+    public String deleteResumeById(@PathVariable Long resumeId) {
+        resumeService.deleteResumeById(resumeId);
+        return "redirect:/users/profile";
     }
 }
 

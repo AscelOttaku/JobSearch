@@ -21,4 +21,7 @@ public interface ResumeRepository extends JpaRepository<Resume, Long> {
 
     @Query("select r from Resume r order by coalesce(r.created, r.updated)")
     Page<Resume> findAllResumes(Pageable pageable);
+
+    @Query("select r from Resume r where r.user.userId = :userId and r.isActive = true")
+    Page<Resume> findActiveResumesByUserId(Long userId, Pageable pageable);
 }

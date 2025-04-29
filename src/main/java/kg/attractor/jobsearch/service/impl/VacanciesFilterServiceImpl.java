@@ -24,21 +24,21 @@ public class VacanciesFilterServiceImpl implements VacanciesFilterService {
     @Override
     public PageHolder<VacancyDto> filterVacanciesBy(FilterType filterType, int page, int size) {
         return switch (filterType) {
-            case OLD -> pageHolderWrapper.wrapPageHolder(vacancyRepository
+            case OLD -> pageHolderWrapper.wrapPageHolderVacancies(vacancyRepository
                             .findAllActiveVacancies(
                                     PageRequest.of(
                                             page, size, Sort.by("updated").ascending())
                             ),
                     page, FilterType.OLD
             );
-            case SALARY_ASC -> pageHolderWrapper.wrapPageHolder(vacancyRepository
+            case SALARY_ASC -> pageHolderWrapper.wrapPageHolderVacancies(vacancyRepository
                             .findAllActiveVacancies(
                                     PageRequest.of(
                                             page, size, Sort.by("salary"))
                             ),
                     page, FilterType.SALARY_ASC
             );
-            case SALARY_DESC -> pageHolderWrapper.wrapPageHolder(vacancyRepository
+            case SALARY_DESC -> pageHolderWrapper.wrapPageHolderVacancies(vacancyRepository
                             .findAllActiveVacancies(
                                     PageRequest.of(
                                             page, size, Sort.by("salary").descending())
@@ -46,7 +46,7 @@ public class VacanciesFilterServiceImpl implements VacanciesFilterService {
                     page, FilterType.SALARY_ASC
             );
             case RESPONSES -> findActiveVacanciesOrderedByResponsesNumbersDesc(page, size);
-            default -> pageHolderWrapper.wrapPageHolder(vacancyRepository
+            default -> pageHolderWrapper.wrapPageHolderVacancies(vacancyRepository
                             .findAllActiveVacancies(
                                     PageRequest.of(
                                             page, size, Sort.by("updated").descending())
@@ -59,7 +59,7 @@ public class VacanciesFilterServiceImpl implements VacanciesFilterService {
     private PageHolder<VacancyDto> findActiveVacanciesOrderedByResponsesNumbersDesc(int page, int size) {
         Page<Vacancy> vacanciesFilteredByResponses = vacancyRepository.findActiveVacanciesOrderedByResponsesNumberDes(PageRequest.of(page, size));
 
-        return pageHolderWrapper.wrapPageHolder(vacanciesFilteredByResponses, page, FilterType.RESPONSES);
+        return pageHolderWrapper.wrapPageHolderVacancies(vacanciesFilteredByResponses, page, FilterType.RESPONSES);
     }
 
     private PageHolder<VacancyDto> findUserVacanciesOrderedByResponsesNumbersDesc(int page, int size) {
@@ -68,7 +68,7 @@ public class VacanciesFilterServiceImpl implements VacanciesFilterService {
                 PageRequest.of(page, size)
         );
 
-        return pageHolderWrapper.wrapPageHolder(vacanciesFilteredByResponses, page, FilterType.RESPONSES);
+        return pageHolderWrapper.wrapPageHolderVacancies(vacanciesFilteredByResponses, page, FilterType.RESPONSES);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class VacanciesFilterServiceImpl implements VacanciesFilterService {
         Long authorizedUserId = authorizedUserService.getAuthorizedUserId();
 
         return switch (filterType) {
-            case OLD -> pageHolderWrapper.wrapPageHolder(vacancyRepository
+            case OLD -> pageHolderWrapper.wrapPageHolderVacancies(vacancyRepository
                     .findUserVacanciesByUserId(
                             authorizedUserId,
                             PageRequest.of(
@@ -84,7 +84,7 @@ public class VacanciesFilterServiceImpl implements VacanciesFilterService {
                     ), page, FilterType.OLD
             );
 
-            case SALARY_ASC -> pageHolderWrapper.wrapPageHolder(vacancyRepository
+            case SALARY_ASC -> pageHolderWrapper.wrapPageHolderVacancies(vacancyRepository
                     .findUserVacanciesByUserId(
                             authorizedUserId,
                             PageRequest.of(
@@ -92,7 +92,7 @@ public class VacanciesFilterServiceImpl implements VacanciesFilterService {
                             )), page, FilterType.SALARY_ASC
                     );
 
-            case SALARY_DESC -> pageHolderWrapper.wrapPageHolder(vacancyRepository
+            case SALARY_DESC -> pageHolderWrapper.wrapPageHolderVacancies(vacancyRepository
                     .findUserVacanciesByUserId(
                             authorizedUserId,
                             PageRequest.of(
@@ -102,7 +102,7 @@ public class VacanciesFilterServiceImpl implements VacanciesFilterService {
 
             case RESPONSES -> findUserVacanciesOrderedByResponsesNumbersDesc(page, size);
 
-            default -> pageHolderWrapper.wrapPageHolder(vacancyRepository
+            default -> pageHolderWrapper.wrapPageHolderVacancies(vacancyRepository
                     .findUserVacanciesByUserId(
                             authorizedUserId,
                             PageRequest.of(
