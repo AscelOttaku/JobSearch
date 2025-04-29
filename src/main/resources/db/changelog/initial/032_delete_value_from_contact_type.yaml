@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 032_delete_value_from_contact_type.yaml
+      author: Zhanybekov Kanybek
+      changes:
+        - delete:
+              schemaName: public
+              tableName: contact_type
+              where: type = 'Kg'

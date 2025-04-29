@@ -15,11 +15,12 @@ public class ValidPasswordValidator implements ConstraintValidator<ValidUserPass
 
     @Override
     public boolean isValid(String password, ConstraintValidatorContext constraintValidatorContext) {
+        constraintValidatorContext.disableDefaultConstraintViolation();
+
         if (password == null || password.isBlank()) {
             constraintValidatorContext.buildConstraintViolationWithTemplate(
                             "password is null or blank"
                     )
-                    .addPropertyNode("password")
                     .addConstraintViolation();
             return false;
         }
@@ -27,13 +28,12 @@ public class ValidPasswordValidator implements ConstraintValidator<ValidUserPass
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         if ((auth == null || !auth.isAuthenticated() ||
-                !(auth instanceof AnonymousAuthenticationToken)) &&
+                (auth instanceof AnonymousAuthenticationToken)) &&
                 !password.matches("^(?=.*[A-Z])(?=.*\\d).+$")) {
 
             constraintValidatorContext.buildConstraintViolationWithTemplate(
                             "password format is incorrect"
                     )
-                    .addPropertyNode("password")
                     .addConstraintViolation();
             return false;
         }

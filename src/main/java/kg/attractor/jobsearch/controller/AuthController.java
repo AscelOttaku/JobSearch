@@ -2,6 +2,8 @@ package kg.attractor.jobsearch.controller;
 
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import kg.attractor.jobsearch.dto.PasswordToken;
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.service.UserService;
@@ -9,10 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("auth")
@@ -61,17 +61,26 @@ public class AuthController {
     @GetMapping("/reset_password")
     public String showResetPasswordForm(@RequestParam String token, Model model) {
         userService.findUserByPasswordResetToken(token);
-        model.addAttribute("token", token);
+        model.addAttribute("password_token", PasswordToken.builder()
+                .token(token)
+                .build());
+
         return "auth/reset_password_form";
     }
 
     @PostMapping("/reset_password")
-    public String processResetPassword(HttpServletRequest request, Model model) {
-        String token = request.getParameter("token");
-        String password = request.getParameter("password");
+    public String processResetPassword(
+            @ModelAttribute("password_token") @Valid PasswordToken passwordToken,
+            BindingResult bindingResult,
+            Model model
+    ) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("password_token", passwordToken);
+            return "auth/reset_password_form";
+        }
 
-        User userByPasswordResetToken = userService.findUserByPasswordResetToken(token);
-        userService.updatePassword(userByPasswordResetToken, password);
+        User userByPasswordResetToken = userService.findUserByPasswordResetToken(passwordToken.getToken());
+        userService.updatePassword(userByPasswordResetToken, passwordToken.getPassword());
         model.addAttribute("message", "You have successfully changed your password.");
         return "auth/reset_password_message";
     }

@@ -64,7 +64,7 @@ public class SecurityConfig {
                                 .requestMatchers(PUT, "/users/updates").hasAnyAuthority(Roles.EMPLOYER.getValue(), Roles.JOB_SEEKER.getValue())
                                 .requestMatchers(POST, "/users/registration").anonymous()
                                 .requestMatchers(GET, "/users/profile").authenticated()
-                                .requestMatchers("/users/update/pro file").fullyAuthenticated()
+                                .requestMatchers("/users/update/profile").fullyAuthenticated()
                                 .requestMatchers(POST, "/users/upload/avatars").hasAnyAuthority(Roles.EMPLOYER.getValue(), Roles.JOB_SEEKER.getValue())
                                 .requestMatchers("/users/responded/vacancies/*").hasAuthority(Roles.EMPLOYER.getValue())
                                 .requestMatchers("/users/employer/*").hasAuthority(Roles.JOB_SEEKER.getValue())
