@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void createUser(UserDto userDto) {
+    public UserDto createUser(UserDto userDto) {
 
         if (!userDto.getAccountType().equalsIgnoreCase("jobSeeker") &&
                 !userDto.getAccountType().equalsIgnoreCase("employer"))
@@ -69,11 +69,12 @@ public class UserServiceImpl implements UserService {
                             .build()
             );
 
-        userRepository.save(userMapper.mapToEntity(userDto));
+        User user = userMapper.mapToEntity(userDto);
+        return userMapper.mapToDto(userRepository.save(user));
     }
 
     @Override
-    public void updateUser(UserDto userDto) {
+    public UserDto updateUser(UserDto userDto) {
         UserDto userPreviousVal = getAuthorizedUser();
 
         if (!userDto.getEmail().equals(userPreviousVal.getEmail()))
@@ -83,7 +84,7 @@ public class UserServiceImpl implements UserService {
         User entity = userMapper.mapToEntity(userDto);
 
         userPreviousVal.setUserId(userPreviousVal.getUserId());
-        userRepository.save(entity);
+        return userMapper.mapToDto(userRepository.save(entity));
     }
 
     @Override
@@ -167,7 +168,7 @@ public class UserServiceImpl implements UserService {
         return optionalUser.isPresent() && optionalUser.get().getAccountType().equalsIgnoreCase("jobSeeker");
     }
 
-    private UserDto getAuthorizedUser() {
+    public UserDto getAuthorizedUser() {
         UserDetails userDetails = getAutentificatedUserDetails();
         return findUserByEmail(userDetails.getUsername());
     }

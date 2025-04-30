@@ -16,9 +16,9 @@ public interface UserService {
 
     ResponseEntity<?> getAvatarOfAuthorizedUser() throws IOException;
 
-    void createUser(UserDto userDto);
+    UserDto createUser(UserDto userDto);
 
-    void updateUser(UserDto userDto);
+    UserDto updateUser(UserDto userDto);
 
     UserDto findJobSeekerByEmail(String userEmail);
 
