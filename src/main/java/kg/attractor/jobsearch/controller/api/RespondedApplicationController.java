@@ -1,14 +1,13 @@
 package kg.attractor.jobsearch.controller.api;
 
-import jakarta.validation.Valid;
 import kg.attractor.jobsearch.dto.RespondApplicationDto;
 import kg.attractor.jobsearch.service.RespondService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("responds")
+@RestController("respondRestApplicationController")
+@RequestMapping("/api/responds")
 public class RespondedApplicationController {
     private final RespondService respondService;
 
@@ -19,9 +18,9 @@ public class RespondedApplicationController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public RespondApplicationDto createRespond(
-            @RequestBody @Valid RespondApplicationDto respondApplicationDto
-    ) {
-        return respondService.createRespond(respondApplicationDto);
+    public void createRespond(
+            @RequestBody RespondApplicationDto respondApplicationDto
+            ) {
+        respondService.createRespond(respondApplicationDto);
     }
 }

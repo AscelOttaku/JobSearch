@@ -148,7 +148,7 @@
                             </label>
                             <div class="d-flex flex-wrap gap-2">
                                 <#list resume.contactInfos as contact>
-                                    <@spring.formHiddenInput "resume.contactInfos[${contact_index}].contactInfoId" 'class="form-control"'/>
+                                    <@spring.formHiddenInput "resume.contactInfos[${contact_index}].id" 'class="form-control"'/>
                                     <@spring.formHiddenInput "resume.contactInfos[${contact_index}].contactType.contactTypeId" 'class="form-control"'/>
                                     <div class="flex-grow-1" style="min-width: calc(50% - 10px);">
                                         <div class="social-input-group">
@@ -167,7 +167,7 @@
                             </#if>
                         </span>
                                                 <@spring.formHiddenInput "resume.contactInfos[${contact?index}].contactType.type" />
-                                                <@spring.formInput "resume.contactInfos[${contact?index}].value" 'class="form-control" placeholder="${contact.contactType.type?switch(
+                                                <@spring.formInput "resume.contactInfos[${contact?index}].contactValue" 'class="form-control" placeholder="${contact.contactType.type?switch(
                                                 "EMAIL", "Email address",
                                                 "TELEGRAM", "Telegram username",
                                                 "FACEBOOK", "Facebook profile",
@@ -176,7 +176,7 @@
                                                 "Введите контакт"
                                                 )}"'/>
                                             </div>
-                                            <@spring.showErrors "resume.contactInfos[${contact?index}].value" "text-danger small" />
+                                            <@spring.showErrors "resume.contactInfos[${contact?index}].contactValue" "text-danger small" />
                                         </div>
                                     </div>
                                 </#list>

@@ -103,7 +103,7 @@ public class VacancyServiceImpl implements VacancyService {
     public PageHolder<VacancyDto> findAllActiveVacancies(int page, int size) {
         Page<Vacancy> isActiveVacancies = vacancyRepository.findIsActiveVacanciesSortedByDate(PageRequest.of(page, size));
 
-        PageHolder<VacancyDto> vacancyDtoPageHolder = pageHolderWrapper.wrapPageHolder(isActiveVacancies, page, FilterType.NEW);
+        PageHolder<VacancyDto> vacancyDtoPageHolder = pageHolderWrapper.wrapPageHolderVacancies(isActiveVacancies, page, FilterType.NEW);
         log.warn("FilterType String value: {}", vacancyDtoPageHolder.getFilterType().name());
         return vacancyDtoPageHolder;
     }
@@ -158,7 +158,7 @@ public class VacancyServiceImpl implements VacancyService {
 
         Page<Vacancy> vacanciesPage = vacancyRepository.findAllVacancies(pageable);
 
-        return pageHolderWrapper.wrapPageHolder(vacanciesPage, page, FilterType.NEW);
+        return pageHolderWrapper.wrapPageHolderVacancies(vacanciesPage, page, FilterType.NEW);
     }
 
     public boolean isVacancyExistById(Long id) {
@@ -182,7 +182,7 @@ public class VacancyServiceImpl implements VacancyService {
 
         Page<Vacancy> vacanciesPage = vacancyRepository.findUserVacanciesByUserId(userId, pageable);
 
-        return pageHolderWrapper.wrapPageHolder(vacanciesPage, page, FilterType.NEW);
+        return pageHolderWrapper.wrapPageHolderVacancies(vacanciesPage, page, FilterType.NEW);
     }
 
     @Override
@@ -233,7 +233,7 @@ public class VacancyServiceImpl implements VacancyService {
     public PageHolder<VacancyDto> findVacanciesByUserId(Long userId, int page, int size) {
         Page<Vacancy> vacanciesPageHolder = vacancyRepository.findUserVacanciesByUserId(userId, PageRequest.of(page, size));
 
-        return pageHolderWrapper.wrapPageHolder(vacanciesPageHolder, page, FilterType.NEW);
+        return pageHolderWrapper.wrapPageHolderVacancies(vacanciesPageHolder, page, FilterType.NEW);
     }
 
     @Override

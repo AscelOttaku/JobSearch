@@ -12,7 +12,7 @@ public class ContactTypePhoneNumberValidValidator implements ConstraintValidator
         if (contactInfoDto.getContactType().getType().equals("PHONE_NUMBER")) {
             constraintValidatorContext.disableDefaultConstraintViolation();
 
-            String value = contactInfoDto.getValue();
+            String value = contactInfoDto.getContactValue();
 
             if (value == null || value.isBlank() || value.equals("+996"))
                 return true;
@@ -21,7 +21,7 @@ public class ContactTypePhoneNumberValidValidator implements ConstraintValidator
                 constraintValidatorContext.buildConstraintViolationWithTemplate(
                         "phone number is not valid"
                 )
-                        .addPropertyNode("value")
+                        .addPropertyNode("contactValue")
                         .addConstraintViolation();
                 return false;
             }

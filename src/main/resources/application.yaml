@@ -12,6 +12,8 @@ spring:
     username: Kanybek
     password: Kanybek12345
     driver-class-name: org.h2.Driver
+    hikari:
+      maximum-pool-size: 5
   liquibase:
     change-log: classpath://db/changelog/master.yaml
   mvc:
@@ -37,15 +39,13 @@ spring:
           starttls:
             enable: true
 
-
-
 logging:
   level:
     org:
       springframework:
-        security: DEBUG
+        security: INFO
         web:
           servlet:
-            DispatcherServlet: DEBUG
+            DispatcherServlet: INFO
 
 

@@ -40,7 +40,7 @@ public class UserDto {
     private String password;
 
     @NotBlank(message = "{blank_message}")
-    @Size(min = 12, max = 12,
+    @Size(min = 13, max = 13,
             message = "{phone_number_size_message}"
     )
     @Pattern(

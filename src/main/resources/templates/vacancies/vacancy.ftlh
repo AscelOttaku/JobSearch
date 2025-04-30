@@ -70,6 +70,110 @@
                 </#if>
             </div>
         </div>
+
+        <#if pageResume?? && pageResume.content?? && pageResume.content?size gt (0)>
+            <form method="post" action="/responds">
+                <#if _csrf??>
+                    <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
+                           value="${(_csrf.token)!'csrf-token'}"/>
+                </#if>
+
+                <input type="hidden" name="vacancyId" value="${vacancy.vacancyId}"/>
+
+                <div class="mb-4">
+                    <label for="resumeSelect" class="form-label fw-semibold mb-2">
+                        <i class="bi bi-file-earmark-person me-1"></i> Выберите резюме для отклика
+                    </label>
+                    <select
+                            id="resumeSelect"
+                            name="resumeId"
+                            class="form-select ${(error??)?then('is-invalid', '')} shadow-sm"
+                            required
+                            aria-describedby="resumeHelp"
+                    >
+                        <option value="" disabled selected class="text-muted"> Выберите подходящее резюме </option>
+                        <#list pageResume.content as resume>
+                            <option
+                                    value="${resume.id}"
+                                    <#if (selectedResumeId?? && selectedResumeId == resume.id)>selected</#if>
+                                    class="fw-medium"
+                            >
+                                ${resume.name}
+                            </option>
+                        </#list>
+                    </select>
+
+                    <#if error??>
+                        <div class="invalid-feedback d-flex align-items-center mt-1">
+                            <i class="bi bi-exclamation-circle-fill me-2"></i>
+                            ${error.defaultMessage}
+                        </div>
+                    <#else>
+                        <small id="resumeHelp" class="form-text text-muted mt-1">
+                            Выберите наиболее подходящее резюме для этой вакансии
+                        </small>
+                    </#if>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-between gap-2">
+                    <#if pageResume.totalPages gt 1>
+                        <nav aria-label="Page navigation" class="flex-grow-1">
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item <#if !pageResume.hasPreviousPage>disabled</#if>">
+                                    <a class="page-link" href="?page=${pageResume.page - 1}&vacancyId=${vacancy.vacancyId}">
+                                        &laquo;
+                                    </a>
+                                </li>
+
+                                <#if pageResume.page gt 2>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=0&vacancyId=${vacancy.vacancyId}">1</a>
+                                    </li>
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                </#if>
+
+                                <#list [pageResume.page - 1, pageResume.page, pageResume.page + 1] as p>
+                                    <#if p gte 0 && p lt pageResume.totalPages>
+                                        <li class="page-item <#if p == pageResume.page>active</#if>">
+                                            <a class="page-link" href="?page=${p}&vacancyId=${vacancy.vacancyId}">
+                                                ${p + 1}
+                                            </a>
+                                        </li>
+                                    </#if>
+                                </#list>
+
+                                <#if pageResume.page lt pageResume.totalPages - 3>
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=${pageResume.totalPages - 1}&vacancyId=${vacancy.vacancyId}">
+                                            ${pageResume.totalPages}
+                                        </a>
+                                    </li>
+                                </#if>
+
+                                <li class="page-item <#if !pageResume.hasNextPage>disabled</#if>">
+                                    <a class="page-link" href="?page=${pageResume.page + 1}&vacancyId=${vacancy.vacancyId}">
+                                        &raquo;
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </#if>
+
+                    <button type="submit" class="btn btn-sm btn-outline-primary flex-shrink-0">
+                        <i class="bi bi-send"></i> Откликнуться
+                    </button>
+                </div>
+            </form>
+        <#else>
+            <a href="/resumes/users/actives?vacancyId=${vacancy.vacancyId}" class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-send"></i> Откликнуться С Резюме
+            </a>
+        </#if>
     </div>
 </div>
 </body>

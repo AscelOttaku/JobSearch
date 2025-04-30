@@ -39,7 +39,7 @@
                     </div>
                     <div class="detail-card">
                         <h3><i class="bi bi-telephone"></i> Телефон</h3>
-                        <p>${company.phone}</p>
+                        <p>${company.phoneNumber}</p>
                     </div>
                 </div>
             </div>

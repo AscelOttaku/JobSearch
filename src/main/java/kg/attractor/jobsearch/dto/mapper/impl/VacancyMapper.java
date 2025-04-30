@@ -21,7 +21,6 @@ import java.time.format.DateTimeFormatter;
 @RequiredArgsConstructor
 public class VacancyMapper implements Mapper<VacancyDto, Vacancy> {
     private final CategoryService categoryService;
-    private final Mapper<ResumeDto, Resume> resumeMapper;
 
     @Override
     public VacancyDto mapToDto(Vacancy vacancy) {
@@ -47,7 +46,7 @@ public class VacancyMapper implements Mapper<VacancyDto, Vacancy> {
                 .updated(Util.dateTimeFormat(vacancy.getUpdated()))
                 .respondedApplications(vacancy.getRespondedApplications().stream()
                         .map(respondedApplication -> RespondApplicationDto.builder()
-                                .resumeDto(resumeMapper.mapToDto(respondedApplication.getResume()))
+                                .resumeId(respondedApplication.getResume().getId())
                                 .confirmation(respondedApplication.getConfirmation())
                                 .build())
                         .toList())

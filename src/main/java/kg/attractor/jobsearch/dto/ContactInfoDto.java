@@ -14,11 +14,11 @@ import lombok.*;
 @NoArgsConstructor
 public class ContactInfoDto {
 
-    private Long contactInfoId;
+    private Long id;
 
     @Valid
     private ContactTypeDto contactType;
 
     private Long resumeId;
-    private String value;
+    private String contactValue;
 }

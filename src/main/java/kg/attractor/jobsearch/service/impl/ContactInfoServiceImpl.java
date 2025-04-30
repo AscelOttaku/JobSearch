@@ -1,7 +1,7 @@
 package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dto.ContactInfoDto;
-import kg.attractor.jobsearch.dto.mapper.impl.ContactInfoMapper;
+import kg.attractor.jobsearch.dto.mapper.ContactInfoMapper;
 import kg.attractor.jobsearch.repository.ContactInfoRepository;
 import kg.attractor.jobsearch.service.ContactInfoService;
 import lombok.RequiredArgsConstructor;
@@ -15,11 +15,11 @@ public class ContactInfoServiceImpl implements ContactInfoService {
 
     @Override
     public void createContactInfo(ContactInfoDto contactInfoDto) {
-        if (contactInfoDto.getValue() == null || contactInfoDto.getValue().isBlank() ||
-                contactInfoDto.getValue().equals("+996")
+        if (contactInfoDto.getContactValue() == null || contactInfoDto.getContactValue().isBlank() ||
+                contactInfoDto.getContactValue().equals("+996")
         ) {
-            if (contactInfoDto.getContactInfoId() != null)
-                deleteContactInfoById(contactInfoDto.getContactInfoId());
+            if (contactInfoDto.getId() != null)
+                deleteContactInfoById(contactInfoDto.getId());
 
             return;
         }
