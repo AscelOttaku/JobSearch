@@ -57,4 +57,9 @@ public class Util {
     public static String generateUniqueValue() {
         return UUID.randomUUID().toString();
     }
+
+    public static String getUserArrivedUri(HttpServletRequest request) {
+        String referer = request.getHeader("Referer");
+        return referer;
+    }
 }

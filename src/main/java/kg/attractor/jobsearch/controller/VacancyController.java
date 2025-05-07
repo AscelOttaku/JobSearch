@@ -15,6 +15,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @Controller("vacancyController")
 @RequestMapping("/vacancies")
 @Slf4j
@@ -119,25 +121,27 @@ public class VacancyController {
     }
 
     @GetMapping("filtered")
-    @ResponseStatus(HttpStatus.OK)
     public String filterVacanciesBy(
             @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
             @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
-            @RequestParam FilterType filterType,
+            @RequestParam(required = false) FilterType filterType,
             Model model
     ) {
+        if (filterType == null) return "redirect:/vacancies/actives?page=" + page + "&size=" + size;
+
         model.addAttribute("vacancies", vacanciesFilterService.filterVacanciesBy(filterType, page, size));
         return "vacancies/vacancies";
     }
 
     @GetMapping("users/filtered")
-    @ResponseStatus(HttpStatus.OK)
     public String filterUsersVacancies(
             @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
             @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
-            @RequestParam FilterType filterType,
+            @RequestParam(required = false) FilterType filterType,
             Model model
     ) {
+        if (filterType == null) return "redirect:/vacancies/users?page=" + page + "&size=" + size;
+
         model.addAttribute("vacancies", vacanciesFilterService.filterUserCreatedVacanciesBy(filterType, page, size));
         return "vacancies/user_vacancies";
     }

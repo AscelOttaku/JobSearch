@@ -51,4 +51,6 @@ public interface UserService {
     void updatePassword(User user, String newPassword);
 
     void makeResetPasswordLink(HttpServletRequest request) throws MessagingException;
+
+    void updateUserAvatarByUserEmail(String email, String avatar);
 }

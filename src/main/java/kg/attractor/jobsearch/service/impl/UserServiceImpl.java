@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static kg.attractor.jobsearch.validators.Validator.notBlank;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -243,5 +245,21 @@ public class UserServiceImpl implements UserService {
         String resetPasswordLink = Util.getSiteUrl(request) + "/auth/reset_password?token=" + token;
 
         emailService.sendEmail(email, resetPasswordLink);
+    }
+
+    @Transactional
+    @Override
+    public void updateUserAvatarByUserEmail(String email, String avatar) {
+        notBlank(email, "email cannot be null or blank");
+        notBlank(avatar, "avatar cannot be null or blank");
+
+        Optional<User> existingUser = userRepository.findUserByEmail(email);
+
+        existingUser.ifPresent(user1 -> {
+            String previousAvatar = user1.getAvatar();
+
+            if (!avatar.isBlank() && !previousAvatar.equals(avatar))
+                userRepository.updateAvatarByUserEmail(avatar, email);
+        });
     }
 }

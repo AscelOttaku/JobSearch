@@ -34,7 +34,7 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="vacancy-form">
-                    <h2 class="mb-4">Обновить вакансию</h2>
+                    <h2 class="mb-4"><@spring.message "update_vacancy"/></h2>
                     <form method="post" action="/vacancies/update/vacancy">
 
                         <#if _csrf??>
@@ -45,21 +45,21 @@
 
                         <div class="mb-3">
                             <label for="name" class="form-label">
-                                <i class="bi bi-card-heading form-icon me-2"></i>Название вакансии
+                                <i class="bi bi-card-heading form-icon me-2"></i><@spring.message "vacancy_name"/>
                             </label>
-                            <@spring.formInput "vacancy.name", 'class="form-control" placeholder="Введите название" id="name"'/>
+                            <@spring.formInput "vacancy.name", 'class="form-control" placeholder="${springMacroRequestContext.getMessage("enter_name")}" id="name"'/>
                             <@spring.showErrors "<br>" "text-danger small"/>
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="categoryId" class="form-label">
-                                    <i class="bi bi-briefcase form-icon me-2"></i>Категория
+                                    <i class="bi bi-briefcase form-icon me-2"></i><@spring.message "category"/>
                                 </label>
                                 <@spring.bind "vacancy.categoryId"/>
                                 <select class="form-select ${(spring.status.error)?string('is-invalid','')}"
                                         id="categoryId" name="${spring.status.expression}">
-                                    <option value="">Выберите категорию</option>
+                                    <option value=""><@spring.message "select_category"/></option>
                                     <#list categories as category>
                                         <option value="${category.id}"
                                                 ${(vacancy.categoryId?? && vacancy.categoryId == category.id)?string('selected','')}>
@@ -71,9 +71,9 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="salary" class="form-label">
-                                    <i class="bi bi-cash-coin form-icon me-2"></i>Зарплата (KGS)
+                                    <i class="bi bi-cash-coin form-icon me-2"></i><@spring.message "salary"/> (<@spring.message "currency"/>)
                                 </label>
-                                <@spring.formInput "vacancy.salary", 'class="form-control" placeholder="Укажите зарплату" id="salary" type="number"'/>
+                                <@spring.formInput "vacancy.salary", 'class="form-control" placeholder="${springMacroRequestContext.getMessage("enter_salary")}" id="salary" type="number"'/>
                                 <@spring.showErrors "<br>" "text-danger small"/>
                             </div>
                         </div>
@@ -81,14 +81,14 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="expFrom" class="form-label">
-                                    <i class="bi bi-clock-history form-icon me-2"></i>Опыт от (лет)
+                                    <i class="bi bi-clock-history form-icon me-2"></i><@spring.message "experience_from"/> (<@spring.message "years"/>)
                                 </label>
                                 <@spring.formInput "vacancy.expFrom", 'class="form-control" placeholder="0" id="expFrom" type="number"'/>
                                 <@spring.showErrors "<br>" "text-danger small"/>
                             </div>
                             <div class="col-md-6">
                                 <label for="expTo" class="form-label">
-                                    <i class="bi bi-clock-history form-icon me-2"></i>Опыт до (лет)
+                                    <i class="bi bi-clock-history form-icon me-2"></i><@spring.message "experience_to"/> (<@spring.message "years"/>)
                                 </label>
                                 <@spring.formInput "vacancy.expTo", 'class="form-control" placeholder="5" id="expTo" type="number"'/>
                                 <@spring.showErrors "<br>" "text-danger small"/>
@@ -97,9 +97,9 @@
 
                         <div class="mb-3">
                             <label for="description" class="form-label">
-                                <i class="bi bi-card-text form-icon me-2"></i>Описание
+                                <i class="bi bi-card-text form-icon me-2"></i><@spring.message "description"/>
                             </label>
-                            <@spring.formTextarea "vacancy.description", 'class="form-control" placeholder="Подробное описание вакансии" rows="4" id="description"'/>
+                            <@spring.formTextarea "vacancy.description", 'class="form-control" placeholder="${springMacroRequestContext.getMessage("vacancy_description")}" rows="4" id="description"'/>
                             <@spring.showErrors "<br>" "text-danger small"/>
                         </div>
 
@@ -108,12 +108,12 @@
                                    id="active" name="active" ${(vacancy.active!true)?then('checked', '')}>
                             <label class="form-check-label" for="active">
                                 <i class="bi bi-power form-icon me-2"></i>
-                                Вакансия активна
+                                <@spring.message "vacancy_active"/>
                             </label>
                         </div>
 
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-submit btn-lg">Обновить вакансию</button>
+                            <button type="submit" class="btn btn-submit btn-lg"><@spring.message "update_vacancy"/></button>
                         </div>
                     </form>
                 </div>
