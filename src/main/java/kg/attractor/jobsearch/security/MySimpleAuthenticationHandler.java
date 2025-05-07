@@ -52,9 +52,8 @@ public class MySimpleAuthenticationHandler implements AuthenticationSuccessHandl
 
     protected void clearAuthenticationAttributes(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        if (session == null) {
+        if (session == null)
             return;
-        }
 
         session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
     }

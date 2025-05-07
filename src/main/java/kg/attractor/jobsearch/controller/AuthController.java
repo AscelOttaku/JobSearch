@@ -38,7 +38,7 @@ public class AuthController {
     public String registerForm(Model model) {
         UserDto userDto = new UserDto();
         userDto.setPhoneNumber("+996");
-        model.addAttribute("user", new UserDto());
+        model.addAttribute("user", userDto);
         return "auth/register";
     }
 

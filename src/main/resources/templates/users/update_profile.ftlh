@@ -89,7 +89,7 @@
                                                 </h5>
                                                 <div class="mb-3">
                                                     <label class="form-label">Email</label>
-                                                    <@spring.formInput "user.email", 'class="form-control" placeholder="Введите email" type="email" '/>
+                                                    <@spring.formInput "user.email", 'class="form-control" placeholder="Введите email" type="email" readonly'/>
                                                     <@spring.showErrors "<br>" "text-danger small"/>
                                                 </div>
                                                 <div class="mb-3">
@@ -100,11 +100,11 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Тип аккаунта</label>
-                                                    <@spring.formInput "user.accountType", 'class="form-control"'/>
+                                                    <@spring.formInput "user.accountType", 'class="form-control" readonly'/>
                                                     <@spring.showErrors "<br>" "text-danger small"/>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <@spring.formHiddenInput "user.password"/>
+                                                    <@spring.formInput "user.password", 'class="form-control" readonly'/>
                                                     <@spring.formHiddenInput "user.avatar"/>
                                                 </div>
                                             </div>

@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 @UtilityClass
@@ -51,5 +52,9 @@ public class Util {
     public static String getSiteUrl(HttpServletRequest request) {
         String siteUrl = request.getRequestURL().toString();
         return siteUrl.replace(request.getRequestURI(), "");
+    }
+
+    public static String generateUniqueValue() {
+        return UUID.randomUUID().toString();
     }
 }

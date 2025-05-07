@@ -4,6 +4,7 @@ server:
 spring:
   application:
     name: JobSearch
+
   jpa:
     hibernate:
       ddl-auto: validate
@@ -12,13 +13,17 @@ spring:
     username: Kanybek
     password: Kanybek12345
     driver-class-name: org.h2.Driver
+
     hikari:
       maximum-pool-size: 5
+
   liquibase:
     change-log: classpath://db/changelog/master.yaml
+
   mvc:
     static-path-pattern: /static/**
   freemarker:
+
     expose-session-attributes: true
     expose-spring-macro-helpers: true
 
@@ -38,6 +43,17 @@ spring:
             true
           starttls:
             enable: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 67559407387-g1ocir2bbsqvtmaqiq3novpao34s35c5.apps.googleusercontent.com
+            client-secret: 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
+            scope:
+              - email
+              - profile
 
 logging:
   level:

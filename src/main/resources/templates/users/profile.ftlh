@@ -29,7 +29,11 @@
             <div class="row mb-4">
                 <div class="col-md-3 text-center mb-3">
                     <#if user.avatar??>
-                        <img src="/users/avatars" class="profile-avatar rounded-circle" alt="Avatar">
+                        <#if user.avatar?contains("https")>
+                            <img src="${user.avatar}" class="profile-avatar rounded-circle" alt="avatar">
+                        <#else>
+                            <img src="/users/avatars" class="profile-avatar rounded-circle" alt="Avatar">
+                        </#if>
                     <#else>
                         <div class="profile-avatar rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white mx-auto">
                             <i class="bi bi-person-fill fs-3"></i>
@@ -50,7 +54,7 @@
                                     </div>
                                     <div class="mb-2">
                                         <span class="fw-bold">Возраст:</span>
-                                        <p class="mb-0 ps-3">${user.age}</p>
+                                        <p class="mb-0 ps-3">${user.age!'Undefined'}</p>
                                     </div>
                                     <div>
                                         <span class="fw-bold">Тип аккаунта:</span>
@@ -71,7 +75,7 @@
                                     </div>
                                     <div>
                                         <span class="fw-bold">Телефон:</span>
-                                        <p class="mb-0 ps-3">${user.phoneNumber}</p>
+                                        <p class="mb-0 ps-3">${user.phoneNumber!'Undefined'}</p>
                                     </div>
                                 </div>
                             </div>
@@ -144,10 +148,12 @@
                                                     Обновлено: ${resume.updated!resume.created}
                                                 </div>
                                                 <div class="item-actions">
-                                                    <a href="/resumes/${resume.id}" class="btn btn-action btn-outline-primary">
+                                                    <a href="/resumes/${resume.id}"
+                                                       class="btn btn-action btn-outline-primary">
                                                         <i class="bi bi-eye"></i>
                                                     </a>
-                                                    <a href="/resumes/update/resume/${resume.id}" class="btn btn-action btn-outline-secondary">
+                                                    <a href="/resumes/update/resume/${resume.id}"
+                                                       class="btn btn-action btn-outline-secondary">
                                                         <i class="bi bi-pencil"></i>
                                                     </a>
                                                 </div>
@@ -201,19 +207,24 @@
                                                     ${vacancy.updated!vacancy.created}
                                                 </div>
                                                 <div class="item-actions">
-                                                    <a href="/vacancies/${vacancy.vacancyId}" class="btn btn-action btn-outline-primary">
+                                                    <a href="/vacancies/${vacancy.vacancyId}"
+                                                       class="btn btn-action btn-outline-primary">
                                                         <i class="bi bi-eye"></i>
                                                     </a>
-                                                    <a href="/vacancies/update/vacancy/${vacancy.vacancyId}" class="btn btn-action btn-outline-secondary">
+                                                    <a href="/vacancies/update/vacancy/${vacancy.vacancyId}"
+                                                       class="btn btn-action btn-outline-secondary">
                                                         <i class="bi bi-pencil"></i>
                                                     </a>
-                                                    <form action="/vacancies/times?vacancyId=${vacancy.vacancyId}" method="post" class="d-inline">
+                                                    <form action="/vacancies/times?vacancyId=${vacancy.vacancyId}"
+                                                          method="post" class="d-inline">
 
                                                         <#if _csrf??>
-                                                            <input type="hidden" name="${(_csrf.parameterName)!}" value="${(_csrf.token)!}"/>
+                                                            <input type="hidden" name="${(_csrf.parameterName)!}"
+                                                                   value="${(_csrf.token)!}"/>
                                                         </#if>
 
-                                                        <button type="submit" class="btn btn-action btn-outline-secondary">
+                                                        <button type="submit"
+                                                                class="btn btn-action btn-outline-secondary">
                                                             <i class="bi bi-arrow-clockwise"></i>
                                                         </button>
                                                     </form>

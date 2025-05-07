@@ -1,15 +1,17 @@
 package kg.attractor.jobsearch.config;
 
 import kg.attractor.jobsearch.enums.Roles;
+import kg.attractor.jobsearch.model.CustomOAuth2User;
 import kg.attractor.jobsearch.security.MySimpleAuthenticationHandler;
+import kg.attractor.jobsearch.service.impl.AuthUserDetailsServiceImpl;
+import kg.attractor.jobsearch.service.impl.CustomOAuth2UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -18,12 +20,10 @@ import static org.springframework.http.HttpMethod.*;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    private final AuthUserDetailsServiceImpl userDetailsService;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     public AuthenticationSuccessHandler authenticationSuccessHandler() {
@@ -97,7 +97,19 @@ public class SecurityConfig {
                                 .requestMatchers("/static/css/*")
                                 .permitAll()
 
-                                .anyRequest().permitAll());
+                                .anyRequest().permitAll())
+
+                // OAuth2 config
+
+                .oauth2Login(oauth -> oauth
+                        .loginPage("/auth/login")
+                        .userInfoEndpoint(userConfig -> userConfig
+                                .userService(customOAuth2UserService))
+                        .successHandler((request, response, authentication) -> {
+                            var oathUser = (CustomOAuth2User) authentication.getPrincipal();
+                            userDetailsService.processOAuthPostLogin(oathUser.getAttributes());
+                            response.sendRedirect("/users/profile");
+                        }));
 
         return http.build();
     }

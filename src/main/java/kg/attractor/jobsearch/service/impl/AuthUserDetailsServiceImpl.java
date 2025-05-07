@@ -3,19 +3,25 @@ package kg.attractor.jobsearch.service.impl;
 import kg.attractor.jobsearch.model.Authority;
 import kg.attractor.jobsearch.model.Role;
 import kg.attractor.jobsearch.model.User;
+import kg.attractor.jobsearch.repository.RoleRepository;
 import kg.attractor.jobsearch.repository.UserRepository;
+import kg.attractor.jobsearch.util.Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -23,6 +29,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AuthUserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder encoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -61,5 +69,29 @@ public class AuthUserDetailsServiceImpl implements UserDetailsService {
         authorities.forEach(authority -> privileges.add(authority.getAuthorityName()));
 
         return privileges;
+    }
+
+    public void processOAuthPostLogin(Map<String, Object> attributes) {
+        String email = (String) attributes.get("email");
+
+        var existingUser = userRepository.findUserByEmail(email);
+
+        if (existingUser.isEmpty()) {
+            var user = new User();
+            user.setName((String) attributes.get("given_name"));
+            user.setSurname((String) attributes.get("family_name"));
+            user.setEmail(email);
+            user.setPassword(encoder.encode(Util.generateUniqueValue()));
+            user.setRole(roleRepository.findByRoleName("JOB_SEEKER")
+                    .orElseThrow(() -> new NoSuchElementException("role not found by name " + "JOB_SEEKER")));
+            user.setEnabled(Boolean.TRUE);
+            user.setAvatar((String) attributes.get("picture"));
+
+            userRepository.save(user);
+        }
+
+        UserDetails userDetails = loadUserByUsername(email);
+        Authentication auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(auth);
     }
 }
