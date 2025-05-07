@@ -62,11 +62,9 @@ public class ResumeController {
         PageHolder<ResumeDto> pageResume = resumeService
                 .findUserCreatedActiveResumes(page, size);
 
-        if (pageResume.getContent().isEmpty())
-            throw new IllegalArgumentException("user do not have any created resumes");
-
         model.addAttribute("vacancy", vacancyService.findVacancyById(vacancyId));
         model.addAttribute("pageResume", pageResume);
+        model.addAttribute("hasResumes", !pageResume.getContent().isEmpty());
         return "vacancies/vacancy";
     }
 

@@ -175,7 +175,11 @@
                             </button>
                         </div>
                     </form>
-                <#else>
+                <#elseif hasResumes?? && !hasResumes>
+                    <a href="/resumes/new_resume" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-person-plus"></i> <@spring.message "create_resume"/>
+                    </a>
+                    <#else>
                     <a href="/resumes/users/actives/${vacancy.vacancyId}" class="btn btn-sm btn-outline-primary">
                         <i class="bi bi-send"></i> <@spring.message "vacancy.response.with.resume"/>
                     </a>
