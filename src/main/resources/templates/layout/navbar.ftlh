@@ -1,7 +1,11 @@
+<#import "../layout.ftlh" as layout>
+
+<@layout.layout ; spring>
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
     <div class="container">
         <a class="navbar-brand" href="#">
-            <i class="bi bi-briefcase me-2"></i>JobSearch
+            <i class="bi bi-briefcase me-2"></i><@spring.message "layout.navbar.job_search"/>
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
@@ -12,27 +16,42 @@
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="/vacancies/actives">
-                        <i class="bi bi-search me-1"></i> Вакансии
+                        <i class="bi bi-search me-1"></i> <@spring.message "vacancies"/>
                     </a>
                 </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dropdownMenuButton1" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        🌐 Language
+                    </a>
+                    <ul class="dropdown-menu z-3" aria-labelledby="dropdownMenuButton1">
+                        <li>
+                            <a class="dropdown-item" href="?lang=en">🇺🇸 English</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="?lang=ru">🇷🇺 Русский</a>
+                        </li>
+                    </ul>
+                </li>
+
                 <#if authorizedUser??>
                     <#if authorizedUser.accountType == 'EMPLOYER'>
                         <li class="nav-item">
                             <a class="nav-link" href="/resumes">
-                                <i class="bi bi-file-earmark-text me-1"></i> Резюме
+                                <i class="bi bi-file-earmark-text me-1"></i> <@spring.message "resume"/>
                             </a>
                         </li>
                     <#else>
                         <li class="nav-item">
                             <a class="nav-link" href="/companies">
-                                <i class="bi bi-file-earmark-text me-1"></i> Компании
+                                <i class="bi bi-file-earmark-text me-1"></i> <@spring.message "companies"/>
                             </a>
                         </li>
                     </#if>
                 </#if>
                 <li class="nav-item">
                     <a class="nav-link" href="/users/profile">
-                        <i class="bi bi-clock-history me-1"></i> Профиль
+                        <i class="bi bi-clock-history me-1"></i> <@spring.message "profile"/>
                     </a>
                 </li>
             </ul>
@@ -55,9 +74,9 @@
                             <i class="bi bi-person-circle me-1"></i> ${user.name!"Профиль"}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="/users/profile"><i class="bi bi-person me-2"></i>Профиль</a>
+                            <li><a class="dropdown-item" href="/users/profile"><i class="bi bi-person me-2"></i><@spring.message "profile"/></a>
                             </li>
-                            <li><a class="dropdown-item" href="/users/responses"><i class="bi bi-envelope me-2"></i>Отклики</a>
+                            <li><a class="dropdown-item" href="/users/responses"><i class="bi bi-envelope me-2"></i><@spring.message "responses"/></a>
                             </li>
                             <li>
                                 <hr class="dropdown-divider">
@@ -67,27 +86,27 @@
                                     <input type="hidden" name="${(_csrf.parameterName)!'csrf'}"
                                            value="${(_csrf.token)!'--no-token--'}"/>
                                     <button type="submit" class="btn btn-outline-info m-2"
-                                            id="logout">Logout
+                                            id="logout"><@spring.message "logout"/>
                                     </button>
                                 </form>
                             <#else>
                                 <a href="/logout" class="btn btn-outline-info m-2"
-                                   id="logout">Logout</a>
+                                   id="logout"><@spring.message "logout"/></a>
                             </#if>
                         </ul>
                     </div>
                 <#else>
                     <#if !authorizedUser??>
                         <a class="btn btn-outline-light me-2" href="/auth/login">
-                            <i class="bi bi-box-arrow-in-right me-1"></i> Login
+                            <i class="bi bi-box-arrow-in-right me-1"></i> <@spring.message "login"/>
                         </a>
 
                         <a class="btn btn-primary" href="/auth/registration">
-                            <i class="bi bi-person-plus me-1"></i> Регистрация
+                            <i class="bi bi-person-plus me-1"></i> <@spring.message "registration"/>
                         </a>
                     <#else>
                         <a class="btn btn-outline-light me-2" href="/auth/logout">
-                            <i class="bi bi-box-arrow-in-right me-1"></i> Logout
+                            <i class="bi bi-box-arrow-in-right me-1"></i> <@spring.message "logout"/>
                         </a>
                     </#if>
                 </#if>
@@ -95,3 +114,4 @@
         </div>
     </div>
 </nav>
+</@layout.layout>

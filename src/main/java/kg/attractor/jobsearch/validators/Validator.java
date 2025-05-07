@@ -35,6 +35,11 @@ public class Validator {
             throw new IllegalArgumentException("argument is blank");
     }
 
+    public static void notBlank(String arg, String message) {
+        if (arg == null || arg.isBlank())
+            throw new IllegalArgumentException(message);
+    }
+
     public static boolean isNotEmptyWorkExperience(WorkExperienceInfoDto workExperienceInfoDto) {
         return workExperienceInfoDto.getYears() != null ||
                 workExperienceInfoDto.getPosition() != null && !workExperienceInfoDto.getPosition().isBlank() ||

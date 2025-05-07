@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: 033_delete_constraint.yaml
+      author: Kanybek
+      changes:
+        - dropNotNullConstraint:
+            columnName: phone_number
+            columnDataType: varchar(45)
+            tableName: users
+            schemaName: public

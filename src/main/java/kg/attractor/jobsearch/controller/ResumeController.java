@@ -51,11 +51,11 @@ public class ResumeController {
         return "resumes/user_resumes";
     }
 
-    @GetMapping("users/actives")
+    @GetMapping("users/actives/{vacancyId}")
     @ResponseStatus(HttpStatus.OK)
     public String findUserActiveResumes(
             Model model,
-            @RequestParam Long vacancyId,
+            @PathVariable Long vacancyId,
             @RequestParam(defaultValue = "0", required = false) Integer page,
             @RequestParam(defaultValue = "5", required = false) Integer size
     ) {
@@ -64,6 +64,7 @@ public class ResumeController {
 
         model.addAttribute("vacancy", vacancyService.findVacancyById(vacancyId));
         model.addAttribute("pageResume", pageResume);
+        model.addAttribute("hasResumes", !pageResume.getContent().isEmpty());
         return "vacancies/vacancy";
     }
 

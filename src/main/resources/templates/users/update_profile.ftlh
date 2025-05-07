@@ -6,7 +6,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Редактирование профиля</title>
+        <title><@spring.message "edit_profile"/></title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
         <link rel="stylesheet" href="/css/auth_form.css">
@@ -28,14 +28,14 @@
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <div>
                                 <a href="/users/profile" class="btn btn-outline-secondary me-2">
-                                    <i class="bi bi-arrow-left me-2"></i>Назад
+                                    <i class="bi bi-arrow-left me-2"></i><@spring.message "back"/>
                                 </a>
                                 <h2 class="d-inline-block mb-0 fw-bold">
-                                    <i class="bi bi-person-badge me-2"></i>Редактирование профиля
+                                    <i class="bi bi-person-badge me-2"></i><@spring.message "edit_profile"/>
                                 </h2>
                             </div>
                             <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-save me-2"></i>Сохранить
+                                <i class="bi bi-save me-2"></i><@spring.message "save"/>
                             </button>
                         </div>
 
@@ -60,21 +60,21 @@
                                         <div class="card info-card h-100">
                                             <div class="card-body">
                                                 <h5 class="card-title text-muted">
-                                                    <i class="bi bi-person-lines-fill me-2"></i>Основная информация
+                                                    <i class="bi bi-person-lines-fill me-2"></i><@spring.message "basic_info"/>
                                                 </h5>
                                                 <div class="mb-3">
-                                                    <label class="form-label">Имя</label>
-                                                    <@spring.formInput "user.name", 'class="form-control" placeholder="Введите имя" '/>
+                                                    <label class="form-label"><@spring.message "first_name"/></label>
+                                                    <@spring.formInput "user.name", 'class="form-control" placeholder="${springMacroRequestContext.getMessage("enter_first_name")}" '/>
                                                     <@spring.showErrors "<br>" "text-danger small"/>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label class="form-label">Фамилия</label>
-                                                    <@spring.formInput "user.surname", 'class="form-control" placeholder="Введите фамилию" '/>
+                                                    <label class="form-label"><@spring.message "last_name"/></label>
+                                                    <@spring.formInput "user.surname", 'class="form-control" placeholder="${springMacroRequestContext.getMessage("enter_last_name")}" '/>
                                                     <@spring.showErrors "<br>" "text-danger small"/>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label class="form-label">Возраст</label>
-                                                    <@spring.formInput "user.age", 'class="form-control" placeholder="Введите возраст" type="number" min="1" max="120"'/>
+                                                    <label class="form-label"><@spring.message "age"/></label>
+                                                    <@spring.formInput "user.age", 'class="form-control" placeholder="${springMacroRequestContext.getMessage("enter_age")}" type="number" min="1" max="120"'/>
                                                     <@spring.showErrors "<br>" "text-danger small"/>
                                                 </div>
                                             </div>
@@ -85,26 +85,26 @@
                                         <div class="card info-card h-100">
                                             <div class="card-body">
                                                 <h5 class="card-title text-muted">
-                                                    <i class="bi bi-telephone-fill me-2"></i>Контакты
+                                                    <i class="bi bi-telephone-fill me-2"></i><@spring.message "contacts"/>
                                                 </h5>
                                                 <div class="mb-3">
                                                     <label class="form-label">Email</label>
-                                                    <@spring.formInput "user.email", 'class="form-control" placeholder="Введите email" type="email" '/>
+                                                    <@spring.formInput "user.email", 'class="form-control" placeholder="${springMacroRequestContext.getMessage("enter_email")}" type="email" readonly'/>
                                                     <@spring.showErrors "<br>" "text-danger small"/>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label class="form-label">Телефон</label>
-                                                    <@spring.formInput "user.phoneNumber", 'class="form-control" placeholder="Введите телефон"'/>
+                                                    <label class="form-label"><@spring.message "phone"/></label>
+                                                    <@spring.formInput "user.phoneNumber", 'class="form-control" placeholder="${springMacroRequestContext.getMessage("enter_phone")}"'/>
                                                     <@spring.showErrors "<br>" "text-danger small"/>
                                                     <@spring.formHiddenInput "user.userId", 'class="form-control"'/>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label class="form-label">Тип аккаунта</label>
-                                                    <@spring.formInput "user.accountType", 'class="form-control"'/>
+                                                    <label class="form-label"><@spring.message "account_type"/></label>
+                                                    <@spring.formInput "user.accountType", 'class="form-control" readonly'/>
                                                     <@spring.showErrors "<br>" "text-danger small"/>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <@spring.formHiddenInput "user.password"/>
+                                                    <@spring.formHiddenInput "user.password", 'class="form-control"'/>
                                                     <@spring.formHiddenInput "user.avatar"/>
                                                 </div>
                                             </div>
@@ -125,7 +125,7 @@
                     <div class="input-group">
                         <input type="file" name="file" class="form-control" id="fileInput">
                         <button class="btn btn-outline-secondary" type="submit">
-                            upload
+                            <@spring.message "upload"/>
                         </button>
                     </div>
                 </form>

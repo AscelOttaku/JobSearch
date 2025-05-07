@@ -36,11 +36,11 @@ public class VacancyDto {
     private Double salary;
 
     @PositiveOrZero(message = "{min_experience_negative_message}")
-    @Max(value = 5, message = "value max size should be equals 5")
+    @Max(value = 5, message = "{value_max_size_should_be_equals_5}")
     private Integer expFrom;
 
     @PositiveOrZero(message = "{max_experience_negative_message}")
-    @Max(value = 10, message = "value max size should be equals 10")
+    @Max(value = 10, message = "{value_max_size_should_be_equals_10}")
     private Integer expTo;
 
     private boolean isActive;
