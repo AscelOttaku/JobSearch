@@ -10,36 +10,43 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.util.function.Supplier;
+
 @Service
 @RequiredArgsConstructor
 public class PageHolderWrapper {
-    private final VacancyMapper vacancyMapper;
     private final ResumeMapper resumeMapper;
+    private final VacancyMapper vacancyMapper;
 
-    public PageHolder<VacancyDto> wrapPageHolderVacancies(Page<Vacancy> vacancies, int page, FilterType filterType) {
-        return PageHolder.<VacancyDto>builder()
-                .content(vacancies.stream()
-                        .map(vacancyMapper::mapToDto)
-                        .toList())
-                .page(page)
-                .size(vacancies.getSize())
-                .totalPages(vacancies.getTotalPages())
-                .hasNextPage(vacancies.hasNext())
-                .hasPreviousPage(vacancies.hasPrevious())
+    public <T> PageHolder<T> wrapPageHolder(Page<T> content, FilterType filterType) {
+        return PageHolder.<T>builder()
+                .content(content.getContent())
+                .page(content.getNumber())
+                .size(content.getSize())
+                .totalPages(content.getTotalPages())
+                .hasNextPage(content.hasNext())
+                .hasPreviousPage(content.hasPrevious())
                 .filterType(filterType)
                 .build();
     }
 
-    public PageHolder<ResumeDto> wrapPageHolderResumes(Page<Resume> resumes, int page) {
+    public PageHolder<ResumeDto> wrapPageHolderResumes(Page<Resume> resumes) {
         return PageHolder.<ResumeDto>builder()
                 .content(resumes.stream()
                         .map(resumeMapper::mapToDto)
                         .toList())
-                .page(page)
+                .page(resumes.getNumber())
                 .size(resumes.getSize())
                 .totalPages(resumes.getTotalPages())
                 .hasNextPage(resumes.hasNext())
                 .hasPreviousPage(resumes.hasPrevious())
                 .build();
+    }
+
+    public PageHolder<VacancyDto> wrapVacancies(Supplier<Page<Vacancy>> supplier, FilterType filterType) {
+        Page<VacancyDto> vacancyDtos = supplier.get()
+                .map(vacancyMapper::mapToDto);
+
+        return wrapPageHolder(vacancyDtos, filterType);
     }
 }

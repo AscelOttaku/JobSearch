@@ -3,6 +3,7 @@ package kg.attractor.jobsearch.service.impl;
 import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.dto.mapper.impl.PageHolderWrapper;
+import kg.attractor.jobsearch.dto.mapper.impl.VacancyMapper;
 import kg.attractor.jobsearch.enums.FilterType;
 import kg.attractor.jobsearch.model.Vacancy;
 import kg.attractor.jobsearch.repository.VacancyRepository;
@@ -24,34 +25,34 @@ public class VacanciesFilterServiceImpl implements VacanciesFilterService {
     @Override
     public PageHolder<VacancyDto> filterVacanciesBy(FilterType filterType, int page, int size) {
         return switch (filterType) {
-            case OLD -> pageHolderWrapper.wrapPageHolderVacancies(vacancyRepository
+            case OLD -> pageHolderWrapper.wrapVacancies(() -> vacancyRepository
                             .findAllActiveVacancies(
                                     PageRequest.of(
                                             page, size, Sort.by("updated").ascending())
                             ),
-                    page, FilterType.OLD
+                    FilterType.OLD
             );
-            case SALARY_ASC -> pageHolderWrapper.wrapPageHolderVacancies(vacancyRepository
+            case SALARY_ASC -> pageHolderWrapper.wrapVacancies(() -> vacancyRepository
                             .findAllActiveVacancies(
                                     PageRequest.of(
                                             page, size, Sort.by("salary"))
                             ),
-                    page, FilterType.SALARY_ASC
+                    FilterType.SALARY_ASC
             );
-            case SALARY_DESC -> pageHolderWrapper.wrapPageHolderVacancies(vacancyRepository
+            case SALARY_DESC -> pageHolderWrapper.wrapVacancies(() -> vacancyRepository
                             .findAllActiveVacancies(
                                     PageRequest.of(
                                             page, size, Sort.by("salary").descending())
                             ),
-                    page, FilterType.SALARY_ASC
+                    FilterType.SALARY_ASC
             );
             case RESPONSES -> findActiveVacanciesOrderedByResponsesNumbersDesc(page, size);
-            default -> pageHolderWrapper.wrapPageHolderVacancies(vacancyRepository
+            default -> pageHolderWrapper.wrapVacancies(() -> vacancyRepository
                             .findAllActiveVacancies(
                                     PageRequest.of(
                                             page, size, Sort.by("updated").descending())
                             ),
-                    page, FilterType.NEW
+                    FilterType.NEW
             );
         };
     }
@@ -59,7 +60,7 @@ public class VacanciesFilterServiceImpl implements VacanciesFilterService {
     private PageHolder<VacancyDto> findActiveVacanciesOrderedByResponsesNumbersDesc(int page, int size) {
         Page<Vacancy> vacanciesFilteredByResponses = vacancyRepository.findActiveVacanciesOrderedByResponsesNumberDes(PageRequest.of(page, size));
 
-        return pageHolderWrapper.wrapPageHolderVacancies(vacanciesFilteredByResponses, page, FilterType.RESPONSES);
+        return pageHolderWrapper.wrapVacancies(() -> vacanciesFilteredByResponses, FilterType.RESPONSES);
     }
 
     private PageHolder<VacancyDto> findUserVacanciesOrderedByResponsesNumbersDesc(int page, int size) {
@@ -68,7 +69,7 @@ public class VacanciesFilterServiceImpl implements VacanciesFilterService {
                 PageRequest.of(page, size)
         );
 
-        return pageHolderWrapper.wrapPageHolderVacancies(vacanciesFilteredByResponses, page, FilterType.RESPONSES);
+        return pageHolderWrapper.wrapVacancies(() -> vacanciesFilteredByResponses, FilterType.RESPONSES);
     }
 
     @Override
@@ -76,39 +77,39 @@ public class VacanciesFilterServiceImpl implements VacanciesFilterService {
         Long authorizedUserId = authorizedUserService.getAuthorizedUserId();
 
         return switch (filterType) {
-            case OLD -> pageHolderWrapper.wrapPageHolderVacancies(vacancyRepository
+            case OLD -> pageHolderWrapper.wrapVacancies(() -> vacancyRepository
                     .findUserVacanciesByUserId(
                             authorizedUserId,
                             PageRequest.of(
                                     page, size, Sort.by("updated").ascending())
-                    ), page, FilterType.OLD
+                    ), FilterType.OLD
             );
 
-            case SALARY_ASC -> pageHolderWrapper.wrapPageHolderVacancies(vacancyRepository
+            case SALARY_ASC -> pageHolderWrapper.wrapVacancies(() -> vacancyRepository
                     .findUserVacanciesByUserId(
                             authorizedUserId,
                             PageRequest.of(
                                     page, size, Sort.by("salary").ascending()
-                            )), page, FilterType.SALARY_ASC
+                            )), FilterType.SALARY_ASC
                     );
 
-            case SALARY_DESC -> pageHolderWrapper.wrapPageHolderVacancies(vacancyRepository
+            case SALARY_DESC -> pageHolderWrapper.wrapVacancies(() -> vacancyRepository
                     .findUserVacanciesByUserId(
                             authorizedUserId,
                             PageRequest.of(
                                     page, size, Sort.by("salary").descending()
-                            )), page, FilterType.SALARY_DESC
+                            )), FilterType.SALARY_DESC
                     );
 
             case RESPONSES -> findUserVacanciesOrderedByResponsesNumbersDesc(page, size);
 
-            default -> pageHolderWrapper.wrapPageHolderVacancies(vacancyRepository
+            default -> pageHolderWrapper.wrapVacancies(() -> vacancyRepository
                     .findUserVacanciesByUserId(
                             authorizedUserId,
                             PageRequest.of(
                                     page, size, Sort.by("updated").descending()
                             )
-                    ), page, FilterType.NEW
+                    ), FilterType.NEW
             );
         };
     }

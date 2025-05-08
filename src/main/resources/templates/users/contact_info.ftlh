@@ -21,7 +21,12 @@
         <div class="company-card">
             <div class="company-header">
                 <#if job_seeker.avatar?? && job_seeker.avatar != "">
-                    <img src="/companies/avatar/${job_seeker.userId}" alt="${job_seeker.name}" class="company-avatar">
+                    <#if job_seeker.avatar?contains("http")>
+                        <img src="${job_seeker.avatar}" alt="avatar">
+                    <#else>
+                        <img src="/companies/avatar/${job_seeker.userId}" alt="${job_seeker.name}"
+                             class="company-avatar">
+                    </#if>
                 <#else>
                     <div class="company-avatar d-flex align-items-center justify-content-center bg-primary text-white fs-4">
                         ${job_seeker.name?substring(0, 1)?upper_case}
