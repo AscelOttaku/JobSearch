@@ -19,7 +19,7 @@ public class CategoryDto {
             message = "{symbol_numbers_pattern_message}"
     )
 
-    @IsCategoryNameExists(message = "category name is already exists")
+    @IsCategoryNameExists(message = "{category_name_exist_error}")
     private String name;
 
     private Long parentId;
