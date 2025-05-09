@@ -17,9 +17,9 @@ public class WorkExperienceInfoDto {
 
     private Long resumeId;
 
-    @NotNull(message = "years cannot be null")
-    @PositiveOrZero(message = "Year cannot be negative")
-    @Max(value = 10, message = "max year is 10")
+    @NotNull(message = "{years_cannot_be_null}")
+    @PositiveOrZero(message = "{non_negative_message}")
+    @Max(value = 10, message = "{max_year_10}")
     private Integer years;
 
     @NotBlank(message = "{blank_message}")

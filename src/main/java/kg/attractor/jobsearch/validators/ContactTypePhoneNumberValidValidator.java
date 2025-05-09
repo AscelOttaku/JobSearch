@@ -19,7 +19,7 @@ public class ContactTypePhoneNumberValidValidator implements ConstraintValidator
 
             if (!value.matches("^\\+?[0-9\\-\\s]+$") || value.length() != 13) {
                 constraintValidatorContext.buildConstraintViolationWithTemplate(
-                        "phone number is not valid"
+                        "{phone_number_not_valid}"
                 )
                         .addPropertyNode("contactValue")
                         .addConstraintViolation();

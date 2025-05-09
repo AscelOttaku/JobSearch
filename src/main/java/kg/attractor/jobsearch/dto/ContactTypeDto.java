@@ -13,7 +13,7 @@ public class ContactTypeDto {
 
     private Long contactTypeId;
 
-    @NotBlank(message = "value cannot be blank")
+    @NotBlank(message = "{blank_message}")
     @IsContactTypeExist
     private String type;
 }

@@ -134,7 +134,7 @@ public class ResumeServiceImpl implements ResumeService {
 
         Page<Resume> activeResumesByUserId = resumeRepository.findActiveResumesByUserId(authUser.getUserId(), PageRequest.of(page, size));
 
-        return pageHolderWrapper.wrapPageHolderResumes(activeResumesByUserId, page);
+        return pageHolderWrapper.wrapPageHolderResumes(activeResumesByUserId);
     }
 
     @Override
@@ -151,7 +151,7 @@ public class ResumeServiceImpl implements ResumeService {
 
         Page<Resume> resumesPage = resumeRepository.findResumeByUserId(authUser.getUserId(), PageRequest.of(page, size));
 
-        return pageHolderWrapper.wrapPageHolderResumes(resumesPage, page);
+        return pageHolderWrapper.wrapPageHolderResumes(resumesPage);
     }
 
     @Override
