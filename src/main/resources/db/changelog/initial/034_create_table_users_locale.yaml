@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: 034_create_table_users_locale.yaml
+      author: Kanybek
+      changes:
+        - createTable:
+            tableName: users_locale
+            columns:
+              - column:
+                  name: user_email
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: locale
+                  type: varchar(55)
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: users_locale
+            baseColumnNames: user_email
+            referencedTableName: users
+            referencedColumnNames: email
+            onDelete: CASCADE
+            onUpdate: CASCADE
+            constraintName: users_email_locale

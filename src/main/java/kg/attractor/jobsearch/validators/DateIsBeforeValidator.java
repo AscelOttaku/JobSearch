@@ -26,7 +26,7 @@ public class DateIsBeforeValidator implements ConstraintValidator<IsDateCorrect,
 
         if (fromDate.isEmpty()) {
             constraintValidatorContext.buildConstraintViolationWithTemplate(
-                            "fromDate must not be empty"
+                            "{from_date_must_not_be_empty}"
                     )
                     .addPropertyNode("startDate")
                     .addConstraintViolation();
@@ -35,7 +35,7 @@ public class DateIsBeforeValidator implements ConstraintValidator<IsDateCorrect,
 
         if (toDate.isEmpty()) {
             constraintValidatorContext.buildConstraintViolationWithTemplate(
-                            "toDate must not be empty"
+                            "{to_date_must_not_be_empty}"
                     )
                     .addPropertyNode("endDate")
                     .addConstraintViolation();
