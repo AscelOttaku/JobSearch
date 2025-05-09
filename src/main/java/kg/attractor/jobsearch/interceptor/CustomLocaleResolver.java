@@ -10,15 +10,16 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.LocaleResolver;
 
 import java.util.Locale;
 
 @Component
 @RequiredArgsConstructor
-public class CustomLocaleResolver implements org.springframework.web.servlet.LocaleResolver {
+public class CustomLocaleResolver {
+    private final LocaleResolver localeResolver;
     private final UsersLocaleRepository usersLocaleRepository;
 
-    @Override
     public Locale resolveLocale(HttpServletRequest request) {
         String lang = request.getParameter("lang");
         Locale locale = lang != null ? Locale.of(lang) : null;
@@ -40,7 +41,6 @@ public class CustomLocaleResolver implements org.springframework.web.servlet.Loc
             return locale;
     }
 
-    @Override
     public void setLocale(HttpServletRequest request, HttpServletResponse response, Locale locale) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         HttpSession session = request.getSession();
@@ -53,5 +53,6 @@ public class CustomLocaleResolver implements org.springframework.web.servlet.Loc
         }
 
         session.setAttribute("lang", locale);
+        localeResolver.setLocale(request, response, locale);
     }
 }
