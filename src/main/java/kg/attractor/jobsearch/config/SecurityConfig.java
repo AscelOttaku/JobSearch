@@ -6,6 +6,7 @@ import kg.attractor.jobsearch.security.MySimpleAuthenticationHandler;
 import kg.attractor.jobsearch.service.impl.AuthUserDetailsServiceImpl;
 import kg.attractor.jobsearch.service.impl.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.Get;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -79,8 +80,9 @@ public class SecurityConfig {
 
 //                                RespondedApplication Endpoints
 
-                                .requestMatchers(POST, "/responds")
-                                .hasAuthority(Roles.JOB_SEEKER.getValue())
+                                .requestMatchers(POST, "/responds").hasAuthority(Roles.JOB_SEEKER.getValue())
+                                .requestMatchers(GET, "/responds/users").hasAuthority(Roles.JOB_SEEKER.getValue())
+                                .requestMatchers(GET, "responds/employers").hasAuthority(Roles.EMPLOYER.getValue())
 
 //                                Resumes Endpoints
 

@@ -5,11 +5,14 @@ import jakarta.validation.constraints.Positive;
 import kg.attractor.jobsearch.annotations.ValidateRespondNotExist;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Builder
 @Getter
+@Setter
 @ValidateRespondNotExist
 public class RespondApplicationDto {
+    private Long id;
 
     @NotNull(message = "{null_message}")
     @Positive(message = "{positive_number_message}")

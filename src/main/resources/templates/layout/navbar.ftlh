@@ -41,10 +41,20 @@
                                 <i class="bi bi-file-earmark-text me-1"></i> <@spring.message "resume"/>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/responds/employers">
+                                <i class="bi bi-chat-dots me-1"></i> <@spring.message "responses"/>
+                            </a>
+                        </li>
                     <#else>
                         <li class="nav-item">
                             <a class="nav-link" href="/companies">
                                 <i class="bi bi-file-earmark-text me-1"></i> <@spring.message "companies"/>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/responds/users">
+                                <i class="bi bi-chat-dots me-1"></i> <@spring.message "responses"/>
                             </a>
                         </li>
                     </#if>

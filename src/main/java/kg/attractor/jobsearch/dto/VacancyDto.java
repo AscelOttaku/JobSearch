@@ -5,6 +5,7 @@ import kg.attractor.jobsearch.annotations.IsExpFromAndExpToCorrectFormat;
 import lombok.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @Builder
 @Getter
@@ -12,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @IsExpFromAndExpToCorrectFormat
+
 public class VacancyDto {
     private Long vacancyId;
 
@@ -51,4 +53,16 @@ public class VacancyDto {
     private String updated;
 
     private List<RespondApplicationDto> respondedApplications;
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        VacancyDto that = (VacancyDto) o;
+        return Objects.equals(vacancyId, that.vacancyId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(vacancyId);
+    }
 }
