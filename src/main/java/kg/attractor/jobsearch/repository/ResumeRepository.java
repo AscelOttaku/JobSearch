@@ -24,4 +24,9 @@ public interface ResumeRepository extends JpaRepository<Resume, Long> {
 
     @Query("select r from Resume r where r.user.userId = :userId and r.isActive = true")
     Page<Resume> findActiveResumesByUserId(Long userId, Pageable pageable);
+
+    @Query("select r from Resume r " +
+            "join RespondedApplication ra on r.id = ra.resume.id " +
+            "where ra.id = :respondedApplicationId and ra.vacancy.id = :vacancyId")
+    List<Resume> findAlLResumesByRespondIdAndVacancyId(Long respondedApplicationId, Long vacancyId);
 }

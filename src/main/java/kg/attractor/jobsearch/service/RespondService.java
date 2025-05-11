@@ -1,6 +1,6 @@
 package kg.attractor.jobsearch.service;
 
-import kg.attractor.jobsearch.dto.RespondApplicationDto;
+import kg.attractor.jobsearch.dto.*;
 
 import java.util.List;
 
@@ -12,4 +12,8 @@ public interface RespondService {
     RespondApplicationDto findRespondById(Long respondId);
 
     boolean validateRespondNotExist(RespondApplicationDto respondApplicationDto);
+
+    PageHolder<RespondApplicationDto> findUserResponds(int page, int size);
+
+    EmployerRespondsPageHolder<VacancyDto, ResumeDto> findEmployerResponds(int page, int size);
 }

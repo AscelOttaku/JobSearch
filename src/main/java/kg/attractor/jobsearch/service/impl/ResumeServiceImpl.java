@@ -175,15 +175,17 @@ public class ResumeServiceImpl implements ResumeService {
 
         Page<Resume> resumePage = resumeRepository.findAllResumes(pageable);
 
-        return PageHolder.<ResumeDto>builder()
-                .content(resumePage.stream()
-                        .map(resumeMapper::mapToDto)
-                        .toList())
-                .page(page)
-                .size(resumePage.getSize())
-                .totalPages(resumePage.getTotalPages())
-                .hasNextPage(resumePage.hasNext())
-                .hasPreviousPage(resumePage.hasPrevious())
-                .build();
+        return pageHolderWrapper.wrapPageHolderResumes(resumePage);
+    }
+
+    @Override
+    public List<ResumeDto> findAllResumesByRespondIdAndVacancyId(Long respondId, Long vacancyId) {
+        Validator.isValidId(respondId);
+        Validator.isValidId(vacancyId);
+
+        return resumeRepository.findAlLResumesByRespondIdAndVacancyId(respondId, vacancyId)
+                .stream()
+                .map(resumeMapper::mapToDto)
+                .collect(Collectors.toList());
     }
 }

@@ -41,10 +41,20 @@
                                 <i class="bi bi-file-earmark-text me-1"></i> <@spring.message "resume"/>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/responds/employers">
+                                <i class="bi bi-chat-dots me-1"></i> <@spring.message "responses"/>
+                            </a>
+                        </li>
                     <#else>
                         <li class="nav-item">
                             <a class="nav-link" href="/companies">
                                 <i class="bi bi-file-earmark-text me-1"></i> <@spring.message "companies"/>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/responds/users">
+                                <i class="bi bi-chat-dots me-1"></i> <@spring.message "responses"/>
                             </a>
                         </li>
                     </#if>
@@ -76,8 +86,13 @@
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="/users/profile"><i class="bi bi-person me-2"></i><@spring.message "profile"/></a>
                             </li>
-                            <li><a class="dropdown-item" href="/users/responses"><i class="bi bi-envelope me-2"></i><@spring.message "responses"/></a>
-                            </li>
+                            <#if authorizedUser.accountType == 'EMPLOYER'>
+                                <li><a class="dropdown-item" href="/responds/employers"><i class="bi bi-envelope me-2"></i><@spring.message "responses"/></a>
+                                </li>
+                                <#else>
+                                    <li><a class="dropdown-item" href="/responds/users"><i class="bi bi-envelope me-2"></i><@spring.message "responses"/></a>
+                                    </li>
+                            </#if>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
