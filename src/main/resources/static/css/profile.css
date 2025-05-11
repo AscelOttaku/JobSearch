@@ -122,3 +122,10 @@ body {
     font-size: 0.9rem;
     border-radius: 5px;
 }
+
+.item-actions .btn {
+    width: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

@@ -1,16 +1,18 @@
 package kg.attractor.jobsearch.controller;
 
 import jakarta.validation.Valid;
+import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.RespondApplicationDto;
 import kg.attractor.jobsearch.service.RespondService;
 import kg.attractor.jobsearch.service.ResumeService;
 import kg.attractor.jobsearch.service.VacancyService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/responds")
@@ -45,5 +47,39 @@ public class RespondApplicationController {
 
         respondService.createRespond(respondApplicationDto);
         return "redirect:/vacancies/" + respondApplicationDto.getVacancyId();
+    }
+
+    @GetMapping("users")
+    @ResponseStatus(HttpStatus.OK)
+    public String findUsersResponds(
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer size,
+            Model model
+    ) {
+        PageHolder<RespondApplicationDto> responds = respondService.findUserResponds(page, size);
+
+        model.addAttribute("responds", responds.getContent().stream()
+                .collect(Collectors.toMap(
+                                respond -> vacancyService.findVacancyById(respond.getVacancyId()),
+                                respond -> resumeService.findResumeById(respond.getResumeId())
+                        )
+                )
+        );
+        responds.setContent(null);
+        model.addAttribute("pageHolder", responds);
+
+        return "responds/user_responds";
+    }
+
+    @GetMapping("employers")
+    @ResponseStatus(HttpStatus.OK)
+    public String findEmployerResponds(
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer size,
+            Model model
+    ) {
+        model.addAttribute("responds", respondService.findEmployerResponds(page, size));
+
+        return "responds/employer_responds";
     }
 }

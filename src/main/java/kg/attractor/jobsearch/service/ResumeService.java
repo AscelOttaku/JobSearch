@@ -29,4 +29,6 @@ public interface ResumeService {
     List<Long> findAllResumesIds();
 
     PageHolder<ResumeDto> findAllResumes(int page, int size);
+
+    List<ResumeDto> findAllResumesByRespondIdAndVacancyId(Long respondId, Long vacancyId);
 }
