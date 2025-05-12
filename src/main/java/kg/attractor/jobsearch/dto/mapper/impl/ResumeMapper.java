@@ -1,10 +1,7 @@
 package kg.attractor.jobsearch.dto.mapper.impl;
 
 import kg.attractor.jobsearch.dto.ResumeDto;
-import kg.attractor.jobsearch.dto.mapper.ContactInfoMapper;
-import kg.attractor.jobsearch.dto.mapper.EducationInfoMapper;
-import kg.attractor.jobsearch.dto.mapper.Mapper;
-import kg.attractor.jobsearch.dto.mapper.WorkExperienceMapper;
+import kg.attractor.jobsearch.dto.mapper.*;
 import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.model.User;
@@ -24,6 +21,7 @@ public class ResumeMapper implements Mapper<ResumeDto, Resume> {
     private final EducationInfoMapper educationInfoMapper;
     private final WorkExperienceMapper workExperienceMapper;
     private final ContactInfoMapper contactInfoMapper;
+    private final SkillMapper skillMapper;
 
     @Override
     public ResumeDto mapToDto(Resume resume) {
@@ -45,6 +43,9 @@ public class ResumeMapper implements Mapper<ResumeDto, Resume> {
                         .toList())
                 .contactInfos(resume.getContactInfos().stream()
                         .map(contactInfoMapper::mapToDto)
+                        .collect(Collectors.toList()))
+                .skills(resume.getSkills().stream()
+                        .map(skillMapper::mapToDto)
                         .collect(Collectors.toList()))
                 .build();
     }
@@ -69,6 +70,7 @@ public class ResumeMapper implements Mapper<ResumeDto, Resume> {
                 LocalDateTime.now());
         resume.setUpdated(resumeDto.getUpdated() != null ?
                 LocalDateTime.parse(resumeDto.getUpdated()) : resume.getCreated());
+        resume.setSkills(resume.getSkills());
         return resume;
     }
 }

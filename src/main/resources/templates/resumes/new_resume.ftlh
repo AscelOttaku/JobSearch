@@ -8,7 +8,7 @@
             <div class="col-md-8">
                 <div class="resume-from">
                     <h2 class="mb-4"><@spring.message "resume.create.title"/></h2>
-                    <form method="post" action="/resumes/new_resume">
+                    <form method="post" name="resumeDto" action="/resumes/new_resume">
 
                         <#if _csrf??>
                             <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
@@ -194,6 +194,17 @@
                             </label>
                         </div>
 
+                        <div class="resume-section">
+                            <h3>Навыки</h3>
+                            <a href="/skills/new_skills" class="btn btn-primary">Добавить навыки</a>
+
+                            <ul class="resume-list">
+                                <#list resume.skills as skill>
+                                    <li class="resume-list-item">${skill.skillName!''}</li>
+                                </#list>
+                            </ul>
+                        </div>
+
                         <div class="d-grid gap-2">
                             <button type="submit"
                                     class="btn btn-primary btn-lg"><@spring.message "save.resume.button"/></button>
@@ -205,4 +216,5 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/scripts/scripts.js"></script>
 </@layout.layout>

@@ -23,8 +23,6 @@ spring:
   mvc:
     static-path-pattern: /static/**
   freemarker:
-
-    expose-session-attributes: true
     expose-spring-macro-helpers: true
 
   sql:

@@ -2,31 +2,21 @@ package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dto.*;
 import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
-import kg.attractor.jobsearch.exceptions.EntityNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.Resume;
-import kg.attractor.jobsearch.model.WorkExperienceInfo;
-import kg.attractor.jobsearch.repository.ResumeRepository;
 import kg.attractor.jobsearch.service.*;
-import kg.attractor.jobsearch.util.Util;
-import kg.attractor.jobsearch.validators.ResumeValidator;
-import kg.attractor.jobsearch.validators.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService {
     private final WorkExperienceInfoService workExperienceInfoService;
     private final ResumeService resumeService;
@@ -126,11 +116,11 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
     }
 
     @Override
-    public Map<String, Object> getResumeDtoModel() {
-        Map<String, Object> model = new HashMap<>();
+    public ResumeDto getResumeDtoModel() {
         ResumeDto resumeDto = new ResumeDto();
-        resumeDto.setWorkExperienceInfoDtos(List.of(new WorkExperienceInfoDto()));
-        resumeDto.setEducationInfoDtos(List.of(new EducationalInfoDto()));
+        resumeDto.setWorkExperienceInfoDtos(new ArrayList<>(List.of(new WorkExperienceInfoDto())));
+        resumeDto.setEducationInfoDtos(new ArrayList<>(List.of(new EducationalInfoDto())));
+        resumeDto.setSkills(new ArrayList<>());
 
         List<ContactInfoDto> contactTypes = contactTypeService.findAllContactTypes()
                 .stream()
@@ -149,7 +139,6 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
         IntStream.range(0, 5).forEach(index ->
                 resumeDto.getContactInfos().add(contactTypes.get(index)));
 
-        model.put("resume", resumeDto);
-        return model;
+        return resumeDto;
     }
 }

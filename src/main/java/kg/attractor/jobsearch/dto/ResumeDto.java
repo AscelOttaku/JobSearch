@@ -9,6 +9,8 @@ import kg.attractor.jobsearch.annotations.IsCategoryIdExists;
 import kg.attractor.jobsearch.model.Skill;
 import lombok.*;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.List;
 
 @Builder
@@ -16,7 +18,11 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResumeDto {
+public class ResumeDto implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1;
+
     private Long id;
 
     @NotBlank(message = "{blank_message}")
@@ -40,5 +46,5 @@ public class ResumeDto {
     private List<@Valid EducationalInfoDto> educationInfoDtos;
     private List<@Valid WorkExperienceInfoDto> workExperienceInfoDtos;
     private List<@Valid ContactInfoDto> contactInfos;
-    private List<@Valid Skill> skills;
+    private List<@Valid SkillDto> skills;
 }

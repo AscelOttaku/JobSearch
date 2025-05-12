@@ -1,7 +1,7 @@
 package kg.attractor.jobsearch.service.impl;
 
-import com.nimbusds.jose.shaded.gson.reflect.TypeToken;
-import kg.attractor.jobsearch.dto.ItemDto;
+import kg.attractor.jobsearch.dto.ItemDataDto;
+import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.dto.SkillDto;
 import kg.attractor.jobsearch.dto.mapper.SkillMapper;
 import kg.attractor.jobsearch.model.Skill;
@@ -9,17 +9,10 @@ import kg.attractor.jobsearch.repository.SkillRepository;
 import kg.attractor.jobsearch.service.SkillService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -41,15 +34,45 @@ public class SkillServiceImpl implements SkillService {
 
     @Override
     public List<SkillDto> findSkillsFromHeadHunter(String text) {
-        String uri = "https://api.hh.ru/suggests/skill_set".concat(text);
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<Map<String, Object>> exchange = restTemplate.exchange(
-                uri,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<>() {});
+        if (text == null || text.isEmpty())
+            return Collections.emptyList();
 
-        log.info(skills.toString());
-        return null;
+        String uri = "https://api.hh.ru/suggests/skill_set?text=".concat(text);
+        RestTemplate restTemplate = new RestTemplate();
+
+        return Optional.ofNullable(restTemplate.getForObject(uri, ItemDataDto.class))
+                .stream()
+                .flatMap(itemDataDto -> itemDataDto.getItems()
+                        .stream()
+                        .map(itemDto -> SkillDto.builder()
+                                .id(itemDto.getId())
+                                .skillName(itemDto.getText())
+                                .isApproved(true)
+                                .build()))
+                .toList();
+    }
+
+    @Override
+    public boolean isSkillApproved(String skillName) {
+        if (skillName == null || skillName.isBlank())
+            return false;
+
+        List<SkillDto> skillDtos = findSkillsFromHeadHunter(skillName);
+        return skillDtos.stream()
+                .anyMatch(skillDto -> skillDto.getSkillName().equalsIgnoreCase(skillName));
+    }
+
+    @Override
+    public void addSkillForResume(ResumeDto resumeDto, String skillName) {
+        resumeDto.setSkills(
+                resumeDto.getSkills() == null ?
+                        new ArrayList<>() :
+                        resumeDto.getSkills()
+        );
+
+        resumeDto.getSkills().add(SkillDto.builder()
+                .skillName(skillName)
+                .isApproved(isSkillApproved(skillName))
+                .build());
     }
 }

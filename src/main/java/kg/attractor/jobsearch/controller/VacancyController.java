@@ -145,4 +145,14 @@ public class VacancyController {
         model.addAttribute("vacancies", vacanciesFilterService.filterUserCreatedVacanciesBy(filterType, page, size));
         return "vacancies/user_vacancies";
     }
+
+    @RequestMapping("/")
+    public String handleHome(
+            Model model,
+            @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+            @RequestParam(value = "size", defaultValue = "20", required = false) Integer size
+    ) {
+        model.addAttribute("vacancies", vacancyService.findAllActiveVacancies(page, size));
+        return "vacancies/vacancies";
+    }
 }

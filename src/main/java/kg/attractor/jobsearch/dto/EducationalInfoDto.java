@@ -10,6 +10,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Builder
@@ -20,7 +22,11 @@ import java.time.LocalDateTime;
 )
 @AllArgsConstructor
 @NoArgsConstructor
-public class EducationalInfoDto {
+public class EducationalInfoDto implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1;
+
     private Long id;
     private Long resumeId;
 

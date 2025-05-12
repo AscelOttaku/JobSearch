@@ -89,7 +89,6 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
                 .toList();
     }
 
-
     @Override
     public List<WorkExperienceInfoDto> findWorkExperienceByIds(List<Long> workExperienceOpIds) {
         return workExperienceOpIds.stream()

@@ -13,9 +13,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.support.SessionStatus;
 
 @Controller
 @RequestMapping("resumes")
+@SessionAttributes({"resume", "categories"})
 @RequiredArgsConstructor
 public class ResumeController {
     private final ResumeService resumeService;
@@ -77,7 +79,8 @@ public class ResumeController {
     @GetMapping("new_resume")
     @ResponseStatus(HttpStatus.CREATED)
     public String createResume(Model model) {
-        model.addAllAttributes(resumeDetailedInfoService.getResumeDtoModel());
+        ResumeDto resumeDtoModel = resumeDetailedInfoService.getResumeDtoModel();
+        model.addAttribute("resume", resumeDtoModel);
         model.addAttribute("categories", categoryService.findAllCategories());
         return "resumes/new_resume";
     }
@@ -86,7 +89,8 @@ public class ResumeController {
     public String createResume(
             @ModelAttribute("resume") ResumeDto resumeDto,
             BindingResult bindingResult,
-            Model model
+            Model model,
+            SessionStatus sessionStatus
     ) {
         resumeValidator.isValid(resumeDto, bindingResult);
 
@@ -97,6 +101,7 @@ public class ResumeController {
         }
 
         Long resumeId = resumeDetailedInfoService.createResume(resumeDto);
+        sessionStatus.setComplete();
         return "redirect:/resumes/" + resumeId;
     }
 
@@ -114,7 +119,8 @@ public class ResumeController {
     public String updateResume(
             @ModelAttribute("resume") ResumeDto resumeDto,
             BindingResult bindingResult,
-            Model model) {
+            Model model,
+            SessionStatus sessionStatus) {
 
         resumeValidator.isValid(resumeDto, bindingResult);
 
@@ -125,6 +131,7 @@ public class ResumeController {
         }
 
         resumeDetailedInfoService.updateResumeDetailedInfo(resumeDto);
+        sessionStatus.setComplete();
         return "redirect:/resumes/" + resumeDto.getId();
     }
 

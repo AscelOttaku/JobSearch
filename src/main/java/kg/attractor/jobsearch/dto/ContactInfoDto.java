@@ -5,6 +5,9 @@ import kg.attractor.jobsearch.annotations.ContactInfoEmailValidEmail;
 import kg.attractor.jobsearch.annotations.ContactInfoPhoneNumberValid;
 import lombok.*;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 @Setter
 @Getter
 @Builder
@@ -12,7 +15,10 @@ import lombok.*;
 @ContactInfoPhoneNumberValid
 @AllArgsConstructor
 @NoArgsConstructor
-public class ContactInfoDto {
+public class ContactInfoDto implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1;
 
     private Long id;
 
