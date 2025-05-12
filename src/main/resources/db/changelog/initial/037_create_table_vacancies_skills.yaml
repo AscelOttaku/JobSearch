@@ -1,0 +1,43 @@
+databaseChangeLog:
+  - changeSet:
+      id: 037_create_table_vacancies_skills.yaml
+      author: Kanybek
+      changes:
+        - createTable:
+            tableName: vacancies_skills
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: vacancy_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: skill_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: vacancy_id
+            baseTableName: vacancies_skills
+            constraintName: fk_vacancies_skills_vacancy_id
+            onUpdate: cascade
+            onDelete: cascade
+            referencedTableName: vacancies
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseColumnNames: skill_id
+            baseTableName: vacancies_skills
+            constraintName: fk_vacancies_skills_skill_id
+            onUpdate: cascade
+            onDelete: cascade
+            referencedTableName: skills
+            referencedColumnNames: id

@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: 035_create_table_skills.yaml
+      author: Kanybek
+      changes:
+        - createTable:
+            tableName: skills
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: skill_name
+                  type: varchar(155)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_approved
+                  type: boolean
+                  constraints:
+                    nullable: false

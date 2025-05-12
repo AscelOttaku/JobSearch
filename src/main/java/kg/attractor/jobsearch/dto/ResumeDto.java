@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import kg.attractor.jobsearch.annotations.IsCategoryIdExists;
+import kg.attractor.jobsearch.model.Skill;
 import lombok.*;
 
 import java.util.List;
@@ -39,4 +40,5 @@ public class ResumeDto {
     private List<@Valid EducationalInfoDto> educationInfoDtos;
     private List<@Valid WorkExperienceInfoDto> workExperienceInfoDtos;
     private List<@Valid ContactInfoDto> contactInfos;
+    private List<@Valid Skill> skills;
 }

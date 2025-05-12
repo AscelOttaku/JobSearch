@@ -47,4 +47,12 @@ public class Vacancy {
 
     private LocalDateTime created;
     private LocalDateTime updated;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "vacancies_skills",
+            joinColumns = @JoinColumn(name = "vacancy_id"),
+            inverseJoinColumns = @JoinColumn(name = "skill_id")
+    )
+    private List<Skill> skills = new ArrayList<>();
 }

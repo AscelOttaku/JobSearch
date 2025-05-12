@@ -6,7 +6,6 @@ import kg.attractor.jobsearch.security.MySimpleAuthenticationHandler;
 import kg.attractor.jobsearch.service.impl.AuthUserDetailsServiceImpl;
 import kg.attractor.jobsearch.service.impl.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.Get;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
