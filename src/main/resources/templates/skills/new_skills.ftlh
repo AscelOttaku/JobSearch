@@ -1,53 +1,81 @@
 <#import "../layout.ftlh" as layout>
 
 <@layout.layout ; spring>
+    <div class="container mt-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title mb-4">
+                    <i class="bi bi-tools me-2"></i>Управление навыками
+                </h3>
 
-    <div class="container">
-        <div class="resume-section">
-            <h3>Навыки</h3>
+                <div class="mb-4">
+                    <form method="GET" action="/skills" class="row g-2">
+                        <div class="col-md-8">
+                            <input type="text"
+                                   name="skillName"
+                                   placeholder="Введите навык..."
+                                   class="form-control"
+                                   value="">
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-search me-2"></i>Найти навыки
+                            </button>
+                        </div>
+                        <#if error??>
+                            <div class="col-12">
+                                <div class="alert alert-danger mt-2 mb-0">${error}</div>
+                            </div>
+                        </#if>
+                    </form>
+                </div>
 
-            <form method="GET" action="/skills" class="resume-form">
-                <label>
-                    <input
-                            type="text"
-                            name="skillName"
-                            placeholder="Введите навык..."
-                            class="resume-input"
-                    />
-                </label>
-                <button type="submit" class="resume-button">Показать варианты</button>
-            </form>
+                <#if skills?? && skills?size gt 0>
+                    <div class="mb-4">
+                        <h5 class="mb-3">Найдены навыки:</h5>
+                        <div class="d-flex flex-wrap gap-2">
+                            <#list skills as skillOption>
+                                <form method="POST" action="/skills/new_skills" class="mb-0">
+                                    <#if _csrf??>
+                                        <input type="hidden" name="${(_csrf.parameterName)!}" value="${(_csrf.token)!}"/>
+                                    </#if>
+                                    <input type="hidden" name="skillName" value="${skillOption.skillName}">
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">
+                                        ${skillOption.skillName} <i class="bi bi-plus ms-1"></i>
+                                    </button>
+                                </form>
+                            </#list>
+                        </div>
+                    </div>
+                </#if>
 
-            <#if skills?? && skills?size gt 0>
-                <ul class="resume-list">
-                    <#list skills as skillOption>
-                        <li class="resume-list-item">
-                            <form method="POST" action="/skills/new_skills" style="display:inline;">
+                <div class="mb-4">
+                    <h5 class="mb-3">Ваши навыки:</h5>
+                    <#if resume.skills?? && resume.skills?size gt 0>
+                        <div class="d-flex flex-wrap gap-2">
+                            <#list resume.skills as skill>
+                                <form method="POST" action="/skills/delete" class="mb-0">
+                                    <#if _csrf??>
+                                        <input type="hidden" name="${(_csrf.parameterName)!}" value="${(_csrf.token)!}"/>
+                                    </#if>
+                                    <input type="hidden" name="skillName" value="${skill.skillName}">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        ${skill.skillName} <i class="bi bi-trash ms-1"></i>
+                                    </button>
+                                </form>
+                            </#list>
+                        </div>
+                    <#else>
+                        <div class="alert alert-info">Вы пока не добавили ни одного навыка</div>
+                    </#if>
+                </div>
 
-                                <#if _csrf??>
-                                    <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
-                                           value="${(_csrf.token)!'csrf-token'}"/>
-                                </#if>
-
-                                <input type="hidden" name="skillName" value="${skillOption.skillName}">
-                                <button type="submit" class="resume-button" style="background:none; border:none; color:blue; text-decoration:underline; cursor:pointer;">
-                                    ${skillOption.skillName}
-                                </button>
-                            </form>
-                        </li>
-                    </#list>
-                </ul>
-            </#if>
-
-            <h4>Текущие навыки:</h4>
-            <ul class="resume-list">
-                <#list resume.skills as skill>
-                    <li class="resume-list-item">${skill.skillName!''}</li>
-                </#list>
-            </ul>
+                <div class="d-flex justify-content-end">
+                    <a href="/skills/new_resume" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Вернуться к резюме
+                    </a>
+                </div>
+            </div>
         </div>
-
-        <a href="/skills/new_resume"><button type="button" class="resume-button">Назад к резюме</button></a>
     </div>
-
 </@layout.layout>

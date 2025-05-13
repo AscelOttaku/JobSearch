@@ -194,15 +194,25 @@
                             </label>
                         </div>
 
-                        <div class="resume-section">
-                            <h3>Навыки</h3>
+                        <div class="resume-section mb-4">
                             <a href="/skills/new_skills" class="btn btn-primary">Добавить навыки</a>
 
-                            <ul class="resume-list">
-                                <#list resume.skills as skill>
-                                    <li class="resume-list-item">${skill.skillName!''}</li>
-                                </#list>
-                            </ul>
+                            <#if resume.skills?? && resume.skills?size gt 0>
+                                <div class="mb-4 mt-4">
+                                    <h4 class="d-flex align-items-center gap-2 mb-3">
+                                        <i class="bi bi-tools fs-5"></i>
+                                        <@spring.message "skills.label"/>
+                                    </h4>
+
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <#list resume.skills as skill>
+                                            <span class="badge bg-light text-dark border border-1 border-secondary">
+                                              ${skill.skillName!''}
+                                               </span>
+                                        </#list>
+                                    </div>
+                                </div>
+                            </#if>
                         </div>
 
                         <div class="d-grid gap-2">

@@ -107,6 +107,17 @@
                             </div>
                         </#if>
 
+                        <#if resume.skills?? && resume.skills?size gt 0>
+                            <div class="skills-section mb-4">
+                                <h3 class="section-title"><i class="bi bi-tools"></i> <@spring.message "skills.label"/></h3>
+                                <div class="skills-container">
+                                    <#list resume.skills as skill>
+                                        <span class="skill-tag">${skill.skillName!''}</span>
+                                    </#list>
+                                </div>
+                            </div>
+                        </#if>
+
                         <#if resume.contactInfos?? && resume.contactInfos?size gt 0>
                             <div class="contact-section mb-4">
                                 <h3 class="section-title"><i class="bi bi-people"></i> <@spring.message "contact.info"/>

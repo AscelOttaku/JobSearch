@@ -7,9 +7,16 @@ import kg.attractor.jobsearch.annotations.IsCategoryNameExists;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 @Builder
 @Getter
-public class CategoryDto {
+public class CategoryDto implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1;
+
     private Long id;
 
     @NotBlank(message = "{blank_message}")

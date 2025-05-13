@@ -12,5 +12,7 @@ public interface SkillService {
 
     boolean isSkillApproved(String skillName);
 
-    void addSkillForResume(ResumeDto resumeDto, String skillName);
+    SkillDto addSkillForResume(ResumeDto resumeDto, String skillName);
+
+    SkillDto deleteSkillBySkillName(String skill, ResumeDto resumeDto);
 }

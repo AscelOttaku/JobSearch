@@ -258,7 +258,7 @@ public class UserServiceImpl implements UserService {
         existingUser.ifPresent(user1 -> {
             String previousAvatar = user1.getAvatar();
 
-            if (!avatar.isBlank() && !previousAvatar.equals(avatar))
+            if (!avatar.isBlank() && !avatar.equals(previousAvatar))
                 userRepository.updateAvatarByUserEmail(avatar, email);
         });
     }
