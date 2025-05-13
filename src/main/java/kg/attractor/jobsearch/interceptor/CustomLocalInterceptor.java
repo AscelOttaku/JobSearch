@@ -18,7 +18,7 @@ public class CustomLocalInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String lang = request.getParameter("lang");
 
-        if (lang == null)
+        if (lang == null || lang.isBlank())
             return true;
 
         Locale locale = Locale.of(lang);
