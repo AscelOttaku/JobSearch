@@ -24,6 +24,7 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
     private final AuthorizedUserService authorizedUserService;
     private final ContactInfoService contactInfoService;
     private final ContactTypeService contactTypeService;
+    private final SkillService skillService;
 
     @Transactional
     @Override
@@ -31,6 +32,7 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
         resumeDto.setUserId(authorizedUserService.getAuthorizedUser().getUserId());
 
         Long resumeId = resumeService.createResume(resumeDto).getId();
+        skillService.deleteUnusedSkillsFromDb();
 
         resumeDto.getEducationInfoDtos()
                 .forEach(educationInfoDto ->
@@ -83,6 +85,7 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
         resumeDto.setUpdated(String.valueOf(LocalDateTime.now()));
 
         Long res = resumeService.updateResume(resumeDto);
+        skillService.deleteUnusedSkillsFromDb();
 
         List<WorkExperienceInfoDto> workExperienceInfoDtos = resumeDto.getWorkExperienceInfoDtos();
         workExperienceInfoDtos.forEach(workExperienceInfoDto ->

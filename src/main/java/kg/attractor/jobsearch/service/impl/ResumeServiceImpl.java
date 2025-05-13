@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -57,10 +58,10 @@ public class ResumeServiceImpl implements ResumeService {
                 ));
 
         if (resumeDto.getWorkExperienceInfoDtos().isEmpty())
-            resumeDto.setWorkExperienceInfoDtos(List.of(new WorkExperienceInfoDto()));
+            resumeDto.setWorkExperienceInfoDtos(new ArrayList<>(List.of(new WorkExperienceInfoDto())));
 
         if (resumeDto.getEducationInfoDtos().isEmpty())
-            resumeDto.setEducationInfoDtos(List.of(new EducationalInfoDto()));
+            resumeDto.setEducationInfoDtos(new ArrayList<>(List.of(new EducationalInfoDto())));
 
         if (resumeDto.getContactInfos().size() < 5) {
             String resumesContactTypes = resumeDto.getContactInfos()

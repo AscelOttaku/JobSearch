@@ -10,6 +10,7 @@ import kg.attractor.jobsearch.service.SkillService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
@@ -100,5 +101,18 @@ public class SkillServiceImpl implements SkillService {
                 .skillName(skill)
                 .isApproved(isSkillApproved(skill))
                 .build();
+    }
+
+    @Transactional
+    @Override
+    public List<SkillDto> deleteUnusedSkillsFromDb() {
+        List<SkillDto> deleteSkills = skillRepository.findUnusedSKills()
+                .stream()
+                .map(skillMapper::mapToDto)
+                .toList();
+
+        skillRepository.deleteUnusedElements();
+
+        return deleteSkills;
     }
 }

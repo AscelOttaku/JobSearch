@@ -15,4 +15,6 @@ public interface SkillService {
     SkillDto addSkillForResume(ResumeDto resumeDto, String skillName);
 
     SkillDto deleteSkillBySkillName(String skill, ResumeDto resumeDto);
+
+    List<SkillDto> deleteUnusedSkillsFromDb();
 }

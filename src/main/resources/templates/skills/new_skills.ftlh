@@ -16,6 +16,7 @@
                                    placeholder="Введите навык..."
                                    class="form-control"
                                    value="">
+                            <input type="hidden" name="pageName" value="${pageName}">
                         </div>
                         <div class="col-md-4">
                             <button type="submit" class="btn btn-primary w-100">
@@ -25,6 +26,11 @@
                         <#if error??>
                             <div class="col-12">
                                 <div class="alert alert-danger mt-2 mb-0">${error}</div>
+                            </div>
+                        </#if>
+                        <#if notFoundError??>
+                            <div class="col-12">
+                                <div class="alert alert-danger mt-2 mb-0">${notFoundError}</div>
                             </div>
                         </#if>
                     </form>
@@ -40,6 +46,7 @@
                                         <input type="hidden" name="${(_csrf.parameterName)!}" value="${(_csrf.token)!}"/>
                                     </#if>
                                     <input type="hidden" name="skillName" value="${skillOption.skillName}">
+                                    <input type="hidden" name="pageName" value="${pageName}">
                                     <button type="submit" class="btn btn-sm btn-outline-primary">
                                         ${skillOption.skillName} <i class="bi bi-plus ms-1"></i>
                                     </button>
@@ -59,6 +66,7 @@
                                         <input type="hidden" name="${(_csrf.parameterName)!}" value="${(_csrf.token)!}"/>
                                     </#if>
                                     <input type="hidden" name="skillName" value="${skill.skillName}">
+                                    <input type="hidden" name="pageName" value="${pageName}">
                                     <button type="submit" class="btn btn-sm btn-outline-danger">
                                         ${skill.skillName} <i class="bi bi-trash ms-1"></i>
                                     </button>
