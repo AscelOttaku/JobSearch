@@ -58,10 +58,10 @@ public class ResumeServiceImpl implements ResumeService {
                 ));
 
         if (resumeDto.getWorkExperienceInfoDtos().isEmpty())
-            resumeDto.setWorkExperienceInfoDtos(new ArrayList<>(List.of(new WorkExperienceInfoDto())));
+            resumeDto.setWorkExperienceInfoDtos(List.of(new WorkExperienceInfoDto()));
 
         if (resumeDto.getEducationInfoDtos().isEmpty())
-            resumeDto.setEducationInfoDtos(new ArrayList<>(List.of(new EducationalInfoDto())));
+            resumeDto.setEducationInfoDtos(List.of(new EducationalInfoDto()));
 
         if (resumeDto.getContactInfos().size() < 5) {
             String resumesContactTypes = resumeDto.getContactInfos()

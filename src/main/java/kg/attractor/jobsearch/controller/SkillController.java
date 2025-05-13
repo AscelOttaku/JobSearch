@@ -44,13 +44,13 @@ public class SkillController {
         return pageName;
     }
 
-    @GetMapping("new_skills")
+    @GetMapping("/resumes/new_skills")
     public String addSkillsPage(Model model) {
         model.addAttribute("pageName", "skills/new_skills");
         return "skills/new_skills";
     }
 
-    @GetMapping("update_skills")
+    @GetMapping("/resumes/update_skills")
     public String updateSkills(Model model) {
         model.addAttribute("pageName", "skills/update_skills");
         return "skills/update_skills";

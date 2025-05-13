@@ -20,7 +20,7 @@ public interface SkillRepository extends JpaRepository<Skill, Long> {
             nativeQuery = true)
     void deleteUnusedElements();
 
-    @Query(value = "select * from SKILLS as s " +
+    @Query(value = "select s.* from SKILLS as s " +
             "left join RESUMES_SKILLS rs on rs.SKILL_ID = s.ID " +
             "where rs.RESUME_ID is null", nativeQuery = true)
     List<Skill> findUnusedSKills();
