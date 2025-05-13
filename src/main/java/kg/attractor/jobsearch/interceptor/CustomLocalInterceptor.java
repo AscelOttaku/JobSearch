@@ -15,13 +15,14 @@ public class CustomLocalInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String lang = request.getParameter("lang");
 
-        if (lang != null) {
-            Locale locale = Locale.of(lang);
-            localeResolver.setLocale(request, response, locale);
-        }
+        if (lang == null)
+            return true;
+
+        Locale locale = Locale.of(lang);
+        localeResolver.setLocale(request, response, locale);
         return true;
     }
 }

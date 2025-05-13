@@ -16,10 +16,10 @@ import java.util.Locale;
 
 @Component
 @RequiredArgsConstructor
-public class CustomLocaleResolver {
-    private final LocaleResolver localeResolver;
+public class CustomLocaleResolver implements LocaleResolver {
     private final UsersLocaleRepository usersLocaleRepository;
 
+    @Override
     public Locale resolveLocale(HttpServletRequest request) {
         String lang = request.getParameter("lang");
         Locale locale = lang != null ? Locale.of(lang) : null;
@@ -41,6 +41,7 @@ public class CustomLocaleResolver {
             return locale;
     }
 
+    @Override
     public void setLocale(HttpServletRequest request, HttpServletResponse response, Locale locale) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         HttpSession session = request.getSession();
@@ -53,6 +54,5 @@ public class CustomLocaleResolver {
         }
 
         session.setAttribute("lang", locale);
-        localeResolver.setLocale(request, response, locale);
     }
 }

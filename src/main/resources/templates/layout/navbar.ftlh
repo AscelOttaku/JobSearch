@@ -26,10 +26,10 @@
                     </a>
                     <ul class="dropdown-menu z-3" aria-labelledby="dropdownMenuButton1">
                         <li>
-                            <a class="dropdown-item" href="/api/lang?lang=en">🇺🇸 English</a>
+                            <a class="dropdown-item" href="?lang=en">🇺🇸 English</a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="/api/lang?lang=ru">🇷🇺 Русский</a>
+                            <a class="dropdown-item" href="?lang=ru">🇷🇺 Русский</a>
                         </li>
                     </ul>
                 </li>
@@ -97,7 +97,7 @@
                                 <hr class="dropdown-divider">
                             </li>
                             <#if _csrf??>
-                                <form action="/logout" method="post">
+                                <form action="/auth/logout" method="post">
                                     <input type="hidden" name="${(_csrf.parameterName)!'csrf'}"
                                            value="${(_csrf.token)!'--no-token--'}"/>
                                     <button type="submit" class="btn btn-outline-info m-2"
@@ -105,7 +105,7 @@
                                     </button>
                                 </form>
                             <#else>
-                                <a href="/logout" class="btn btn-outline-info m-2"
+                                <a href="/auth/logout" class="btn btn-outline-info m-2"
                                    id="logout"><@spring.message "logout"/></a>
                             </#if>
                         </ul>
