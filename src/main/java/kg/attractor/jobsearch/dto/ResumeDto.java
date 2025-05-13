@@ -2,11 +2,9 @@ package kg.attractor.jobsearch.dto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import kg.attractor.jobsearch.annotations.IsCategoryIdExists;
-import kg.attractor.jobsearch.model.Skill;
 import lombok.*;
 
 import java.io.Serial;

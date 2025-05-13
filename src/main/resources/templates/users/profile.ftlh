@@ -53,7 +53,7 @@
                                         </div>
                                         <div class="mb-2">
                                             <span class="fw-bold"><@spring.message "age"/>:</span>
-                                            <p class="mb-0 ps-3">${user.age!'<@spring.message "undefined"/>'}</p>
+                                            <p class="mb-0 ps-3">${user.age!}<#if !user.age??><@spring.message "undefined"/></#if></p>
                                         </div>
                                         <div>
                                             <span class="fw-bold"><@spring.message "account_type"/>:</span>
@@ -74,7 +74,7 @@
                                         </div>
                                         <div>
                                             <span class="fw-bold"><@spring.message "phone"/>:</span>
-                                            <p class="mb-0 ps-3">${user.phoneNumber!'<@spring.message "undefined"/>'}</p>
+                                            <p class="mb-0 ps-3">${user.phoneNumber!}<#if !user.age??><@spring.message "undefined"/></#if></p>
                                         </div>
                                     </div>
                                 </div>

@@ -4,6 +4,7 @@ import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.dto.mapper.*;
 import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.model.Resume;
+import kg.attractor.jobsearch.model.Skill;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.service.CategoryService;
 import kg.attractor.jobsearch.util.Util;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -70,7 +72,13 @@ public class ResumeMapper implements Mapper<ResumeDto, Resume> {
                 LocalDateTime.now());
         resume.setUpdated(resumeDto.getUpdated() != null ?
                 LocalDateTime.parse(resumeDto.getUpdated()) : resume.getCreated());
-        resume.setSkills(resume.getSkills());
+
+        List<Skill> skills = resumeDto.getSkills() != null ?
+                resumeDto.getSkills().stream()
+                        .map(skillMapper::mapToEntity)
+                        .toList() : null;
+
+        resume.setSkills(skills);
         return resume;
     }
 }
