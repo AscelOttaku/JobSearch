@@ -26,10 +26,26 @@
                     </a>
                     <ul class="dropdown-menu z-3" aria-labelledby="dropdownMenuButton1">
                         <li>
-                            <a class="dropdown-item" href="?lang=en">🇺🇸 English</a>
+                            <form action="/api/locale" method="POST">
+                                <#if _csrf??>
+                                    <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
+                                           value="${(_csrf.token)!'csrf-token'}"/>
+                                </#if>
+
+                                <input type="hidden" name="lang" value="en">
+                                <button type="submit" class="dropdown-item">🇺🇸 English</button>
+                            </form>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="?lang=ru">🇷🇺 Русский</a>
+                            <form action="/api/locale" method="POST">
+                                <#if _csrf??>
+                                    <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
+                                           value="${(_csrf.token)!'csrf-token'}"/>
+                                </#if>
+
+                                <input type="hidden" name="lang" value="ru">
+                                <button type="submit" class="dropdown-item">🇷🇺 Русский</button>
+                            </form>
                         </li>
                     </ul>
                 </li>

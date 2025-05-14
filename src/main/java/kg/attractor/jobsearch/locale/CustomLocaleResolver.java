@@ -1,4 +1,4 @@
-package kg.attractor.jobsearch.interceptor;
+package kg.attractor.jobsearch.locale;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
