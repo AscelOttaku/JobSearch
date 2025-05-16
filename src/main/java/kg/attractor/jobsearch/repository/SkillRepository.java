@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SkillRepository extends JpaRepository<Skill, Long> {
@@ -24,4 +25,6 @@ public interface SkillRepository extends JpaRepository<Skill, Long> {
             "left join RESUMES_SKILLS rs on rs.SKILL_ID = s.ID " +
             "where rs.RESUME_ID is null", nativeQuery = true)
     List<Skill> findUnusedSKills();
+
+    Optional<Skill> findBySkillName(String skillName);
 }

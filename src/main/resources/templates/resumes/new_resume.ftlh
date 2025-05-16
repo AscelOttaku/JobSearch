@@ -136,7 +136,7 @@
                                         <label for="endDate" class="form-label">
                                             <i class="bi bi-calendar-minus form-icon me-2"></i><@spring.message "end.date.label"/>
                                         </label>
-                                        <@spring.formInput "resume.educationInfoDtos[${index}].endDate", 'class="form-control" placeholder="${springMacroRequestContext.getMessage("date.format")}" id="endDate" type="date"'/>
+                                        <@spring.formInput "resume.educationInfoDtos[${index}].endDate", 'class="form-control" type="date" placeholder="${springMacroRequestContext.getMessage("date.format")}" id="endDate"'/>
                                         <@spring.showErrors "<br>" "text-danger small"/>
                                     </div>
                                 </div>
@@ -195,7 +195,15 @@
                         </div>
 
                         <div class="resume-section mb-4">
-                            <a href="/skills/new_skills" class="btn btn-primary">Добавить навыки</a>
+                            <input type="hidden" name="pageName" value="skills/resumes/new_skills">
+
+                            <#list resume.skills as skill>
+                                <@spring.formHiddenInput "resume.skills[${skill?index}].skillName" 'class="form-control"'/>
+                                <@spring.formHiddenInput "resume.skills[${skill?index}].id" 'class="form-control"'/>
+                                <@spring.formHiddenInput "resume.skills[${skill?index}].isApproved" 'class="form-control"'/>
+                            </#list>
+
+                            <button formaction="/skills/save_resume_storage" class="btn btn-primary">Добавить навыки</button>
 
                             <#if resume.skills?? && resume.skills?size gt 0>
                                 <div class="mb-4 mt-4">

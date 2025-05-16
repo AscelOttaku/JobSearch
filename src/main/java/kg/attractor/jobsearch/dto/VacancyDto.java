@@ -1,5 +1,6 @@
 package kg.attractor.jobsearch.dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import kg.attractor.jobsearch.annotations.IsExpFromAndExpToCorrectFormat;
 import lombok.*;
@@ -13,7 +14,6 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @IsExpFromAndExpToCorrectFormat
-
 public class VacancyDto {
     private Long vacancyId;
 
@@ -53,6 +53,7 @@ public class VacancyDto {
     private String updated;
 
     private List<RespondApplicationDto> respondedApplications;
+    private List<@Valid SkillDto> skills;
 
     @Override
     public boolean equals(Object o) {

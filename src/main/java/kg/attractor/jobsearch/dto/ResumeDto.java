@@ -7,8 +7,6 @@ import jakarta.validation.constraints.Size;
 import kg.attractor.jobsearch.annotations.IsCategoryIdExists;
 import lombok.*;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.List;
 
 @Builder
@@ -16,11 +14,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResumeDto implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1;
-
+public class ResumeDto {
     private Long id;
 
     @NotBlank(message = "{blank_message}")

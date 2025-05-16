@@ -5,14 +5,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
 import java.util.Map;
 
 @Getter
 @Setter
 @Builder
-public class EmployerRespondsPageHolder<T, R> {
-    private Map<T, List<R>> content;
+public class RespondPageHolder<V, R> {
+    private Map<V, Map<R, Boolean>> content;
     private Integer page;
     private Integer size;
     private Integer totalPages;

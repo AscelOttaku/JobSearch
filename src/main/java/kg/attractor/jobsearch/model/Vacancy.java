@@ -48,7 +48,7 @@ public class Vacancy {
     private LocalDateTime created;
     private LocalDateTime updated;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(
             name = "vacancies_skills",
             joinColumns = @JoinColumn(name = "vacancy_id"),

@@ -42,7 +42,8 @@
 
                         <div class="col-md-6">
                             <label for="salary" class="form-label">
-                                <i class="bi bi-cash-coin form-icon me-2"></i><@spring.message "expected.salary"/> (<@spring.message "currency"/>)
+                                <i class="bi bi-cash-coin form-icon me-2"></i><@spring.message "expected.salary"/>
+                                (<@spring.message "currency"/>)
                             </label>
                             <@spring.formInput "resume.salary", 'class="form-control" placeholder="${springMacroRequestContext.getMessage("salary.placeholder")}" id="salary" type="number"'/>
                             <@spring.showErrors "<br>" "text-danger small"/>
@@ -185,7 +186,18 @@
                         </div>
 
                         <div class="resume-section mb-4">
-                            <a href="/skills/update_skills" class="btn btn-primary"><@spring.message "skills.update"/></a>
+                            <input type="hidden" name="pageName" value="skills/resumes/update_skills">
+
+                            <#if resume.skills?? && resume.skills?size gt 0>
+                                <#list resume.skills as skill>
+                                    <@spring.formHiddenInput "resume.skills[${skill?index}].skillName" 'class="form-control"'/>
+                                    <@spring.formHiddenInput "resume.skills[${skill?index}].id" 'class="form-control"'/>
+                                    <@spring.formHiddenInput "resume.skills[${skill?index}].isApproved" 'class="form-control"'/>
+                                </#list>
+                            </#if>
+
+                            <button formaction="/skills/save_resume_storage" class="btn btn-primary">Добавить навыки
+                            </button>
 
                             <#if resume.skills?? && resume.skills?size gt 0>
                                 <div class="mb-4 mt-4">
@@ -206,7 +218,8 @@
                         </div>
 
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg"><@spring.message "save.resume"/></button>
+                            <button type="submit"
+                                    class="btn btn-primary btn-lg"><@spring.message "save.resume"/></button>
                         </div>
                     </form>
                 </div>

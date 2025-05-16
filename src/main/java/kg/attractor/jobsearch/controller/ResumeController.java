@@ -17,7 +17,7 @@ import org.springframework.web.bind.support.SessionStatus;
 
 @Controller
 @RequestMapping("resumes")
-@SessionAttributes({"resume", "categories"})
+@SessionAttributes({"categories"})
 @RequiredArgsConstructor
 public class ResumeController {
     private final ResumeService resumeService;
@@ -135,7 +135,7 @@ public class ResumeController {
         return "redirect:/resumes/" + resumeDto.getId();
     }
 
-    @DeleteMapping("{resumeId}")
+    @PostMapping("{resumeId}")
     @ResponseStatus(HttpStatus.SEE_OTHER)
     public String deleteResumeById(@PathVariable Long resumeId) {
         resumeService.deleteResumeById(resumeId);

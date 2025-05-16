@@ -1,6 +1,7 @@
 package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dto.PageHolder;
+import kg.attractor.jobsearch.dto.SkillDto;
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
@@ -15,6 +16,7 @@ import kg.attractor.jobsearch.model.Vacancy;
 import kg.attractor.jobsearch.repository.VacancyRepository;
 import kg.attractor.jobsearch.service.AuthorizedUserService;
 import kg.attractor.jobsearch.service.CategoryService;
+import kg.attractor.jobsearch.service.SkillService;
 import kg.attractor.jobsearch.service.VacancyService;
 import kg.attractor.jobsearch.validators.Validator;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +41,7 @@ public class VacancyServiceImpl implements VacancyService {
     private final CategoryService categoryService;
     private final AuthorizedUserService authorizedUserService;
     private final PageHolderWrapper pageHolderWrapper;
+    private final SkillService skillService;
 
     @Override
     public VacancyDto findVacancyById(Long vacancyId) {
@@ -63,6 +66,7 @@ public class VacancyServiceImpl implements VacancyService {
         return vacancyRepository.findById(vacancyId).isPresent();
     }
 
+    @Transactional
     @Override
     public VacancyDto createdVacancy(VacancyDto vacancyDto) {
         UserDto authorizedUser = new UserDto();
@@ -71,11 +75,14 @@ public class VacancyServiceImpl implements VacancyService {
         vacancyDto.setUser(authorizedUser);
         log.info("Create vacancy / user name: {}", authorizedUser.getName());
 
+        List<SkillDto> skillDtos = skillService.saveNewSkills(vacancyDto.getSkills());
+        vacancyDto.setSkills(skillDtos);
         Vacancy vacancy = vacancyMapper.mapToEntity(vacancyDto);
 
         return vacancyMapper.mapToDto(vacancyRepository.save(vacancy));
     }
 
+    @Transactional
     @Override
     public VacancyDto updateVacancy(VacancyDto vacancyDto) {
         Validator.isValidId(vacancyDto.getVacancyId());
@@ -86,6 +93,8 @@ public class VacancyServiceImpl implements VacancyService {
         vacancyDto.setUser(user);
         log.info("Updated vacancy / user name: {}", user.getName());
 
+        List<SkillDto> skillDtos = skillService.saveNewSkills(vacancyDto.getSkills());
+        vacancyDto.setSkills(skillDtos);
         Vacancy vacancy = vacancyMapper.mapToEntity(vacancyDto);
 
         return vacancyMapper.mapToDto(vacancyRepository.save(vacancy));

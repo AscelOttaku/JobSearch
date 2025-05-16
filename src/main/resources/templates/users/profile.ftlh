@@ -209,17 +209,20 @@
                                                         <i class="bi bi-calendar"></i>
                                                         ${vacancy.updated!vacancy.created}
                                                     </div>
-                                                    <div class="item-actions">
+                                                    <div class="vacancy-actions">
                                                         <a href="/vacancies/${vacancy.vacancyId}"
-                                                           class="btn btn-action btn-outline-primary">
-                                                            <i class="bi bi-eye"></i>
+                                                           class="btn btn-sm btn-outline-primary">
+                                                            <i class="bi bi-eye"></i> <@spring.message "detailed"/>
                                                         </a>
+
                                                         <a href="/vacancies/update/vacancy/${vacancy.vacancyId}"
-                                                           class="btn btn-action btn-outline-secondary">
-                                                            <i class="bi bi-pencil"></i>
+                                                           class="btn btn-sm btn-outline-secondary">
+                                                            <i class="bi bi-pencil"></i> <@spring.message "refactoring"/>
                                                         </a>
+
                                                         <form action="/vacancies/times?vacancyId=${vacancy.vacancyId}"
-                                                              method="post" class="d-inline">
+                                                              method="post"
+                                                              class="d-inline">
 
                                                             <#if _csrf??>
                                                                 <input type="hidden" name="${(_csrf.parameterName)!}"

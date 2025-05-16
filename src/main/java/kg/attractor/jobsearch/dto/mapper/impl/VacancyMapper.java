@@ -1,12 +1,11 @@
 package kg.attractor.jobsearch.dto.mapper.impl;
 
 import kg.attractor.jobsearch.dto.RespondApplicationDto;
-import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
+import kg.attractor.jobsearch.dto.mapper.SkillMapper;
 import kg.attractor.jobsearch.model.Category;
-import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.model.Vacancy;
 import kg.attractor.jobsearch.service.CategoryService;
@@ -16,11 +15,13 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
 public class VacancyMapper implements Mapper<VacancyDto, Vacancy> {
     private final CategoryService categoryService;
+    private final SkillMapper skillMapper;
 
     @Override
     public VacancyDto mapToDto(Vacancy vacancy) {
@@ -49,6 +50,9 @@ public class VacancyMapper implements Mapper<VacancyDto, Vacancy> {
                                 .resumeId(respondedApplication.getResume().getId())
                                 .confirmation(respondedApplication.getConfirmation())
                                 .build())
+                        .toList())
+                .skills(vacancy.getSkills().stream()
+                        .map(skillMapper::mapToDto)
                         .toList())
                 .build();
     }
@@ -79,6 +83,10 @@ public class VacancyMapper implements Mapper<VacancyDto, Vacancy> {
                 LocalDateTime.parse(vacancyDto.getUpdated(),
                         DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) :
                 LocalDateTime.now());
+        vacancy.setSkills(vacancyDto.getSkills() != null ?
+                vacancyDto.getSkills().stream()
+                        .map(skillMapper::mapToEntity)
+                        .toList() : new ArrayList<>());
         return vacancy;
     }
 }

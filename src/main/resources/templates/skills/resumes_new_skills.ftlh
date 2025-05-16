@@ -41,7 +41,7 @@
                         <h5 class="mb-3">Найдены навыки:</h5>
                         <div class="d-flex flex-wrap gap-2">
                             <#list skills as skillOption>
-                                <form method="POST" action="/skills/new_skills" class="mb-0">
+                                <form method="POST" action="/skills/resumes/new_skills" class="mb-0">
                                     <#if _csrf??>
                                         <input type="hidden" name="${(_csrf.parameterName)!}" value="${(_csrf.token)!}"/>
                                     </#if>
@@ -61,7 +61,7 @@
                     <#if resume.skills?? && resume.skills?size gt 0>
                         <div class="d-flex flex-wrap gap-2">
                             <#list resume.skills as skill>
-                                <form method="POST" action="/skills/delete" class="mb-0">
+                                <form method="POST" action="/skills/resumes/delete" class="mb-0">
                                     <#if _csrf??>
                                         <input type="hidden" name="${(_csrf.parameterName)!}" value="${(_csrf.token)!}"/>
                                     </#if>

@@ -2,8 +2,8 @@ package kg.attractor.jobsearch.service.impl;
 
 import jakarta.transaction.Transactional;
 import kg.attractor.jobsearch.dto.*;
-import kg.attractor.jobsearch.dto.mapper.impl.PageHolderWrapper;
 import kg.attractor.jobsearch.dto.mapper.impl.RespondApplicationMapper;
+import kg.attractor.jobsearch.dto.mapper.impl.RespondPageHolderWrapper;
 import kg.attractor.jobsearch.dto.mapper.impl.VacancyMapper;
 import kg.attractor.jobsearch.enums.Roles;
 import kg.attractor.jobsearch.model.RespondedApplication;
@@ -19,10 +19,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,7 +33,6 @@ public class RespondServiceImpl implements RespondService {
     private final ResumeService resumeService;
     private final AuthorizedUserService authorizedUserService;
     private final VacancyService vacancyService;
-    private final PageHolderWrapper pageHolderWrapper;
     private final VacancyMapper vacancyMapper;
 
     @Transactional
@@ -83,20 +82,21 @@ public class RespondServiceImpl implements RespondService {
     }
 
     @Override
-    public PageHolder<RespondApplicationDto> findUserResponds(int page, int size) {
+    public RespondPageHolder<VacancyDto, ResumeDto> findUserResponds(int page, int size) {
         Authentication authentication = authorizedUserService.getAuthentication();
 
-        Page<RespondApplicationDto> respondApplicationDtos = respondedApplicationRepository
+        Page<RespondedApplication> respondApplicationDtos = respondedApplicationRepository
                 .findAllRespondedApplicationsByUserEmail(
                         authentication.getName(),
-                        PageRequest.of(page, size))
-                .map(respondApplicationMapper::mapToDto);
+                        PageRequest.of(page, size));
 
-        return pageHolderWrapper.wrapPageHolder(respondApplicationDtos, null);
+        Map<VacancyDto, Map<ResumeDto, Boolean>> pair = convertToMapKeyAsVacancyValueAsResume(respondApplicationDtos);
+
+        return RespondPageHolderWrapper.wrap(pair, respondApplicationDtos);
     }
 
     @Override
-    public EmployerRespondsPageHolder<VacancyDto, ResumeDto> findEmployerResponds(int page, int size) {
+    public RespondPageHolder<VacancyDto, ResumeDto> findEmployerResponds(int page, int size) {
         Authentication authentication = authorizedUserService.getAuthentication();
 
         Page<RespondedApplication> respondDtoPage = respondedApplicationRepository
@@ -105,29 +105,41 @@ public class RespondServiceImpl implements RespondService {
                         PageRequest.of(page, size)
                 );
 
-        Map<VacancyDto, List<ResumeDto>> responds = respondDtoPage.stream()
+        Map<VacancyDto, Map<ResumeDto, Boolean>> pair = convertToMapKeyAsVacancyValueAsResume(respondDtoPage);
+
+        return RespondPageHolderWrapper.wrap(pair, respondDtoPage);
+    }
+
+    private Map<VacancyDto, Map<ResumeDto, Boolean>> convertToMapKeyAsVacancyValueAsResume(Page<RespondedApplication> respondDtoPage) {
+        return respondDtoPage.stream()
                 .collect(
                         Collectors.toMap(
                                 respondApplicationDto -> vacancyMapper.mapToDto(respondApplicationDto.getVacancy()),
-                                respondApplicationDto -> resumeService.findAllResumesByRespondIdAndVacancyId(
-                                        respondApplicationDto.getId(),
-                                        respondApplicationDto.getVacancy().getId()
-                                ),
+                                respondApplicationDto -> {
+                                    List<ResumeDto> resumeDtos = resumeService.findAllResumesByRespondIdAndVacancyId(
+                                            respondApplicationDto.getId(),
+                                            respondApplicationDto.getVacancy().getId()
+                                    );
+
+                                    return resumeDtos.stream()
+                                            .collect(Collectors.toMap(
+                                                    Function.identity(),
+                                                    resumeDto -> respondApplicationDto.getConfirmation()
+                                            ));
+                                },
                                 (k, v) -> {
-                                    k.addAll(v);
+                                    k.putAll(v);
                                     return k;
                                 }
                         )
                 );
+    }
 
-        return EmployerRespondsPageHolder.<VacancyDto, ResumeDto>builder()
-                .content(responds)
-                .page(respondDtoPage.getNumber())
-                .size(respondDtoPage.getSize())
-                .totalPages(respondDtoPage.getTotalPages())
-                .hasPreviousPage(respondDtoPage.hasPrevious())
-                .hasNextPage(respondDtoPage.hasNext())
-                .filterType(null)
-                .build();
+    @Override
+    public List<RespondApplicationDto> findAllResponds() {
+        return respondedApplicationRepository.findAll()
+                .stream()
+                .map(respondApplicationMapper::mapToDto)
+                .toList();
     }
 }

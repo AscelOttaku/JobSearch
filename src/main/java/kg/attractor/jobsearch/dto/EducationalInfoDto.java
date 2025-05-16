@@ -22,11 +22,7 @@ import java.time.LocalDateTime;
 )
 @AllArgsConstructor
 @NoArgsConstructor
-public class EducationalInfoDto implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1;
-
+public class EducationalInfoDto {
     private Long id;
     private Long resumeId;
 

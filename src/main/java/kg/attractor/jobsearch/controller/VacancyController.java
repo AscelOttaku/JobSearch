@@ -2,6 +2,7 @@ package kg.attractor.jobsearch.controller;
 
 import jakarta.validation.Valid;
 import kg.attractor.jobsearch.dto.PageHolder;
+import kg.attractor.jobsearch.dto.SkillDto;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.enums.FilterType;
 import kg.attractor.jobsearch.service.CategoryService;
@@ -14,11 +15,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.support.SessionStatus;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Controller("vacancyController")
 @RequestMapping("/vacancies")
+@SessionAttributes({"categories"})
 @Slf4j
 @RequiredArgsConstructor
 public class VacancyController {
@@ -76,7 +81,12 @@ public class VacancyController {
     }
 
     @PostMapping("/new_vacancy")
-    public String createVacancy(@ModelAttribute("vacancy") @Valid VacancyDto vacancyDto, BindingResult result, Model model) {
+    public String createVacancy(
+            @ModelAttribute("vacancy") @Valid VacancyDto vacancyDto,
+            BindingResult result,
+            Model model,
+            SessionStatus sessionStatus
+    ) {
         if (result.hasErrors()) {
             model.addAttribute("vacancy", vacancyDto);
             model.addAttribute("categories", categoryService.findAllCategories());
@@ -84,6 +94,7 @@ public class VacancyController {
         }
 
         VacancyDto vacancy = vacancyService.createdVacancy(vacancyDto);
+        sessionStatus.setComplete();
         return "redirect:/vacancies/" + vacancy.getVacancyId();
     }
 
@@ -99,8 +110,8 @@ public class VacancyController {
     public String updateVacancy(
             @ModelAttribute("vacancy") @Valid VacancyDto vacancyDto,
             BindingResult bindingResult,
-            Model model
-    ) {
+            Model model,
+            SessionStatus sessionStatus) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("vacancy", vacancyDto);
             model.addAttribute("categories", categoryService.findAllCategories());
@@ -108,6 +119,7 @@ public class VacancyController {
         }
 
         VacancyDto vacancy = vacancyService.updateVacancy(vacancyDto);
+        sessionStatus.setComplete();
         return "redirect:/vacancies/" + vacancy.getVacancyId();
     }
 

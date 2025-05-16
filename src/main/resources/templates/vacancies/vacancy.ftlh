@@ -55,6 +55,17 @@
                 </div>
             </div>
 
+            <#if vacancy.skills?? && vacancy.skills?size gt 0>
+                <div class="skills-section mb-4">
+                    <h3 class="section-title"><i class="bi bi-tools"></i> <@spring.message "skills.label"/></h3>
+                    <div class="skills-container">
+                        <#list vacancy.skills as skill>
+                            <span class="skill-tag">${skill.skillName!''}</span>
+                        </#list>
+                    </div>
+                </div>
+            </#if>
+
             <div class="vacancy-footer">
                 <div>
                     <i class="bi bi-calendar"></i><@spring.message "release_date"/>: ${vacancy.updated!vacancy.created}

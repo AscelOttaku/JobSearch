@@ -6,20 +6,13 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 
-import java.io.Serial;
-import java.io.Serializable;
-
 @Builder
 @Getter
 @Setter
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
-public class WorkExperienceInfoDto implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1;
-
+public class WorkExperienceInfoDto {
     private Long id;
 
     private Long resumeId;

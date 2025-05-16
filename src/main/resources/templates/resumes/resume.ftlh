@@ -172,7 +172,6 @@
                                             <input type="hidden" name="${(_csrf.parameterName)!}"
                                                    value="${(_csrf.token)!}"/>
                                         </#if>
-                                        <input type="hidden" name="_method" value="delete"/>
                                         <button type="submit" class="btn btn-sm btn-danger">
                                             <i class="bi bi-trash-fill text-white me-1"></i> <@spring.message "delete.button"/>
                                         </button>

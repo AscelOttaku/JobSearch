@@ -6,12 +6,19 @@ import kg.attractor.jobsearch.annotations.UniqueUserPhoneNumber;
 import kg.attractor.jobsearch.annotations.ValidUserPassword;
 import lombok.*;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
+public class UserDto implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1;
+
     private Long userId;
 
     @NotBlank(message = "{blank_message}")

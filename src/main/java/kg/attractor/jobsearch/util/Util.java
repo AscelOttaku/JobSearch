@@ -7,6 +7,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -61,5 +63,21 @@ public class Util {
     public static String getUserArrivedUri(HttpServletRequest request) {
         String referer = request.getHeader("Referer");
         return referer;
+    }
+
+    public static <T> List<T> makeSureListIsNotNull(List<T> list) {
+        return list == null ? new ArrayList<>() : list;
+    }
+
+    public static void makeSureTextLengthMoreThenTwoElements(String skillName) {
+        if (skillName == null || skillName.isBlank())
+            throw new IllegalArgumentException("text is null or blank");
+
+        if (skillName.length() <= 2)
+            throw new IllegalArgumentException("text name cannot be equals or less then 2");
+    }
+
+    public static boolean isSkillCorrect(String skillName) {
+        return skillName != null && !skillName.isBlank() && skillName.length() > 2;
     }
 }

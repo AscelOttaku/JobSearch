@@ -3,10 +3,12 @@ package kg.attractor.jobsearch.service.impl;
 import kg.attractor.jobsearch.dto.ItemDataDto;
 import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.dto.SkillDto;
+import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.dto.mapper.SkillMapper;
 import kg.attractor.jobsearch.model.Skill;
 import kg.attractor.jobsearch.repository.SkillRepository;
 import kg.attractor.jobsearch.service.SkillService;
+import kg.attractor.jobsearch.util.Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -66,17 +68,11 @@ public class SkillServiceImpl implements SkillService {
 
     @Override
     public SkillDto addSkillForResume(ResumeDto resumeDto, String skillName) {
-        resumeDto.setSkills(
-                resumeDto.getSkills() == null ?
-                        new ArrayList<>() :
-                        resumeDto.getSkills()
-        );
+        Util.makeSureTextLengthMoreThenTwoElements(skillName);
 
-        if (
-                resumeDto.getSkills()
-                        .stream()
-                        .noneMatch(skill -> skill.getSkillName().equals(skillName))
-        ) {
+        resumeDto.setSkills(Util.makeSureListIsNotNull(resumeDto.getSkills()));
+
+        if (isSkillNotExist(resumeDto.getSkills(), skillName)) {
             resumeDto.getSkills().add(SkillDto.builder()
                     .skillName(skillName)
                     .isApproved(isSkillApproved(skillName))
@@ -87,20 +83,41 @@ public class SkillServiceImpl implements SkillService {
     }
 
     @Override
-    public SkillDto deleteSkillBySkillName(String skill, ResumeDto resumeDto) {
-        if (skill == null || skill.isBlank())
-            throw new IllegalArgumentException("skill name cannot be null or blank");
+    public SkillDto addSkillForVacancy(VacancyDto vacancyDto, String skillName) {
+        Util.makeSureTextLengthMoreThenTwoElements(skillName);
 
-        List<SkillDto> skillDtos = resumeDto.getSkills();
+        vacancyDto.setSkills(Util.makeSureListIsNotNull(vacancyDto.getSkills()));
 
+        if (isSkillNotExist(vacancyDto.getSkills(), skillName)) {
+            vacancyDto.getSkills().add(SkillDto.builder()
+                    .skillName(skillName)
+                    .isApproved(isSkillApproved(skillName))
+                    .build());
+        }
+
+        return vacancyDto.getSkills().getLast();
+    }
+
+    private SkillDto deleteSkillBySkillName(String skill, List<SkillDto> skillDtos) {
         if (skillDtos == null || skillDtos.isEmpty())
             throw new IllegalArgumentException("skills are not exists");
 
-        skillDtos.removeIf(skillDto -> skillDto.getSkillName().equals(skill));
+        skillDtos.removeIf(skillDto -> skillDto.getSkillName().equalsIgnoreCase(skill));
         return SkillDto.builder()
                 .skillName(skill)
                 .isApproved(isSkillApproved(skill))
                 .build();
+    }
+
+    @Override
+    public <T> SkillDto deleteSkillBySKillName(T object, String skillName) {
+        if (object instanceof ResumeDto resumeDto)
+            return deleteSkillBySkillName(skillName, resumeDto.getSkills());
+
+        else if (object instanceof VacancyDto vacancyDto)
+            return deleteSkillBySkillName(skillName, vacancyDto.getSkills());
+
+        throw new IllegalArgumentException("object is not instanceof ResumeDto or VacancyDto");
     }
 
     @Transactional
@@ -114,5 +131,19 @@ public class SkillServiceImpl implements SkillService {
         skillRepository.deleteUnusedElements();
 
         return deleteSkills;
+    }
+
+    private boolean isSkillNotExist(List<SkillDto> skillDtos, String skillName) {
+        return skillDtos.stream()
+                .noneMatch(skillDto -> skillDto.getSkillName().equalsIgnoreCase(skillName));
+    }
+
+    @Override
+    public List<SkillDto> saveNewSkills(List<SkillDto> skillDtos) {
+        return skillDtos.stream()
+                .map(skillDto -> skillRepository.findBySkillName(skillDto.getSkillName())
+                        .orElseGet(() -> skillRepository.save(skillMapper.mapToEntity(skillDto))))
+                .map(skillMapper::mapToDto)
+                .toList();
     }
 }

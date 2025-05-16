@@ -13,7 +13,9 @@ public interface RespondService {
 
     boolean validateRespondNotExist(RespondApplicationDto respondApplicationDto);
 
-    PageHolder<RespondApplicationDto> findUserResponds(int page, int size);
+    RespondPageHolder<VacancyDto, ResumeDto> findUserResponds(int page, int size);
 
-    EmployerRespondsPageHolder<VacancyDto, ResumeDto> findEmployerResponds(int page, int size);
+    RespondPageHolder<VacancyDto, ResumeDto> findEmployerResponds(int page, int size);
+
+    List<RespondApplicationDto> findAllResponds();
 }

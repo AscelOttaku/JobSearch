@@ -1,8 +1,7 @@
 package kg.attractor.jobsearch.controller;
 
 import jakarta.validation.Valid;
-import kg.attractor.jobsearch.dto.PageHolder;
-import kg.attractor.jobsearch.dto.RespondApplicationDto;
+import kg.attractor.jobsearch.dto.*;
 import kg.attractor.jobsearch.service.RespondService;
 import kg.attractor.jobsearch.service.ResumeService;
 import kg.attractor.jobsearch.service.VacancyService;
@@ -11,8 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/responds")
@@ -56,19 +53,8 @@ public class RespondApplicationController {
             @RequestParam(required = false, defaultValue = "10") Integer size,
             Model model
     ) {
-        PageHolder<RespondApplicationDto> responds = respondService.findUserResponds(page, size);
-
-        model.addAttribute("responds", responds.getContent().stream()
-                .collect(Collectors.toMap(
-                                respond -> vacancyService.findVacancyById(respond.getVacancyId()),
-                                respond -> resumeService.findResumeById(respond.getResumeId())
-                        )
-                )
-        );
-        responds.setContent(null);
-        model.addAttribute("pageHolder", responds);
-
-        return "responds/user_responds";
+        model.addAttribute("responds", respondService.findUserResponds(page, size));
+        return "responds/responds";
     }
 
     @GetMapping("employers")
@@ -79,7 +65,6 @@ public class RespondApplicationController {
             Model model
     ) {
         model.addAttribute("responds", respondService.findEmployerResponds(page, size));
-
-        return "responds/employer_responds";
+        return "responds/responds";
     }
 }

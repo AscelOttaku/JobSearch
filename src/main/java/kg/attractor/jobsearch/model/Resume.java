@@ -49,7 +49,7 @@ public class Resume {
     @OneToMany(mappedBy = "resume", fetch = FetchType.LAZY)
     private List<ContactInfo> contactInfos = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(
             name = "resumes_skills",
             joinColumns = @JoinColumn(name = "resume_id"),

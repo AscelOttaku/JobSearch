@@ -31,6 +31,8 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
     public Long createResume(ResumeDto resumeDto) {
         resumeDto.setUserId(authorizedUserService.getAuthorizedUser().getUserId());
 
+        List<SkillDto> skillDtos = skillService.saveNewSkills(resumeDto.getSkills());
+        resumeDto.setSkills(skillDtos);
         Long resumeId = resumeService.createResume(resumeDto).getId();
         skillService.deleteUnusedSkillsFromDb();
 
@@ -83,6 +85,9 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
 
         resumeDto.setCreated(previousResume.getCreated());
         resumeDto.setUpdated(String.valueOf(LocalDateTime.now()));
+
+        List<SkillDto> skillDtos = skillService.saveNewSkills(resumeDto.getSkills());
+        resumeDto.setSkills(skillDtos);
 
         Long res = resumeService.updateResume(resumeDto);
         skillService.deleteUnusedSkillsFromDb();

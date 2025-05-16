@@ -14,7 +14,7 @@
 
         <#if responds?? && responds.content?? && responds.content?has_content>
             <div class="responds-list">
-                <#list responds.content as vacancy, resumes>
+                <#list responds.content as vacancy, pair>
                     <div class="vacancy-card card mb-4">
                         <div class="card-header bg-primary text-white">
                             <h4 class="mb-0">
@@ -31,15 +31,34 @@
                         <div class="card-body">
                             <h5 class="card-title"><@spring.message "resumes.list.responded_resumes"/></h5>
 
-                            <#if resumes?has_content>
+                            <#if pair?has_content>
                                 <div class="list-group">
-                                    <#list resumes as resume>
+                                    <#list pair as resume, confirmation>
                                         <div class="list-group-item d-flex justify-content-between align-items-center">
                                             <div>
                                                 <h6>${resume.name!''}</h6>
-                                                <small class="text-muted"><@spring.message "category.label"/>:: ${resume.categoryName!''}</small>
-                                                <small class="text-muted"><@spring.message "salary"/>:: ${resume.salary!''}</small>
+
+                                                <div>
+                                                    <@spring.message "confirmed"/>:
+                                                    <#if confirmation>
+                                                        <span class="badge bg-success">
+                                                          <@spring.message "confirmed"/>
+                                                      </span>
+                                                    <#else>
+                                                        <span class="badge bg-danger">
+                                                          <@spring.message "not_confirmed"/>
+                                                      </span>
+                                                    </#if>
+                                                </div>
+
+                                                <div class="text-muted">
+                                                    <@spring.message "category.label"/>: ${resume.categoryName!''}
+                                                </div>
+                                                <div class="text-muted">
+                                                    <@spring.message "salary"/>: ${resume.salary!''}
+                                                </div>
                                             </div>
+
                                             <a href="/resumes/${resume.id!''}" class="btn btn-sm btn-outline-primary">
                                                 <i class="bi bi-eye"></i> Просмотр резюме
                                             </a>
