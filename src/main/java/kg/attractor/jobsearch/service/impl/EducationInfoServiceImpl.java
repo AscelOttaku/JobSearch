@@ -7,7 +7,7 @@ import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.EducationInfo;
 import kg.attractor.jobsearch.repository.EducationInfoRepository;
 import kg.attractor.jobsearch.service.EducationInfoService;
-import kg.attractor.jobsearch.validators.Validator;
+import kg.attractor.jobsearch.validators.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +49,7 @@ public class EducationInfoServiceImpl implements EducationInfoService {
 
     private List<EducationalInfoDto> cleanEmptyEducationInfos(List<EducationalInfoDto> educationInfosDtos) {
         educationInfosDtos.removeIf(educationInfoDto -> {
-            if (!Validator.isNotEmptyEducationalInfo(educationInfoDto)) {
+            if (!ValidatorUtil.isEmptyEducationalInfo(educationInfoDto)) {
                 if (educationInfoDto.getId() == null)
                     return true;
 
@@ -82,7 +82,7 @@ public class EducationInfoServiceImpl implements EducationInfoService {
             return Collections.emptyList();
 
         return educationalInfosDtos.stream()
-                .filter(Validator::isNotEmptyEducationalInfo)
+                .filter(ValidatorUtil::isEmptyEducationalInfo)
                 .map(educationInfoMapperDto::mapToEntity)
                 .map(educationInfoRepository::save)
                 .map(educationInfoMapperDto::mapToDto)

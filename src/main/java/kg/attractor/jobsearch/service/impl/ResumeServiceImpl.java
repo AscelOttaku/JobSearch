@@ -10,7 +10,7 @@ import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.repository.ResumeRepository;
 import kg.attractor.jobsearch.service.*;
-import kg.attractor.jobsearch.validators.Validator;
+import kg.attractor.jobsearch.validators.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -44,7 +44,7 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public ResumeDto findResumeById(Long id) {
-        Validator.isValidId(id);
+        ValidatorUtil.isValidId(id);
 
         ResumeDto resumeDto = resumeRepository.findById(id)
                 .map(mapper::mapToDto)
@@ -92,7 +92,7 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public List<ResumeDto> findResumesByCategoryId(Long categoryId) {
-        Validator.isValidId(categoryId);
+        ValidatorUtil.isValidId(categoryId);
         categoryService.findCategoryById(categoryId);
 
         var optionalResume = resumeRepository.findResumesByCategoryId(categoryId);
@@ -115,7 +115,7 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public void deleteResumeById(Long resumeId) {
-        Validator.isValidId(resumeId);
+        ValidatorUtil.isValidId(resumeId);
 
         Resume resume = resumeRepository.findById(resumeId)
                 .orElseThrow(() -> new NoSuchElementException("Resume not found by id " + resumeId));
@@ -181,8 +181,8 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public List<ResumeDto> findAllResumesByRespondIdAndVacancyId(Long respondId, Long vacancyId) {
-        Validator.isValidId(respondId);
-        Validator.isValidId(vacancyId);
+        ValidatorUtil.isValidId(respondId);
+        ValidatorUtil.isValidId(vacancyId);
 
         return resumeRepository.findAlLResumesByRespondIdAndVacancyId(respondId, vacancyId)
                 .stream()

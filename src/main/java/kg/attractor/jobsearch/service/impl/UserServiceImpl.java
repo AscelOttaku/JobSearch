@@ -14,7 +14,7 @@ import kg.attractor.jobsearch.service.UserService;
 import kg.attractor.jobsearch.service.VacancyService;
 import kg.attractor.jobsearch.util.FileUtil;
 import kg.attractor.jobsearch.util.Util;
-import kg.attractor.jobsearch.validators.Validator;
+import kg.attractor.jobsearch.validators.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static kg.attractor.jobsearch.validators.Validator.notBlank;
+import static kg.attractor.jobsearch.validators.ValidatorUtil.notBlank;
 
 @Slf4j
 @Service
@@ -133,7 +133,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> findRespondedToVacancyUsersByVacancy(Long vacancyId) {
-        Validator.isValidId(vacancyId);
+        ValidatorUtil.isValidId(vacancyId);
 
         UserDto authorizedUser = getAuthorizedUser();
         Long ownerId = vacancyService.findVacancyOwnerByVacancyId(vacancyId);
@@ -237,7 +237,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void makeResetPasswordLink(HttpServletRequest request) throws MessagingException {
         String email = request.getParameter("email");
-        Validator.isValidEmail(email);
+        ValidatorUtil.isValidEmail(email);
 
         String token = UUID.randomUUID().toString();
 

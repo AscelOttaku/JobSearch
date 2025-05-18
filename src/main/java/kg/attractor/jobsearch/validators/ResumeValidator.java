@@ -3,13 +3,15 @@ package kg.attractor.jobsearch.validators;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import kg.attractor.jobsearch.dto.ResumeDto;
+import kg.attractor.jobsearch.util.Util;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ResumeValidator {
@@ -18,45 +20,27 @@ public class ResumeValidator {
     public void isValid(ResumeDto resumeDto, BindingResult bindingResult) {
         Set<ConstraintViolation<ResumeDto>> constraintViolations = validator.validate(resumeDto);
 
-        boolean isWorkExperiencesValid = resumeDto.getWorkExperienceInfoDtos()
-                .stream()
-                .noneMatch(kg.attractor.jobsearch.validators.Validator::isNotEmptyWorkExperience);
-
-        boolean isEducationalInfosValid = resumeDto.getEducationInfoDtos()
-                .stream()
-                .noneMatch(kg.attractor.jobsearch.validators.Validator::isNotEmptyEducationalInfo);
-
-        Set<ConstraintViolation<ResumeDto>> getListConstraintViolations = constraintViolations
-                .stream()
-                .filter(constraintValidator -> {
-                    String field = constraintValidator.getPropertyPath().toString().toLowerCase();
-
-                    if (field.contains("workExperienceInfoDtos".toLowerCase()))
-                        return !isWorkExperiencesValid;
-
-                    if (field.contains("educationInfoDtos".toLowerCase()))
-                        return !isEducationalInfosValid;
-
-                    return false;
-                })
-                .collect(Collectors.toSet());
-
         for (ConstraintViolation<ResumeDto> constraintViolation : constraintViolations) {
-            String field = constraintViolation.getPropertyPath().toString();
-            String message = constraintViolation.getMessage();
+            String fieldName = constraintViolation.getPropertyPath().toString();
+            boolean isValid = false;
 
-            if (field.toLowerCase().contains("workExperienceInfoDtos".toLowerCase()) ||
-                    field.toLowerCase().contains("educationInfoDtos".toLowerCase()))
-                continue;
+            if (fieldName.toLowerCase().contains("workExperienceInfoDtos".toLowerCase())) {
+                Integer index = Util.findNumber(fieldName)
+                        .orElse(0);
 
-            bindingResult.rejectValue(field, "resume_error", message);
+                if (ValidatorUtil.isEmptyWorkExperience(resumeDto.getWorkExperienceInfoDtos()
+                        .get(index))) isValid = true;
+
+            } else if (fieldName.toLowerCase().contains("educationInfoDtos".toLowerCase())) {
+                Integer index = Util.findNumber(fieldName)
+                        .orElse(0);
+
+                if (ValidatorUtil.isEmptyEducationalInfo(resumeDto.getEducationInfoDtos()
+                        .get(index))) isValid = true;
+            }
+
+            if (!isValid)
+                bindingResult.rejectValue(fieldName, "resume_error", constraintViolation.getMessage());
         }
-
-        getListConstraintViolations.forEach(constraintViolation -> {
-            String field = constraintViolation.getPropertyPath().toString();
-            String message = constraintViolation.getMessage();
-
-            bindingResult.rejectValue(field, "resume_error", message);
-        });
     }
 }

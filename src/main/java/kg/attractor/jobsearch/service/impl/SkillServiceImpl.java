@@ -140,6 +140,9 @@ public class SkillServiceImpl implements SkillService {
 
     @Override
     public List<SkillDto> saveNewSkills(List<SkillDto> skillDtos) {
+        if (skillDtos == null || skillDtos.isEmpty())
+            return Collections.emptyList();
+
         return skillDtos.stream()
                 .map(skillDto -> skillRepository.findBySkillName(skillDto.getSkillName())
                         .orElseGet(() -> skillRepository.save(skillMapper.mapToEntity(skillDto))))

@@ -7,7 +7,7 @@ import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.WorkExperienceInfo;
 import kg.attractor.jobsearch.repository.WorkExperienceRepository;
 import kg.attractor.jobsearch.service.WorkExperienceInfoService;
-import kg.attractor.jobsearch.validators.Validator;
+import kg.attractor.jobsearch.validators.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +49,7 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
 
     private List<WorkExperienceInfoDto> cleanEmptyData(List<WorkExperienceInfoDto> workExperienceInfoDtos) {
         workExperienceInfoDtos.removeIf(workExperienceInfoDto -> {
-            if (!Validator.isNotEmptyWorkExperience(workExperienceInfoDto)) {
+            if (!ValidatorUtil.isEmptyWorkExperience(workExperienceInfoDto)) {
                 if (workExperienceInfoDto.getId() == null)
                     return true;
 
@@ -83,7 +83,7 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
             return Collections.emptyList();
 
         return workExperienceInfosDtos.stream()
-                .filter(Validator::isNotEmptyWorkExperience)
+                .filter(ValidatorUtil::isEmptyWorkExperience)
                 .map(workExperienceInfoMapper::mapToEntity)
                 .map(this::createWorkExperience)
                 .toList();
