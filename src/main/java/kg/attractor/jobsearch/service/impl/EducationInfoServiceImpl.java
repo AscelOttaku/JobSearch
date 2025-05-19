@@ -85,7 +85,7 @@ public class EducationInfoServiceImpl implements EducationInfoService {
             return Collections.emptyList();
 
         return educationalInfosDtos.stream()
-                .filter(ValidatorUtil::isEmptyEducationalInfo)
+                .filter(educationalInfoDto -> !ValidatorUtil.isEmptyEducationalInfo(educationalInfoDto))
                 .map(educationInfoMapperDto::mapToEntity)
                 .map(educationInfoRepository::save)
                 .map(educationInfoMapperDto::mapToDto)

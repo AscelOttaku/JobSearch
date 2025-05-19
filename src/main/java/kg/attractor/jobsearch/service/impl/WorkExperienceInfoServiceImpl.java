@@ -83,7 +83,7 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
             return Collections.emptyList();
 
         return workExperienceInfosDtos.stream()
-                .filter(ValidatorUtil::isEmptyWorkExperience)
+                .filter(workExperienceInfoDto -> !ValidatorUtil.isEmptyWorkExperience(workExperienceInfoDto))
                 .map(workExperienceInfoMapper::mapToEntity)
                 .map(this::createWorkExperience)
                 .toList();
