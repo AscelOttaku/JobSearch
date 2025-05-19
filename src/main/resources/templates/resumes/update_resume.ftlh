@@ -49,10 +49,10 @@
                             <@spring.showErrors "<br>" "text-danger small"/>
                         </div>
 
-                        <#list resume.workExperienceInfoDtos as workExperience>
-                            <#assign index = workExperience?index>
-                            <@spring.formHiddenInput "resume.workExperienceInfoDtos[${index}].id", 'class="form-control", type="hidden", placeholder="${springMacroRequestContext.getMessage("position.placeholder")}" id="position"'/>
-                            <div id="workExperiences">
+                        <div id="workExperiences">
+                            <#list resume.workExperienceInfoDtos as workExperience>
+                                <#assign index = workExperience?index>
+                                <@spring.formHiddenInput "resume.workExperienceInfoDtos[${index}].id", 'class="form-control", type="hidden", placeholder="${springMacroRequestContext.getMessage("position.placeholder")}" id="position"'/>
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <div class="mb-3">
@@ -86,19 +86,25 @@
                                             <@spring.showErrors "<br>" "text-danger small"/>
                                         </div>
                                     </div>
+                                    <div class="text-end mb-3">
+                                        <button id="deleteWorkExperienceButton" type="button"
+                                                class="btn btn-outline-danger delete-work-experience">
+                                            <i class="bi bi-trash me-1"></i><@spring.message "delete.button"/>
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        </#list>
+                            </#list>
+                        </div>
                         <div class="text-end mb-3">
                             <button id="addWorkExperienceButton" type="button" class="btn btn-outline-success">
                                 <i class="bi bi-plus-lg me-1"></i><@spring.message "add_work_experience_info"/>
                             </button>
                         </div>
 
-                        <#list resume.educationInfoDtos as educationInfo>
-                            <#assign index = educationInfo?index>
-                            <@spring.formHiddenInput "resume.educationInfoDtos[${index}].id", 'class="form-control", type="hidden", placeholder="Id" id="position"'/>
-                            <div id="educationInfos">
+                        <div id="educationInfos">
+                            <#list resume.educationInfoDtos as educationInfo>
+                                <#assign index = educationInfo?index>
+                                <@spring.formHiddenInput "resume.educationInfoDtos[${index}].id", 'class="form-control", type="hidden", placeholder="Id" id="position"'/>
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <div class="mb-3">
@@ -139,9 +145,15 @@
                                             <@spring.showErrors "<br>" "text-danger small"/>
                                         </div>
                                     </div>
+                                    <div class="text-end mb-3">
+                                        <button id="deleteEducationInfoButton" type="button"
+                                                class="btn btn-outline-danger delete-education">
+                                            <i class="bi bi-trash me-1"></i><@spring.message "delete.button"/>
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        </#list>
+                            </#list>
+                        </div>
                         <div class="text-end mb-3">
                             <button id="addEduCationButton" type="button" class="btn btn-outline-success">
                                 <i class="bi bi-plus-lg me-1"></i><@spring.message "add_education_info"/>
@@ -240,6 +252,30 @@
             </div>
         </div>
     </div>
+
+    <script id="dto-workExperience-length" type="application/json">
+       <#if resume.workExperienceInfoDtos??>
+        ${resume.workExperienceInfoDtos?size - 1}
+    <#else>
+        0
+        </#if>
+
+
+
+
+    </script>
+
+    <script id="dto-education-info-length" type="application/json">
+    <#if resume.educationInfoDtos??>
+        ${resume.educationInfoDtos?size - 1}
+    <#else>
+        0
+        </#if>
+
+
+
+
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/static/scripts/resume/resume.js"></script>

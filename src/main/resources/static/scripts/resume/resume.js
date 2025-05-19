@@ -4,8 +4,11 @@ const educationInfos = document.getElementById("educationInfos")
 const addEduCationButton = document.getElementById("addEduCationButton");
 const addWorkExperienceButton = document.getElementById("addWorkExperienceButton");
 
-let educationInfoCounter = 0;
-let workExperienceCounter = 0;
+let educationInfoCounter = parseInt(document.getElementById("dto-education-info-length").textContent);
+console.log('educationInfo:' + educationInfoCounter)
+
+let workExperienceCounter = parseInt(document.getElementById("dto-workExperience-length").textContent);
+console.log('workExperience:' + workExperienceCounter);
 
 const labels = {
     ru: {
@@ -59,10 +62,12 @@ const currentLanguage = document.documentElement.lang || 'ru';
 
 addWorkExperienceButton.addEventListener("click", () => {
     workExperienceCounter++;
+    console.log('workExperience:' + workExperienceCounter);
 
     const langLabels = labels[currentLanguage] || labels['ru'];
 
     let newWorkExperience = document.createElement("div");
+    newWorkExperience.id = 'workExperience' + workExperienceCounter;
     newWorkExperience.classList.add("work-experience-block");
     newWorkExperience.innerHTML =
         `<div class="row mb-3">
@@ -117,8 +122,8 @@ addWorkExperienceButton.addEventListener("click", () => {
     deleteButton.className = "btn btn-danger btn-sm d-flex align-items-center ms-auto";
     deleteButton.innerHTML = '<i class="bi bi-dash-lg me-1"></i>Удалить';
     deleteButton.addEventListener("click", () => {
-        workExperienceCounter--;
         workExperiences.removeChild(newWorkExperience);
+        console.log('workExperience:' + workExperienceCounter);
     })
 
     const buttonWrapper = wrapButton(deleteButton);
@@ -130,6 +135,7 @@ addWorkExperienceButton.addEventListener("click", () => {
 
 addEduCationButton.addEventListener("click", () => {
     educationInfoCounter++;
+    console.log('educationInfo:' + educationInfoCounter)
 
     const l = educationLabels[currentLanguage] || educationLabels['ru'];
 
@@ -196,13 +202,12 @@ addEduCationButton.addEventListener("click", () => {
     deleteButton.className = "btn btn-danger btn-sm d-flex align-items-center ms-auto";
     deleteButton.innerHTML = '<i class="bi bi-dash-lg me-1"></i>Удалить';
     deleteButton.addEventListener("click", () => {
-        educationInfoCounter--;
         educationInfos.removeChild(newEducationInfo)
+        console.log('educationInfo:' + educationInfoCounter)
     })
 
     const buttonWrapper = wrapButton(deleteButton);
     newEducationInfo.appendChild(buttonWrapper);
-
     educationInfos.appendChild(newEducationInfo);
 })
 
@@ -212,3 +217,28 @@ function wrapButton(button) {
     buttonWrapper.appendChild(button);
     return buttonWrapper;
 }
+
+const deleteWorkExperienceButtons = document.querySelectorAll(".btn.btn-outline-danger.delete-work-experience")
+
+deleteWorkExperienceButtons.forEach(button => {
+    button.addEventListener("click", (event) => {
+        let parentBlock = event.currentTarget.parentElement.parentElement
+        console.log(parentBlock)
+        workExperiences.removeChild(parentBlock)
+        workExperienceCounter++;
+        console.log('workExperience:' + workExperienceCounter);
+    })
+})
+
+
+const deleteEducationInfoButtons = document.querySelectorAll(".btn.btn-outline-danger.delete-education")
+
+deleteEducationInfoButtons.forEach(button => {
+    button.addEventListener("click", (event) => {
+        let parentBlock = event.currentTarget.parentElement.parentElement
+        console.log(parentBlock)
+        educationInfos.removeChild(parentBlock)
+        educationInfoCounter++;
+        console.log('educationInfo:' + educationInfoCounter)
+    })
+})

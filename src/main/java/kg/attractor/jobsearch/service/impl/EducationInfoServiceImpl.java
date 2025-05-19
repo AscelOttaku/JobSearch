@@ -12,10 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -85,7 +83,7 @@ public class EducationInfoServiceImpl implements EducationInfoService {
             return Collections.emptyList();
 
         return educationalInfosDtos.stream()
-                .filter(ValidatorUtil::isEmptyEducationalInfo)
+                .filter(educationalInfoDto -> !ValidatorUtil.isEmptyEducationalInfo(educationalInfoDto))
                 .map(educationInfoMapperDto::mapToEntity)
                 .map(educationInfoRepository::save)
                 .map(educationInfoMapperDto::mapToDto)
@@ -110,5 +108,22 @@ public class EducationInfoServiceImpl implements EducationInfoService {
     @Override
     public void deleteEducationInfoById(Long educationInfoId) {
         educationInfoRepository.deleteById(educationInfoId);
+    }
+
+    @Override
+    public List<EducationalInfoDto> deleteEmptyEducation(List<EducationalInfoDto> educationalInfoDtos) {
+        if (educationalInfoDtos == null)
+            educationalInfoDtos = new ArrayList<>();
+
+        if (educationalInfoDtos.isEmpty())
+            return educationalInfoDtos;
+
+        if (educationalInfoDtos.size() == 1 && educationalInfoDtos.stream()
+                .allMatch(ValidatorUtil::isEmptyEducationalInfo))
+            return educationalInfoDtos;
+
+        return educationalInfoDtos.stream()
+                .filter(educationalInfoDto -> !ValidatorUtil.isEmptyEducationalInfo(educationalInfoDto))
+                .collect(Collectors.toList());
     }
 }

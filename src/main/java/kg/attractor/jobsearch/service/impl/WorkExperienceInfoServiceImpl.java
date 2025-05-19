@@ -11,10 +11,8 @@ import kg.attractor.jobsearch.validators.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -83,7 +81,7 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
             return Collections.emptyList();
 
         return workExperienceInfosDtos.stream()
-                .filter(ValidatorUtil::isEmptyWorkExperience)
+                .filter(workExperienceInfoDto -> !ValidatorUtil.isEmptyWorkExperience(workExperienceInfoDto))
                 .map(workExperienceInfoMapper::mapToEntity)
                 .map(this::createWorkExperience)
                 .toList();
@@ -114,5 +112,22 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
     @Override
     public void deleteWorkExperience(Long id) {
         workExperienceRepository.deleteById(id);
+    }
+
+    @Override
+    public List<WorkExperienceInfoDto> deleteEmptyWorkExperience(List<WorkExperienceInfoDto> workExperienceInfoDtos) {
+        if (workExperienceInfoDtos == null)
+            workExperienceInfoDtos = new ArrayList<>();
+
+        if (workExperienceInfoDtos.isEmpty())
+            return workExperienceInfoDtos;
+
+        if (workExperienceInfoDtos.size() == 1 && workExperienceInfoDtos.stream()
+                    .allMatch(ValidatorUtil::isEmptyWorkExperience))
+                return workExperienceInfoDtos;
+
+        return workExperienceInfoDtos.stream()
+                .filter(workExperienceInfoDto -> !ValidatorUtil.isEmptyWorkExperience(workExperienceInfoDto))
+                .collect(Collectors.toList());
     }
 }
