@@ -171,9 +171,9 @@ addEduCationButton.addEventListener("click", () => {
   <div class="col-md-6">
     <div class="mb-3">
       <label for="startDate_${educationInfoCounter}" class="form-label">
-        <i class="bi form-icon me-2"></i>${l.startDate}
+        <i class="bi bi-calendar-plus form-icon me-2"></i>${l.startDate}
       </label>
-      <input type="date" name="educationInfoDtos[${educationInfoCounter}].startDate"
+      <input type="datetime-local" name="educationInfoDtos[${educationInfoCounter}].startDate"
              id="startDate_${educationInfoCounter}"
              class="form-control"
              placeholder="${l.datePlaceholder}"/>
@@ -181,9 +181,9 @@ addEduCationButton.addEventListener("click", () => {
 
     <div class="mb-3">
       <label for="endDate_${educationInfoCounter}" class="form-label">
-        <i class="bi form-icon me-2"></i>${l.endDate}
+        <i class="bi bi-calendar-plus form-icon me-2"></i>${l.endDate}
       </label>
-      <input type="date" name="educationInfoDtos[${educationInfoCounter}].endDate"
+      <input type="datetime-local" name="educationInfoDtos[${educationInfoCounter}].endDate"
              id="endDate_${educationInfoCounter}"
              class="form-control"
              placeholder="${l.datePlaceholder}"/>

@@ -30,7 +30,7 @@ public class EducationInfo {
     @Column(name = "start_date", nullable = false, updatable = false)
     private LocalDateTime startDate;
 
-    @Column(name = "end_date")
+    @Column(name = "end_date", nullable = false, updatable = false)
     private LocalDateTime endDate;
 
     @Column(name = "degree")

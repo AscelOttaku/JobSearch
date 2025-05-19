@@ -49,7 +49,7 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
 
     private List<WorkExperienceInfoDto> cleanEmptyData(List<WorkExperienceInfoDto> workExperienceInfoDtos) {
         workExperienceInfoDtos.removeIf(workExperienceInfoDto -> {
-            if (!ValidatorUtil.isEmptyWorkExperience(workExperienceInfoDto)) {
+            if (ValidatorUtil.isEmptyWorkExperience(workExperienceInfoDto)) {
                 if (workExperienceInfoDto.getId() == null)
                     return true;
 

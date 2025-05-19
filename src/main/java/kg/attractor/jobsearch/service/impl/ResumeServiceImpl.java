@@ -43,7 +43,7 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public ResumeDto findResumeById(Long id) {
+    public ResumeDto findPreparedResumeById(Long id) {
         ValidatorUtil.isValidId(id);
 
         ResumeDto resumeDto = resumeRepository.findById(id)
@@ -89,6 +89,13 @@ public class ResumeServiceImpl implements ResumeService {
         return resumeDto;
     }
 
+    @Override
+    public ResumeDto findResumeById(Long resumeId) {
+        ValidatorUtil.isValidId(resumeId);
+
+        return resumeMapper.mapToDto(resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new NoSuchElementException("Resume by id " + resumeId + " not found")));
+    }
 
     @Override
     public List<ResumeDto> findResumesByCategoryId(Long categoryId) {

@@ -9,6 +9,7 @@ import kg.attractor.jobsearch.repository.EducationInfoRepository;
 import kg.attractor.jobsearch.service.EducationInfoService;
 import kg.attractor.jobsearch.validators.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EducationInfoServiceImpl implements EducationInfoService {
@@ -44,12 +46,13 @@ public class EducationInfoServiceImpl implements EducationInfoService {
                 .filter(educationInfoDto ->
                         isEducationInfoBelongToResume(educationInfoDto.getId(), educationInfoDto.getResumeId()))
                 .map(educationInfoMapperDto::mapToEntity)
+                .peek(educationInfo -> log.warn(String.valueOf(educationInfo.getStartDate())))
                 .forEach(educationInfoRepository::save);
     }
 
     private List<EducationalInfoDto> cleanEmptyEducationInfos(List<EducationalInfoDto> educationInfosDtos) {
         educationInfosDtos.removeIf(educationInfoDto -> {
-            if (!ValidatorUtil.isEmptyEducationalInfo(educationInfoDto)) {
+            if (ValidatorUtil.isEmptyEducationalInfo(educationInfoDto)) {
                 if (educationInfoDto.getId() == null)
                     return true;
 

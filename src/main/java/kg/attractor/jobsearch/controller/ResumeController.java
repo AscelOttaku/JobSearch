@@ -108,7 +108,7 @@ public class ResumeController {
     @GetMapping("update/resume/{resumeId}")
     @ResponseStatus(HttpStatus.SEE_OTHER)
     public String updateResumeById(@PathVariable Long resumeId, Model model) {
-        ResumeDto resumeDto = resumeService.findResumeById(resumeId);
+        ResumeDto resumeDto = resumeService.findPreparedResumeById(resumeId);
 
         model.addAttribute("resume", resumeDto);
         model.addAttribute("categories", categoryService.findAllCategories());

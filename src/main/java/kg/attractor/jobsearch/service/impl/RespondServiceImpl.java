@@ -43,7 +43,7 @@ public class RespondServiceImpl implements RespondService {
         if (!userDto.getAccountType().equals(Roles.JOB_SEEKER.getValue()))
             throw new IllegalArgumentException("User who's account type is not a job seeker cannot create a respond");
 
-        ResumeDto resumeDto = resumeService.findResumeById(respondApplicationDto.getResumeId());
+        ResumeDto resumeDto = resumeService.findPreparedResumeById(respondApplicationDto.getResumeId());
         vacancyService.findVacancyById(respondApplicationDto.getVacancyId());
 
         if (!resumeDto.getUserId().equals(userDto.getUserId()))

@@ -8,7 +8,9 @@ import java.util.List;
 public interface ResumeService {
     List<ResumeDto> findAllResumes();
 
-    ResumeDto findResumeById(Long id);
+    ResumeDto findPreparedResumeById(Long id);
+
+    ResumeDto findResumeById(Long resumeId);
 
     List<ResumeDto> findResumesByCategoryId(Long categoryId);
 
