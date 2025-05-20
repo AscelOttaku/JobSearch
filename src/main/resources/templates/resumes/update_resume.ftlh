@@ -49,90 +49,116 @@
                             <@spring.showErrors "<br>" "text-danger small"/>
                         </div>
 
-                        <#list resume.workExperienceInfoDtos as workExperience>
-                            <#assign index = workExperience?index>
-                            <@spring.formHiddenInput "resume.workExperienceInfoDtos[${index}].id", 'class="form-control", type="hidden", placeholder="${springMacroRequestContext.getMessage("position.placeholder")}" id="position"'/>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="years" class="form-label">
-                                            <i class="bi bi-calendar-check form-icon me-2"></i> <@spring.message "work.experience.years"/>
-                                        </label>
-                                        <@spring.formInput "resume.workExperienceInfoDtos[${index}].years", 'class="form-control" placeholder="${springMacroRequestContext.getMessage("years.placeholder")}" id="years" type="number" min="0"'/>
-                                        <@spring.showErrors "<br>" "text-danger small"/>
+                        <div id="workExperiences">
+                            <#list resume.workExperienceInfoDtos as workExperience>
+                                <#assign index = workExperience?index>
+                                <@spring.formHiddenInput "resume.workExperienceInfoDtos[${index}].id", 'class="form-control", type="hidden", placeholder="${springMacroRequestContext.getMessage("position.placeholder")}" id="position"'/>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="years" class="form-label">
+                                                <i class="bi bi-calendar-check form-icon me-2"></i> <@spring.message "work.experience.years"/>
+                                            </label>
+                                            <@spring.formInput "resume.workExperienceInfoDtos[${index}].years", 'class="form-control" placeholder="${springMacroRequestContext.getMessage("years.placeholder")}" id="years" type="number" min="0"'/>
+                                            <@spring.showErrors "<br>" "text-danger small"/>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="companyName" class="form-label">
+                                                <i class="bi bi-building form-icon me-2"></i> <@spring.message "company.name"/>
+                                            </label>
+                                            <@spring.formInput "resume.workExperienceInfoDtos[${index}].companyName", 'class="form-control" placeholder="${springMacroRequestContext.getMessage("company.name.placeholder")}" id="companyName"'/>
+                                            <@spring.showErrors "<br>" "text-danger small"/>
+                                        </div>
                                     </div>
-                                    <div class="mb-3">
-                                        <label for="companyName" class="form-label">
-                                            <i class="bi bi-building form-icon me-2"></i> <@spring.message "company.name"/>
-                                        </label>
-                                        <@spring.formInput "resume.workExperienceInfoDtos[${index}].companyName", 'class="form-control" placeholder="${springMacroRequestContext.getMessage("company.name.placeholder")}" id="companyName"'/>
-                                        <@spring.showErrors "<br>" "text-danger small"/>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="position" class="form-label">
+                                                <i class="bi bi-person-badge form-icon me-2"></i> <@spring.message "position"/>
+                                            </label>
+                                            <@spring.formInput "resume.workExperienceInfoDtos[${index}].position", 'class="form-control" placeholder="${springMacroRequestContext.getMessage("position.placeholder")}" id="position"'/>
+                                            <@spring.showErrors "<br>" "text-danger small"/>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="responsibilities" class="form-label">
+                                                <i class="bi bi-list-task form-icon me-2"></i> <@spring.message "responsibilities"/>
+                                            </label>
+                                            <@spring.formTextarea "resume.workExperienceInfoDtos[${index}].responsibilities", 'class="form-control" placeholder="${springMacroRequestContext.getMessage("responsibilities.placeholder")}" id="responsibilities" rows="3"'/>
+                                            <@spring.showErrors "<br>" "text-danger small"/>
+                                        </div>
+                                    </div>
+                                    <div class="text-end mb-3">
+                                        <button id="deleteWorkExperienceButton" type="button"
+                                                class="btn btn-outline-danger delete-work-experience">
+                                            <i class="bi bi-trash me-1"></i><@spring.message "delete.button"/>
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="position" class="form-label">
-                                            <i class="bi bi-person-badge form-icon me-2"></i> <@spring.message "position"/>
-                                        </label>
-                                        <@spring.formInput "resume.workExperienceInfoDtos[${index}].position", 'class="form-control" placeholder="${springMacroRequestContext.getMessage("position.placeholder")}" id="position"'/>
-                                        <@spring.showErrors "<br>" "text-danger small"/>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="responsibilities" class="form-label">
-                                            <i class="bi bi-list-task form-icon me-2"></i> <@spring.message "responsibilities"/>
-                                        </label>
-                                        <@spring.formTextarea "resume.workExperienceInfoDtos[${index}].responsibilities", 'class="form-control" placeholder="${springMacroRequestContext.getMessage("responsibilities.placeholder")}" id="responsibilities" rows="3"'/>
-                                        <@spring.showErrors "<br>" "text-danger small"/>
-                                    </div>
-                                </div>
-                            </div>
-                        </#list>
+                            </#list>
+                        </div>
+                        <div class="text-end mb-3">
+                            <button id="addWorkExperienceButton" type="button" class="btn btn-outline-success">
+                                <i class="bi bi-plus-lg me-1"></i><@spring.message "add_work_experience_info"/>
+                            </button>
+                        </div>
 
-                        <#list resume.educationInfoDtos as educationInfo>
-                            <#assign index = educationInfo?index>
-                            <@spring.formHiddenInput "resume.educationInfoDtos[${index}].id", 'class="form-control", type="hidden", placeholder="Id" id="position"'/>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="degree" class="form-label">
-                                            <i class="bi bi-award form-icon me-2"></i><@spring.message "education"/>
-                                        </label>
-                                        <@spring.formInput "resume.educationInfoDtos[${index}].degree", 'class="form-control" placeholder="${springMacroRequestContext.getMessage("education.placeholder")}" id="degree"'/>
-                                        <@spring.showErrors "<br>" "text-danger small"/>
+                        <div id="educationInfos">
+                            <#list resume.educationInfoDtos as educationInfo>
+                                <#assign index = educationInfo?index>
+                                <@spring.formHiddenInput "resume.educationInfoDtos[${index}].id", 'class="form-control", type="hidden", placeholder="Id" id="position"'/>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="degree" class="form-label">
+                                                <i class="bi bi-award form-icon me-2"></i><@spring.message "education"/>
+                                            </label>
+                                            <@spring.formInput "resume.educationInfoDtos[${index}].degree", 'class="form-control" placeholder="${springMacroRequestContext.getMessage("education.placeholder")}" id="degree"'/>
+                                            <@spring.showErrors "<br>" "text-danger small"/>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="institution" class="form-label">
+                                                <i class="bi bi-journal-bookmark form-icon me-2"></i> <@spring.message "institution"/>
+                                            </label>
+                                            <@spring.formInput "resume.educationInfoDtos[${index}].institution", 'class="form-control" placeholder="${springMacroRequestContext.getMessage("institution.placeholder")}" id="institution"'/>
+                                            <@spring.showErrors "<br>" "text-danger small"/>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="program" class="form-label">
+                                                <i class="bi bi-journal-bookmark form-icon me-2"></i> <@spring.message "study.program"/>
+                                            </label>
+                                            <@spring.formInput "resume.educationInfoDtos[${index}].program", 'class="form-control" placeholder="${springMacroRequestContext.getMessage("study.program.placeholder")}" id="program"'/>
+                                            <@spring.showErrors "<br>" "text-danger small"/>
+                                        </div>
                                     </div>
-                                    <div class="mb-3">
-                                        <label for="institution" class="form-label">
-                                            <i class="bi bi-journal-bookmark form-icon me-2"></i> <@spring.message "institution"/>
-                                        </label>
-                                        <@spring.formInput "resume.educationInfoDtos[${index}].institution", 'class="form-control" placeholder="${springMacroRequestContext.getMessage("institution.placeholder")}" id="institution"'/>
-                                        <@spring.showErrors "<br>" "text-danger small"/>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="startDate" class="form-label">
+                                                <i class="bi bi-calendar-plus form-icon me-2"></i> <@spring.message "start.date"/>
+                                            </label>
+                                            <@spring.formInput "resume.educationInfoDtos[${index}].startDate", 'class="form-control" placeholder="ГГГГ-ММ-ДД HH:MM:ss" id="startDate" type="datetime-local"'/>
+                                            <@spring.showErrors "<br>" "text-danger small"/>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="endDate" class="form-label">
+                                                <i class="bi bi-calendar-minus form-icon me-2"></i> <@spring.message "end.date"/>
+                                            </label>
+                                            <@spring.formInput "resume.educationInfoDtos[${index}].endDate", 'class="form-control" placeholder="ГГГГ-ММ-ДД HH:MM:ss" id="endDate" type="datetime-local"'/>
+                                            <@spring.showErrors "<br>" "text-danger small"/>
+                                        </div>
                                     </div>
-                                    <div class="mb-3">
-                                        <label for="program" class="form-label">
-                                            <i class="bi bi-journal-bookmark form-icon me-2"></i> <@spring.message "study.program"/>
-                                        </label>
-                                        <@spring.formInput "resume.educationInfoDtos[${index}].program", 'class="form-control" placeholder="${springMacroRequestContext.getMessage("study.program.placeholder")}" id="program"'/>
-                                        <@spring.showErrors "<br>" "text-danger small"/>
+                                    <div class="text-end mb-3">
+                                        <button id="deleteEducationInfoButton" type="button"
+                                                class="btn btn-outline-danger delete-education">
+                                            <i class="bi bi-trash me-1"></i><@spring.message "delete.button"/>
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="startDate" class="form-label">
-                                            <i class="bi bi-calendar-plus form-icon me-2"></i> <@spring.message "start.date"/>
-                                        </label>
-                                        <@spring.formInput "resume.educationInfoDtos[${index}].startDate", 'class="form-control" placeholder="ГГГГ-ММ-ДД HH:MM:ss" id="startDate" type="datetime-local"'/>
-                                        <@spring.showErrors "<br>" "text-danger small"/>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="endDate" class="form-label">
-                                            <i class="bi bi-calendar-minus form-icon me-2"></i> <@spring.message "end.date"/>
-                                        </label>
-                                        <@spring.formInput "resume.educationInfoDtos[${index}].endDate", 'class="form-control" placeholder="ГГГГ-ММ-ДД HH:MM:ss" id="endDate" type="datetime-local"'/>
-                                        <@spring.showErrors "<br>" "text-danger small"/>
-                                    </div>
-                                </div>
-                            </div>
-                        </#list>
+                            </#list>
+                        </div>
+                        <div class="text-end mb-3">
+                            <button id="addEduCationButton" type="button" class="btn btn-outline-success">
+                                <i class="bi bi-plus-lg me-1"></i><@spring.message "add_education_info"/>
+                            </button>
+                        </div>
 
                         <div class="mb-3">
                             <label class="form-label">
@@ -227,5 +253,30 @@
         </div>
     </div>
 
+    <script id="dto-workExperience-length" type="application/json">
+       <#if resume.workExperienceInfoDtos??>
+        ${resume.workExperienceInfoDtos?size - 1}
+    <#else>
+        0
+        </#if>
+
+
+
+
+    </script>
+
+    <script id="dto-education-info-length" type="application/json">
+    <#if resume.educationInfoDtos??>
+        ${resume.educationInfoDtos?size - 1}
+    <#else>
+        0
+        </#if>
+
+
+
+
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/scripts/resume/resume.js"></script>
 </@layout.layout>

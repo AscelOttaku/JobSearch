@@ -68,6 +68,6 @@ public class ResumeController {
     @GetMapping("{resumeId}")
     @ResponseStatus(HttpStatus.OK)
     public ResumeDto findResumeById(@PathVariable Long resumeId) {
-        return resumeService.findResumeById(resumeId);
+        return resumeService.findPreparedResumeById(resumeId);
     }
 }

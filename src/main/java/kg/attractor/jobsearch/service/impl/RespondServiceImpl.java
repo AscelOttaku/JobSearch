@@ -12,7 +12,7 @@ import kg.attractor.jobsearch.service.AuthorizedUserService;
 import kg.attractor.jobsearch.service.RespondService;
 import kg.attractor.jobsearch.service.ResumeService;
 import kg.attractor.jobsearch.service.VacancyService;
-import kg.attractor.jobsearch.validators.Validator;
+import kg.attractor.jobsearch.validators.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,7 +43,7 @@ public class RespondServiceImpl implements RespondService {
         if (!userDto.getAccountType().equals(Roles.JOB_SEEKER.getValue()))
             throw new IllegalArgumentException("User who's account type is not a job seeker cannot create a respond");
 
-        ResumeDto resumeDto = resumeService.findResumeById(respondApplicationDto.getResumeId());
+        ResumeDto resumeDto = resumeService.findPreparedResumeById(respondApplicationDto.getResumeId());
         vacancyService.findVacancyById(respondApplicationDto.getVacancyId());
 
         if (!resumeDto.getUserId().equals(userDto.getUserId()))
@@ -57,7 +57,7 @@ public class RespondServiceImpl implements RespondService {
 
     @Override
     public List<RespondApplicationDto> findAllActiveResponsesByUserId(Long userId) {
-        Validator.isValidId(userId);
+        ValidatorUtil.isValidId(userId);
 
         return respondedApplicationRepository.findActiveRespondedApplicationsByUserId(userId)
                 .stream()

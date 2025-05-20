@@ -2,13 +2,16 @@ package kg.attractor.jobsearch.service;
 
 import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.ResumeDto;
+import kg.attractor.jobsearch.dto.WorkExperienceInfoDto;
 
 import java.util.List;
 
 public interface ResumeService {
     List<ResumeDto> findAllResumes();
 
-    ResumeDto findResumeById(Long id);
+    ResumeDto findPreparedResumeById(Long id);
+
+    ResumeDto findResumeById(Long resumeId);
 
     List<ResumeDto> findResumesByCategoryId(Long categoryId);
 

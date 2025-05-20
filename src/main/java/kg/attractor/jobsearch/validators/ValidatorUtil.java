@@ -8,7 +8,7 @@ import kg.attractor.jobsearch.model.Vacancy;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public class Validator {
+public class ValidatorUtil {
 
     public static void isValidId(Long arg) {
 
@@ -40,16 +40,17 @@ public class Validator {
             throw new IllegalArgumentException(message);
     }
 
-    public static boolean isNotEmptyWorkExperience(WorkExperienceInfoDto workExperienceInfoDto) {
-        return workExperienceInfoDto.getYears() != null ||
-                workExperienceInfoDto.getPosition() != null && !workExperienceInfoDto.getPosition().isBlank() ||
-                workExperienceInfoDto.getCompanyName() != null && !workExperienceInfoDto.getCompanyName().isBlank() ||
-                workExperienceInfoDto.getResponsibilities() != null && !workExperienceInfoDto.getResponsibilities().isBlank();
+    public static boolean isEmptyWorkExperience(WorkExperienceInfoDto workExperienceInfoDto) {
+        return (workExperienceInfoDto.getYears() == null)
+                && (workExperienceInfoDto.getPosition() == null || workExperienceInfoDto.getPosition().isBlank())
+                && (workExperienceInfoDto.getCompanyName() == null || workExperienceInfoDto.getCompanyName().isBlank())
+                && (workExperienceInfoDto.getResponsibilities() == null || workExperienceInfoDto.getResponsibilities().isBlank());
     }
 
-    public static boolean isNotEmptyEducationalInfo(EducationalInfoDto educationalInfoDto) {
-        return educationalInfoDto.getDegree() != null && !educationalInfoDto.getDegree().isBlank() ||
-                educationalInfoDto.getInstitution() != null && !educationalInfoDto.getInstitution().isBlank() ||
-                educationalInfoDto.getProgram() != null && !educationalInfoDto.getProgram().isBlank();
+    public static boolean isEmptyEducationalInfo(EducationalInfoDto educationalInfoDto) {
+        return (educationalInfoDto.getDegree() == null || educationalInfoDto.getDegree().isBlank()) &&
+                (educationalInfoDto.getInstitution() == null || educationalInfoDto.getInstitution().isBlank()) &&
+                (educationalInfoDto.getProgram() == null || educationalInfoDto.getProgram().isBlank()) &&
+                (educationalInfoDto.getStartDate() == null && educationalInfoDto.getEndDate() == null);
     }
 }

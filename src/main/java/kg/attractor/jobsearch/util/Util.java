@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @UtilityClass
@@ -79,5 +80,13 @@ public class Util {
 
     public static boolean isSkillCorrect(String skillName) {
         return skillName != null && !skillName.isBlank() && skillName.length() > 2;
+    }
+
+    public static Optional<Integer> findNumber(String arg) {
+        Pattern pattern = Pattern.compile("\\[(\\d+)]");
+        Matcher matcher = pattern.matcher(arg);
+
+        return matcher.find() ? Optional.of(Integer.parseInt(matcher.group(1))) :
+                Optional.empty();
     }
 }

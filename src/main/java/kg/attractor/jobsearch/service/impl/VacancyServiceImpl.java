@@ -18,7 +18,7 @@ import kg.attractor.jobsearch.service.AuthorizedUserService;
 import kg.attractor.jobsearch.service.CategoryService;
 import kg.attractor.jobsearch.service.SkillService;
 import kg.attractor.jobsearch.service.VacancyService;
-import kg.attractor.jobsearch.validators.Validator;
+import kg.attractor.jobsearch.validators.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -45,7 +45,7 @@ public class VacancyServiceImpl implements VacancyService {
 
     @Override
     public VacancyDto findVacancyById(Long vacancyId) {
-        Validator.isValidId(vacancyId);
+        ValidatorUtil.isValidId(vacancyId);
 
         return vacancyRepository.findById(vacancyId)
                 .map(vacancyMapper::mapToDto)
@@ -61,7 +61,7 @@ public class VacancyServiceImpl implements VacancyService {
 
     @Override
     public boolean isVacancyExist(Long vacancyId) {
-        Validator.isValidId(vacancyId);
+        ValidatorUtil.isValidId(vacancyId);
 
         return vacancyRepository.findById(vacancyId).isPresent();
     }
@@ -85,7 +85,7 @@ public class VacancyServiceImpl implements VacancyService {
     @Transactional
     @Override
     public VacancyDto updateVacancy(VacancyDto vacancyDto) {
-        Validator.isValidId(vacancyDto.getVacancyId());
+        ValidatorUtil.isValidId(vacancyDto.getVacancyId());
 
         UserDto user = new UserDto();
         user.setUserId(authorizedUserService.getAuthorizedUserId());
@@ -102,7 +102,7 @@ public class VacancyServiceImpl implements VacancyService {
 
     @Override
     public void deleteVacancy(Long vacancyId) {
-        Validator.isValidId(vacancyId);
+        ValidatorUtil.isValidId(vacancyId);
 
         vacancyRepository.deleteById(vacancyId);
     }
@@ -118,7 +118,7 @@ public class VacancyServiceImpl implements VacancyService {
 
     @Override
     public List<VacancyDto> findVacanciesByCategory(Long id) {
-        Validator.isValidId(id);
+        ValidatorUtil.isValidId(id);
 
         boolean isCategoryExists = categoryService.checkIfCategoryExistsById(id);
 

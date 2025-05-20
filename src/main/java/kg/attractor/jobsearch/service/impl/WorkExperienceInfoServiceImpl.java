@@ -7,14 +7,12 @@ import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.WorkExperienceInfo;
 import kg.attractor.jobsearch.repository.WorkExperienceRepository;
 import kg.attractor.jobsearch.service.WorkExperienceInfoService;
-import kg.attractor.jobsearch.validators.Validator;
+import kg.attractor.jobsearch.validators.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +47,7 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
 
     private List<WorkExperienceInfoDto> cleanEmptyData(List<WorkExperienceInfoDto> workExperienceInfoDtos) {
         workExperienceInfoDtos.removeIf(workExperienceInfoDto -> {
-            if (!Validator.isNotEmptyWorkExperience(workExperienceInfoDto)) {
+            if (ValidatorUtil.isEmptyWorkExperience(workExperienceInfoDto)) {
                 if (workExperienceInfoDto.getId() == null)
                     return true;
 
@@ -83,7 +81,7 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
             return Collections.emptyList();
 
         return workExperienceInfosDtos.stream()
-                .filter(Validator::isNotEmptyWorkExperience)
+                .filter(workExperienceInfoDto -> !ValidatorUtil.isEmptyWorkExperience(workExperienceInfoDto))
                 .map(workExperienceInfoMapper::mapToEntity)
                 .map(this::createWorkExperience)
                 .toList();
@@ -114,5 +112,22 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
     @Override
     public void deleteWorkExperience(Long id) {
         workExperienceRepository.deleteById(id);
+    }
+
+    @Override
+    public List<WorkExperienceInfoDto> deleteEmptyWorkExperience(List<WorkExperienceInfoDto> workExperienceInfoDtos) {
+        if (workExperienceInfoDtos == null)
+            workExperienceInfoDtos = new ArrayList<>();
+
+        if (workExperienceInfoDtos.isEmpty())
+            return workExperienceInfoDtos;
+
+        if (workExperienceInfoDtos.size() == 1 && workExperienceInfoDtos.stream()
+                    .allMatch(ValidatorUtil::isEmptyWorkExperience))
+                return workExperienceInfoDtos;
+
+        return workExperienceInfoDtos.stream()
+                .filter(workExperienceInfoDto -> !ValidatorUtil.isEmptyWorkExperience(workExperienceInfoDto))
+                .collect(Collectors.toList());
     }
 }

@@ -67,7 +67,7 @@ public class ResumeDetailedInfoServiceImpl implements ResumeDetailedInfoService 
     public void updateResumeDetailedInfo(ResumeDto resumeDto) {
 
         long authorizedUserId = authorizedUserService.getAuthorizedUser().getUserId();
-        ResumeDto previousResume = resumeService.findResumeById(resumeDto.getId());
+        ResumeDto previousResume = resumeService.findPreparedResumeById(resumeDto.getId());
 
         if (authorizedUserId != previousResume.getUserId()) {
             log.warn("Resume doesn't belongs to user");

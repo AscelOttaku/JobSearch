@@ -19,4 +19,6 @@ public interface EducationInfoService {
     List<EducationalInfoDto> findEducationInfosByResumeId(Long resumeId);
 
     void deleteEducationInfoById(Long educationInfoId);
+
+    List<EducationalInfoDto> deleteEmptyEducation(List<EducationalInfoDto> educationalInfoDtos);
 }

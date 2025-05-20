@@ -2,10 +2,7 @@ package kg.attractor.jobsearch.controller;
 
 import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.ResumeDto;
-import kg.attractor.jobsearch.service.CategoryService;
-import kg.attractor.jobsearch.service.ResumeDetailedInfoService;
-import kg.attractor.jobsearch.service.ResumeService;
-import kg.attractor.jobsearch.service.VacancyService;
+import kg.attractor.jobsearch.service.*;
 import kg.attractor.jobsearch.validators.ResumeValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,6 +22,8 @@ public class ResumeController {
     private final CategoryService categoryService;
     private final ResumeValidator resumeValidator;
     private final VacancyService vacancyService;
+    private final WorkExperienceInfoService workExperienceInfoService;
+    private final EducationInfoService educationInfoService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -92,6 +91,9 @@ public class ResumeController {
             Model model,
             SessionStatus sessionStatus
     ) {
+        resumeDto.setWorkExperienceInfoDtos(workExperienceInfoService.deleteEmptyWorkExperience(resumeDto.getWorkExperienceInfoDtos()));
+        resumeDto.setEducationInfoDtos(educationInfoService.deleteEmptyEducation(resumeDto.getEducationInfoDtos()));
+
         resumeValidator.isValid(resumeDto, bindingResult);
 
         if (bindingResult.hasErrors()) {
@@ -108,7 +110,7 @@ public class ResumeController {
     @GetMapping("update/resume/{resumeId}")
     @ResponseStatus(HttpStatus.SEE_OTHER)
     public String updateResumeById(@PathVariable Long resumeId, Model model) {
-        ResumeDto resumeDto = resumeService.findResumeById(resumeId);
+        ResumeDto resumeDto = resumeService.findPreparedResumeById(resumeId);
 
         model.addAttribute("resume", resumeDto);
         model.addAttribute("categories", categoryService.findAllCategories());
@@ -120,7 +122,10 @@ public class ResumeController {
             @ModelAttribute("resume") ResumeDto resumeDto,
             BindingResult bindingResult,
             Model model,
-            SessionStatus sessionStatus) {
+            SessionStatus sessionStatus
+    ) {
+        resumeDto.setWorkExperienceInfoDtos(workExperienceInfoService.deleteEmptyWorkExperience(resumeDto.getWorkExperienceInfoDtos()));
+        resumeDto.setEducationInfoDtos(educationInfoService.deleteEmptyEducation(resumeDto.getEducationInfoDtos()));
 
         resumeValidator.isValid(resumeDto, bindingResult);
 
