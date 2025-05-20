@@ -1,27 +1,26 @@
 <#import "../layout.ftlh" as layout>
 <link rel="stylesheet" href="/static/css/login.css">
-<@layout.layout>
+<@layout.layout ; spring>
     <div class="custom-body">
         <div class="custom-login-card">
             <div class="custom-brand">
                 <div class="custom-brand-logo"></div>
-                <h1>Welcome To Job Search Application</h1>
-                <p>Enter Your Account Data</p>
+                <h1><@spring.message "login.title"/></h1>
+                <p><@spring.message "login.subtitle"/></p>
             </div>
 
             <form id="login-form" action="/auth/login" method="post">
-
                 <#if _csrf??>
                     <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
                            value="${(_csrf.token)!'csrf-token'}"/>
                 </#if>
 
                 <div class="custom-form-group">
-                    <label for="email">Email</label>
+                    <label for="email"><@spring.message "login.email"/></label>
                     <input
                             type="email"
                             name="username"
-                            placeholder="email@"
+                            placeholder="<@spring.message 'login.email.placeholder'/>"
                             autocomplete="email"
                             class="custom-form-control"
                     >
@@ -29,11 +28,11 @@
                 </div>
 
                 <div class="custom-form-group">
-                    <label for="password">Password</label>
+                    <label for="password"><@spring.message "login.password"/></label>
                     <input
                             type="password"
                             name="password"
-                            placeholder="Enter your password"
+                            placeholder="<@spring.message 'login.password.placeholder'/>"
                             autocomplete="current-password"
                             class="custom-form-control"
                     >
@@ -43,18 +42,18 @@
                 <div class="remember-forgot">
                     <div class="remember-me">
                         <input type="checkbox" id="remember">
-                        <label for="remember">Remember me</label>
+                        <label for="remember"><@spring.message "login.remember"/></label>
                     </div>
-                    <a href="/auth/forgot_password" class="forgot-password">Forgot password?</a>
+                    <a href="/auth/forgot_password" class="forgot-password"><@spring.message "login.forgot_password"/></a>
                 </div>
 
                 <button type="submit" class="custom-btn-primary" id="loginButton">
-                    Sign in
+                    <@spring.message "login.sign_in"/>
                 </button>
             </form>
 
             <div class="social-login">
-                <p>Or continue with</p>
+                <p><@spring.message "login.or_continue"/></p>
                 <div class="social-buttons pt-3">
                     <div class="social-btn">
                         <a class="btn" href="/oauth2/authorization/google">
@@ -65,7 +64,7 @@
                              1.408-4.492 3.304a4.792 4.792 0 0 0 0 3.063h.003c.635 1.893 2.405 3.301 4.492 3.301 1.078 0 2.004-.276
                              2.722-.764h-.003a3.702 3.702 0 0 0 1.599-2.431H8v-3.08h7.545z"/>
                             </svg>
-                            Google
+                            <@spring.message "login.google"/>
                         </a>
                     </div>
                     <div class="social-btn">A</div>
@@ -74,14 +73,46 @@
             </div>
 
             <div class="signup-link">
-                <p>Don't have an account? <a href="/auth/registration">Sign up</a></p>
+                <p><@spring.message "login.no_account"/> <a href="/auth/registration"><@spring.message "login.sign_up"/></a></p>
             </div>
 
             <div class="text-center mt-3">
                 <a href="/auth/forgot_password" class="btn btn-dark" style="text-decoration: none; font-weight: bold;">
-                    Forgot password?
+                    <@spring.message "login.forgot_password"/>
                 </a>
             </div>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="dropdownMenuButton1" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    🌐 Language
+                </a>
+                <ul class="dropdown-menu z-3" aria-labelledby="dropdownMenuButton1">
+                    <li>
+                        <form action="/api/locale" method="POST">
+                            <#if _csrf??>
+                                <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
+                                       value="${(_csrf.token)!'csrf-token'}"/>
+                            </#if>
+
+                            <input type="hidden" name="lang" value="en">
+                            <button type="submit" class="dropdown-item">🇺🇸 English</button>
+                        </form>
+                    </li>
+                    <li>
+                        <form action="/api/locale" method="POST">
+                            <#if _csrf??>
+                                <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
+                                       value="${(_csrf.token)!'csrf-token'}"/>
+                            </#if>
+
+                            <input type="hidden" name="lang" value="ru">
+                            <button type="submit" class="dropdown-item">🇷🇺 Русский</button>
+                        </form>
+                    </li>
+                </ul>
+            </li>
         </div>
     </div>
 </@layout.layout>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

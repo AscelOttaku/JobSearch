@@ -1,8 +1,10 @@
 package kg.attractor.jobsearch.controller;
 
+import jakarta.validation.constraints.NotNull;
 import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.dto.SkillDto;
 import kg.attractor.jobsearch.dto.VacancyDto;
+import kg.attractor.jobsearch.service.AuthorizedUserService;
 import kg.attractor.jobsearch.service.SkillService;
 import kg.attractor.jobsearch.storage.TemporalStorage;
 import kg.attractor.jobsearch.util.Util;
@@ -23,6 +25,7 @@ import java.util.List;
 public class SkillController {
     private final SkillService skillService;
     private final TemporalStorage temporalStorage;
+    private final AuthorizedUserService authorizedUserService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -228,3 +231,4 @@ public class SkillController {
         return "vacancies/update_vacancy";
     }
 }
+
