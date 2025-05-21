@@ -22,4 +22,8 @@ public interface SkillService {
     List<SkillDto> deleteUnusedSkillsFromDb();
 
     List<SkillDto> saveNewSkills(List<SkillDto> skillDtos);
+
+    Double calculateAccordingToSKillsUsersCorrespondenceToVacancy(
+            List<SkillDto> resumeSKills, List<SkillDto> vacancySkills
+    );
 }

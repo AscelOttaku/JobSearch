@@ -149,4 +149,19 @@ public class SkillServiceImpl implements SkillService {
                 .map(skillMapper::mapToDto)
                 .toList();
     }
+
+    @Override
+    public Double calculateAccordingToSKillsUsersCorrespondenceToVacancy(
+            List<SkillDto> resumeSKills, List<SkillDto> vacancySkills
+    ) {
+        if (resumeSKills.isEmpty() || vacancySkills.isEmpty())
+            return 0.0;
+
+        long correspondedSKills = resumeSKills.stream()
+                .filter(skillDto -> vacancySkills.stream()
+                        .anyMatch(vacancySkill -> vacancySkill.getSkillName().equals(skillDto.getSkillName())))
+                .count();
+
+        return ((double) vacancySkills.size() / correspondedSKills) * 100;
+    }
 }
