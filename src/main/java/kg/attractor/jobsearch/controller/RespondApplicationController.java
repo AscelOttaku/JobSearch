@@ -1,7 +1,7 @@
 package kg.attractor.jobsearch.controller;
 
 import jakarta.validation.Valid;
-import kg.attractor.jobsearch.dto.*;
+import kg.attractor.jobsearch.dto.RespondApplicationDto;
 import kg.attractor.jobsearch.service.RespondService;
 import kg.attractor.jobsearch.service.ResumeService;
 import kg.attractor.jobsearch.service.VacancyService;
@@ -30,8 +30,7 @@ public class RespondApplicationController {
             @RequestParam(value = "size", defaultValue = "5", required = false) Integer size,
             @Valid RespondApplicationDto respondApplicationDto,
             BindingResult bindingResult,
-            Model model
-    ) {
+            Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("vacancy", vacancyService.findVacancyById(respondApplicationDto.getVacancyId()));
             model.addAttribute("pageResume", resumeService.findUserCreatedActiveResumes(
