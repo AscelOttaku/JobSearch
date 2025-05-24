@@ -15,7 +15,7 @@
         <div class="collapse navbar-collapse" id="navbarContent">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="/vacancies/actives">
+                    <a onclick="sendUri(event)" class="nav-link" href="/vacancies/actives">
                         <i class="bi bi-search me-1"></i> <@spring.message "vacancies"/>
                     </a>
                 </li>
@@ -145,4 +145,6 @@
         </div>
     </div>
 </nav>
+
+    <script src="/static/scripts/vacancy/vacancies-filter.js"></script>
 </@layout.layout>
