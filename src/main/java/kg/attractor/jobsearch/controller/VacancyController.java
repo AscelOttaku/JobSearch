@@ -1,5 +1,6 @@
 package kg.attractor.jobsearch.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.SkillDto;
@@ -125,11 +126,11 @@ public class VacancyController {
 
     @PostMapping("times")
     @ResponseStatus(HttpStatus.SEE_OTHER)
-    public String updateVacancyTime(@RequestParam("vacancyId") Long vacancyId) {
+    public String updateVacancyTime(@RequestParam("vacancyId") Long vacancyId, HttpServletRequest request) {
         log.info("text = {}", vacancyId);
         vacancyService.updateVacancyDate(vacancyId);
 
-        return "redirect:/users/profile";
+        return "redirect:" + request.getHeader("Referer");
     }
 
     @GetMapping("filtered")
@@ -164,6 +165,6 @@ public class VacancyController {
             @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
             @RequestParam(value = "size", defaultValue = "20", required = false) Integer size
     ) {
-        return "redirect:/" + "?page" + page + "?size" + size;
+        return "redirect:/".concat("?page" + page + "?size" + size);
     }
 }

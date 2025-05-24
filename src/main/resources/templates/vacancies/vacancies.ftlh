@@ -94,6 +94,31 @@
                                 </button>
                             </form>
                         </#if>
+
+                        <form action="/favorites" method="post" class="d-inline">
+                            <#if _csrf??>
+                                <input type="hidden" name="${(_csrf.parameterName)!}" value="${(_csrf.token)!}"/>
+                            </#if>
+
+                            <input type="hidden" name="vacancyId" value="${vacancy.vacancyId}"/>
+                            <button type="submit" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-star"></i> Добавить в избранное
+                            </button>
+                        </form>
+
+                        <#if errors?? && index?? && index == vacancy.vacancyId>
+                            <#if errors?is_sequence>
+                                <div class="text-danger mt-2">
+                                    <#list errors as error>
+                                        <p>${error.defaultMessage}</p>
+                                    </#list>
+                                </div>
+                            <#else>
+                                <div class="text-danger mt-2">
+                                    <p>${errors.defaultMessage}</p>
+                                </div>
+                            </#if>
+                        </#if>
                     </div>
                 </div>
             </div>

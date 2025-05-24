@@ -214,13 +214,7 @@ public class VacancyServiceImpl implements VacancyService {
         UserDto authorizedUser = authorizedUserService.getAuthorizedUser();
 
         Vacancy vacancy = vacancyRepository.findById(vacancyId)
-                .orElseThrow(() -> new CustomIllegalArgException(
-                        "Vacancy not found by " + vacancyId,
-                        CustomBindingResult.builder()
-                                .className(Vacancy.class.getSimpleName())
-                                .fieldName("vacancyId")
-                                .rejectedValue(vacancyId)
-                                .build()));
+                .orElseThrow(() -> new IllegalArgumentException("Vacancy not found by " + vacancyId));
 
         if (!Objects.equals(authorizedUser.getUserId(), vacancy.getUser().getUserId()))
             throw new IllegalArgumentException("user doesn't belongs this vacancy");
