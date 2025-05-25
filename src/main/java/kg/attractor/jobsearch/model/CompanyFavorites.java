@@ -20,10 +20,10 @@ public class CompanyFavorites {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "vacancy_id", nullable = false)
+    @JoinColumn(name = "vacancy_id")
     private Vacancy vacancy;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "resume_id", nullable = false)
+    @JoinColumn(name = "resume_id")
     private Resume resume;
 }

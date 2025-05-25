@@ -7,6 +7,7 @@ import kg.attractor.jobsearch.dto.SkillDto;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.enums.FilterType;
 import kg.attractor.jobsearch.service.CategoryService;
+import kg.attractor.jobsearch.service.FavoritesService;
 import kg.attractor.jobsearch.service.VacanciesFilterService;
 import kg.attractor.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;

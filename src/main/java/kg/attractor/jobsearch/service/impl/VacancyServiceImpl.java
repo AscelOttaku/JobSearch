@@ -14,10 +14,7 @@ import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.model.Vacancy;
 import kg.attractor.jobsearch.repository.VacancyRepository;
-import kg.attractor.jobsearch.service.AuthorizedUserService;
-import kg.attractor.jobsearch.service.CategoryService;
-import kg.attractor.jobsearch.service.SkillService;
-import kg.attractor.jobsearch.service.VacancyService;
+import kg.attractor.jobsearch.service.*;
 import kg.attractor.jobsearch.validators.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +39,7 @@ public class VacancyServiceImpl implements VacancyService {
     private final AuthorizedUserService authorizedUserService;
     private final PageHolderWrapper pageHolderWrapper;
     private final SkillService skillService;
+    private final FavoritesService favoritesService;
 
     @Override
     public VacancyDto findVacancyById(Long vacancyId) {
@@ -112,6 +110,7 @@ public class VacancyServiceImpl implements VacancyService {
         Page<Vacancy> isActiveVacancies = vacancyRepository.findIsActiveVacanciesSortedByDate(PageRequest.of(page, size));
 
         PageHolder<VacancyDto> vacancyDtoPageHolder = pageHolderWrapper.wrapVacancies(() -> isActiveVacancies, FilterType.NEW);
+        vacancyDtoPageHolder.getContent().forEach(vacancyDto -> vacancyDto.setFavoritesDtos(favoritesService.findALlUserFavorites()));
         log.warn("FilterType String value: {}", vacancyDtoPageHolder.getFilterType().name());
         return vacancyDtoPageHolder;
     }

@@ -95,30 +95,47 @@
                             </form>
                         </#if>
 
-                        <form action="/favorites" method="post" class="d-inline">
-                            <#if _csrf??>
-                                <input type="hidden" name="${(_csrf.parameterName)!}" value="${(_csrf.token)!}"/>
+                        <#assign isFavorite = false>
+
+                        <#assign isFavorite = false>
+                        <#list vacancy.favoritesDtos as fav>
+                            <#if fav.vacancyId == vacancy.vacancyId>
+                                <#assign isFavorite = true>
+                                <#break>
                             </#if>
+                        </#list>
 
-                            <input type="hidden" name="vacancyId" value="${vacancy.vacancyId}"/>
-                            <button type="submit" class="btn btn-outline-primary btn-sm">
-                                <i class="bi bi-star"></i> Добавить в избранное
-                            </button>
-                        </form>
-
-                        <#if errors?? && index?? && index == vacancy.vacancyId>
-                            <#if errors?is_sequence>
-                                <div class="text-danger mt-2">
-                                    <#list errors as error>
-                                        <p>${error.defaultMessage}</p>
-                                    </#list>
-                                </div>
+                        <#if isFavorite>
+                        <form action="/favorites/delete/${vacancy.favoritesDtos?filter(fav -> fav.vacancyId == vacancy.vacancyId)[0].id}"
+                              method="post" class="d-inline">
                             <#else>
+                            <form action="/favorites" method="post" class="d-inline">
+                                </#if>
+
+                                <#if _csrf??>
+                                    <input type="hidden" name="${(_csrf.parameterName)!}" value="${(_csrf.token)!}"/>
+                                </#if>
+
+                                <input type="hidden" name="vacancyId" value="${vacancy.vacancyId}"/>
+
+                                <button type="submit"
+                                        class="btn btn-sm ${isFavorite?then('btn-primary', 'btn-outline-primary')}">
+                                    <i class="bi bi-star${isFavorite?then('-fill', '')}"></i>
+                                    ${isFavorite?then('В избранном', 'Добавить в избранное')}
+                                </button>
+                            </form>
+
+                            <#if errors?? && index?? && index == vacancy.vacancyId>
                                 <div class="text-danger mt-2">
-                                    <p>${errors.defaultMessage}</p>
+                                    <#if errors?is_sequence>
+                                        <#list errors as error>
+                                            <p>${error.defaultMessage}</p>
+                                        </#list>
+                                    <#else>
+                                        <p>${errors.defaultMessage}</p>
+                                    </#if>
                                 </div>
                             </#if>
-                        </#if>
                     </div>
                 </div>
             </div>

@@ -1,6 +1,5 @@
 package kg.attractor.jobsearch.dto;
 
-import jakarta.validation.constraints.NotNull;
 import kg.attractor.jobsearch.annotations.UniqueFavorites;
 import lombok.Builder;
 import lombok.Getter;

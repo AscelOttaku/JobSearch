@@ -1,12 +1,13 @@
 package kg.attractor.jobsearch.dto.mapper;
 
 import kg.attractor.jobsearch.dto.FavoritesDto;
+import kg.attractor.jobsearch.dto.mapper.utils.MapperUtil;
 import kg.attractor.jobsearch.model.CompanyFavorites;
 import kg.attractor.jobsearch.model.JobSeekerFavorites;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {MapperUtil.class})
 public interface FavoritesMapper {
 
     @Mapping(target = "userId", source = "user.userId")
@@ -23,7 +24,7 @@ public interface FavoritesMapper {
     JobSeekerFavorites mapToJobSeekerFavorites(FavoritesDto favoritesDto);
 
     @Mapping(target = "user.userId", source = "userId")
-    @Mapping(target = "vacancy.id", source = "vacancyId")
-    @Mapping(target = "resume.id", source = "resumeId")
+    @Mapping(target = "vacancy",  qualifiedByName = "createVacancy", source = "vacancyId")
+    @Mapping(target = "resume",  qualifiedByName = "createResume", source = "resumeId")
     CompanyFavorites mapToCompanyFavorites(FavoritesDto favoritesDto);
 }
