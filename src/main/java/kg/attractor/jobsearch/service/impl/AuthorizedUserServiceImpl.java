@@ -3,7 +3,6 @@ package kg.attractor.jobsearch.service.impl;
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.mapper.impl.UserMapper;
 import kg.attractor.jobsearch.exceptions.EntityNotFoundException;
-import kg.attractor.jobsearch.exceptions.UserNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.repository.UserRepository;
@@ -68,5 +67,11 @@ public class AuthorizedUserServiceImpl implements AuthorizedUserService {
                                 .rejectedValue(getAuthentication().getName())
                                 .build()
                 ));
+    }
+
+    @Override
+    public boolean isUserAuthorized() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken);
     }
 }

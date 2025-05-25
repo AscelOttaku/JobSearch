@@ -7,10 +7,9 @@ import kg.attractor.jobsearch.service.FavoritesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -21,12 +20,12 @@ public class FavoritesController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.SEE_OTHER)
-    public String saveFavorites
-            (@Valid FavoritesDto favoritesDto,
-             BindingResult bindingResult,
-             RedirectAttributes redirectAttributes,
-             HttpServletRequest request) {
-
+    public String saveFavorites(
+            @Valid FavoritesDto favoritesDto,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes,
+            HttpServletRequest request
+    ) {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("errors", bindingResult.getGlobalError());
             redirectAttributes.addFlashAttribute("index", favoritesDto.getVacancyId());
@@ -34,6 +33,15 @@ public class FavoritesController {
         }
 
         favoritesService.saveFavorites(favoritesDto);
+        return "redirect:" + request.getHeader("referer");
+    }
+
+    @PostMapping("delete/{favoriteId}")
+    public String deleteFavorites(
+            @PathVariable Long favoriteId,
+            HttpServletRequest request
+    ) {
+        favoritesService.deleteFavoritesById(favoriteId);
         return "redirect:" + request.getHeader("referer");
     }
 }
