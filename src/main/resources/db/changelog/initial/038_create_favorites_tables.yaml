@@ -1,0 +1,99 @@
+databaseChangeLog:
+  - changeSet:
+      id: 038_create_favorites_tables.yaml
+      author: Kanybek
+      changes:
+        - createTable:
+            tableName: job_seeker_favorites
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: vacancy_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: vacancy_id
+            baseTableName: job_seeker_favorites
+            constraintName: fk_job_seeker_vacancy_id_vacancies
+            onUpdate: cascade
+            onDelete: cascade
+            referencedTableName: vacancies
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: job_seeker_favorites
+            constraintName: fk_job_seeker_user_id_users
+            onUpdate: cascade
+            onDelete: cascade
+            referencedTableName: users
+            referencedColumnNames: user_id
+
+        - createTable:
+            tableName: company_favorites
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: company_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: vacancy_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: resume_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: vacancy_id
+            baseTableName: company_favorites
+            constraintName: company_favorites_vacancy_id_vacancies
+            onUpdate: cascade
+            onDelete: cascade
+            referencedTableName: vacancies
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseColumnNames: company_id
+            baseTableName: company_favorites
+            constraintName: company_favorites_user_id_users
+            onUpdate: cascade
+            onDelete: cascade
+            referencedTableName: users
+            referencedColumnNames: user_id
+
+        - addForeignKeyConstraint:
+            baseColumnNames: resume_id
+            baseTableName: company_favorites
+            constraintName: company_favorites_resume_id_resumes
+            onUpdate: cascade
+            onDelete: cascade
+            referencedTableName: resumes
+            referencedColumnNames: id
+
+
+

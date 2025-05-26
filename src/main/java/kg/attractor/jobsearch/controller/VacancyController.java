@@ -1,11 +1,13 @@
 package kg.attractor.jobsearch.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import kg.attractor.jobsearch.dto.PageHolder;
-import kg.attractor.jobsearch.dto.SkillDto;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.enums.FilterType;
+import kg.attractor.jobsearch.service.AuthorizedUserService;
 import kg.attractor.jobsearch.service.CategoryService;
+import kg.attractor.jobsearch.service.FavoritesService;
 import kg.attractor.jobsearch.service.VacanciesFilterService;
 import kg.attractor.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +19,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 @Controller("vacancyController")
 @RequestMapping("/vacancies")
 @SessionAttributes({"categories"})
@@ -30,6 +28,7 @@ public class VacancyController {
     private final VacancyService vacancyService;
     private final CategoryService categoryService;
     private final VacanciesFilterService vacanciesFilterService;
+    private final AuthorizedUserService authorizedUserService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -125,11 +124,11 @@ public class VacancyController {
 
     @PostMapping("times")
     @ResponseStatus(HttpStatus.SEE_OTHER)
-    public String updateVacancyTime(@RequestParam("vacancyId") Long vacancyId) {
+    public String updateVacancyTime(@RequestParam("vacancyId") Long vacancyId, HttpServletRequest request) {
         log.info("text = {}", vacancyId);
         vacancyService.updateVacancyDate(vacancyId);
 
-        return "redirect:/users/profile";
+        return "redirect:" + request.getHeader("Referer");
     }
 
     @GetMapping("filtered")
@@ -141,7 +140,10 @@ public class VacancyController {
     ) {
         if (filterType == null) return "redirect:/vacancies/actives?page=" + page + "&size=" + size;
 
-        model.addAttribute("vacancies", vacanciesFilterService.filterVacanciesBy(filterType, page, size));
+        if (filterType == FilterType.FAVORITES && !authorizedUserService.isUserAuthorized())
+            return "redirect:/auth/login";
+
+        model.addAttribute("vacancies", vacancyService.filterVacancies(page, size, filterType));
         return "vacancies/vacancies";
     }
 
@@ -159,12 +161,11 @@ public class VacancyController {
     }
 
     @RequestMapping("/")
+    @ResponseStatus(HttpStatus.SEE_OTHER)
     public String handleHome(
-            Model model,
             @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
             @RequestParam(value = "size", defaultValue = "20", required = false) Integer size
     ) {
-        model.addAttribute("vacancies", vacancyService.findAllActiveVacancies(page, size));
-        return "vacancies/vacancies";
+        return "redirect:/".concat("?page" + page + "?size" + size);
     }
 }
