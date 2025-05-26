@@ -9,6 +9,7 @@ import kg.attractor.jobsearch.repository.UserRepository;
 import kg.attractor.jobsearch.service.AuthorizedUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,12 @@ public class AuthorizedUserServiceImpl implements AuthorizedUserService {
 
     @Override
     public Authentication getAuthentication() {
-        return SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken)
+            throw new IllegalArgumentException("user is not authenticated");
+
+        return authentication;
     }
 
     @Override
@@ -61,5 +67,11 @@ public class AuthorizedUserServiceImpl implements AuthorizedUserService {
                                 .rejectedValue(getAuthentication().getName())
                                 .build()
                 ));
+    }
+
+    @Override
+    public boolean isUserAuthorized() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken);
     }
 }

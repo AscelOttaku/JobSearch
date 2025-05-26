@@ -54,6 +54,7 @@ public class VacancyDto {
 
     private List<RespondApplicationDto> respondedApplications;
     private List<@Valid SkillDto> skills;
+    private List<FavoritesDto> favoritesDtos;
 
     @Override
     public boolean equals(Object o) {

@@ -21,21 +21,25 @@
                             <i class="bi bi-sort-down"></i> <@spring.message "sorting"/>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="sortDropdown">
-                            <li><a class="dropdown-item"
+                            <li><a onclick="onClickFilter(event)" class="dropdown-item"
                                    href="/vacancies/actives?page=${vacancies.page}&size=${vacancies.size}">
                                     <i class="bi bi-arrow-down"></i> <@spring.message "new_first"/></a></li>
-                            <li><a class="dropdown-item"
+                            <li><a onclick="onClickFilter(event)" class="dropdown-item"
                                    href="/vacancies/filtered?page=${vacancies.page}&size=${vacancies.size}&filterType=OLD">
                                     <i class="bi bi-arrow-up"></i> <@spring.message "old_first"/></a></li>
-                            <li><a class="dropdown-item"
+                            <li><a onclick="onClickFilter(event)" class="dropdown-item"
                                    href="/vacancies/filtered?page${vacancies.page}&size=${vacancies.size}&filterType=SALARY_DESC">
                                     <i class="bi bi-currency-dollar"></i> <@spring.message "salary_decrease"/></a></li>
-                            <li><a class="dropdown-item"
+                            <li><a onclick="onClickFilter(event)" class="dropdown-item"
                                    href="/vacancies/filtered?page${vacancies.page}&size=${vacancies.size}&filterType=SALARY_ASC">
                                     <i class="bi bi-currency-dollar"></i> <@spring.message "salary_increase"/></a></li>
-                            <li><a class="dropdown-item"
+                            <li><a onclick="onClickFilter(event)" class="dropdown-item"
                                    href="/vacancies/filtered?page=${vacancies.page}&size=${vacancies.size}&filterType=RESPONSES">
                                     <i class="bi bi-chat-left-dots"></i> <@spring.message "by_responses_quantity"/></a>
+                            </li>
+                            <li><a onclick="onClickFilter(event)" class="dropdown-item"
+                                   href="/vacancies/filtered?page=${vacancies.page}&size=${vacancies.size}&filterType=FAVORITE_VACANCIES">
+                                    <i class="bi bi-star"></i> <@spring.message "by_favorites"/></a>
                             </li>
                         </ul>
                     </div>
@@ -94,6 +98,50 @@
                                 </button>
                             </form>
                         </#if>
+
+                        <#if favorites??>
+                        <#assign isFavorite = false>
+
+                        <#assign isFavorite = false>
+                        <#list favorites as fav>
+                            <#if fav.vacancyId == vacancy.vacancyId>
+                                <#assign isFavorite = true>
+                                <#break>
+                            </#if>
+                        </#list>
+
+                        <#if isFavorite>
+                        <form action="/favorites/delete/${favorites?filter(fav -> fav.vacancyId == vacancy.vacancyId)[0].id}"
+                              method="post" class="d-inline">
+                            <#else>
+                            <form action="/favorites" method="post" class="d-inline">
+                                </#if>
+
+                                <#if _csrf??>
+                                    <input type="hidden" name="${(_csrf.parameterName)!}" value="${(_csrf.token)!}"/>
+                                </#if>
+
+                                <input type="hidden" name="vacancyId" value="${vacancy.vacancyId}"/>
+
+                                <button type="submit"
+                                        class="btn btn-sm ${isFavorite?then('btn-primary', 'btn-outline-primary')}">
+                                    <i class="bi bi-star${isFavorite?then('-fill', '')}"></i>
+                                    ${isFavorite?then('В избранном', 'Добавить в избранное')}
+                                </button>
+                            </form>
+
+                            <#if errors?? && index?? && index == vacancy.vacancyId>
+                                <div class="text-danger mt-2">
+                                    <#if errors?is_sequence>
+                                        <#list errors as error>
+                                            <p>${error.defaultMessage}</p>
+                                        </#list>
+                                    <#else>
+                                        <p>${errors.defaultMessage}</p>
+                                    </#if>
+                                </div>
+                            </#if>
+                        </#if>
                     </div>
                 </div>
             </div>
@@ -147,6 +195,7 @@
         </#if>
     </div>
 
+    <script src="/static/scripts/vacancy/vacancies-filter.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 

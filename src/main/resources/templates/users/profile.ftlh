@@ -95,14 +95,14 @@
                         </h3>
                         <div>
                             <#if user.accountType == "JOB_SEEKER">
-                                <a href="/resumes/users" class="btn btn-outline-primary me-2">
+                                <a onclick="sendUri(event)" href="/resumes/users" class="btn btn-outline-primary me-2">
                                     <i class="bi bi-collection me-2"></i><@spring.message "all_resumes"/>
                                 </a>
                                 <a href="/resumes/new_resume" class="btn btn-primary">
                                     <i class="bi bi-plus-circle me-2"></i><@spring.message "create"/>
                                 </a>
                             <#elseif user.accountType == "EMPLOYER">
-                                <a href="/vacancies/users" class="btn btn-outline-primary me-2">
+                                <a onclick="sendUri(event)" href="/vacancies/users" class="btn btn-outline-primary me-2">
                                     <i class="bi bi-collection me-2"></i><@spring.message "all_vacancies"/>
                                 </a>
                                 <a href="/vacancies/new_vacancy" class="btn btn-primary">
@@ -281,5 +281,6 @@
     </div>
     </body>
 
+    <script src="/static/scripts/vacancy/user_vacancies_filter.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </@layout.layout>

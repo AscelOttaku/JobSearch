@@ -30,6 +30,7 @@ public class VacancyMapper implements Mapper<VacancyDto, Vacancy> {
                 .userId(vacancy.getUser().getUserId())
                 .name(vacancy.getUser().getName())
                 .surname(vacancy.getUser().getSurname())
+                .accountType(vacancy.getUser().getAccountType())
                 .build();
 
         return VacancyDto.builder()

@@ -11,4 +11,6 @@ public interface AuthorizedUserService {
     boolean checkIfJobSeekerExistByEmail(String userEmail);
 
     Long getAuthorizedUserId();
+
+    boolean isUserAuthorized();
 }

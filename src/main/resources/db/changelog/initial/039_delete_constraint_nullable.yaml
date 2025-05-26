@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 039_delete_constraint_nullable.yaml
+      author: Kanybek
+      changes:
+        - dropNotNullConstraint:
+            tableName: company_favorites
+            columnName: vacancy_id
+        - dropNotNullConstraint:
+            tableName: company_favorites
+            columnName: resume_id

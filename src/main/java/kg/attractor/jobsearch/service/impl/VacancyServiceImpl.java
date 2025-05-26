@@ -7,17 +7,15 @@ import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.dto.mapper.impl.PageHolderWrapper;
 import kg.attractor.jobsearch.enums.FilterType;
-import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
 import kg.attractor.jobsearch.exceptions.EntityNotFoundException;
 import kg.attractor.jobsearch.exceptions.VacancyNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
+import kg.attractor.jobsearch.strategy.vacancies.UserVacancyFilterStrategy;
+import kg.attractor.jobsearch.strategy.vacancies.VacancyFilterStrategy;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.model.Vacancy;
 import kg.attractor.jobsearch.repository.VacancyRepository;
-import kg.attractor.jobsearch.service.AuthorizedUserService;
-import kg.attractor.jobsearch.service.CategoryService;
-import kg.attractor.jobsearch.service.SkillService;
-import kg.attractor.jobsearch.service.VacancyService;
+import kg.attractor.jobsearch.service.*;
 import kg.attractor.jobsearch.validators.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Objects;
@@ -42,6 +41,8 @@ public class VacancyServiceImpl implements VacancyService {
     private final AuthorizedUserService authorizedUserService;
     private final PageHolderWrapper pageHolderWrapper;
     private final SkillService skillService;
+    private final VacancyFilterStrategy vacancyFilterStrategy;
+    private final UserVacancyFilterStrategy userVacancyFilterStrategy;
 
     @Override
     public VacancyDto findVacancyById(Long vacancyId) {
@@ -214,13 +215,7 @@ public class VacancyServiceImpl implements VacancyService {
         UserDto authorizedUser = authorizedUserService.getAuthorizedUser();
 
         Vacancy vacancy = vacancyRepository.findById(vacancyId)
-                .orElseThrow(() -> new CustomIllegalArgException(
-                        "Vacancy not found by " + vacancyId,
-                        CustomBindingResult.builder()
-                                .className(Vacancy.class.getSimpleName())
-                                .fieldName("vacancyId")
-                                .rejectedValue(vacancyId)
-                                .build()));
+                .orElseThrow(() -> new IllegalArgumentException("Vacancy not found by " + vacancyId));
 
         if (!Objects.equals(authorizedUser.getUserId(), vacancy.getUser().getUserId()))
             throw new IllegalArgumentException("user doesn't belongs this vacancy");
@@ -246,5 +241,39 @@ public class VacancyServiceImpl implements VacancyService {
                 .stream()
                 .map(vacancyMapper::mapToDto)
                 .toList();
+    }
+
+    @Override
+    public PageHolder<VacancyDto> filterVacancies(int page, int size, FilterType filterType) {
+        Assert.notNull(filterType, "filterType must not be null");
+
+        vacancyFilterStrategy.addFilterStrategy(FilterType.FAVORITE_VACANCIES, this::findUserFavoriteVacancies);
+        return vacancyFilterStrategy.filter(page, size, filterType);
+    }
+
+    @Override
+    public PageHolder<VacancyDto> filterUserVacancies(int page, int size, FilterType filterType) {
+        Assert.notNull(filterType, "filter type must not be null");
+
+        userVacancyFilterStrategy.initStrategies();
+        userVacancyFilterStrategy.addFilterStrategy(FilterType.FAVORITE_VACANCIES, this::findUserFavoriteVacancies);
+        return userVacancyFilterStrategy.filter(page, size, filterType);
+    }
+
+    private PageHolder<VacancyDto> findUserFavoriteVacancies(int page, int size) {
+        UserDto authUserDto = authorizedUserService.getAuthorizedUser();
+        Page<Vacancy> vacancies;
+        Pageable pageable = PageRequest.of(page, size);
+
+        if (authUserDto.getAccountType().equals("EMPLOYER"))
+            vacancies = vacancyRepository.findCompanyFavoriteVacancies(
+                    authUserDto.getUserId(), pageable
+            );
+        else
+            vacancies = vacancyRepository.findJobSeekerFavoriteVacancies(
+                    authUserDto.getUserId(), pageable
+            );
+
+        return pageHolderWrapper.wrapVacancies(() -> vacancies, FilterType.FAVORITE_VACANCIES);
     }
 }
