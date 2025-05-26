@@ -83,7 +83,7 @@ public class SecurityConfig {
                                 .requestMatchers(GET, "/responds/users").hasAuthority(Roles.JOB_SEEKER.getValue())
                                 .requestMatchers(GET, "responds/employers").hasAuthority(Roles.EMPLOYER.getValue())
 
-//                                Resumes Endpoints
+                                 //Resumes Endpoints
 
                                 .requestMatchers(GET, "/resumes").hasAuthority(Roles.EMPLOYER.getValue())
                                 .requestMatchers(POST, "/resumes").hasAuthority(Roles.JOB_SEEKER.getValue())
@@ -92,6 +92,11 @@ public class SecurityConfig {
                                 .requestMatchers(GET, "/resumes/update/resume/*") .hasAnyAuthority(Roles.JOB_SEEKER.getValue())
                                 .requestMatchers(GET, "/resumes/users/actives").fullyAuthenticated()
                                 .requestMatchers("/resumes/*").authenticated()
+
+                                //Favorites
+
+                                .requestMatchers(POST, "/favorites").fullyAuthenticated()
+                                .requestMatchers(POST, "/favorites/delete/*").fullyAuthenticated()
 
                                 //All Other Endpoints
 

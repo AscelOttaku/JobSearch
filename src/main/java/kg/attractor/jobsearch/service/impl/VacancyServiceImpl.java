@@ -7,17 +7,14 @@ import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.dto.mapper.impl.PageHolderWrapper;
 import kg.attractor.jobsearch.enums.FilterType;
-import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
 import kg.attractor.jobsearch.exceptions.EntityNotFoundException;
 import kg.attractor.jobsearch.exceptions.VacancyNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
+import kg.attractor.jobsearch.factory.VacancyFilterFactory;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.model.Vacancy;
 import kg.attractor.jobsearch.repository.VacancyRepository;
-import kg.attractor.jobsearch.service.AuthorizedUserService;
-import kg.attractor.jobsearch.service.CategoryService;
-import kg.attractor.jobsearch.service.SkillService;
-import kg.attractor.jobsearch.service.VacancyService;
+import kg.attractor.jobsearch.service.*;
 import kg.attractor.jobsearch.validators.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Objects;
@@ -42,6 +40,8 @@ public class VacancyServiceImpl implements VacancyService {
     private final AuthorizedUserService authorizedUserService;
     private final PageHolderWrapper pageHolderWrapper;
     private final SkillService skillService;
+    private final FavoritesService favoritesService;
+    private final VacancyFilterFactory vacancyFilterFactory;
 
     @Override
     public VacancyDto findVacancyById(Long vacancyId) {
@@ -112,6 +112,7 @@ public class VacancyServiceImpl implements VacancyService {
         Page<Vacancy> isActiveVacancies = vacancyRepository.findIsActiveVacanciesSortedByDate(PageRequest.of(page, size));
 
         PageHolder<VacancyDto> vacancyDtoPageHolder = pageHolderWrapper.wrapVacancies(() -> isActiveVacancies, FilterType.NEW);
+        vacancyDtoPageHolder.getContent().forEach(vacancyDto -> vacancyDto.setFavoritesDtos(favoritesService.findALlUserFavorites()));
         log.warn("FilterType String value: {}", vacancyDtoPageHolder.getFilterType().name());
         return vacancyDtoPageHolder;
     }
@@ -214,13 +215,7 @@ public class VacancyServiceImpl implements VacancyService {
         UserDto authorizedUser = authorizedUserService.getAuthorizedUser();
 
         Vacancy vacancy = vacancyRepository.findById(vacancyId)
-                .orElseThrow(() -> new CustomIllegalArgException(
-                        "Vacancy not found by " + vacancyId,
-                        CustomBindingResult.builder()
-                                .className(Vacancy.class.getSimpleName())
-                                .fieldName("vacancyId")
-                                .rejectedValue(vacancyId)
-                                .build()));
+                .orElseThrow(() -> new IllegalArgumentException("Vacancy not found by " + vacancyId));
 
         if (!Objects.equals(authorizedUser.getUserId(), vacancy.getUser().getUserId()))
             throw new IllegalArgumentException("user doesn't belongs this vacancy");
@@ -246,5 +241,12 @@ public class VacancyServiceImpl implements VacancyService {
                 .stream()
                 .map(vacancyMapper::mapToDto)
                 .toList();
+    }
+
+    @Override
+    public PageHolder<VacancyDto> filterVacancies(int page, int size, FilterType filterType) {
+        Assert.notNull(filterType, "filterType must not be null");
+
+        return vacancyFilterFactory.filter(page, size, filterType);
     }
 }

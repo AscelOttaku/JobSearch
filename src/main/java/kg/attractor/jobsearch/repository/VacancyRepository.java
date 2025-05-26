@@ -61,4 +61,14 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Long> {
             "(select count(ra) from RespondedApplication ra " +
             "where ra.vacancy.id = v.id) desc")
     Page<Vacancy> findUserVacanciesOrderedByResponsesNumberDesc(Long userId, Pageable pageable);
+
+    @Query("select v from Vacancy v " +
+            "left join CompanyFavorites f on f.vacancy.id = v.id " +
+            "where f.user.userId = :userId")
+    Page<Vacancy> findCompanyFavoriteVacancies(Long userId, Pageable pageable);
+
+    @Query("select v from Vacancy v " +
+            "left join JobSeekerFavorites f on f.vacancy.id = v.id " +
+            "where f.user.userId = :userId")
+    Page<Vacancy> findJobSeekerFavoriteVacancies(Long userId, Pageable pageable);
 }
