@@ -21,23 +21,23 @@
                             <i class="bi bi-sort-down"></i> <@spring.message "sorting"/>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="sortDropdown">
-                            <li><a onclick="onClickFilter(event)" class="dropdown-item"
+                            <li><a onclick="userOnClickFilter(event)" class="dropdown-item"
                                    href="/vacancies/users?page=${vacancies.page}&size=${vacancies.size}">
                                     <i class="bi bi-arrow-down"></i> <@spring.message "new_first"/></a></li>
                             <li><a class="dropdown-item"
                                    href="/vacancies/users/filtered?page=${vacancies.page}&size=${vacancies.size}&filterType=OLD">
                                     <i class="bi bi-arrow-up"></i> <@spring.message "old_first"/></a></li>
-                            <li><a onclick="onClickFilter(event)" class="dropdown-item"
+                            <li><a onclick="userOnClickFilter(event)" class="dropdown-item"
                                    href="/vacancies/users/filtered?page${vacancies.page}&size=${vacancies.size}&filterType=SALARY_DESC">
                                     <i class="bi bi-currency-dollar"></i> <@spring.message "salary_decrease"/></a></li>
-                            <li><a onclick="onClickFilter(event)" class="dropdown-item"
+                            <li><a onclick="userOnClickFilter(event)" class="dropdown-item"
                                    href="/vacancies/users/filtered?page${vacancies.page}&size=${vacancies.size}&filterType=SALARY_ASC">
                                     <i class="bi bi-currency-dollar"></i> <@spring.message "salary_increase"/></a></li>
-                            <li><a onclick="onClickFilter(event)" class="dropdown-item"
+                            <li><a onclick="userOnClickFilter(event)" class="dropdown-item"
                                    href="/vacancies/users/filtered?page=${vacancies.page}&size=${vacancies.size}&filterType=RESPONSES">
                                     <i class="bi bi-chat-left-dots"></i> <@spring.message "by_responses_quantity"/></a>
                             </li>
-                            <li><a onclick="onClickFilter(event)" class="dropdown-item"
+                            <li><a onclick="userOnClickFilter(event)" class="dropdown-item"
                                    href="/vacancies/users/filtered?page=${vacancies.page}&size=${vacancies.size}&filterType=FAVORITE_VACANCIES">
                                     <i class="bi bi-star"></i> <@spring.message "by_favorites"/></a>
                             </li>

@@ -1,6 +1,15 @@
 <#import "../layout.ftlh" as layout>
 
 <@layout.layout ; spring>
+    <header>
+        <script id="authorizedUser">
+            <#if authorizedUser??>
+            window.currentUser = "${authorizedUser.email?js_string}";
+            <#else>
+            window.currentUser = null;
+            </#if>
+        </script>
+    </header>
 
     <link rel="stylesheet" href="/static/css/vacancy.css">
 
