@@ -1,6 +1,15 @@
 <#import "../layout.ftlh" as layout>
 
 <@layout.layout ; spring>
+    <header>
+        <script id="authorizedUser">
+            <#if authorizedUser??>
+            window.currentUser = "${authorizedUser.email?js_string}";
+            <#else>
+            window.currentUser = null;
+            </#if>
+        </script>
+    </header>
 
     <link rel="stylesheet" href="/static/css/vacancy.css">
 
@@ -22,7 +31,7 @@
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="sortDropdown">
                             <li><a onclick="onClickFilter(event)" class="dropdown-item"
-                                   href="/vacancies/actives?page=${vacancies.page}&size=${vacancies.size}">
+                                   href="/vacancies/actives?page=${vacancies.page}&size=${vacancies.size}&filterType=NEW">
                                     <i class="bi bi-arrow-down"></i> <@spring.message "new_first"/></a></li>
                             <li><a onclick="onClickFilter(event)" class="dropdown-item"
                                    href="/vacancies/filtered?page=${vacancies.page}&size=${vacancies.size}&filterType=OLD">

@@ -1,4 +1,4 @@
-function onClickFilter(event) {
+function userOnClickFilter(event) {
     const filterArg = event.currentTarget
     const href = filterArg.href;
     const url = new URL(href);
@@ -7,7 +7,7 @@ function onClickFilter(event) {
         localStorage.setItem('user_vacancies_filterType', url.searchParams.get('filterType'));
 }
 
-function sendUri(event) {
+function userSendUri(event) {
     event.preventDefault()
     let url = event.currentTarget.href;
     console.log(url)
