@@ -8,7 +8,7 @@
     <#include "../layout/navbar.ftlh">
 
     <div class="vacancy-container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div id="searchResult" class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="page-title">
                 <i class="bi bi-briefcase"></i> <@spring.message "vacancies.available_vacancies"/>
             </h1>
@@ -141,7 +141,7 @@
                                     </#if>
                                 </div>
                             </#if>
-                        </#if>
+                            </#if>
                     </div>
                 </div>
             </div>

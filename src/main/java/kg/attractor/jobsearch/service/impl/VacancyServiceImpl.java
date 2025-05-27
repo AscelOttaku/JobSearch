@@ -276,4 +276,14 @@ public class VacancyServiceImpl implements VacancyService {
 
         return pageHolderWrapper.wrapVacancies(() -> vacancies, FilterType.FAVORITE_VACANCIES);
     }
+
+    @Override
+    public List<VacancyDto> searchVacancies(String query) {
+        Assert.notNull(query, "query cannot be null");
+
+        return vacancyRepository.searchVacanciesByName(query)
+                .stream()
+                .map(vacancyMapper::mapToDto)
+                .toList();
+    }
 }

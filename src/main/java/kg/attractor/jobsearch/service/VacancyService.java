@@ -42,4 +42,6 @@ public interface VacancyService {
     PageHolder<VacancyDto> filterVacancies(int page, int size, FilterType filterType);
 
     PageHolder<VacancyDto> filterUserVacancies(int page, int size, FilterType filterType);
+
+    List<VacancyDto> searchVacancies(String query);
 }

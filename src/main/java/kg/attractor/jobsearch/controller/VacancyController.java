@@ -15,6 +15,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 
+import java.util.List;
+
 @Controller("vacancyController")
 @RequestMapping("/vacancies")
 @SessionAttributes({"categories"})
@@ -23,7 +25,6 @@ import org.springframework.web.bind.support.SessionStatus;
 public class VacancyController {
     private final VacancyService vacancyService;
     private final CategoryService categoryService;
-    private final VacanciesFilterService vacanciesFilterService;
     private final AuthorizedUserService authorizedUserService;
     private final FavoritesService favoritesService;
 
@@ -145,6 +146,12 @@ public class VacancyController {
         model.addAttribute("vacancies", vacancyService.filterVacancies(page, size, filterType));
         model.addAttribute("favorites", favoritesService.findALlUserFavorites());
         return "vacancies/vacancies";
+    }
+
+    @GetMapping("search")
+    @ResponseBody
+    public List<VacancyDto> search(@RequestParam String query) {
+        return vacancyService.searchVacancies(query);
     }
 
     @GetMapping("users/filtered")

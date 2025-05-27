@@ -71,4 +71,7 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Long> {
             "left join JobSeekerFavorites f on f.vacancy.id = v.id " +
             "where f.user.userId = :userId")
     Page<Vacancy> findJobSeekerFavoriteVacancies(Long userId, Pageable pageable);
+
+    @Query("select v from Vacancy v where lower(v.name) like lower(concat('%', :vacancyName, '%'))")
+    List<Vacancy> searchVacanciesByName(String vacancyName);
 }
