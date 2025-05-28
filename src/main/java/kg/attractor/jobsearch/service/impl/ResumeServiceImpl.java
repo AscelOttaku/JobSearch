@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -195,5 +196,22 @@ public class ResumeServiceImpl implements ResumeService {
                 .stream()
                 .map(resumeMapper::mapToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public PageHolder<ResumeDto> findRespondedToVacancyResumes(Long vacancyId, int page, int size) {
+        Assert.notNull(vacancyId, "vacancy id cannot be null");
+
+        Page<Resume> respondedToVacancyResumes = resumeRepository.findRespondedToVacancyResumes(vacancyId, PageRequest.of(page, size));
+        return pageHolderWrapper.wrapPageHolderResumes(respondedToVacancyResumes);
+    }
+
+    @Override
+    public ResumeDto findResumeByRespondId(Long respondId) {
+        Assert.notNull(respondId, "respond id cannot be null");
+
+        return resumeRepository.findResumeByRespondId(respondId)
+                .map(resumeMapper::mapToDto)
+                .orElseThrow(() -> new NoSuchElementException("resume not found"));
     }
 }

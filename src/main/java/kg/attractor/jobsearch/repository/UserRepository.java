@@ -53,4 +53,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<String> findUserAvatarById(Long userId);
 
     Optional<User> findUserByResetPasswordToken(String token);
+
+    @Query("select u from User u " +
+            "left join Resume r on r.user.userId = u.userId " +
+            "left join RespondedApplication ra on ra.resume.id = r.id " +
+            "where ra.id = :respondId")
+    Optional<User> findUserByRespondId(Long respondId);
 }

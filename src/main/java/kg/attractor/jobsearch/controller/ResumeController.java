@@ -146,5 +146,20 @@ public class ResumeController {
         resumeService.deleteResumeById(resumeId);
         return "redirect:/users/profile";
     }
+
+    @GetMapping("responded/vacancy/{vacancyId}")
+    @ResponseStatus(HttpStatus.OK)
+    public String findUserRespondedResumes(
+            @PathVariable Long vacancyId,
+            Model model,
+            @RequestParam(defaultValue = "0", required = false) Integer page,
+            @RequestParam(defaultValue = "5", required = false) Integer size
+    ) {
+        PageHolder<ResumeDto> pageResume = resumeService.findRespondedToVacancyResumes(vacancyId, page, size);
+
+        model.addAttribute("vacancy", vacancyService.findVacancyById(vacancyId));
+        model.addAttribute("respondedPageResumes", pageResume);
+        return "vacancies/vacancy";
+    }
 }
 

@@ -23,6 +23,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -55,6 +56,13 @@ public class UserServiceImpl implements UserService {
         UserDto userDto = getAuthorizedUser();
 
         return FileUtil.getOutputFile(userDto.getAvatar(), FileUtil.defineFileType(userDto.getAvatar()));
+    }
+
+    @Override
+    public ResponseEntity<?> getAvatar(String avatar) throws IOException {
+        Assert.notNull(avatar, "avatar cannot be null");
+
+        return FileUtil.getOutputFile(avatar, FileUtil.defineFileType(avatar));
     }
 
     @Override
@@ -261,5 +269,14 @@ public class UserServiceImpl implements UserService {
             if (!avatar.isBlank() && !avatar.equals(previousAvatar))
                 userRepository.updateAvatarByUserEmail(avatar, email);
         });
+    }
+
+    @Override
+    public UserDto findUserByRespondId(Long respondId) {
+        Assert.notNull(respondId, "Respond id cannot be null");
+
+        return userRepository.findUserByRespondId(respondId)
+                .map(userMapper::mapToDto)
+                .orElseThrow(() -> new NoSuchElementException("user not found by respond " + respondId));
     }
 }

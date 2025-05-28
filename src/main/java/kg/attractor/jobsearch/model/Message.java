@@ -17,12 +17,16 @@ public class Message {
     @Column(name = "id", updatable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "responded_application_id", nullable = false)
     private RespondedApplication respondedApplication;
 
     @Column(name = "content", nullable = false)
     private String content;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "message_owner_id", nullable = false)
+    private User owner;
 
     @Column(name = "time")
     private LocalDateTime time;

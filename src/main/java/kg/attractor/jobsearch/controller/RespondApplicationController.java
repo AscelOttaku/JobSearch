@@ -3,6 +3,7 @@ package kg.attractor.jobsearch.controller;
 import jakarta.validation.Valid;
 import kg.attractor.jobsearch.dto.RespondApplicationDto;
 import kg.attractor.jobsearch.service.RespondService;
+import kg.attractor.jobsearch.service.ResumeRespondService;
 import kg.attractor.jobsearch.service.ResumeService;
 import kg.attractor.jobsearch.service.VacancyService;
 import org.springframework.http.HttpStatus;
@@ -17,11 +18,13 @@ public class RespondApplicationController {
     private final RespondService respondService;
     private final ResumeService resumeService;
     private final VacancyService vacancyService;
+    private final ResumeRespondService resumeRespondService;
 
-    public RespondApplicationController(RespondService respondService, ResumeService resumeService, VacancyService vacancyService) {
+    public RespondApplicationController(RespondService respondService, ResumeService resumeService, VacancyService vacancyService, ResumeRespondService resumeRespondService) {
         this.respondService = respondService;
         this.resumeService = resumeService;
         this.vacancyService = vacancyService;
+        this.resumeRespondService = resumeRespondService;
     }
 
     @PostMapping
@@ -30,7 +33,8 @@ public class RespondApplicationController {
             @RequestParam(value = "size", defaultValue = "5", required = false) Integer size,
             @Valid RespondApplicationDto respondApplicationDto,
             BindingResult bindingResult,
-            Model model) {
+            Model model)
+    {
         if (bindingResult.hasErrors()) {
             model.addAttribute("vacancy", vacancyService.findVacancyById(respondApplicationDto.getVacancyId()));
             model.addAttribute("pageResume", resumeService.findUserCreatedActiveResumes(

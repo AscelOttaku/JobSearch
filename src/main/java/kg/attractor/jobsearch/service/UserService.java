@@ -16,6 +16,8 @@ public interface UserService {
 
     ResponseEntity<?> getAvatarOfAuthorizedUser() throws IOException;
 
+    ResponseEntity<?> getAvatar(String avatar) throws IOException;
+
     void createUser(UserDto userDto);
 
     void updateUser(UserDto userDto);
@@ -53,4 +55,6 @@ public interface UserService {
     void makeResetPasswordLink(HttpServletRequest request) throws MessagingException;
 
     void updateUserAvatarByUserEmail(String email, String avatar);
+
+    UserDto findUserByRespondId(Long respondId);
 }

@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Map;
@@ -59,7 +60,17 @@ public class RespondServiceImpl implements RespondService {
     public List<RespondApplicationDto> findAllActiveResponsesByUserId(Long userId) {
         ValidatorUtil.isValidId(userId);
 
-        return respondedApplicationRepository.findActiveRespondedApplicationsByUserId(userId)
+        return respondedApplicationRepository.findRespondedApplicationsByEmployerId(userId)
+                .stream()
+                .map(respondApplicationMapper::mapToDto)
+                .toList();
+    }
+
+    @Override
+    public List<RespondApplicationDto> findAllResponsesByUserId(Long userId) {
+        ValidatorUtil.isValidId(userId);
+
+        return respondedApplicationRepository.findRespondedApplicationsByEmployerId(userId)
                 .stream()
                 .map(respondApplicationMapper::mapToDto)
                 .toList();
@@ -93,6 +104,16 @@ public class RespondServiceImpl implements RespondService {
         Map<VacancyDto, Map<ResumeDto, Boolean>> pair = convertToMapKeyAsVacancyValueAsResume(respondApplicationDtos);
 
         return RespondPageHolderWrapper.wrap(pair, respondApplicationDtos);
+    }
+
+    @Override
+    public List<RespondApplicationDto> findUserResponds() {
+        return respondedApplicationRepository.findAllRespondedApplicationsByUserEmail(
+                authorizedUserService.getAuthentication().getName()
+        )
+                .stream()
+                .map(respondApplicationMapper::mapToDto)
+                .toList();
     }
 
     @Override
@@ -141,5 +162,30 @@ public class RespondServiceImpl implements RespondService {
                 .stream()
                 .map(respondApplicationMapper::mapToDto)
                 .toList();
+    }
+
+    @Override
+    public boolean isRespondExistById(Long respondId) {
+        Assert.notNull(respondId, "respondId cannot be null");
+        return respondedApplicationRepository.existsById(respondId);
+    }
+
+    @Override
+    public List<RespondApplicationDto> findAllRespondsByVacancyId(Long vacancyId) {
+        Assert.notNull(vacancyId, "vacancy id cannot be null");
+
+        return respondedApplicationRepository.findAllRespondedApplicationsByVacancyId(vacancyId)
+                .stream()
+                .map(respondApplicationMapper::mapToDto)
+                .toList();
+    }
+
+    @Override
+    public Long findRespondIdByVacancyIdAndResumeId(Long vacancyId, Long resumeId) {
+        Assert.isTrue(vacancyId != null && resumeId != null, "vacancyId and resumeId cannot be null");
+
+        return respondedApplicationRepository.findRespondedApplicationByVacancyIdAndResumeId(vacancyId, resumeId)
+                .map(RespondedApplication::getId)
+                .orElseThrow(() -> new NoSuchElementException("respond not found by"));
     }
 }

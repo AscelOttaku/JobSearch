@@ -155,6 +155,11 @@ public class UserController {
         return userService.getAvatarOfAuthorizedUser();
     }
 
+    @GetMapping("avatar/{avatar}")
+    public ResponseEntity<?> getAvatar(@PathVariable String avatar) throws IOException {
+        return userService.getAvatar(avatar);
+    }
+
     @GetMapping("profile/{userId}")
     public String getUserInfo(@PathVariable Long userId, Model model) {
         model.addAttribute("job_seeker", userService.findUserById(userId));

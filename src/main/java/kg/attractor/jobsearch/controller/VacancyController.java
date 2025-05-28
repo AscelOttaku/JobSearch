@@ -27,6 +27,7 @@ public class VacancyController {
     private final CategoryService categoryService;
     private final AuthorizedUserService authorizedUserService;
     private final FavoritesService favoritesService;
+    private final RespondService respondService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -69,6 +70,7 @@ public class VacancyController {
     @ResponseStatus(HttpStatus.OK)
     public String findVacancyById(@PathVariable Long vacancyId, Model model) {
         model.addAttribute("vacancy", vacancyService.findVacancyById(vacancyId));
+        model.addAttribute("responds", respondService.findAllRespondsByVacancyId(vacancyId));
         return "vacancies/vacancy";
     }
 

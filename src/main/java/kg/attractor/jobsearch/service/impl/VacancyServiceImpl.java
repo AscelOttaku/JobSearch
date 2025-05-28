@@ -10,12 +10,15 @@ import kg.attractor.jobsearch.enums.FilterType;
 import kg.attractor.jobsearch.exceptions.EntityNotFoundException;
 import kg.attractor.jobsearch.exceptions.VacancyNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
-import kg.attractor.jobsearch.strategy.vacancies.UserVacancyFilterStrategy;
-import kg.attractor.jobsearch.strategy.vacancies.VacancyFilterStrategy;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.model.Vacancy;
 import kg.attractor.jobsearch.repository.VacancyRepository;
-import kg.attractor.jobsearch.service.*;
+import kg.attractor.jobsearch.service.AuthorizedUserService;
+import kg.attractor.jobsearch.service.CategoryService;
+import kg.attractor.jobsearch.service.SkillService;
+import kg.attractor.jobsearch.service.VacancyService;
+import kg.attractor.jobsearch.strategy.vacancies.UserVacancyFilterStrategy;
+import kg.attractor.jobsearch.strategy.vacancies.VacancyFilterStrategy;
 import kg.attractor.jobsearch.validators.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -285,5 +289,14 @@ public class VacancyServiceImpl implements VacancyService {
                 .stream()
                 .map(vacancyMapper::mapToDto)
                 .toList();
+    }
+
+    @Override
+    public VacancyDto findVacancyByRespondId(Long respondId) {
+        Assert.notNull(respondId, "Respond id cannot be null");
+
+        return vacancyRepository.findVacancyByRespondedApplicationId(respondId)
+                .map(vacancyMapper::mapToDto)
+                .orElseThrow(() -> new NoSuchElementException("vacancy not found by " + respondId));
     }
 }
