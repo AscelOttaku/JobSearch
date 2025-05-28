@@ -1,5 +1,11 @@
 <#import "../layout.ftlh" as layout>
 
+<script>
+    setInterval(() => {
+        location.reload();
+    }, 8000);
+</script>
+
 <@layout.layout ; spring>
     <#include "../layout/navbar.ftlh">
 
