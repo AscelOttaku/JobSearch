@@ -87,24 +87,12 @@
                             <i class="bi bi-clock-history me-1"></i> <@spring.message "profile"/>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/search">
+                            <i class="bi bi-search me-1"></i> <@spring.message "layout.navbar.search_fun"/>
+                        </a>
+                    </li>
                 </ul>
-
-                <div class="d-flex">
-                    <form class="d-flex me-3" action="#" method="get" id="searchForm" onsubmit="return false;">
-                        <div class="input-group">
-                            <input id="searchInput" class="form-control" type="search" name="query"
-                                   placeholder="Поиск..."
-                                   aria-label="Search" autocomplete="off">
-                            <button class="btn btn-outline-light" type="button" id="clearSearchBtn"
-                                    style="display:none;">
-                                <i class="bi bi-x-circle"></i>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-                <div id="searchResults" class="search-results-dropdown"
-                     style="position:absolute; background:#fff; border:1px solid #ccc; z-index:1000; display:none; max-height:300px; overflow-y:auto;"></div>
 
                 <#if user??>
                     <div class="dropdown">
@@ -162,5 +150,4 @@
     </nav>
 
     <script src="/static/scripts/vacancy/vacancies-filter.js"></script>
-    <script src="/static/scripts/vacancy/search_vacancies.js"></script>
 </@layout.layout>
