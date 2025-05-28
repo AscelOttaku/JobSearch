@@ -214,4 +214,12 @@ public class ResumeServiceImpl implements ResumeService {
                 .map(resumeMapper::mapToDto)
                 .orElseThrow(() -> new NoSuchElementException("resume not found"));
     }
+
+    @Override
+    public String findResumeNameByRespondId(Long respondId) {
+        Assert.notNull(respondId, "Respond id cannot be null");
+
+        return resumeRepository.findResumeNameByRespondId(respondId)
+                .orElseThrow(() -> new NoSuchElementException("resume name not found"));
+    }
 }

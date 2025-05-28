@@ -38,4 +38,6 @@ public interface ResumeService {
     PageHolder<ResumeDto> findRespondedToVacancyResumes(Long vacancyId, int page, int size);
 
     ResumeDto findResumeByRespondId(Long respondId);
+
+    String findResumeNameByRespondId(Long respondId);
 }

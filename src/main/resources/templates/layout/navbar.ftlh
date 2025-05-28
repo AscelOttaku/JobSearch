@@ -87,7 +87,7 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="/messages/job_seeker">
-                                    <i class="bi bi-file-earmark-text me-1"></i> <@spring.message "messages"/>
+                                    <i class="bi bi-chat-dots me-1"></i> <@spring.message "messages"/>
                                 </a>
                             </li>
                         </#if>

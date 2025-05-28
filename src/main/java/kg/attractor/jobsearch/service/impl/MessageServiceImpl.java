@@ -24,6 +24,7 @@ public class MessageServiceImpl implements MessageService {
     private final AuthorizedUserService authorizedUserService;
     private final VacancyService vacancyService;
     private final UserService userService;
+    private final ResumeService resumeService;
 
     @Override
     public MessageDto saveMessage(MessageDto messageDto) {
@@ -93,6 +94,7 @@ public class MessageServiceImpl implements MessageService {
         messageOutputDtos.forEach(messageOutputDto -> {
             messageOutputDto.setUserDto(userService.findUserByRespondId(messageOutputDto.getRespondedApplicationId()));
             messageOutputDto.setVacancyDto(vacancyService.findVacancyByRespondId(messageOutputDto.getRespondedApplicationId()));
+            messageOutputDto.setResumeName(resumeService.findResumeNameByRespondId(messageOutputDto.getRespondedApplicationId()));
         });
         return messageOutputDtos;
     }

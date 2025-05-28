@@ -12,4 +12,5 @@ public class MessageOutputDto {
     private Long respondedApplicationId;
     private UserDto userDto;
     private VacancyDto vacancyDto;
+    private String resumeName;
 }

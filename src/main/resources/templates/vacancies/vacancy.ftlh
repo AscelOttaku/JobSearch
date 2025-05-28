@@ -194,7 +194,7 @@
                     </a>
                 <#else>
                     <a href="/resumes/users/actives/${vacancy.vacancyId}" class="btn btn-sm btn-outline-primary">
-                        <i class="bi bi-send"></i> <@spring.message "vacancy.response.with.resume"/>
+                        <i class="bi bi-chat-dots me-1"></i> <@spring.message "vacancy.response.with.resume"/>
                     </a>
                 </#if>
 

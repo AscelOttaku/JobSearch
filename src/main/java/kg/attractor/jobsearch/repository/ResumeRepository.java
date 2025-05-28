@@ -46,4 +46,9 @@ public interface ResumeRepository extends JpaRepository<Resume, Long> {
             "left join RespondedApplication ra on ra.resume.id = r.id " +
             "where ra.id = :respondId")
     Optional<Resume> findResumeByRespondId(Long respondId);
+
+    @Query("select r.name from Resume r " +
+            "left join RespondedApplication ra on ra.resume.id = r.id " +
+            "where ra.id = :respondId")
+    Optional<String> findResumeNameByRespondId(Long respondId);
 }
