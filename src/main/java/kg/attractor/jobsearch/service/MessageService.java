@@ -12,5 +12,7 @@ public interface MessageService {
 
     List<MessageDto> findMessagesByResumeIdAndVacancyId(Long resumeId, Long vacancyId);
 
-    List<MessageOutputDto> findUserMessages();
+    List<MessageOutputDto> findEmployerMessages();
+
+    List<MessageOutputDto> findJobSeekerMessages();
 }

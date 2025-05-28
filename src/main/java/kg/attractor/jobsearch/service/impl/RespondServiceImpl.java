@@ -67,10 +67,22 @@ public class RespondServiceImpl implements RespondService {
     }
 
     @Override
-    public List<RespondApplicationDto> findAllResponsesByUserId(Long userId) {
+    public List<RespondApplicationDto> findAllResponsesByEmployerId(Long userId) {
         ValidatorUtil.isValidId(userId);
 
         return respondedApplicationRepository.findRespondedApplicationsByEmployerId(userId)
+                .stream()
+                .map(respondApplicationMapper::mapToDto)
+                .toList();
+    }
+
+    @Override
+    public List<RespondApplicationDto> findAllResponsesByJobSeekerId(Long userId) {
+        ValidatorUtil.isValidId(userId);
+
+        return respondedApplicationRepository.findAllRespondedApplicationsByJobSeekerId(
+                authorizedUserService.getAuthorizedUserId()
+        )
                 .stream()
                 .map(respondApplicationMapper::mapToDto)
                 .toList();

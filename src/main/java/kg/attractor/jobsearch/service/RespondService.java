@@ -9,7 +9,9 @@ public interface RespondService {
 
     List<RespondApplicationDto> findAllActiveResponsesByUserId(Long resumeId);
 
-    List<RespondApplicationDto> findAllResponsesByUserId(Long userId);
+    List<RespondApplicationDto> findAllResponsesByEmployerId(Long userId);
+
+    List<RespondApplicationDto> findAllResponsesByJobSeekerId(Long userId);
 
     RespondApplicationDto findRespondById(Long respondId);
 

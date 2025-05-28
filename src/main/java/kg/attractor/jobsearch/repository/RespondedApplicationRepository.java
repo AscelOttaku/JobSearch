@@ -38,6 +38,12 @@ public interface RespondedApplicationRepository extends JpaRepository<RespondedA
     List<RespondedApplication> findAllRespondedApplicationsByUserEmail(String email);
 
     @Query("select ra from RespondedApplication ra " +
+            "join Resume r on r.id = ra.resume.id " +
+            "join User u on u.userId = r.user.userId " +
+            "where u.userId = :userId")
+    List<RespondedApplication> findAllRespondedApplicationsByJobSeekerId(Long userId);
+
+    @Query("select ra from RespondedApplication ra " +
             "join Vacancy v on v.id = ra.vacancy.id " +
             "join User u on u.userId = v.user.userId " +
             "where u.email ilike :email")

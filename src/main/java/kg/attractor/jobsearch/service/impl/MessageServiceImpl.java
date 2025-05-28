@@ -62,12 +62,26 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<MessageOutputDto> findUserMessages() {
-        List<Long> allResponds = respondService.findAllResponsesByUserId(authorizedUserService.getAuthorizedUserId())
+    public List<MessageOutputDto> findEmployerMessages() {
+        List<Long> allResponds = respondService.findAllResponsesByEmployerId(authorizedUserService.getAuthorizedUserId())
                 .stream()
                 .map(RespondApplicationDto::getId)
                 .toList();
 
+        return findAllMessagesByRespondedApplicationIds(allResponds);
+    }
+
+    @Override
+    public List<MessageOutputDto> findJobSeekerMessages() {
+        List<Long> allResponds = respondService.findAllResponsesByJobSeekerId(authorizedUserService.getAuthorizedUserId())
+                .stream()
+                .map(RespondApplicationDto::getId)
+                .toList();
+
+        return findAllMessagesByRespondedApplicationIds(allResponds);
+    }
+
+    private List<MessageOutputDto> findAllMessagesByRespondedApplicationIds(List<Long> allResponds) {
         List<MessageOutputDto> messageOutputDtos = messageRepository.findAllMessagesByRespondedApplicationIds(allResponds)
                 .stream()
                 .map(message -> MessageOutputDto.builder()
@@ -80,7 +94,6 @@ public class MessageServiceImpl implements MessageService {
             messageOutputDto.setUserDto(userService.findUserByRespondId(messageOutputDto.getRespondedApplicationId()));
             messageOutputDto.setVacancyDto(vacancyService.findVacancyByRespondId(messageOutputDto.getRespondedApplicationId()));
         });
-
         return messageOutputDtos;
     }
 }

@@ -62,8 +62,14 @@ public class MessageController {
     }
 
     @GetMapping("users")
-    public String findAllMessages(Model model) {
-        model.addAttribute("messages", messageService.findUserMessages());
+    public String findAllMessagesForEmployer(Model model) {
+        model.addAttribute("messages", messageService.findEmployerMessages());
+        return "messages/messages_users";
+    }
+
+    @GetMapping("job_seeker")
+    public String findAllMessagesForJobSeeker(Model model) {
+        model.addAttribute("messages", messageService.findJobSeekerMessages());
         return "messages/messages_users";
     }
 }

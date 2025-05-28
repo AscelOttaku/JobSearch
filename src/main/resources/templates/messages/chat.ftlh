@@ -1,5 +1,11 @@
 <#import "../layout.ftlh" as layout>
 
+<script>
+    setInterval(() => {
+        location.reload();
+    }, 8000);
+</script>
+
 <@layout.layout ; spring>
     <#include "../layout/navbar.ftlh">
 
@@ -114,7 +120,7 @@
                         </#if>
                     <#else>
                         <input type="hidden" name="vacancyId" value="${vacancy.vacancyId}">
-                        <input type="hidden" name="resumeId" value="${currentUser.userId}">
+                        <input type="hidden" name="resumeId" value="${resumeId}">
                     </#if>
 
                     <input type="text" name="content" class="form-control" placeholder="Введите сообщение..." required>
