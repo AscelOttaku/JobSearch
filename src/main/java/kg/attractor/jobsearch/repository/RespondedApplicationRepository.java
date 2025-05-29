@@ -14,13 +14,7 @@ import java.util.Optional;
 public interface RespondedApplicationRepository extends JpaRepository<RespondedApplication, Long> {
 
     @Query("select ra from RespondedApplication ra " +
-            "                JOIN Resume r ON r.id = ra.resume.id " +
-            "                JOIN User u ON u.userId = r.user.userId " +
-            "                where u.userId = :userId And ra.confirmation = TRUE")
-    List<RespondedApplication> findActiveRespondedApplicationsByUserId(Long userId);
-
-    @Query("select ra from RespondedApplication ra " +
-            "                JOIN Vacancy v ON v.id = ra.resume.id " +
+            "                JOIN Vacancy v ON v.id = ra.vacancy.id " +
             "                JOIN User u ON u.userId = v.user.userId " +
             "                where u.userId = :userId")
     List<RespondedApplication> findRespondedApplicationsByEmployerId(Long userId);

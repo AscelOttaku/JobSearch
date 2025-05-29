@@ -106,8 +106,7 @@ public class SecurityConfig {
 
                                 //All Other Endpoints
 
-                                .requestMatchers("/static/css/*")
-                                .permitAll()
+                                .requestMatchers("/static/css/*").permitAll()
 
                                 .anyRequest().permitAll())
 

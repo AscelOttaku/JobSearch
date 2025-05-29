@@ -22,6 +22,23 @@
                 <i class="bi bi-briefcase"></i> <@spring.message "vacancies.available_vacancies"/>
             </h1>
 
+            <div class="dropdown">
+                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="categoryDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-tags"></i> <@spring.message "category_filter"/>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
+                    <#list categories as category>
+                        <li>
+                            <a class="dropdown-item"
+                               href="/vacancies/sort?categoryName=${category.name}&page=0&size=${vacancies.size}&categoryId=${category.id}">
+                                ${category.name}
+                            </a>
+                        </li>
+                    </#list>
+                </ul>
+            </div>
+
             <div class="sorting-controls">
                 <div class="sort-dropdown">
                     <div class="dropdown">

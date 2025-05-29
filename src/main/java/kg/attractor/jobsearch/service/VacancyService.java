@@ -41,9 +41,13 @@ public interface VacancyService {
 
     PageHolder<VacancyDto> filterVacancies(int page, int size, FilterType filterType);
 
+    PageHolder<VacancyDto> filterVacanciesByCategoryName(String categoryNam, int page, int size);
+
     PageHolder<VacancyDto> filterUserVacancies(int page, int size, FilterType filterType);
 
     List<VacancyDto> searchVacancies(String query);
 
     VacancyDto findVacancyByRespondId(Long respondId);
+
+    PageHolder<VacancyDto> findAllUserRespondedVacanciesByResumeId(Long resumeId, int page, int size);
 }

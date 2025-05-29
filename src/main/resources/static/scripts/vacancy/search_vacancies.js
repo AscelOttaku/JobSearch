@@ -11,7 +11,7 @@ searchInput.addEventListener('input', function () {
     }
     clearSearchBtn.style.display = 'inline-block';
 
-    fetch(`/vacancies/search?query=${encodeURIComponent(query)}`)
+    fetch(`/api/vacancies/search?query=${encodeURIComponent(query)}`)
         .then(response => response.json())
         .then(data => {
             if (data.length === 0) {

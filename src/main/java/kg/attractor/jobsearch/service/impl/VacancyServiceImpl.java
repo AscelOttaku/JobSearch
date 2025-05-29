@@ -256,6 +256,16 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
+    public PageHolder<VacancyDto> filterVacanciesByCategoryName(String categoryNam, int page, int size) {
+        Assert.notNull(categoryNam, "Category name cannot be empty");
+
+        Page<VacancyDto> vacancyByCategoryName = vacancyRepository.findVacancyByCategoryName(categoryNam, PageRequest.of(page, size))
+                .map(vacancyMapper::mapToDto);
+
+        return pageHolderWrapper.wrapPageHolder(vacancyByCategoryName);
+    }
+
+    @Override
     public PageHolder<VacancyDto> filterUserVacancies(int page, int size, FilterType filterType) {
         Assert.notNull(filterType, "filter type must not be null");
 
@@ -298,5 +308,18 @@ public class VacancyServiceImpl implements VacancyService {
         return vacancyRepository.findVacancyByRespondedApplicationId(respondId)
                 .map(vacancyMapper::mapToDto)
                 .orElseThrow(() -> new NoSuchElementException("vacancy not found by " + respondId));
+    }
+
+    @Override
+    public PageHolder<VacancyDto> findAllUserRespondedVacanciesByResumeId(Long resumeId, int page, int size) {
+        Assert.notNull(resumeId, "Resume id cannot be null");
+
+        UserDto authUserDto = authorizedUserService.getAuthorizedUser();
+        Assert.isTrue(authUserDto.getAccountType().equals("EMPLOYER"), "user account type should be equals employer");
+
+        Page<VacancyDto> userRespondedVacancies = vacancyRepository.findUserRespondedVacancies(resumeId, authUserDto.getUserId(), PageRequest.of(page, size))
+                .map(vacancyMapper::mapToDto);
+
+        return pageHolderWrapper.wrapPageHolder(userRespondedVacancies);
     }
 }

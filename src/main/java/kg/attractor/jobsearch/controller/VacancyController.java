@@ -6,6 +6,7 @@ import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.enums.FilterType;
 import kg.attractor.jobsearch.service.*;
+import kg.attractor.jobsearch.storage.TemporalStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -14,8 +15,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
+import java.security.SecureRandom;
 
 @Controller("vacancyController")
 @RequestMapping("/vacancies")
@@ -28,6 +30,7 @@ public class VacancyController {
     private final AuthorizedUserService authorizedUserService;
     private final FavoritesService favoritesService;
     private final RespondService respondService;
+    private final TemporalStorage temporalStorage;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -50,6 +53,7 @@ public class VacancyController {
     ) {
         model.addAttribute("vacancies", vacancyService.findAllActiveVacancies(page, size));
         model.addAttribute("favorites", favoritesService.findALlUserFavorites());
+        model.addAttribute("categories", categoryService.findAllCategories());
         return "vacancies/vacancies";
     }
 
@@ -147,13 +151,20 @@ public class VacancyController {
 
         model.addAttribute("vacancies", vacancyService.filterVacancies(page, size, filterType));
         model.addAttribute("favorites", favoritesService.findALlUserFavorites());
+        model.addAttribute("categories", categoryService.findAllCategories());
         return "vacancies/vacancies";
     }
 
-    @GetMapping("search")
-    @ResponseBody
-    public List<VacancyDto> search(@RequestParam String query) {
-        return vacancyService.searchVacancies(query);
+    @GetMapping("sort")
+    public String sortVacanciesByCategoryName(
+            @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+            @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
+            @RequestParam String categoryName,
+            Model model
+    ) {
+       model.addAttribute("vacancies", vacancyService.filterVacanciesByCategoryName(categoryName, page, size));
+       model.addAttribute("favorites", favoritesService.findALlUserFavorites());
+       return "vacancies/vacancies";
     }
 
     @GetMapping("users/filtered")
@@ -177,5 +188,16 @@ public class VacancyController {
             @RequestParam(value = "size", defaultValue = "20", required = false) Integer size
     ) {
         return "redirect:/".concat("?page" + page + "?size" + size);
+    }
+
+    @GetMapping("users/respond/{resumeId}")
+    public String findUserRespondedVacancies(
+            @PathVariable Long resumeId,
+            @RequestParam(defaultValue = "0", required = false) Integer page,
+            @RequestParam(defaultValue = "5", required = false) Integer size
+    ) {
+        PageHolder<VacancyDto> allUserRespondedVacanciesByResumeId = vacancyService.findAllUserRespondedVacanciesByResumeId(resumeId, page, size);
+        temporalStorage.addData("respondedVacancies", allUserRespondedVacanciesByResumeId);
+        return "redirect:/resumes/" + resumeId;
     }
 }

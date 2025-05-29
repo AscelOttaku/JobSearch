@@ -1,5 +1,6 @@
 package kg.attractor.jobsearch.repository;
 
+import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.model.Vacancy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -80,4 +81,11 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Long> {
             "left join RespondedApplication ra on ra.vacancy.id = v.id " +
             "where ra.id = :respondId")
     Optional<Vacancy> findVacancyByRespondedApplicationId(Long respondId);
+
+    Page<Vacancy> findVacancyByCategoryName(String categoryName, Pageable pageable);
+
+    @Query("select v from Vacancy v " +
+            "left join RespondedApplication ra on ra.vacancy.id = v.id " +
+            "where ra.resume.id = :resumeId and v.user.userId = :userId")
+    Page<Vacancy> findUserRespondedVacancies(Long resumeId, Long userId, Pageable pageable);
 }

@@ -222,4 +222,12 @@ public class ResumeServiceImpl implements ResumeService {
         return resumeRepository.findResumeNameByRespondId(respondId)
                 .orElseThrow(() -> new NoSuchElementException("resume name not found"));
     }
+
+    @Override
+    public PageHolder<ResumeDto> findAllResumesByCategoryName(String categoryName, int page, int size) {
+        Assert.notNull(categoryName, "Category name cannot be null");
+
+        Page<Resume> allResumesByCategoryName = resumeRepository.findAllResumesByCategoryName(categoryName, PageRequest.of(page, size));
+        return pageHolderWrapper.wrapPageHolderResumes(allResumesByCategoryName);
+    }
 }

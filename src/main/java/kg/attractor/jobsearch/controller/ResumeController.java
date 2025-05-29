@@ -2,7 +2,9 @@ package kg.attractor.jobsearch.controller;
 
 import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.ResumeDto;
+import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.service.*;
+import kg.attractor.jobsearch.storage.TemporalStorage;
 import kg.attractor.jobsearch.validators.ResumeValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,6 +13,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("resumes")
@@ -24,6 +28,7 @@ public class ResumeController {
     private final VacancyService vacancyService;
     private final WorkExperienceInfoService workExperienceInfoService;
     private final EducationInfoService educationInfoService;
+    private final TemporalStorage temporalStorage;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -34,6 +39,7 @@ public class ResumeController {
     ) {
         PageHolder<ResumeDto> resumeDtos = resumeService.findAllResumes(page, size);
         model.addAttribute("pageResume", resumeDtos);
+        model.addAttribute("categories", categoryService.findAllCategories());
         return "resumes/resumes";
     }
 
@@ -72,6 +78,11 @@ public class ResumeController {
     @ResponseStatus(HttpStatus.OK)
     public String findResumeById(@PathVariable Long resumeId, Model model) {
         model.addAttribute("resume", resumeService.findResumeById(resumeId));
+
+        if (temporalStorage.isDataExist("respondedVacancies"))
+            model.addAttribute("respondedVacancies", temporalStorage.getTemporalData("respondedVacancies", PageHolder.class));
+
+        temporalStorage.removeTemporalData("respondedVacancies");
         return "resumes/resume";
     }
 
@@ -160,6 +171,18 @@ public class ResumeController {
         model.addAttribute("vacancy", vacancyService.findVacancyById(vacancyId));
         model.addAttribute("respondedPageResumes", pageResume);
         return "vacancies/vacancy";
+    }
+
+    @GetMapping("sort")
+    public String findResumeByCategory(
+            @RequestParam String categoryName,
+            @RequestParam(defaultValue = "0", required = false) Integer page,
+            @RequestParam(defaultValue = "5", required = false) Integer size,
+            Model model
+    ) {
+        model.addAttribute("pageResume", resumeService.findAllResumesByCategoryName(categoryName, page, size));
+        model.addAttribute("categories", categoryService.findAllCategories());
+        return "resumes/resumes";
     }
 }
 

@@ -178,9 +178,34 @@
                                     </form>
                                 </#if>
 
-                                <a href="/users/profile/${resume.userId}" class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-eye"></i> <@spring.message "more.info"/>
-                                </a>
+                                 <#if authorizedUser?? && authorizedUser.accountType == 'EMPLOYER'>
+                                     <#if respondedVacancies??>
+                                         <form id="chatForm" onsubmit="redirectToChat(event)">
+                                             <div class="mb-3">
+                                                 <label for="resumeSelect" class="form-label">Выберите резюме для чата:</label>
+                                                 <select id="resumeSelect" class="form-select" required>
+                                                     <#list respondedVacancies.content as vacancy>
+                                                         <#if vacancy.vacancyId?? && resume.id??>
+                                                             <option value="${resume.id}-${vacancy.vacancyId}">Резюме ${resume.name}</option>
+                                                         <#else>
+                                                             <option disabled>нету вакансий на которые был выпонен отклик</option>
+                                                         </#if>
+                                                     </#list>
+                                                 </select>
+                                             </div>
+                                             <button type="submit" class="btn btn-primary">Перейти к чату</button>
+                                         </form>
+                                     <#else>
+                                         <a href="/vacancies/users/respond/${resume.id}" class="btn btn-sm btn-outline-primary">
+                                             <i class="bi bi-send"></i> <@spring.message "chat"/>
+                                         </a>
+                                     </#if>
+                                 </#if>
+                               <div>
+                                   <a href="/users/profile/${resume.userId}" class="btn btn-sm btn-outline-primary">
+                                       <i class="bi bi-eye"></i> <@spring.message "more.info"/>
+                                   </a>
+                               </div>
                             </div>
                         </div>
                     </div>
@@ -189,6 +214,17 @@
         </div>
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('chatForm');
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+                const select = document.getElementById('resumeSelect');
+                const [resumeId, vacancyId] = select.value.split('-');
+                window.location.href = `/messages/chat/` + resumeId + '/' + vacancyId;
+            });
+        });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </@layout.layout>

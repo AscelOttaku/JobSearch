@@ -88,10 +88,17 @@
                 <#list messages as msg>
                     <div class="message">
                         <div class="message-content">
-                            <#if msg.userDto.avatar?contains('https')>
-                                <img class="avatar" src="${msg.userDto.avatar}" alt="avatar">
+                            <#if msg.userDto.avatar?? && msg.userDto.avatar?has_content>
+                                <#if msg.userDto.avatar?contains("https")>
+                                    <img class="avatar" src="${msg.userDto.avatar}" alt="avatar">
+                                <#else>
+                                    <img class="avatar" src="/users/avatar/${msg.userDto.avatar}" alt="avatar">
+                                </#if>
                             <#else>
-                                <img class="avatar" src="/users/avatar/${msg.userDto.avatar}" alt="avatar">
+                                <div class="profile-avatar rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white mx-auto"
+                                     style="width: 40px; height: 40px; font-size: 18px;">
+                                    <i class="bi bi-person-fill"></i>
+                                </div>
                             </#if>
                             <div>
                                 <div class="content">

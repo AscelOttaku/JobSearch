@@ -30,6 +30,18 @@ public class PageHolderWrapper {
                 .build();
     }
 
+    public <T> PageHolder<T> wrapPageHolder(Page<T> content) {
+        return PageHolder.<T>builder()
+                .content(content.getContent())
+                .page(content.getNumber())
+                .size(content.getSize())
+                .totalPages(content.getTotalPages())
+                .hasNextPage(content.hasNext())
+                .hasPreviousPage(content.hasPrevious())
+                .filterType(null)
+                .build();
+    }
+
     public PageHolder<ResumeDto> wrapPageHolderResumes(Page<Resume> resumes) {
         return PageHolder.<ResumeDto>builder()
                 .content(resumes.stream()
