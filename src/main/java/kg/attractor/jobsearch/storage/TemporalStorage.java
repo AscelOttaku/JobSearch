@@ -1,6 +1,7 @@
 package kg.attractor.jobsearch.storage;
 
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +17,11 @@ public class TemporalStorage {
             throw new IllegalArgumentException("key is null or blank or value is null");
 
         this.temporalData.put(key, value);
+    }
+
+    public boolean isDataExist(String key) {
+        Assert.notNull(key, "key is null");
+        return this.temporalData.containsKey(key);
     }
 
     public <T> T getTemporalData(String key, Class<T> type) {

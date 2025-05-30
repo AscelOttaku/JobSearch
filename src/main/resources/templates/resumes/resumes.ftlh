@@ -12,6 +12,23 @@
             <i class="bi bi-file-earmark-text"></i><@spring.message "resumes.list.title"/>
         </h1>
 
+        <div class="dropdown mb-4">
+            <button class="btn btn-outline-primary dropdown-toggle" type="button" id="categoryDropdown"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-tags"></i> <@spring.message "category_filter"/>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
+                <#list categories as category>
+                    <li>
+                        <a class="dropdown-item"
+                           href="/resumes/sort?categoryName=${category.name}&page=0&size=${pageResume.size}&categoryId=${category.id}">
+                            ${category.name}
+                        </a>
+                    </li>
+                </#list>
+            </ul>
+        </div>
+
         <#list pageResume.content as resume>
             <div class="resume-card">
                 <div class="resume-header">

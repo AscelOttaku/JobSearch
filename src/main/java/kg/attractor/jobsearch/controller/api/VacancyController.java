@@ -77,4 +77,10 @@ public class VacancyController {
     ) {
         return vacancyService.findAllVacancies(page, size);
     }
+
+    @GetMapping("search")
+    @ResponseStatus(HttpStatus.OK)
+    public List<VacancyDto> search(@RequestParam String query) {
+        return vacancyService.searchVacancies(query);
+    }
 }

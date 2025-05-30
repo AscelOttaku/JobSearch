@@ -18,9 +18,10 @@
             <div class="resume-card">
                 <div class="resume-header">
                     <h2 class="resume-title">${resume.name}</h2>
-                    <span class="resume-status ${resume.active?string('text-bg-success', 'text-bg-secondary')}">
-                    ${resume.active?string('<@spring.message "active"/>', '<@spring.message "inactive"/>')}
-                </span>
+                    <span class="badge ${resume.active?string('bg-success', 'bg-secondary')}">
+                             <span ${resume.active?string('text-bg-success', 'text-bg-secondary')}">
+                             <@spring.message "${resume.active?string('active', 'inactive')}"/>
+                             </span>
                 </div>
 
                 <div class="resume-meta">
@@ -28,7 +29,8 @@
                         <i class="bi bi-briefcase"></i><@spring.message "category"/>: ${resume.categoryName!''}
                     </div>
                     <div class="meta-item">
-                        <i class="bi bi-cash-coin"></i><@spring.message "salary"/>: ${resume.salary} <@spring.message "currency"/>
+                        <i class="bi bi-cash-coin"></i><@spring.message "salary"/>
+                        : ${resume.salary} <@spring.message "currency"/>
                     </div>
                 </div>
 

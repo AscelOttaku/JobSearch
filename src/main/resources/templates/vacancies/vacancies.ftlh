@@ -1,6 +1,15 @@
 <#import "../layout.ftlh" as layout>
 
 <@layout.layout ; spring>
+    <header>
+        <script id="authorizedUser">
+            <#if authorizedUser??>
+            window.currentUser = "${authorizedUser.email?js_string}";
+            <#else>
+            window.currentUser = null;
+            </#if>
+        </script>
+    </header>
 
     <link rel="stylesheet" href="/static/css/vacancy.css">
 
@@ -8,10 +17,27 @@
     <#include "../layout/navbar.ftlh">
 
     <div class="vacancy-container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div id="searchResult" class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="page-title">
                 <i class="bi bi-briefcase"></i> <@spring.message "vacancies.available_vacancies"/>
             </h1>
+
+            <div class="dropdown">
+                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="categoryDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-tags"></i> <@spring.message "category_filter"/>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
+                    <#list categories as category>
+                        <li>
+                            <a class="dropdown-item"
+                               href="/vacancies/sort?categoryName=${category.name}&page=0&size=${vacancies.size}&categoryId=${category.id}">
+                                ${category.name}
+                            </a>
+                        </li>
+                    </#list>
+                </ul>
+            </div>
 
             <div class="sorting-controls">
                 <div class="sort-dropdown">
@@ -22,7 +48,7 @@
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="sortDropdown">
                             <li><a onclick="onClickFilter(event)" class="dropdown-item"
-                                   href="/vacancies/actives?page=${vacancies.page}&size=${vacancies.size}">
+                                   href="/vacancies/actives?page=${vacancies.page}&size=${vacancies.size}&filterType=NEW">
                                     <i class="bi bi-arrow-down"></i> <@spring.message "new_first"/></a></li>
                             <li><a onclick="onClickFilter(event)" class="dropdown-item"
                                    href="/vacancies/filtered?page=${vacancies.page}&size=${vacancies.size}&filterType=OLD">
@@ -38,7 +64,7 @@
                                     <i class="bi bi-chat-left-dots"></i> <@spring.message "by_responses_quantity"/></a>
                             </li>
                             <li><a onclick="onClickFilter(event)" class="dropdown-item"
-                                   href="/vacancies/filtered?page=${vacancies.page}&size=${vacancies.size}&filterType=FAVORITES">
+                                   href="/vacancies/filtered?page=${vacancies.page}&size=${vacancies.size}&filterType=FAVORITE_VACANCIES">
                                     <i class="bi bi-star"></i> <@spring.message "by_favorites"/></a>
                             </li>
                         </ul>
@@ -99,11 +125,11 @@
                             </form>
                         </#if>
 
-                        <#if vacancy.favoritesDtos??>
+                        <#if favorites??>
                         <#assign isFavorite = false>
 
                         <#assign isFavorite = false>
-                        <#list vacancy.favoritesDtos as fav>
+                        <#list favorites as fav>
                             <#if fav.vacancyId == vacancy.vacancyId>
                                 <#assign isFavorite = true>
                                 <#break>
@@ -111,7 +137,7 @@
                         </#list>
 
                         <#if isFavorite>
-                        <form action="/favorites/delete/${vacancy.favoritesDtos?filter(fav -> fav.vacancyId == vacancy.vacancyId)[0].id}"
+                        <form action="/favorites/delete/${favorites?filter(fav -> fav.vacancyId == vacancy.vacancyId)[0].id}"
                               method="post" class="d-inline">
                             <#else>
                             <form action="/favorites" method="post" class="d-inline">
@@ -141,7 +167,7 @@
                                     </#if>
                                 </div>
                             </#if>
-                        </#if>
+                            </#if>
                     </div>
                 </div>
             </div>

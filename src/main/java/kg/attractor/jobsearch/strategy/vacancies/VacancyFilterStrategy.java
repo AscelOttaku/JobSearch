@@ -1,37 +1,28 @@
-package kg.attractor.jobsearch.factory;
+package kg.attractor.jobsearch.strategy.vacancies;
 
 import kg.attractor.jobsearch.dto.PageHolder;
-import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.dto.mapper.impl.PageHolderWrapper;
 import kg.attractor.jobsearch.enums.FilterType;
-import kg.attractor.jobsearch.model.Vacancy;
 import kg.attractor.jobsearch.repository.VacancyRepository;
-import kg.attractor.jobsearch.service.AuthorizedUserService;
-import kg.attractor.jobsearch.service.FavoritesService;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-@Component
-public class VacancyFilterFactory {
+@Service
+public class VacancyFilterStrategy {
     private final VacancyRepository vacancyRepository;
     private final PageHolderWrapper wrapper;
     private final Map<FilterType, BiFunction<Integer, Integer, PageHolder<VacancyDto>>> filterStrategies = new EnumMap<>(FilterType.class);
-    private final AuthorizedUserService authorizedUserService;
-    private final FavoritesService favoritesService;
 
-    public VacancyFilterFactory(VacancyRepository vacancyRepository, PageHolderWrapper wrapper, AuthorizedUserService authorizedUserService, FavoritesService favoritesService) {
+    public VacancyFilterStrategy(VacancyRepository vacancyRepository, PageHolderWrapper wrapper) {
         this.vacancyRepository = vacancyRepository;
         this.wrapper = wrapper;
-        this.authorizedUserService = authorizedUserService;
-        this.favoritesService = favoritesService;
         setFilterStrategies();
     }
 
@@ -67,8 +58,6 @@ public class VacancyFilterFactory {
                 FilterType.RESPONSES
         ));
 
-        filterStrategies.put(FilterType.FAVORITES, this::findUserFavoriteVacancies);
-
         filterStrategies.put(FilterType.NEW, (page, size) -> wrapper.wrapVacancies(
                 () -> vacancyRepository
                         .findAllActiveVacancies(
@@ -79,23 +68,11 @@ public class VacancyFilterFactory {
         ));
     }
 
-    private PageHolder<VacancyDto> findUserFavoriteVacancies(int page, int size) {
-        UserDto authUserDto = authorizedUserService.getAuthorizedUser();
-        Page<Vacancy> vacancies;
-        Pageable pageable = PageRequest.of(page, size);
+    public void addFilterStrategy(FilterType filterType, BiFunction<Integer, Integer, PageHolder<VacancyDto>> filterStrategy) {
+        Assert.notNull(filterType, "filterType must not be null");
+        Assert.notNull(filterStrategy, "filterStrategy must not be null");
 
-        if (authUserDto.getAccountType().equals("EMPLOYER"))
-            vacancies = vacancyRepository.findCompanyFavoriteVacancies(
-                    authUserDto.getUserId(), pageable
-            );
-        else
-            vacancies = vacancyRepository.findJobSeekerFavoriteVacancies(
-                    authUserDto.getUserId(), pageable
-            );
-
-        PageHolder<VacancyDto> vacancyDtoPageHolder = wrapper.wrapVacancies(() -> vacancies, FilterType.FAVORITES);
-        vacancyDtoPageHolder.getContent().forEach(vacancyDto -> vacancyDto.setFavoritesDtos(favoritesService.findALlUserFavorites()));
-        return vacancyDtoPageHolder;
+        filterStrategies.put(filterType, filterStrategy);
     }
 
     public PageHolder<VacancyDto> filter(int page, int size, FilterType filterType) {

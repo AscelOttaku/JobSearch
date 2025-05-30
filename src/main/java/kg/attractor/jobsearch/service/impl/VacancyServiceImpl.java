@@ -10,11 +10,15 @@ import kg.attractor.jobsearch.enums.FilterType;
 import kg.attractor.jobsearch.exceptions.EntityNotFoundException;
 import kg.attractor.jobsearch.exceptions.VacancyNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
-import kg.attractor.jobsearch.factory.VacancyFilterFactory;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.model.Vacancy;
 import kg.attractor.jobsearch.repository.VacancyRepository;
-import kg.attractor.jobsearch.service.*;
+import kg.attractor.jobsearch.service.AuthorizedUserService;
+import kg.attractor.jobsearch.service.CategoryService;
+import kg.attractor.jobsearch.service.SkillService;
+import kg.attractor.jobsearch.service.VacancyService;
+import kg.attractor.jobsearch.strategy.vacancies.UserVacancyFilterStrategy;
+import kg.attractor.jobsearch.strategy.vacancies.VacancyFilterStrategy;
 import kg.attractor.jobsearch.validators.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -40,8 +45,8 @@ public class VacancyServiceImpl implements VacancyService {
     private final AuthorizedUserService authorizedUserService;
     private final PageHolderWrapper pageHolderWrapper;
     private final SkillService skillService;
-    private final FavoritesService favoritesService;
-    private final VacancyFilterFactory vacancyFilterFactory;
+    private final VacancyFilterStrategy vacancyFilterStrategy;
+    private final UserVacancyFilterStrategy userVacancyFilterStrategy;
 
     @Override
     public VacancyDto findVacancyById(Long vacancyId) {
@@ -112,7 +117,6 @@ public class VacancyServiceImpl implements VacancyService {
         Page<Vacancy> isActiveVacancies = vacancyRepository.findIsActiveVacanciesSortedByDate(PageRequest.of(page, size));
 
         PageHolder<VacancyDto> vacancyDtoPageHolder = pageHolderWrapper.wrapVacancies(() -> isActiveVacancies, FilterType.NEW);
-        vacancyDtoPageHolder.getContent().forEach(vacancyDto -> vacancyDto.setFavoritesDtos(favoritesService.findALlUserFavorites()));
         log.warn("FilterType String value: {}", vacancyDtoPageHolder.getFilterType().name());
         return vacancyDtoPageHolder;
     }
@@ -247,6 +251,75 @@ public class VacancyServiceImpl implements VacancyService {
     public PageHolder<VacancyDto> filterVacancies(int page, int size, FilterType filterType) {
         Assert.notNull(filterType, "filterType must not be null");
 
-        return vacancyFilterFactory.filter(page, size, filterType);
+        vacancyFilterStrategy.addFilterStrategy(FilterType.FAVORITE_VACANCIES, this::findUserFavoriteVacancies);
+        return vacancyFilterStrategy.filter(page, size, filterType);
+    }
+
+    @Override
+    public PageHolder<VacancyDto> filterVacanciesByCategoryName(String categoryNam, int page, int size) {
+        Assert.notNull(categoryNam, "Category name cannot be empty");
+
+        Page<VacancyDto> vacancyByCategoryName = vacancyRepository.findVacancyByCategoryName(categoryNam, PageRequest.of(page, size))
+                .map(vacancyMapper::mapToDto);
+
+        return pageHolderWrapper.wrapPageHolder(vacancyByCategoryName);
+    }
+
+    @Override
+    public PageHolder<VacancyDto> filterUserVacancies(int page, int size, FilterType filterType) {
+        Assert.notNull(filterType, "filter type must not be null");
+
+        userVacancyFilterStrategy.initStrategies();
+        userVacancyFilterStrategy.addFilterStrategy(FilterType.FAVORITE_VACANCIES, this::findUserFavoriteVacancies);
+        return userVacancyFilterStrategy.filter(page, size, filterType);
+    }
+
+    private PageHolder<VacancyDto> findUserFavoriteVacancies(int page, int size) {
+        UserDto authUserDto = authorizedUserService.getAuthorizedUser();
+        Page<Vacancy> vacancies;
+        Pageable pageable = PageRequest.of(page, size);
+
+        if (authUserDto.getAccountType().equals("EMPLOYER"))
+            vacancies = vacancyRepository.findCompanyFavoriteVacancies(
+                    authUserDto.getUserId(), pageable
+            );
+        else
+            vacancies = vacancyRepository.findJobSeekerFavoriteVacancies(
+                    authUserDto.getUserId(), pageable
+            );
+
+        return pageHolderWrapper.wrapVacancies(() -> vacancies, FilterType.FAVORITE_VACANCIES);
+    }
+
+    @Override
+    public List<VacancyDto> searchVacancies(String query) {
+        Assert.notNull(query, "query cannot be null");
+
+        return vacancyRepository.searchVacanciesByName(query)
+                .stream()
+                .map(vacancyMapper::mapToDto)
+                .toList();
+    }
+
+    @Override
+    public VacancyDto findVacancyByRespondId(Long respondId) {
+        Assert.notNull(respondId, "Respond id cannot be null");
+
+        return vacancyRepository.findVacancyByRespondedApplicationId(respondId)
+                .map(vacancyMapper::mapToDto)
+                .orElseThrow(() -> new NoSuchElementException("vacancy not found by " + respondId));
+    }
+
+    @Override
+    public PageHolder<VacancyDto> findAllUserRespondedVacanciesByResumeId(Long resumeId, int page, int size) {
+        Assert.notNull(resumeId, "Resume id cannot be null");
+
+        UserDto authUserDto = authorizedUserService.getAuthorizedUser();
+        Assert.isTrue(authUserDto.getAccountType().equals("EMPLOYER"), "user account type should be equals employer");
+
+        Page<VacancyDto> userRespondedVacancies = vacancyRepository.findUserRespondedVacancies(resumeId, authUserDto.getUserId(), PageRequest.of(page, size))
+                .map(vacancyMapper::mapToDto);
+
+        return pageHolderWrapper.wrapPageHolder(userRespondedVacancies);
     }
 }

@@ -71,6 +71,7 @@ public class SecurityConfig {
                                 .requestMatchers("/users/job-seeker/*").hasAuthority(Roles.EMPLOYER.getValue())
                                 .requestMatchers("/users/upload/*").fullyAuthenticated().requestMatchers("/users/avatars").fullyAuthenticated()
                                 .requestMatchers("/users/profile/*").fullyAuthenticated()
+                                .requestMatchers(GET, "/users/avatar/*").permitAll()
                                 .requestMatchers(GET,"/users/**").hasAuthority(Roles.EMPLOYER.getValue())
 
                                 // Companies
@@ -98,10 +99,14 @@ public class SecurityConfig {
                                 .requestMatchers(POST, "/favorites").fullyAuthenticated()
                                 .requestMatchers(POST, "/favorites/delete/*").fullyAuthenticated()
 
+                                //Messages
+
+                                .requestMatchers(POST, "/messages").authenticated()
+                                .requestMatchers(GET, "/messages/*").authenticated()
+
                                 //All Other Endpoints
 
-                                .requestMatchers("/static/css/*")
-                                .permitAll()
+                                .requestMatchers("/static/css/*").permitAll()
 
                                 .anyRequest().permitAll())
 
