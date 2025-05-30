@@ -62,8 +62,8 @@ logging:
         web:
           servlet:
             DispatcherServlet: INFO
-#        file:
-#          path: logs
+  file:
+    path: logs
 
 
 
