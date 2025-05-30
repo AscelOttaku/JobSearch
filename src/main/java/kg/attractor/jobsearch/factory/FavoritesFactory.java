@@ -4,7 +4,6 @@ import kg.attractor.jobsearch.strategy.favorites.FavoriteStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.List;

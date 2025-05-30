@@ -1,19 +1,16 @@
 package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dto.PageHolder;
-import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.dto.mapper.impl.PageHolderWrapper;
 import kg.attractor.jobsearch.enums.FilterType;
 import kg.attractor.jobsearch.model.Vacancy;
 import kg.attractor.jobsearch.repository.VacancyRepository;
 import kg.attractor.jobsearch.service.AuthorizedUserService;
-import kg.attractor.jobsearch.service.FavoritesService;
 import kg.attractor.jobsearch.service.VacanciesFilterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 

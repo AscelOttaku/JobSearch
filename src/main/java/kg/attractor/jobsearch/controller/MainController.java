@@ -10,4 +10,9 @@ public class MainController {
     public String redirectToActiveVacancies() {
         return "redirect:/vacancies/actives";
     }
+
+    @GetMapping("/search")
+    public String searchPage() {
+        return "search/search";
+    }
 }

@@ -152,7 +152,8 @@
                                         <#list [pageResume.page - 1, pageResume.page, pageResume.page + 1] as p>
                                             <#if p gte 0 && p lt pageResume.totalPages>
                                                 <li class="page-item <#if p == pageResume.page>active</#if>">
-                                                    <a class="page-link" href="?page=${p}&vacancyId=${vacancy.vacancyId}">
+                                                    <a class="page-link"
+                                                       href="?page=${p}&vacancyId=${vacancy.vacancyId}">
                                                         ${p + 1}
                                                     </a>
                                                 </li>
@@ -186,17 +187,52 @@
                             </button>
                         </div>
                     </form>
+
                 <#elseif hasResumes?? && !hasResumes>
                     <a href="/resumes/new_resume" class="btn btn-sm btn-outline-primary">
                         <i class="bi bi-person-plus"></i> <@spring.message "create_resume"/>
                     </a>
-                    <#else>
+                <#else>
                     <a href="/resumes/users/actives/${vacancy.vacancyId}" class="btn btn-sm btn-outline-primary">
-                        <i class="bi bi-send"></i> <@spring.message "vacancy.response.with.resume"/>
+                        <i class="bi bi-chat-dots me-1"></i> <@spring.message "vacancy.response.with.resume"/>
+                    </a>
+                </#if>
+
+                <#if respondedPageResumes?? && respondedPageResumes.content?size gt 0>
+                    <form id="chatForm" onsubmit="redirectToChat(event)">
+                        <div class="mb-3">
+                            <label for="resumeSelect" class="form-label">Выберите резюме для чата:</label>
+                            <select id="resumeSelect" class="form-select" required>
+                                <#list respondedPageResumes.content as resume>
+                                    <#if resume.id?? && vacancy.vacancyId??>
+                                        <option value="${resume.id}-${vacancy.vacancyId}">Резюме ${resume.name}</option>
+                                    <#else>
+                                        <option disabled>Ошибка: id отсутствует</option>
+                                    </#if>
+                                </#list>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Перейти к чату</button>
+                    </form>
+                <#else>
+                    <a href="/resumes/responded/vacancy/${vacancy.vacancyId}" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-send"></i> <@spring.message "chat"/>
                     </a>
                 </#if>
             </#if>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('chatForm');
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+                const select = document.getElementById('resumeSelect');
+                const [resumeId, vacancyId] = select.value.split('-');
+                window.location.href = `/messages/chat/` + resumeId + '/' + vacancyId;
+            });
+        });
+    </script>
     </body>
 </@layout.layout>

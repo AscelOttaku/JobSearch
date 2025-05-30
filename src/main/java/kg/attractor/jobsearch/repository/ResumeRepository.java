@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ResumeRepository extends JpaRepository<Resume, Long> {
@@ -29,4 +30,27 @@ public interface ResumeRepository extends JpaRepository<Resume, Long> {
             "join RespondedApplication ra on r.id = ra.resume.id " +
             "where ra.id = :respondedApplicationId and ra.vacancy.id = :vacancyId")
     List<Resume> findAlLResumesByRespondIdAndVacancyId(Long respondedApplicationId, Long vacancyId);
+
+    @Query("select r from Resume r " +
+            "left join RespondedApplication ra on ra.resume.id = r.id " +
+            "where ra.vacancy.id = :vacancyId")
+    Page<Resume> findRespondedToVacancyResumes(Long vacancyId, Pageable pageable);
+
+    @Query("select r from Resume r " +
+            "left join RespondedApplication ra on ra.resume.id = r.id " +
+            "left join Vacancy v on v.id = ra.vacancy.id " +
+            "where ra.vacancy.id in :vacancyIds")
+    List<Resume> findAllRespondedResumesByVacancyIds(List<Long> vacancyIds);
+
+    @Query("select r from Resume r " +
+            "left join RespondedApplication ra on ra.resume.id = r.id " +
+            "where ra.id = :respondId")
+    Optional<Resume> findResumeByRespondId(Long respondId);
+
+    @Query("select r.name from Resume r " +
+            "left join RespondedApplication ra on ra.resume.id = r.id " +
+            "where ra.id = :respondId")
+    Optional<String> findResumeNameByRespondId(Long respondId);
+
+    Page<Resume> findAllResumesByCategoryName(String categoryName, Pageable pageable);
 }

@@ -1,5 +1,6 @@
 package kg.attractor.jobsearch.repository;
 
+import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.model.Vacancy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface VacancyRepository extends JpaRepository<Vacancy, Long> {
@@ -71,4 +73,19 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Long> {
             "left join JobSeekerFavorites f on f.vacancy.id = v.id " +
             "where f.user.userId = :userId")
     Page<Vacancy> findJobSeekerFavoriteVacancies(Long userId, Pageable pageable);
+
+    @Query("select v from Vacancy v where lower(v.name) like lower(concat('%', :vacancyName, '%'))")
+    List<Vacancy> searchVacanciesByName(String vacancyName);
+
+    @Query("select v from Vacancy v " +
+            "left join RespondedApplication ra on ra.vacancy.id = v.id " +
+            "where ra.id = :respondId")
+    Optional<Vacancy> findVacancyByRespondedApplicationId(Long respondId);
+
+    Page<Vacancy> findVacancyByCategoryName(String categoryName, Pageable pageable);
+
+    @Query("select v from Vacancy v " +
+            "left join RespondedApplication ra on ra.vacancy.id = v.id " +
+            "where ra.resume.id = :resumeId and v.user.userId = :userId")
+    Page<Vacancy> findUserRespondedVacancies(Long resumeId, Long userId, Pageable pageable);
 }

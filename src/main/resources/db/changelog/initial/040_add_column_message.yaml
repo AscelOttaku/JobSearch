@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: 040_add_column_message.yaml
+      author: Kanybek
+      changes:
+        - addColumn:
+            tableName: messages
+            columns:
+              - column:
+                  name: message_owner_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: message_owner_id
+            baseTableName: messages
+            constraintName: message_owner_id_messages
+            onUpdate: cascade
+            onDelete: cascade
+            referencedTableName: users
+            referencedColumnNames: user_id
