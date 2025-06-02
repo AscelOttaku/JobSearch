@@ -200,4 +200,28 @@ public class RespondServiceImpl implements RespondService {
                 .map(RespondedApplication::getId)
                 .orElseThrow(() -> new NoSuchElementException("respond not found by"));
     }
+
+    @Override
+    public Long findAuthEmployerCreatedRespondsQuantity() {
+        return respondedApplicationRepository.findEmployerCreatedRespondsQuantityByEmployerId(authorizedUserService.getAuthorizedUserId())
+                .orElse(0L);
+    }
+
+    @Override
+    public Long findAuthJobSeekerCreatedRespondsQuantity() {
+        return respondedApplicationRepository.findJobSeekerCreatedRespondsQuantityByJobSeekerId(authorizedUserService.getAuthorizedUserId())
+                .orElse(0L);
+    }
+
+    @Override
+    public Long findAuthEmployerCreatedConfirmedRespondsQuantity() {
+        return respondedApplicationRepository.findEmployerCreatedConfirmedRespondsQuantityByEmployerId(authorizedUserService.getAuthorizedUserId())
+                .orElse(0L);
+    }
+
+    @Override
+    public Long findAuthJobSeekerCreatedConfirmedRespondsQuantity() {
+        return respondedApplicationRepository.findJobSeekerCreatedConfirmedRespondsQuantityByJobSeekerId(authorizedUserService.getAuthorizedUserId())
+                .orElse(0L);
+    }
 }

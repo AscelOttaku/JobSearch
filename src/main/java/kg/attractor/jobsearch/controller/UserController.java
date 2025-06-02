@@ -39,6 +39,12 @@ public class UserController {
         return "users/profile";
     }
 
+    @GetMapping("profile/statistics")
+    public String getUserStatistics(Model model) {
+        model.addAllAttributes(profileService.getStatistics());
+        return "users/statistics";
+    }
+
     @PostMapping("registration")
     public String createUser(@Valid @ModelAttribute("user") UserDto userDto, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {

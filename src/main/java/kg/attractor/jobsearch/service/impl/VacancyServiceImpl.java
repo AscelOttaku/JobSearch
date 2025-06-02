@@ -322,4 +322,10 @@ public class VacancyServiceImpl implements VacancyService {
 
         return pageHolderWrapper.wrapPageHolder(userRespondedVacancies);
     }
+
+    @Override
+    public Long findAuthUserCreatedVacanciesQuantity() {
+        return vacancyRepository.findUserCreatedVacanciesQuantity(authorizedUserService.getAuthorizedUserId())
+                .orElse(0L);
+    }
 }

@@ -30,4 +30,12 @@ public interface RespondService {
     List<RespondApplicationDto> findAllRespondsByVacancyId(Long vacancyId);
 
     Long findRespondIdByVacancyIdAndResumeId(Long vacancyId, Long resumeId);
+
+    Long findAuthEmployerCreatedRespondsQuantity();
+
+    Long findAuthJobSeekerCreatedRespondsQuantity();
+
+    Long findAuthEmployerCreatedConfirmedRespondsQuantity();
+
+    Long findAuthJobSeekerCreatedConfirmedRespondsQuantity();
 }

@@ -50,4 +50,6 @@ public interface VacancyService {
     VacancyDto findVacancyByRespondId(Long respondId);
 
     PageHolder<VacancyDto> findAllUserRespondedVacanciesByResumeId(Long resumeId, int page, int size);
+
+    Long findAuthUserCreatedVacanciesQuantity();
 }

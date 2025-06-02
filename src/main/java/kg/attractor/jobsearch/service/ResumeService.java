@@ -41,4 +41,6 @@ public interface ResumeService {
     String findResumeNameByRespondId(Long respondId);
 
     PageHolder<ResumeDto> findAllResumesByCategoryName(String categoryName, int page, int size);
+
+    Long findAuthUserCreatedResumesQuantity();
 }
