@@ -2,7 +2,6 @@ package kg.attractor.jobsearch.controller;
 
 import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.ResumeDto;
-import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.service.*;
 import kg.attractor.jobsearch.storage.TemporalStorage;
 import kg.attractor.jobsearch.validators.ResumeValidator;
@@ -13,8 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("resumes")

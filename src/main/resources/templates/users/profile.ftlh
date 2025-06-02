@@ -18,6 +18,9 @@
                     <h1 class="profile-title">
                         <i class="bi bi-person-badge me-2"></i><@spring.message "profile"/> ${user.accountType}
                     </h1>
+                    <a href="/users/profile/statistics" class="btn btn-outline-primary">
+                        <i class="bi bi-pencil-square me-2"></i><@spring.message "statistics"/>
+                    </a>
                     <a href="/users/update/profile" class="btn btn-outline-secondary">
                         <i class="bi bi-pencil-square me-2"></i><@spring.message "edit"/>
                     </a>
@@ -102,7 +105,8 @@
                                     <i class="bi bi-plus-circle me-2"></i><@spring.message "create"/>
                                 </a>
                             <#elseif user.accountType == "EMPLOYER">
-                                <a onclick="userSendUri(event)" href="/vacancies/users" class="btn btn-outline-primary me-2">
+                                <a onclick="userSendUri(event)" href="/vacancies/users"
+                                   class="btn btn-outline-primary me-2">
                                     <i class="bi bi-collection me-2"></i><@spring.message "all_vacancies"/>
                                 </a>
                                 <a href="/vacancies/new_vacancy" class="btn btn-primary">
