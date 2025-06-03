@@ -9,8 +9,6 @@ databaseChangeLog:
               - column:
                   name: message_owner_id
                   type: bigint
-                  constraints:
-                    nullable: false
 
         - addForeignKeyConstraint:
             baseColumnNames: message_owner_id

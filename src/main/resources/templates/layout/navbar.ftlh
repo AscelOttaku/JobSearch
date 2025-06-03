@@ -66,7 +66,7 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="/responds/employers">
-                                    <i class="bi bi-chat-dots me-1"></i> <@spring.message "responses"/>
+                                    <i class="bi-people"></i> <@spring.message "responses"/>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -82,7 +82,7 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="/responds/users">
-                                    <i class="bi bi-chat-dots me-1"></i> <@spring.message "responses"/>
+                                    <i class="bi-people"></i> <@spring.message "responses"/>
                                 </a>
                             </li>
                             <li class="nav-item">
