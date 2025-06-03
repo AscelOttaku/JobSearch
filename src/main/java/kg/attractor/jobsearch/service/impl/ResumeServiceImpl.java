@@ -8,6 +8,7 @@ import kg.attractor.jobsearch.enums.Roles;
 import kg.attractor.jobsearch.exceptions.ResumeNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.Resume;
+import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.repository.ResumeRepository;
 import kg.attractor.jobsearch.service.*;
 import kg.attractor.jobsearch.validators.ValidatorUtil;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
@@ -229,5 +231,11 @@ public class ResumeServiceImpl implements ResumeService {
 
         Page<Resume> allResumesByCategoryName = resumeRepository.findAllResumesByCategoryName(categoryName, PageRequest.of(page, size));
         return pageHolderWrapper.wrapPageHolderResumes(allResumesByCategoryName);
+    }
+
+    @Override
+    public Long findAuthUserCreatedResumesQuantity() {
+        return resumeRepository.findUserCreatedResumesQuantity(authorizedUserService.getAuthorizedUserId())
+                .orElse(0L);
     }
 }

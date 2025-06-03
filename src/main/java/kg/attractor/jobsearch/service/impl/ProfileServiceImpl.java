@@ -35,5 +35,25 @@ public class ProfileServiceImpl implements ProfileService {
         return model;
     }
 
+    @Override
+    public Map<String, Object> getStatistics() {
+        Map<String, Object> model = new HashMap<>();
 
+        UserDto userDto = authorizedUserService.getAuthorizedUser();
+        model.put("user", userDto);
+
+        String userAccountType = Util.convertToCamelCase(userDto.getAccountType());
+
+        if (userAccountType.equalsIgnoreCase("JobSeeker")) {
+            model.put("createdResumes", resumeService.findAuthUserCreatedResumesQuantity());
+            model.put("madeResponsesQuantity", respondService.findAuthJobSeekerCreatedRespondsQuantity());
+            model.put("madeConfirmedRespondsQuantity", respondService.findAuthJobSeekerCreatedConfirmedRespondsQuantity());
+        } else {
+            model.put("createdVacancies", vacancyService.findAuthUserCreatedVacanciesQuantity());
+            model.put("madeResponsesQuantity", respondService.findAuthEmployerCreatedRespondsQuantity());
+            model.put("madeConfirmedRespondsQuantity", respondService.findAuthEmployerCreatedConfirmedRespondsQuantity());
+        }
+
+        return model;
+    }
 }

@@ -16,7 +16,7 @@
 
     <#nested spring>
 
-    <#assign known = SPRING_SECURITY_CONTEXT?? >
+    <#assign known = SPRING_SECURITY_CONTEXT??>
     <#if known>
         <#assign
         user = SPRING_SECURITY_CONTEXT.authentication.principal

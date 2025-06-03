@@ -53,4 +53,11 @@ public interface ResumeRepository extends JpaRepository<Resume, Long> {
     Optional<String> findResumeNameByRespondId(Long respondId);
 
     Page<Resume> findAllResumesByCategoryName(String categoryName, Pageable pageable);
+
+
+    @Query(value = "select result.quantity from " +
+            "(select r.USER_ID, count(r.ID) as quantity from RESUMES r " +
+            "where r.USER_ID = :userId " +
+            "group by r.USER_ID) as result", nativeQuery = true)
+    Optional<Long> findUserCreatedResumesQuantity(Long userId);
 }

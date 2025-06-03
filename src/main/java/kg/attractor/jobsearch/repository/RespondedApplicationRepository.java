@@ -46,4 +46,21 @@ public interface RespondedApplicationRepository extends JpaRepository<RespondedA
     Optional<RespondedApplication> findRespondedApplicationByVacancyIdAndResumeId(Long vacancyId, Long resumeId);
 
     List<RespondedApplication> findAllRespondedApplicationsByVacancyId(Long vacancyId);
+
+    @Query("select count(ra.id) from RespondedApplication ra " +
+            "where ra.vacancy.user.userId = :employerId")
+    Optional<Long> findEmployerCreatedRespondsQuantityByEmployerId(Long employerId);
+
+    @Query("select count(ra.id) from RespondedApplication ra " +
+            "where ra.resume.user.userId = :jobSeekerId")
+    Optional<Long> findJobSeekerCreatedRespondsQuantityByJobSeekerId(Long jobSeekerId);
+
+    @Query("select count(ra.id) from RespondedApplication ra " +
+            "where ra.vacancy.user.userId = :employerId and ra.confirmation = true")
+    Optional<Long> findEmployerCreatedConfirmedRespondsQuantityByEmployerId(Long employerId);
+
+    @Query("select count(ra.id) from RespondedApplication ra " +
+            "where ra.resume.user.userId = :jobSeekerId and ra.confirmation = true")
+    Optional<Long> findJobSeekerCreatedConfirmedRespondsQuantityByJobSeekerId(Long jobSeekerId);
 }
+
