@@ -145,7 +145,7 @@
                                                 <label for="startDate" class="form-label">
                                                     <i class="bi bi-calendar-plus form-icon me-2"></i><@spring.message "start.date.label"/>
                                                 </label>
-                                                <@spring.formInput "resume.educationInfoDtos[${index}].startDate", 'class="form-control" type="date" placeholder="${springMacroRequestContext.getMessage("date.format")}" id="startDate"'/>
+                                                <@spring.formInput "resume.educationInfoDtos[${index}].startDate", 'class="form-control" placeholder="${springMacroRequestContext.getMessage("date.format")}", id="startDate" type="datetime-local"'/>
                                                 <@spring.showErrors "<br>" "text-danger small"/>
                                             </div>
 
