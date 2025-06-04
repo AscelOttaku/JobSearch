@@ -7,6 +7,7 @@ import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.dto.mapper.SkillMapper;
 import kg.attractor.jobsearch.model.Skill;
 import kg.attractor.jobsearch.repository.SkillRepository;
+import kg.attractor.jobsearch.service.ResumeService;
 import kg.attractor.jobsearch.service.SkillService;
 import kg.attractor.jobsearch.util.Util;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 public class SkillServiceImpl implements SkillService {
     private final SkillRepository skillRepository;
     private final SkillMapper skillMapper;
+    private final ResumeService resumeService;
 
     @Override
     public SkillDto save(SkillDto skillDto) {
@@ -151,17 +153,19 @@ public class SkillServiceImpl implements SkillService {
     }
 
     @Override
-    public Double calculateAccordingToSKillsUsersCorrespondenceToVacancy(
-            List<SkillDto> resumeSKills, List<SkillDto> vacancySkills
-    ) {
-        if (resumeSKills.isEmpty() || vacancySkills.isEmpty())
-            return 0.0;
+    public Integer calculateAccordingToSKillsUsersCorrespondenceToVacancy(List<SkillDto> vacancySkills) {
+        if (vacancySkills.isEmpty())
+            return 0;
 
-        long correspondedSKills = resumeSKills.stream()
+        List<SkillDto> resumeSkills = resumeService.findUserUsedLastResume()
+                .map(ResumeDto::getSkills)
+                .orElseGet(Collections::emptyList);
+
+        long correspondedSKills = resumeSkills.stream()
                 .filter(skillDto -> vacancySkills.stream()
                         .anyMatch(vacancySkill -> vacancySkill.getSkillName().equals(skillDto.getSkillName())))
                 .count();
 
-        return ((double) vacancySkills.size() / correspondedSKills) * 100;
+        return Math.toIntExact((vacancySkills.size() / correspondedSKills) * 100);
     }
 }

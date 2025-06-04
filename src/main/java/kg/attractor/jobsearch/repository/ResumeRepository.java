@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -60,4 +61,12 @@ public interface ResumeRepository extends JpaRepository<Resume, Long> {
             "where r.USER_ID = :userId " +
             "group by r.USER_ID) as result", nativeQuery = true)
     Optional<Long> findUserCreatedResumesQuantity(Long userId);
+
+    Optional<Resume> findResumeById(Long id);
+
+    @Query(value = "select * from RESUMES r " +
+            "join RESPONDED_APPLICATION ra on ra.RESUME_ID = r.id " +
+            "where r.USER_ID = :userId " +
+            "order by ra.id desc limit 1", nativeQuery = true)
+    Optional<Resume> findUserUsedLastResume(Long userId);
 }

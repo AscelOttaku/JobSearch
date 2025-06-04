@@ -23,7 +23,7 @@ public interface SkillService {
 
     List<SkillDto> saveNewSkills(List<SkillDto> skillDtos);
 
-    Double calculateAccordingToSKillsUsersCorrespondenceToVacancy(
-            List<SkillDto> resumeSKills, List<SkillDto> vacancySkills
+    Integer calculateAccordingToSKillsUsersCorrespondenceToVacancy(
+            List<SkillDto> vacancySkills
     );
 }

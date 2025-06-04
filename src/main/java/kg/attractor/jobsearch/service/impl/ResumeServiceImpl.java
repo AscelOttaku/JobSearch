@@ -14,19 +14,18 @@ import kg.attractor.jobsearch.service.ContactTypeService;
 import kg.attractor.jobsearch.service.ResumeService;
 import kg.attractor.jobsearch.validators.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ResumeServiceImpl implements ResumeService {
@@ -237,5 +236,14 @@ public class ResumeServiceImpl implements ResumeService {
     public Long findAuthUserCreatedResumesQuantity() {
         return resumeRepository.findUserCreatedResumesQuantity(authorizedUserService.getAuthorizedUserId())
                 .orElse(0L);
+    }
+
+    @Override
+    public Optional<ResumeDto> findUserUsedLastResume() {
+        if (!authorizedUserService.isUserAuthorized())
+            return Optional.empty();
+
+        return resumeRepository.findUserUsedLastResume(authorizedUserService.getAuthorizedUserId())
+                .map(resumeMapper::mapToDto);
     }
 }

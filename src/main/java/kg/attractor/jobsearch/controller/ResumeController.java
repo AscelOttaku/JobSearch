@@ -17,7 +17,7 @@ import org.springframework.web.bind.support.SessionStatus;
 @RequestMapping("resumes")
 @SessionAttributes({"categories"})
 @RequiredArgsConstructor
-public class ResumeController {
+public class   ResumeController {
     private final ResumeService resumeService;
     private final ResumeDetailedInfoService resumeDetailedInfoService;
     private final CategoryService categoryService;
@@ -180,6 +180,12 @@ public class ResumeController {
         model.addAttribute("pageResume", resumeService.findAllResumesByCategoryName(categoryName, page, size));
         model.addAttribute("categories", categoryService.findAllCategories());
         return "resumes/resumes";
+    }
+
+    @GetMapping("test/transact")
+    public String testTransact() {
+        resumeService.testProxy();
+        return null;
     }
 }
 

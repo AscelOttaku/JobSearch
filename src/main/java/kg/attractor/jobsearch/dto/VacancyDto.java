@@ -51,6 +51,7 @@ public class VacancyDto {
 
     private String created;
     private String updated;
+    private Integer skillCorrespondence;
 
     private List<RespondApplicationDto> respondedApplications;
     private List<@Valid SkillDto> skills;

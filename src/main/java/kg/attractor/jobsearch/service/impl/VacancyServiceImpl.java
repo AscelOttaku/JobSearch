@@ -117,6 +117,7 @@ public class VacancyServiceImpl implements VacancyService {
         Page<Vacancy> isActiveVacancies = vacancyRepository.findIsActiveVacanciesSortedByDate(PageRequest.of(page, size));
 
         PageHolder<VacancyDto> vacancyDtoPageHolder = pageHolderWrapper.wrapVacancies(() -> isActiveVacancies, FilterType.NEW);
+        vacancyDtoPageHolder.getContent().forEach(vacancyDto -> vacancyDto.setSkillCorrespondence(skillService.calculateAccordingToSKillsUsersCorrespondenceToVacancy(vacancyDto.getSkills())));
         log.warn("FilterType String value: {}", vacancyDtoPageHolder.getFilterType().name());
         return vacancyDtoPageHolder;
     }

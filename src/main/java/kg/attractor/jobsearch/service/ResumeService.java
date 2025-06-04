@@ -4,6 +4,7 @@ import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.ResumeDto;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ResumeService {
     List<ResumeDto> findAllResumes();
@@ -43,4 +44,6 @@ public interface ResumeService {
     PageHolder<ResumeDto> findAllResumesByCategoryName(String categoryName, int page, int size);
 
     Long findAuthUserCreatedResumesQuantity();
+
+    Optional<ResumeDto> findUserUsedLastResume();
 }

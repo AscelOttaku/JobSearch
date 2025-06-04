@@ -95,6 +95,16 @@
                         <i class="bi bi-clock-history"></i><@spring.message "experience"/>: ${vacancy.expFrom}
                         -${vacancy.expTo} <@spring.message "years"/>
                     </div>
+                    <div class="meta-item">
+                        <i class="bi bi-clock-history"></i>
+                        <@spring.message "correspondence"/>:
+                        <div class="progress"
+                             style="height: 20px; width: 200px; display: inline-block; vertical-align: middle; margin-left: 10px;">
+                            <div class="progress-bar bg-success" role="progressbar">
+                                ${vacancy.skillCorrespondence}%
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="vacancy-footer">
