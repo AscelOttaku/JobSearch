@@ -104,6 +104,10 @@ public class SecurityConfig {
                                 .requestMatchers(POST, "/messages").authenticated()
                                 .requestMatchers(GET, "/messages/*").authenticated()
 
+                                //Files
+
+                                .requestMatchers(GET, "/files/filePath/*").authenticated()
+
                                 //All Other Endpoints
 
                                 .requestMatchers("/static/css/*").permitAll()

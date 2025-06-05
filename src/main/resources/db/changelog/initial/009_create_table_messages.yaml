@@ -20,7 +20,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: content
-                  type: varchar(45)
+                  type: text
                   constraints:
                     nullable: false
               - column:

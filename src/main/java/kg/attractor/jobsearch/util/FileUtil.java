@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -18,7 +19,7 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 public class FileUtil {
-    private static final String DIRECTORY = "data/photos";
+    private static String directory = "data/photos";
 
     private FileUtil() {
         throw new IllegalStateException("Utility class");
@@ -26,12 +27,12 @@ public class FileUtil {
 
     public static String uploadFile(MultipartFile file) throws IOException {
         String fileName = getUniqueId() + "_" + file.getOriginalFilename();
-        Path directoryPath = Paths.get(DIRECTORY);
+        Path directoryPath = Paths.get(directory);
 
         if (!Files.isDirectory(directoryPath))
             Files.createDirectories(directoryPath);
 
-        Path filePath = Paths.get(DIRECTORY, fileName);
+        Path filePath = Paths.get(directory, fileName);
 
         if (!Files.exists(filePath))
             Files.createFile(filePath);
@@ -45,14 +46,31 @@ public class FileUtil {
         return fileName;
     }
 
+    public static String uploadFile(String filePath, MultipartFile file) throws IOException {
+        directory = filePath;
+        String path = uploadFile(file);
+
+        directory = "data/photos";
+        return path;
+    }
+
     private static String getUniqueId() {
         return UUID.randomUUID().toString();
     }
 
     @SneakyThrows
-    public static ResponseEntity<Object> getOutputFile(String filename, MediaType mediaType) {
+    public static ResponseEntity<?> getOutputFile(String filename, MediaType mediaType) {
+        return getResponseEntityForFile(filename, directory, mediaType);
+    }
+
+    @SneakyThrows
+    public static ResponseEntity<?> getOutputFile(String filename, String directory, MediaType mediaType) {
+        return getResponseEntityForFile(filename, directory, mediaType);
+    }
+
+    private static ResponseEntity<?> getResponseEntityForFile(String filename, String directoryName, MediaType mediaType) throws IOException {
         try {
-            byte[] image = Files.readAllBytes(Paths.get(DIRECTORY + "/" + filename));
+            byte[] image = Files.readAllBytes(Paths.get(directoryName + "/" + filename));
             Resource resource = new ByteArrayResource(image);
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
@@ -65,6 +83,7 @@ public class FileUtil {
     }
 
     public static MediaType defineFileType(String filePath) throws IOException {
+        Assert.notNull(filePath, "filePath must not be null");
         String fileType = Files.probeContentType(Paths.get(filePath));
         return MediaType.parseMediaType(fileType);
     }

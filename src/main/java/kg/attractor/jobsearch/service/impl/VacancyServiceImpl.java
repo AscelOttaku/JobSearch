@@ -171,8 +171,9 @@ public class VacancyServiceImpl implements VacancyService {
         Pageable pageable = PageRequest.of(page, pageSize);
 
         Page<Vacancy> vacanciesPage = vacancyRepository.findAllVacancies(pageable);
-
-        return pageHolderWrapper.wrapVacancies(() -> vacanciesPage, FilterType.NEW);
+        PageHolder<VacancyDto> vacancyDtoPageHolder = pageHolderWrapper.wrapVacancies(() -> vacanciesPage, FilterType.NEW);
+        vacancyDtoPageHolder.getContent().forEach(vacancyDto -> vacancyDto.setSkillCorrespondence(skillService.calculateAccordingToSKillsUsersCorrespondenceToVacancy(vacancyDto.getSkills())));
+        return vacancyDtoPageHolder;
     }
 
     @Override

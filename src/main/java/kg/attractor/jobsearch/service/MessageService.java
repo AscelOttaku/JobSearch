@@ -2,7 +2,9 @@ package kg.attractor.jobsearch.service;
 
 import kg.attractor.jobsearch.dto.MessageDto;
 import kg.attractor.jobsearch.dto.MessageOutputDto;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface MessageService {
@@ -15,4 +17,12 @@ public interface MessageService {
     List<MessageOutputDto> findEmployerMessages();
 
     List<MessageOutputDto> findJobSeekerMessages();
+
+    void deleteMessageById(Long messageId);
+
+    void clearHistory(Long respondApplicationId);
+
+    void saveFile(Long respondId, MultipartFile multipartFile) throws IOException;
+
+    Long saveFile(Long vacancyId, Long resumeId, MultipartFile multipartFile) throws IOException;
 }

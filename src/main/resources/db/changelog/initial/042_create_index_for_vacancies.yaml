@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-index-on-virtual-column
+      author: kanybek
+      changes:
+        - createIndex:
+            clustered: true
+            tableName: vacancies
+            indexName: idx_created
+            columns:
+              - column:
+                  descending: true
+                  name: created

@@ -181,11 +181,5 @@ public class   ResumeController {
         model.addAttribute("categories", categoryService.findAllCategories());
         return "resumes/resumes";
     }
-
-    @GetMapping("test/transact")
-    public String testTransact() {
-        resumeService.testProxy();
-        return null;
-    }
 }
 

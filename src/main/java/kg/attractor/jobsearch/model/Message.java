@@ -1,6 +1,7 @@
 package kg.attractor.jobsearch.model;
 
 import jakarta.persistence.*;
+import kg.attractor.jobsearch.enums.MessageType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,7 +22,7 @@ public class Message {
     @JoinColumn(name = "responded_application_id", nullable = false)
     private RespondedApplication respondedApplication;
 
-    @Column(name = "content", nullable = false)
+    @Column(name = "content", columnDefinition = "clob", nullable = false)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -30,4 +31,8 @@ public class Message {
 
     @Column(name = "time")
     private LocalDateTime time;
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "message_type", nullable = false)
+    private MessageType messageType;
 }

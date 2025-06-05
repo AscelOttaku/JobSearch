@@ -1,16 +1,19 @@
 package kg.attractor.jobsearch.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import kg.attractor.jobsearch.dto.MessageDto;
 import kg.attractor.jobsearch.service.MessageService;
 import kg.attractor.jobsearch.service.VacancyService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 @Controller
 @RequestMapping("messages")
@@ -39,8 +42,12 @@ public class MessageController {
             @PathVariable Long respondId,
             Model model
     ) {
-        model.addAttribute("messages", messageService.findMessagesByRespondId(respondId));
+        List<MessageDto> messagesByRespondId = messageService.findMessagesByRespondId(respondId);
+        model.addAttribute("messages", messagesByRespondId);
         model.addAttribute("vacancy", vacancyService.findVacancyByRespondId(respondId));
+
+        if (messagesByRespondId.isEmpty())
+            model.addAttribute("respondId", respondId);
 
         return "messages/chat";
     }
@@ -71,5 +78,37 @@ public class MessageController {
     public String findAllMessagesForJobSeeker(Model model) {
         model.addAttribute("messages", messageService.findJobSeekerMessages());
         return "messages/messages_users";
+    }
+
+    @PostMapping("delete/{messageId}")
+    @ResponseStatus(HttpStatus.SEE_OTHER)
+    public String deleteMessageById(@PathVariable Long messageId, HttpServletRequest request) {
+        messageService.deleteMessageById(messageId);
+        return "redirect:".concat(request.getHeader("referer"));
+    }
+
+    @PostMapping("clear/{respondId}")
+    @ResponseStatus(HttpStatus.SEE_OTHER)
+    public String clearAllMessages(@PathVariable Long respondId, HttpServletRequest request) {
+        messageService.clearHistory(respondId);
+        return "redirect:".concat(request.getHeader("referer"));
+    }
+
+    @PostMapping("file")
+    public String saveFile(
+            @RequestParam(required = false) Long respondId,
+            @RequestParam(required = false) Long vacancyId,
+            @RequestParam(required = false) Long resumeId,
+            MultipartFile file
+    ) throws IOException {
+        if (respondId != null) {
+            messageService.saveFile(respondId, file);
+            return "redirect:/messages/chat/" + respondId;
+        } else if (vacancyId != null && resumeId != null) {
+            Long newRespondId = messageService.saveFile(vacancyId, resumeId, file);
+            return "redirect:/messages/chat/" + newRespondId;
+        } else {
+            throw new IllegalArgumentException("Недостаточно параметров для загрузки файла");
+        }
     }
 }

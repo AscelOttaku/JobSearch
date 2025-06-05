@@ -182,7 +182,7 @@
                                 </nav>
                             </#if>
 
-                            <button type="submit" class="btn btn-sm btn-outline-primary flex-shrink-0">
+                            <button type="submit" class="btn btn-sm btn-outline-primary flex-shrink-0 mb-3">
                                 <i class="bi bi-send"></i> <@spring.message "vacancy.make.response"/>
                             </button>
                         </div>
