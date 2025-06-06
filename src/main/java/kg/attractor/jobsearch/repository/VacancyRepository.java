@@ -25,7 +25,6 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Long> {
 
     List<Vacancy> findVacanciesByUserEmail(String email);
 
-    @Lock(value = LockModeType.PESSIMISTIC_READ)
     @Query("select v from Vacancy v " +
             "join Role r on r.id = v.user.role.id " +
             "where v.user.userId = :userId and " +

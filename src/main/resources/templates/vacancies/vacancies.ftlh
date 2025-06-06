@@ -95,14 +95,24 @@
                         <i class="bi bi-clock-history"></i><@spring.message "experience"/>: ${vacancy.expFrom}
                         -${vacancy.expTo} <@spring.message "years"/>
                     </div>
-                    <div class="meta-item">
-                        <i class="bi bi-clock-history"></i>
-                        <@spring.message "correspondence"/>:
-                        <div class="progress"
-                             style="height: 20px; width: 200px; display: inline-block; vertical-align: middle; margin-left: 10px;">
-                            <div class="progress-bar bg-success" role="progressbar">
-                                ${vacancy.skillCorrespondence}%
-                            </div>
+                    <div class="meta-item d-flex align-items-center gap-2">
+                        <i class="bi bi-graph-up-arrow"></i>
+                        <span><@spring.message "correspondence"/>:</span>
+                        <div class="skill-match-circle" data-value="${vacancy.skillCorrespondence}">
+                            <svg class="circle-chart" viewBox="0 0 36 36">
+                                <path class="circle-bg"
+                                      d="M18 2.0845
+                    a 15.9155 15.9155 0 0 1 0 31.831
+                    a 15.9155 15.9155 0 0 1 0 -31.831"
+                                />
+                                <path class="circle-fill"
+                                      stroke-dasharray="${vacancy.skillCorrespondence}, 100"
+                                      d="M18 2.0845
+                    a 15.9155 15.9155 0 0 1 0 31.831
+                    a 15.9155 15.9155 0 0 1 0 -31.831"
+                                />
+                                <text x="18" y="20.5" class="percentage-text">${vacancy.skillCorrespondence}%</text>
+                            </svg>
                         </div>
                     </div>
                 </div>
