@@ -1,9 +1,11 @@
 package kg.attractor.jobsearch.repository;
 
+import jakarta.persistence.LockModeType;
 import kg.attractor.jobsearch.model.Vacancy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,6 +25,7 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Long> {
 
     List<Vacancy> findVacanciesByUserEmail(String email);
 
+    @Lock(value = LockModeType.PESSIMISTIC_READ)
     @Query("select v from Vacancy v " +
             "join Role r on r.id = v.user.role.id " +
             "where v.user.userId = :userId and " +
@@ -95,4 +98,9 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Long> {
             "      group by v.VACANCY_USER_ID) " +
             "         as result", nativeQuery = true)
     Optional<Long> findUserCreatedVacanciesQuantity(Long userId);
+
+    @Query("select v from Vacancy v " +
+            "where v.user.userId = :userId " +
+            "order by v.id desc limit 1")
+    Optional<Vacancy> findUserCreatedLastVacancy(Long userId);
 }

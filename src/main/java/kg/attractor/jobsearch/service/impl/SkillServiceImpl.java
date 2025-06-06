@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 public class SkillServiceImpl implements SkillService {
     private final SkillRepository skillRepository;
     private final SkillMapper skillMapper;
-    private final ResumeService resumeService;
 
     @Override
     public SkillDto save(SkillDto skillDto) {
@@ -150,22 +149,5 @@ public class SkillServiceImpl implements SkillService {
                         .orElseGet(() -> skillRepository.save(skillMapper.mapToEntity(skillDto))))
                 .map(skillMapper::mapToDto)
                 .toList();
-    }
-
-    @Override
-    public Integer calculateAccordingToSKillsUsersCorrespondenceToVacancy(List<SkillDto> vacancySkills) {
-        if (vacancySkills.isEmpty())
-            return 0;
-
-        List<SkillDto> resumeSkills = resumeService.findUserUsedLastResume()
-                .map(ResumeDto::getSkills)
-                .orElseGet(Collections::emptyList);
-
-        long correspondedSKills = resumeSkills.stream()
-                .filter(skillDto -> vacancySkills.stream()
-                        .anyMatch(vacancySkill -> vacancySkill.getSkillName().equals(skillDto.getSkillName())))
-                .count();
-
-        return Math.toIntExact((vacancySkills.size() / correspondedSKills) * 100);
     }
 }

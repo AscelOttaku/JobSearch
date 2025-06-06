@@ -134,7 +134,7 @@ label[for="fileInput"]:hover {
 }
 
 @media (max-width: 576px) {
-.file-attachment {
+    .file-attachment {
         max-width: 100%;
     }
 }

@@ -12,11 +12,9 @@ import kg.attractor.jobsearch.exceptions.VacancyNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.model.Vacancy;
+import kg.attractor.jobsearch.provider.UserLastCreatedVacancyProvider;
 import kg.attractor.jobsearch.repository.VacancyRepository;
-import kg.attractor.jobsearch.service.AuthorizedUserService;
-import kg.attractor.jobsearch.service.CategoryService;
-import kg.attractor.jobsearch.service.SkillService;
-import kg.attractor.jobsearch.service.VacancyService;
+import kg.attractor.jobsearch.service.*;
 import kg.attractor.jobsearch.strategy.vacancies.UserVacancyFilterStrategy;
 import kg.attractor.jobsearch.strategy.vacancies.VacancyFilterStrategy;
 import kg.attractor.jobsearch.validators.ValidatorUtil;
@@ -30,15 +28,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class VacancyServiceImpl implements VacancyService {
+public class VacancyServiceImpl implements VacancyService, UserLastCreatedVacancyProvider {
     private final Mapper<VacancyDto, Vacancy> vacancyMapper;
     private final VacancyRepository vacancyRepository;
     private final CategoryService categoryService;
@@ -47,6 +42,7 @@ public class VacancyServiceImpl implements VacancyService {
     private final SkillService skillService;
     private final VacancyFilterStrategy vacancyFilterStrategy;
     private final UserVacancyFilterStrategy userVacancyFilterStrategy;
+    private final SkillCorrespondenceService skillCorrespondenceService;
 
     @Override
     public VacancyDto findVacancyById(Long vacancyId) {
@@ -117,7 +113,7 @@ public class VacancyServiceImpl implements VacancyService {
         Page<Vacancy> isActiveVacancies = vacancyRepository.findIsActiveVacanciesSortedByDate(PageRequest.of(page, size));
 
         PageHolder<VacancyDto> vacancyDtoPageHolder = pageHolderWrapper.wrapVacancies(() -> isActiveVacancies, FilterType.NEW);
-        vacancyDtoPageHolder.getContent().forEach(vacancyDto -> vacancyDto.setSkillCorrespondence(skillService.calculateAccordingToSKillsUsersCorrespondenceToVacancy(vacancyDto.getSkills())));
+        vacancyDtoPageHolder.getContent().forEach(vacancyDto -> vacancyDto.setSkillCorrespondence(skillCorrespondenceService.calculateAccordingToSKillsUsersCorrespondenceToVacancy(vacancyDto.getSkills())));
         log.warn("FilterType String value: {}", vacancyDtoPageHolder.getFilterType().name());
         return vacancyDtoPageHolder;
     }
@@ -172,7 +168,7 @@ public class VacancyServiceImpl implements VacancyService {
 
         Page<Vacancy> vacanciesPage = vacancyRepository.findAllVacancies(pageable);
         PageHolder<VacancyDto> vacancyDtoPageHolder = pageHolderWrapper.wrapVacancies(() -> vacanciesPage, FilterType.NEW);
-        vacancyDtoPageHolder.getContent().forEach(vacancyDto -> vacancyDto.setSkillCorrespondence(skillService.calculateAccordingToSKillsUsersCorrespondenceToVacancy(vacancyDto.getSkills())));
+        vacancyDtoPageHolder.getContent().forEach(vacancyDto -> vacancyDto.setSkillCorrespondence(skillCorrespondenceService.calculateAccordingToSKillsUsersCorrespondenceToVacancy(vacancyDto.getSkills())));
         return vacancyDtoPageHolder;
     }
 
@@ -254,7 +250,9 @@ public class VacancyServiceImpl implements VacancyService {
         Assert.notNull(filterType, "filterType must not be null");
 
         vacancyFilterStrategy.addFilterStrategy(FilterType.FAVORITE_VACANCIES, this::findUserFavoriteVacancies);
-        return vacancyFilterStrategy.filter(page, size, filterType);
+        PageHolder<VacancyDto> filteredVacancies = vacancyFilterStrategy.filter(page, size, filterType);
+        filteredVacancies.getContent().forEach(vacancyDto -> vacancyDto.setSkillCorrespondence(skillCorrespondenceService.calculateAccordingToSKillsUsersCorrespondenceToVacancy(vacancyDto.getSkills())));
+        return filteredVacancies;
     }
 
     @Override
@@ -264,7 +262,9 @@ public class VacancyServiceImpl implements VacancyService {
         Page<VacancyDto> vacancyByCategoryName = vacancyRepository.findVacancyByCategoryName(categoryNam, PageRequest.of(page, size))
                 .map(vacancyMapper::mapToDto);
 
-        return pageHolderWrapper.wrapPageHolder(vacancyByCategoryName);
+        PageHolder<VacancyDto> vacancyDtoPageHolder = pageHolderWrapper.wrapPageHolder(vacancyByCategoryName);
+        vacancyDtoPageHolder.getContent().forEach(vacancyDto -> vacancyDto.setSkillCorrespondence(skillCorrespondenceService.calculateAccordingToSKillsResumeCorrespondenceToVacancy(vacancyDto.getSkills())));
+        return vacancyDtoPageHolder;
     }
 
     @Override
@@ -329,5 +329,14 @@ public class VacancyServiceImpl implements VacancyService {
     public Long findAuthUserCreatedVacanciesQuantity() {
         return vacancyRepository.findUserCreatedVacanciesQuantity(authorizedUserService.getAuthorizedUserId())
                 .orElse(0L);
+    }
+
+    @Override
+    public Optional<VacancyDto> findUserLastCreatedVacancy() {
+        if (!authorizedUserService.isUserAuthorized())
+            return Optional.empty();
+
+        return vacancyRepository.findUserCreatedLastVacancy(authorizedUserService.getAuthorizedUserId())
+                .map(vacancyMapper::mapToDto);
     }
 }

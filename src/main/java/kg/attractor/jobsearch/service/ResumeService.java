@@ -44,6 +44,4 @@ public interface ResumeService {
     PageHolder<ResumeDto> findAllResumesByCategoryName(String categoryName, int page, int size);
 
     Long findAuthUserCreatedResumesQuantity();
-
-    Optional<ResumeDto> findUserUsedLastResume();
 }

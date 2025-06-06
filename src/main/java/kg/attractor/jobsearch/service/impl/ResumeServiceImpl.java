@@ -8,6 +8,8 @@ import kg.attractor.jobsearch.enums.Roles;
 import kg.attractor.jobsearch.exceptions.ResumeNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.Resume;
+import kg.attractor.jobsearch.provider.UserLastCreatedVacancyProvider;
+import kg.attractor.jobsearch.provider.UserLastRespondedResumeProvider;
 import kg.attractor.jobsearch.repository.ResumeRepository;
 import kg.attractor.jobsearch.service.AuthorizedUserService;
 import kg.attractor.jobsearch.service.ContactTypeService;
@@ -28,7 +30,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ResumeServiceImpl implements ResumeService {
+public class ResumeServiceImpl implements ResumeService, UserLastRespondedResumeProvider {
     private final Mapper<ResumeDto, Resume> mapper;
     private final ResumeRepository resumeRepository;
     private final CategoryServiceImpl categoryService;
@@ -239,7 +241,7 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public Optional<ResumeDto> findUserUsedLastResume() {
+    public Optional<ResumeDto> findUserLastRespondedResume() {
         if (!authorizedUserService.isUserAuthorized())
             return Optional.empty();
 
