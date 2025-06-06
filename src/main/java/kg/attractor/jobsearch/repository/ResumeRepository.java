@@ -64,8 +64,8 @@ public interface ResumeRepository extends JpaRepository<Resume, Long> {
 
     Optional<Resume> findResumeById(Long id);
 
-    @Query(value = "select * from RESUMES r " +
-            "join RESPONDED_APPLICATION ra on ra.RESUME_ID = r.id " +
+    @Query(value = "select r.* from RESUMES r " +
+            "left join RESPONDED_APPLICATION ra on ra.RESUME_ID = r.id " +
             "where r.USER_ID = :userId " +
             "order by ra.id desc limit 1", nativeQuery = true)
     Optional<Resume> findUserUsedLastResume(Long userId);

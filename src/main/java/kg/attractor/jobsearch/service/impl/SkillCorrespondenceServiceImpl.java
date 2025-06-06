@@ -53,6 +53,10 @@ public class SkillCorrespondenceServiceImpl implements SkillCorrespondenceServic
                         .anyMatch(vacancySkill -> vacancySkill.getSkillName().equals(skillDto.getSkillName())))
                 .count();
 
-        return Math.toIntExact((skills.size() / correspondedSKills) * 100);
+        if (correspondedSKills == 0)
+            return 0;
+
+        double percentage = ((double) correspondedSKills / skills.size()) * 100;
+        return (int) Math.round(percentage);
     }
 }

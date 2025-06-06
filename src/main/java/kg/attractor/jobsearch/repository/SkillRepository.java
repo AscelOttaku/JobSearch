@@ -16,14 +16,16 @@ public interface SkillRepository extends JpaRepository<Skill, Long> {
     @Query(value = "DELETE FROM SKILLS " +
             "where SKILLS.ID in (select s.ID from SKILLS s  " +
             "    left join RESUMES_SKILLS rs on rs.SKILL_ID = s.ID " +
-            "where rs.RESUME_ID is null" +
+            "left join PUBLIC.VACANCIES_SKILLS vs on vs.SKILL_ID = s.ID " +
+            "where rs.RESUME_ID is null and vs.VACANCY_ID is null" +
             " )",
             nativeQuery = true)
     void deleteUnusedElements();
 
     @Query(value = "select s.* from SKILLS as s " +
             "left join RESUMES_SKILLS rs on rs.SKILL_ID = s.ID " +
-            "where rs.RESUME_ID is null", nativeQuery = true)
+            "left join VACANCIES_SKILLS vs on vs.SKILL_ID = s.ID " +
+            "where rs.RESUME_ID is null and vs.VACANCY_ID is null", nativeQuery = true)
     List<Skill> findUnusedSKills();
 
     Optional<Skill> findBySkillName(String skillName);

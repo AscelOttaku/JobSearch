@@ -17,7 +17,7 @@ import org.springframework.web.bind.support.SessionStatus;
 @RequestMapping("resumes")
 @SessionAttributes({"categories"})
 @RequiredArgsConstructor
-public class   ResumeController {
+public class ResumeController {
     private final ResumeService resumeService;
     private final ResumeDetailedInfoService resumeDetailedInfoService;
     private final CategoryService categoryService;
