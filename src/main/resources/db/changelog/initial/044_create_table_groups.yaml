@@ -1,0 +1,36 @@
+databaseChangeLog:
+  - changeSet:
+      id: 044_create_table_groups
+      author: Kanybek
+      changes:
+        - createTable:
+            tableName: groups
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(144)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: logo
+                  type: varchar(255)
+              - column:
+                  name: admin
+                  type: bigint
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: groups
+            baseColumnNames: admin
+            constraintName: fk_admin_groups_constraint
+            onDelete: cascade
+            onUpdate: cascade
+            referencedColumnNames: user_id
+            referencedTableName: users

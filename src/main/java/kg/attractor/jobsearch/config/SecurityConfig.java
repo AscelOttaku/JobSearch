@@ -108,6 +108,13 @@ public class SecurityConfig {
 
                                 .requestMatchers(GET, "/files/filePath/*").authenticated()
 
+                                //Groups
+
+                                .requestMatchers(GET, "/groups/new_groups").authenticated()
+                                .requestMatchers(POST, "/groups/new_groups").authenticated()
+                                .requestMatchers("/groups/update_groups").authenticated()
+                                .requestMatchers("/groups/delete").authenticated()
+
                                 //All Other Endpoints
 
                                 .requestMatchers("/static/css/*").permitAll()

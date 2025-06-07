@@ -91,6 +91,11 @@
                                 </a>
                             </li>
                         </#if>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/groups">
+                                <i class="bi-person-lines-fill"></i> <@spring.message "groups"/>
+                            </a>
+                        </li>
                     </#if>
                     <li class="nav-item">
                         <a class="nav-link" href="/users/profile">
@@ -108,8 +113,9 @@
                     <div class="dropdown">
                         <a class="btn btn-outline-light dropdown-toggle" href="#" role="button" id="userMenu"
                            data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle me-1"></i> ${user.name!"Профиль"}
+                            <i class="bi bi-person-circle me-1"></i> ${authorizedUser.name!"Профиль"}
                         </a>
+
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="/users/profile"><i
                                             class="bi bi-person me-2"></i><@spring.message "profile"/></a>
