@@ -1,0 +1,42 @@
+databaseChangeLog:
+  - changeSet:
+      id: 045_create-groups-users-table
+      author: Kanybek
+      changes:
+        - createTable:
+            tableName: groups_users
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: group_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: groups_users
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: user_id
+            constraintName: fk_groups_users_user
+            onDelete: CASCADE
+            onUpdate: CASCADE
+
+        - addForeignKeyConstraint:
+            baseTableName: groups_users
+            baseColumnNames: group_id
+            referencedTableName: groups
+            referencedColumnNames: id
+            constraintName: fk_groups_users_group
+            onDelete: CASCADE
+            onUpdate: CASCADE

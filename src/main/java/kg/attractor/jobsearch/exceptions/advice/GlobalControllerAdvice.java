@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
+import java.io.IOException;
 import java.time.format.DateTimeParseException;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -87,10 +88,10 @@ public class GlobalControllerAdvice {
         return errorService.handleDateTimeParserException(ex);
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
+    @ExceptionHandler({IllegalArgumentException.class, IOException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleIllegalArgumentException(
-            IllegalArgumentException ex,
+            Exception ex,
             HttpServletRequest request,
             Model model) {
 

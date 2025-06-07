@@ -87,4 +87,10 @@ public class FileUtil {
         String fileType = Files.probeContentType(Paths.get(filePath));
         return MediaType.parseMediaType(fileType);
     }
+
+    @SneakyThrows
+    public static void deleteFile(String filePath) {
+        Assert.notNull(filePath, "filePath must not be null");
+        Files.delete(Path.of(filePath));
+    }
 }
