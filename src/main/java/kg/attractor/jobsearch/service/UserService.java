@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.model.User;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -57,4 +58,6 @@ public interface UserService {
     void updateUserAvatarByUserEmail(String email, String avatar);
 
     UserDto findUserByRespondId(Long respondId);
+
+    UserDetails getUserDetails(String email);
 }

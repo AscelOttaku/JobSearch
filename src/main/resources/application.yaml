@@ -65,5 +65,10 @@ logging:
   file:
     path: logs
 
+token:
+  spring:
+    key: $2a$12$42FY39WTkqQUVAZMBCBtQOqTalLUTtTh2YmWyBxLZwf4NbwTMjNoW
+
+
 
 

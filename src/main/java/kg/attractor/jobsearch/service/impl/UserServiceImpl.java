@@ -7,6 +7,7 @@ import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
 import kg.attractor.jobsearch.exceptions.UserNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
+import kg.attractor.jobsearch.model.Role;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.model.Vacancy;
 import kg.attractor.jobsearch.repository.UserRepository;
@@ -18,6 +19,8 @@ import kg.attractor.jobsearch.validators.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -278,5 +281,30 @@ public class UserServiceImpl implements UserService {
         return userRepository.findUserByRespondId(respondId)
                 .map(userMapper::mapToDto)
                 .orElseThrow(() -> new NoSuchElementException("user not found by respond " + respondId));
+    }
+
+    @Override
+    public UserDetails getUserDetails(String email) {
+        User user = userRepository.findUserByEmail(email)
+                .orElseThrow(NoSuchElementException::new);
+
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                user.getPassword(),
+                user.isEnabled(),
+                true,
+                true,
+                true,
+                getAllPrivileges(user.getRole())
+        );
+    }
+
+    private List<GrantedAuthority> getAllPrivileges(Role role) {
+        List<GrantedAuthority> privileges = new LinkedList<>();
+        privileges.add(new SimpleGrantedAuthority(role.getRoleName()));
+        privileges.addAll(role.getAuthorities().stream()
+                .map(authority -> new SimpleGrantedAuthority(authority.getAuthorityName()))
+                .toList());
+        return privileges;
     }
 }
