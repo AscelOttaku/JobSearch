@@ -4,15 +4,19 @@ import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.model.Role;
 import kg.attractor.jobsearch.model.User;
+import kg.attractor.jobsearch.service.RoleService;
 import kg.attractor.jobsearch.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 @RequiredArgsConstructor
 public class UserMapper implements Mapper<UserDto, User> {
     private final PasswordEncoder passwordEncoder;
+    private final RoleService roleService;
 
     @Override
     public UserDto mapToDto(User user) {
@@ -31,14 +35,6 @@ public class UserMapper implements Mapper<UserDto, User> {
 
     @Override
     public User mapToEntity(UserDto userDto) {
-
-        Role role = new Role();
-
-        if (userDto.getAccountType().equalsIgnoreCase("EMPLOYER"))
-            role.setId(1L);
-        else
-            role.setId(2L);
-
         User user = new User();
         user.setUserId(userDto.getUserId());
         user.setName(userDto.getName());
@@ -49,6 +45,10 @@ public class UserMapper implements Mapper<UserDto, User> {
         user.setPhoneNumber(userDto.getPhoneNumber());
         user.setAccountType(userDto.getAccountType());
         user.setAvatar(userDto.getAvatar());
+
+        Long roleId = Objects.equals(userDto.getAccountType(), "EMPLOYER") ? 1L : 2L;
+        Role role = roleService.findRoleById(roleId)
+                .orElseThrow(() -> new IllegalArgumentException("Role not found with id: " + roleId));
         user.setRole(role);
         user.setEnabled(true);
         return user;

@@ -1,5 +1,6 @@
 package kg.attractor.jobsearch.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
@@ -46,13 +47,18 @@ public class UserController {
     }
 
     @PostMapping("registration")
-    public String createUser(@Valid @ModelAttribute("user") UserDto userDto, BindingResult bindingResult, Model model) {
+    public String createUser(
+            @Valid @ModelAttribute("user") UserDto userDto,
+            BindingResult bindingResult,
+            Model model,
+            HttpServletRequest request
+    ) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("user", userDto);
             return "/auth/register";
         }
 
-        userService.createUser(userDto);
+        userService.createUser(userDto, request);
         return "redirect:/users/profile";
     }
 

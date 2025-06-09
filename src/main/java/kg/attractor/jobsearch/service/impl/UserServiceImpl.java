@@ -7,9 +7,11 @@ import kg.attractor.jobsearch.dto.mapper.Mapper;
 import kg.attractor.jobsearch.exceptions.CustomIllegalArgException;
 import kg.attractor.jobsearch.exceptions.UserNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
+import kg.attractor.jobsearch.model.Role;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.model.Vacancy;
 import kg.attractor.jobsearch.repository.UserRepository;
+import kg.attractor.jobsearch.service.RoleService;
 import kg.attractor.jobsearch.service.UserService;
 import kg.attractor.jobsearch.service.VacancyService;
 import kg.attractor.jobsearch.util.FileUtil;
@@ -18,14 +20,20 @@ import kg.attractor.jobsearch.validators.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -41,6 +49,8 @@ public class UserServiceImpl implements UserService {
     private final VacancyService vacancyService;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
+    private final RoleService roleService;
+    private final AuthenticationManager authenticationManager;
 
     @Transactional
     @Override
@@ -65,21 +75,52 @@ public class UserServiceImpl implements UserService {
         return FileUtil.getOutputFile(avatar, FileUtil.defineFileType(avatar));
     }
 
+    @Transactional(isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
     @Override
-    public void createUser(UserDto userDto) {
-
+    public void createUser(UserDto userDto, HttpServletRequest request) {
         if (!userDto.getAccountType().equalsIgnoreCase("jobSeeker") &&
                 !userDto.getAccountType().equalsIgnoreCase("employer"))
-            throw new CustomIllegalArgException(
-                    "Field name account type is not employer or user",
-                    CustomBindingResult.builder()
-                            .className(User.class.getSimpleName())
-                            .fieldName("accountType")
-                            .rejectedValue(userDto.getAccountType())
-                            .build()
+            throw new IllegalArgumentException(
+                    "Field name account type is not employer or user"
             );
 
-        userRepository.save(userMapper.mapToEntity(userDto));
+        userRepository.saveAndFlush(userMapper.mapToEntity(userDto));
+        saveCreatedUserToContext(userDto, request);
+    }
+
+    private void saveCreatedUserToContext(UserDto userDto, HttpServletRequest request) {
+        UserDetails user = new org.springframework.security.core.userdetails.User(
+                userDto.getEmail(),
+                userDto.getPassword(),
+                true,
+                true,
+                true,
+                true,
+                getAuthorities(roleService.findRoleByName(userDto.getAccountType())
+                        .orElseThrow(() -> new NoSuchElementException("role not found"))));
+
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                user, userDto.getPassword(), user.getAuthorities()
+        );
+
+        usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetails(request));
+        Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        request.getSession(true)
+                .setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
+        log.info("Auth user name: {}", authentication.getName());
+    }
+
+    private List<SimpleGrantedAuthority> getAuthorities(Role role) {
+        Assert.notNull(role, "role cannot be null");
+        List<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(role.getRoleName());
+        grantedAuthorities.add(simpleGrantedAuthority);
+        grantedAuthorities.addAll(role.getAuthorities().stream()
+                .map(authority -> new SimpleGrantedAuthority(authority.getAuthorityName()))
+                .toList());
+        return grantedAuthorities;
     }
 
     @Override
@@ -259,14 +300,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUserAvatarByUserEmail(String email, String avatar) {
         notBlank(email, "email cannot be null or blank");
-        notBlank(avatar, "avatar cannot be null or blank");
 
         Optional<User> existingUser = userRepository.findUserByEmail(email);
 
         existingUser.ifPresent(user1 -> {
             String previousAvatar = user1.getAvatar();
 
-            if (!avatar.isBlank() && !avatar.equals(previousAvatar))
+            if ((Util.notNullOrBlank(avatar) && !avatar.equals(previousAvatar)))
                 userRepository.updateAvatarByUserEmail(avatar, email);
         });
     }

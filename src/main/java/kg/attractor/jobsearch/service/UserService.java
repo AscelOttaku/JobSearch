@@ -18,7 +18,7 @@ public interface UserService {
 
     ResponseEntity<?> getAvatar(String avatar) throws IOException;
 
-    void createUser(UserDto userDto);
+    void createUser(UserDto userDto, HttpServletRequest request);
 
     void updateUser(UserDto userDto);
 

@@ -3,18 +3,23 @@ package kg.attractor.jobsearch.config;
 import kg.attractor.jobsearch.enums.Roles;
 import kg.attractor.jobsearch.model.CustomOAuth2User;
 import kg.attractor.jobsearch.security.MySimpleAuthenticationHandler;
+import kg.attractor.jobsearch.service.UserService;
 import kg.attractor.jobsearch.service.impl.AuthUserDetailsServiceImpl;
 import kg.attractor.jobsearch.service.impl.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import java.util.Map;
 
 import static org.springframework.http.HttpMethod.*;
 
@@ -31,7 +36,12 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http, UserService userService) throws Exception {
         http
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .formLogin(form -> form
@@ -129,7 +139,9 @@ public class SecurityConfig {
                                 .userService(customOAuth2UserService))
                         .successHandler((request, response, authentication) -> {
                             var oathUser = (CustomOAuth2User) authentication.getPrincipal();
-                            userDetailsService.processOAuthPostLogin(oathUser.getAttributes());
+                            Map<String, Object> attributes = oathUser.getAttributes();
+                            userDetailsService.processOAuthPostLogin(attributes);
+                            userService.updateUserAvatarByUserEmail((String) attributes.get("email"), (String) attributes.get("picture"));
                             response.sendRedirect("/users/profile");
                         }));
 

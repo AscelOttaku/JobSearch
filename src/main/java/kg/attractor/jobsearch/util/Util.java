@@ -24,6 +24,10 @@ public class Util {
                 .toLowerCase();
     }
 
+    public static boolean notNullOrBlank(String value) {
+        return value != null && !value.isBlank();
+    }
+
     public static String convertToCamelCase(String str) {
         return CaseUtils.toCamelCase(str, false, '_');
     }

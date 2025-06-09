@@ -5,7 +5,6 @@ import kg.attractor.jobsearch.model.Role;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.repository.RoleRepository;
 import kg.attractor.jobsearch.repository.UserRepository;
-import kg.attractor.jobsearch.service.UserService;
 import kg.attractor.jobsearch.util.Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +29,6 @@ public class AuthUserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
-    private final UserService userService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -83,15 +81,13 @@ public class AuthUserDetailsServiceImpl implements UserDetailsService {
             user.setSurname((String) attributes.get("family_name"));
             user.setEmail(email);
             user.setPassword(encoder.encode(Util.generateUniqueValue()));
-            user.setRole(roleRepository.findByRoleName("JOB_SEEKER")
+            user.setRole(roleRepository.findByRoleNameEqualsIgnoreCase("JOB_SEEKER")
                     .orElseThrow(() -> new NoSuchElementException("role not found by name " + "JOB_SEEKER")));
             user.setEnabled(Boolean.TRUE);
             user.setAvatar(avatar);
 
             userRepository.save(user);
         }
-
-        userService.updateUserAvatarByUserEmail(email, avatar);
 
         UserDetails userDetails = loadUserByUsername(email);
         Authentication auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

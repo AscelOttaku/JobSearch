@@ -30,7 +30,7 @@
             <div class="p-4">
                 <div class="row mb-4">
                     <div class="col-md-3 text-center mb-3">
-                        <#if user.avatar??>
+                        <#if user.avatar?? && user.avatar?length gt 0>
                             <#if user.avatar?contains("https")>
                                 <img src="${user.avatar}" class="profile-avatar rounded-circle" alt="avatar">
                             <#else>
