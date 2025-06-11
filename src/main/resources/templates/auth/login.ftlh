@@ -18,7 +18,7 @@
                 <div class="custom-form-group">
                     <label for="email"><@spring.message "login.email"/></label>
                     <input
-                            type="email"
+                            type="text"
                             name="username"
                             placeholder="<@spring.message 'login.email.placeholder'/>"
                             autocomplete="email"

@@ -33,7 +33,11 @@ public class AuthUserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findUserByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("user not found by email " + username));
+                .orElseGet(() -> userRepository.findUserByPhoneNumber(username)
+                        .orElseThrow(() -> new UsernameNotFoundException(
+                                "User not found by email or phone number: " + username)
+                        )
+                );
 
         log.info(user.getEmail());
 
