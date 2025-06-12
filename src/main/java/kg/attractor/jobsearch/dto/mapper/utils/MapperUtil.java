@@ -6,6 +6,9 @@ import kg.attractor.jobsearch.model.Vacancy;
 import org.mapstruct.Named;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Component
 public class MapperUtil {
 
@@ -33,6 +36,23 @@ public class MapperUtil {
             return vacancy;
         }
 
+        return null;
+    }
+
+    @Named("convertLocalDateTimeToString")
+    public String convertLocalDateTimeToString(LocalDateTime localDateTime) {
+        if (localDateTime != null) {
+            return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                    .format(localDateTime);
+        }
+        return null;
+    }
+
+    @Named("convertStringToLocalDateTime")
+    public LocalDateTime convertStringToLocalDateTime(String dateTimeString) {
+        if (dateTimeString != null && !dateTimeString.isEmpty()) {
+            return LocalDateTime.parse(dateTimeString, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        }
         return null;
     }
 }

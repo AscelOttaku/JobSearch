@@ -27,4 +27,5 @@ public class GroupsDto {
 
     private UserDto admin;
     private String logo;
+    private Boolean authUserJoinedTheGroup;
 }

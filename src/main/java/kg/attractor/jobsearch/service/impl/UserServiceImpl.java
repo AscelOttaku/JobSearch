@@ -319,4 +319,12 @@ public class UserServiceImpl implements UserService {
                 .map(userMapper::mapToDto)
                 .orElseThrow(() -> new NoSuchElementException("user not found by respond " + respondId));
     }
+
+    @Override
+    public void isUserExistById(Long userId) {
+        Assert.notNull(userId, "userId cannot be null");
+
+        userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found by id: " + userId));
+    }
 }

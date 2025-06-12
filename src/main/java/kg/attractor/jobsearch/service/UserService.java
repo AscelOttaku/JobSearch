@@ -57,4 +57,6 @@ public interface UserService {
     void updateUserAvatarByUserEmail(String email, String avatar);
 
     UserDto findUserByRespondId(Long respondId);
+
+    void isUserExistById(Long userId);
 }

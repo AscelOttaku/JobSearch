@@ -15,4 +15,6 @@ public interface GroupsService {
     GroupsDto findGroupsById(Long id);
 
     void deleteGroupsById(Long id);
+
+    void isGroupExistById(Long id);
 }

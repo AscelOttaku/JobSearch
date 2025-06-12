@@ -7,13 +7,13 @@ import kg.attractor.jobsearch.model.Groups;
 import kg.attractor.jobsearch.repository.GroupsRepository;
 import kg.attractor.jobsearch.service.AuthorizedUserService;
 import kg.attractor.jobsearch.service.GroupsService;
+import kg.attractor.jobsearch.service.GroupsUsersService;
 import kg.attractor.jobsearch.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -23,12 +23,21 @@ public class GroupsServiceImpl implements GroupsService {
     private final GroupsRepository groupsRepository;
     private final GroupsMapper groupsMapper;
     private final AuthorizedUserService authorizedUserService;
+    private final GroupsUsersService groupsUsersService;
 
     @Override
     public List<GroupsDto> findAllGroups() {
-        return groupsRepository.findAll().stream()
+        List<GroupsDto> groups = groupsRepository.findAll().stream()
                 .map(groupsMapper::mapToDto)
                 .toList();
+
+        groups.forEach(groupsDto -> groupsDto.setAuthUserJoinedTheGroup(
+                groupsUsersService.isUserJoinedGroup(
+                        groupsDto.getId(),
+                        authorizedUserService.getAuthorizedUserId()
+                )
+        ));
+        return groups;
     }
 
     @Override
@@ -55,7 +64,7 @@ public class GroupsServiceImpl implements GroupsService {
 
         Groups updatedGroups = groupsMapper.mapToEntity(groupsDto);
 
-        if (groupsDto.getImage() != null) {
+        if (groupsDto.getImage() != null && !groupsDto.getImage().isEmpty()) {
             FileUtil.deleteFile("data/photos/" + groups.getLogo());
             updatedGroups.setLogo(FileUtil.uploadFile(groupsDto.getImage()));
         }
@@ -75,5 +84,13 @@ public class GroupsServiceImpl implements GroupsService {
     @Override
     public void deleteGroupsById(Long id) {
         groupsRepository.deleteById(id);
+    }
+
+    @Override
+    public void isGroupExistById(Long id) {
+        Assert.isTrue(id != null && id > 0, "id must not be null and greater than 0");
+
+        if (!groupsRepository.existsById(id))
+            throw new NoSuchElementException("Group not found by id: " + id);
     }
 }

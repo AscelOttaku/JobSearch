@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
+import java.util.List;
 
 @Controller
 @RequestMapping("groups")
@@ -24,7 +25,9 @@ public class GroupsController {
 
     @GetMapping
     public String findAllGroups(Model model) {
-        model.addAttribute("groupsDto", groupsService.findAllGroups());
+        List<GroupsDto> groups = groupsService.findAllGroups();
+
+        model.addAttribute("groupsDto", groups);
         return "groups/groups";
     }
 

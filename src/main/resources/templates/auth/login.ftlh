@@ -16,7 +16,7 @@
                 </#if>
 
                 <div class="custom-form-group">
-                    <label for="email"><@spring.message "login.email"/></label>
+                    <label for="email"><@spring.message "login.emailOrPhoneNumber"/></label>
                     <input
                             type="text"
                             name="username"
