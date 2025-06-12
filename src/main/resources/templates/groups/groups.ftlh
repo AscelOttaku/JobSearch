@@ -29,7 +29,8 @@
                         </thead>
                         <tbody>
                         <#list groupsDto as group>
-                            <tr onclick="window.location.href='/groups_messages/group/${group.id}';" style="cursor: pointer;">
+                            <tr onclick="window.location.href='/groups_messages/group/${group.id}';"
+                                style="cursor: pointer;">
                                 <td>${group.id}</td>
                                 <td>${group.name}</td>
                                 <td>
@@ -58,10 +59,20 @@
                                                     <i class="bi bi-plus-circle me-1"></i> Join
                                                 </a>
                                             <#else>
-                                                <button class="btn btn-sm btn-outline-secondary px-3" disabled
-                                                        title="Already joined">
-                                                    <i class="bi bi-check-circle me-1"></i> Joined
-                                                </button>
+                                                <form method="post"
+                                                      action="/groups_users/leave_group/${group.id}/${authorizedUser.userId}"
+                                                      class="d-inline mb-0">
+                                                    <#if _csrf??>
+                                                        <input type="hidden" name="${(_csrf.parameterName)!}"
+                                                               value="${(_csrf.token)!}"/>
+                                                    </#if>
+                                                    <button type="submit"
+                                                            class="btn btn-sm btn-outline-danger"
+                                                            onclick="return confirm('<@spring.message "leave_group"/>')"
+                                                            title="<@spring.message "leave_group"/>">
+                                                        <i class="bi bi-box-arrow-left me-1"></i> <@spring.message "leave_group"/>
+                                                    </button>
+                                                </form>
                                             </#if>
                                         </#if>
 

@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 @Service
@@ -59,5 +61,14 @@ public class GroupsUsersServiceImpl implements GroupsUsersService {
     public Long findMembersCountByGroupId(Long groupId) {
         Assert.isTrue(groupId != null && groupId > 0, "groupId must not be null and greater than 0");
         return groupsUsersRepository.findMembersCountByGroupId(groupId);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Override
+    public void leaveGroup(Long groupId, Long userId) {
+        groupsService.isGroupExistById(groupId);
+        userService.isUserExistById(userId);
+
+        groupsUsersRepository.deleteByGroupIdAndUserId(groupId, userId);
     }
 }

@@ -3,9 +3,7 @@ package kg.attractor.jobsearch.controller;
 import kg.attractor.jobsearch.service.GroupsUsersService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("groups_users")
@@ -17,5 +15,11 @@ public class GroupsUsersController {
     public String joinGroup(@PathVariable Long groupId, @PathVariable Long userId) {
         groupsUsersService.joinGroup(groupId, userId);
         return "redirect:/groups_messages/group/" + groupId;
+    }
+
+    @PostMapping("leave_group/{groupId}/{userId}")
+    public String leaveGroup(@PathVariable Long groupId, @PathVariable Long userId) {
+        groupsUsersService.leaveGroup(groupId, userId);
+        return "redirect:/groups";
     }
 }

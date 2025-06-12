@@ -9,9 +9,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("groups_messages")
@@ -27,12 +28,6 @@ public class GroupsMessagesController {
         model.addAttribute("membersCount", groupsUsersService.findMembersCountByGroupId(groupId));
         model.addAttribute("groupsMessagesDto", groupsMessagesService.findALlGroupsMessageByGroupId(groupId));
         return "groups/groups_messages";
-    }
-
-    @ResponseBody
-    @GetMapping("group/row/{groupId}")
-    public List<GroupsMessagesDto> findAllGroupsMessageByGroupId(@PathVariable Long groupId) {
-        return groupsMessagesService.findALlGroupsMessageByGroupId(groupId);
     }
 
     @PostMapping("message")

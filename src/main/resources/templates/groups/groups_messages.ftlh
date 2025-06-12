@@ -146,7 +146,7 @@
             const groupId = '${group.id}';
             if (!groupId) return;
 
-            fetch('/groups_messages/group/row/' + groupId)
+            fetch('/api/groups_messages/group/row/' + groupId)
                 .then(response => {
                     if (!response.ok) throw new Error("Ошибка загрузки сообщений");
                     return response.text();
