@@ -17,6 +17,12 @@ public class GroupsUsersController {
         return "redirect:/groups_messages/group/" + groupId;
     }
 
+    @GetMapping("join_group/groupId/{groupId}/token/{token}")
+    public String joinGroup(@PathVariable Long groupId, @PathVariable String token) {
+        groupsUsersService.joinGroupByLink(groupId, token);
+        return "redirect:/groups_messages/group/" + groupId;
+    }
+
     @PostMapping("leave_group/{groupId}/{userId}")
     public String leaveGroup(@PathVariable Long groupId, @PathVariable Long userId) {
         groupsUsersService.leaveGroup(groupId, userId);

@@ -10,6 +10,7 @@ import kg.attractor.jobsearch.repository.GroupsUsersRepository;
 import kg.attractor.jobsearch.service.GroupsService;
 import kg.attractor.jobsearch.service.GroupsUsersService;
 import kg.attractor.jobsearch.service.UserService;
+import kg.attractor.jobsearch.storage.TemporalStorage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +29,7 @@ public class GroupsUsersServiceImpl implements GroupsUsersService {
     private GroupsService groupsService;
     private final UserService userService;
     private final UserMapper userMapper;
+    private TemporalStorage temporalStorage;
 
     @Autowired
     public void setGroupsService(@Lazy GroupsService groupsService) {
@@ -53,6 +57,23 @@ public class GroupsUsersServiceImpl implements GroupsUsersService {
     }
 
     @Override
+    public GroupsUsersDto joinGroupByLink(Long groupId, String token) {
+        String storedToken = temporalStorage.getOptionalTemporalData("groupToken_" + groupId, String.class)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid or expired token"));
+        temporalStorage.removeTemporalData("groupToken_" + groupId);
+
+        if (!token.equals(storedToken)) throw new IllegalArgumentException("Invalid or expired token");
+
+        LocalDateTime createdTime = temporalStorage.getTemporalData("groupToken_" + groupId + "_created", LocalDateTime.class);
+        temporalStorage.removeTemporalData("groupToken_" + groupId + "_created");
+
+        if (createdTime.isBefore(LocalDateTime.now().minusHours(1)))
+            throw new IllegalArgumentException("Token expired");
+
+        return joinGroup(groupId, userService.getAuthUserId());
+    }
+
+    @Override
     public boolean isUserJoinedGroup(Long groupId, Long userId) {
         return groupsUsersRepository.existsByGroupIdAndUserId(groupId, userId);
     }
@@ -70,5 +91,10 @@ public class GroupsUsersServiceImpl implements GroupsUsersService {
         userService.isUserExistById(userId);
 
         groupsUsersRepository.deleteByGroupIdAndUserId(groupId, userId);
+    }
+
+    @Autowired
+    public void setTemporalStorage(TemporalStorage temporalStorage) {
+        this.temporalStorage = temporalStorage;
     }
 }

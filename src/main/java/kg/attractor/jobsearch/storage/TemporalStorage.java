@@ -37,6 +37,17 @@ public class TemporalStorage {
                 .orElseThrow(() -> new NoSuchElementException("value do not exists by key " + key));
     }
 
+    public <T> Optional<T> getOptionalTemporalData(String key, Class<T> type) {
+        if (key == null || key.isBlank())
+            return Optional.empty();
+
+        Object value = temporalData.get(key);
+        if (type == null || !type.isInstance(value))
+            throw new ClassCastException("value is null or cannot be cast to given type");
+
+        return Optional.of(type.cast(value));
+    }
+
     public void removeTemporalData(String key) {
         if (key == null || key.isBlank())
             throw new IllegalArgumentException("key is null or blank");

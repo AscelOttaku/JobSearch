@@ -69,6 +69,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Long getAuthUserId() {
+        UserDetails userDetails = getAutentificatedUserDetails();
+        return userRepository.findUserByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new UserNotFoundException("User not found by email: " + userDetails.getUsername()))
+                .getUserId();
+    }
+
+    @Override
     public ResponseEntity<?> getAvatar(String avatar) throws IOException {
         Assert.notNull(avatar, "avatar cannot be null");
 

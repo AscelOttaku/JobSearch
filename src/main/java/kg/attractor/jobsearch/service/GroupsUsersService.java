@@ -5,6 +5,8 @@ import kg.attractor.jobsearch.dto.GroupsUsersDto;
 public interface GroupsUsersService {
     GroupsUsersDto joinGroup(Long groupId, Long userId);
 
+    GroupsUsersDto joinGroupByLink(Long groupId, String token);
+
     boolean isUserJoinedGroup(Long groupId, Long userId);
 
     Long findMembersCountByGroupId(Long groupId);
