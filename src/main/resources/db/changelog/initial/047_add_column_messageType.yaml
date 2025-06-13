@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: 047_add_column_messageType
+      author: Kanybek
+      changes:
+        - addColumn:
+            tableName: group_messages
+            columns:
+              - column:
+                  name: message_type
+                  type: varchar(500)
+                  defaultValue: 'MESSAGES'

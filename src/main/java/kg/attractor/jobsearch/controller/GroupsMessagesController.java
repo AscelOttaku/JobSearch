@@ -9,10 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping("groups_messages")
@@ -37,13 +35,23 @@ public class GroupsMessagesController {
             Model model
     ) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("groupsMessagesDto", groupsMessagesDto);
+            model.addAttribute("groupsMessagesDto", groupsMessagesService.findALlGroupsMessageByGroupId(groupsMessagesDto.getGroupId()));
             model.addAttribute("group", groupsService.findGroupsById(groupsMessagesDto.getGroupId()));
             model.addAttribute("membersCount", groupsUsersService.findMembersCountByGroupId(groupsMessagesDto.getGroupId()));
+            model.addAttribute("bindingResult", bindingResult);
             return "groups/groups_messages";
         }
 
         groupsMessagesService.createMessage(groupsMessagesDto);
         return "redirect:/groups_messages/group/" + groupsMessagesDto.getGroupId();
+    }
+
+    @PostMapping("message_file")
+    public String createMessageFile(
+            @RequestParam Long groupId,
+            MultipartFile multipartFile
+    ) {
+        groupsMessagesService.createMessageFile(groupId, multipartFile);
+        return "redirect:/groups_messages/group/" + groupId;
     }
 }

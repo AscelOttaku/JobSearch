@@ -8,42 +8,7 @@
         <title>Сообщения группы</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-        <style>
-            .text-muted {
-                font-size: 1rem;
-            }
-
-            .message-container {
-                max-height: 70vh;
-                overflow-y: auto;
-            }
-
-            .message-card {
-                border-radius: 15px;
-                transition: all 0.3s ease;
-            }
-
-            .message-card:hover {
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            }
-
-            .user-avatar {
-                width: 40px;
-                height: 40px;
-                object-fit: cover;
-                border-radius: 50%;
-            }
-
-            .group-header {
-                background-color: #f8f9fa;
-                border-radius: 10px;
-            }
-
-            .timestamp {
-                font-size: 0.8rem;
-                color: #6c757d;
-            }
-        </style>
+        <link rel="stylesheet" href="/static/css/groupMessages.css">
     </head>
     <body class="bg-light">
     <div class="container py-4">
@@ -86,7 +51,46 @@
                                                 ${msg.createdAt}
                                             </small>
                                         </div>
-                                        <p class="mb-0">${msg.message}</p>
+                                        <div class="content">
+                                            <#if msg.messageType == 'MESSAGES'>
+                                                ${msg.message}
+                                            <#elseif msg.messageType == 'IMAGES'>
+                                                <div class="file-attachment image-attachment">
+                                                    <img src="/files/filePath/${msg.message}?fileType=${msg.messageType}"
+                                                         alt="Uploaded image" class="img-thumbnail">
+                                                    <div class="file-meta">
+                                                        <i class="bi bi-image"></i>
+                                                        <span>Photo</span>
+                                                    </div>
+                                                </div>
+                                            <#else>
+                                                <div class="file-attachment document-attachment">
+                                                    <div class="file-icon">
+                                                        <#if msg.message?ends_with('.pdf')>
+                                                            <i class="bi bi-file-earmark-pdf-fill text-danger"></i>
+                                                        <#elseif msg.message?ends_with('.doc') || msg.message?ends_with('.docx')>
+                                                            <i class="bi bi-file-earmark-word-fill text-primary"></i>
+                                                        <#elseif msg.message?ends_with('.xls') || msg.message?ends_with('.xlsx')>
+                                                            <i class="bi bi-file-earmark-excel-fill text-success"></i>
+                                                        <#elseif msg.message?ends_with('.zip') || msg.message?ends_with('.rar')>
+                                                            <i class="bi bi-file-earmark-zip-fill text-warning"></i>
+                                                        <#else>
+                                                            <i class="bi bi-file-earmark-fill text-secondary"></i>
+                                                        </#if>
+                                                    </div>
+                                                    <div class="file-info">
+                                                        <div class="file-name">${msg.message?keep_after_last("/")}</div>
+                                                        <div class="file-actions">
+                                                            <a href="/files/filePath/${msg.message}?fileType=${msg.messageType}"
+                                                               class="btn btn-sm btn-link download-btn"
+                                                               title="Download">
+                                                                <i class="bi bi-download"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </#if>
+                                        </div>
                                     </div>
                                     <#if msg.owner.userId == authorizedUser.userId>
                                         <div class="dropdown">
@@ -125,17 +129,44 @@
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                     <input type="hidden" name="groupId" value="${group.id!0}"/>
                     <div class="input-group">
-                        <textarea class="form-control"
-                                  name="message"
-                                  rows="2"
-                                  placeholder="Написать сообщение..."
-                                  required></textarea>
+                    <textarea class="form-control"
+                              name="message"
+                              rows="2"
+                              placeholder="Написать сообщение..."
+                              required></textarea>
                         <button class="btn btn-primary" type="submit">
                             <i class="bi bi-send"></i>
                         </button>
                     </div>
+                    <#if bindingResult?? && bindingResult.hasFieldErrors("message")>
+                        <#list bindingResult.getFieldErrors("message") as error>
+                            <div class="text-danger mt-2">${error.defaultMessage}</div>
+                        </#list>
+                    </#if>
                 </form>
             </div>
+
+            <form method="post" action="/groups_messages/message_file" enctype="multipart/form-data" class="mt-3">
+                <#if _csrf??>
+                    <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
+                           value="${(_csrf.token)!'csrf-token'}"/>
+                </#if>
+
+                <div class="position-relative d-inline-block">
+                    <input type="file" name="multipartFile" id="fileInput" class="visually-hidden">
+                    <input type="hidden" name="groupId" value="${group.id!0}">
+
+                    <label for="fileInput" class="btn btn-link p-2" style="font-size: 1.5rem; color: #6c757d;"
+                           title="<@spring.message 'upload'/>">
+                        <i class="bi bi-paperclip"></i>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary rounded-circle p-2" style="width: 40px; height: 40px;"
+                        title="<@spring.message 'send'/>">
+                    <i class="bi bi-send-fill"></i>
+                </button>
+            </form>
         </div>
     </div>
 

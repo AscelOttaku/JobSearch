@@ -1,6 +1,7 @@
 package kg.attractor.jobsearch.model;
 
 import jakarta.persistence.*;
+import kg.attractor.jobsearch.enums.MessageType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,6 +27,10 @@ public class GroupsMessages {
 
     @Column(nullable = false, length = 1000)
     private String message;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "message_type", nullable = false)
+    private MessageType messageType;
 
     @Column(name = "created_time", nullable = false, updatable = false)
     private LocalDateTime createdTime;

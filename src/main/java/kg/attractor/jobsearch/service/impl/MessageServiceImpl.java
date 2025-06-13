@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -146,26 +145,19 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public void saveFile(Long respondId, MultipartFile multipartFile) throws IOException {
+    public void saveFile(Long respondId, MultipartFile multipartFile) {
         Assert.notNull(respondId, "respondId must not be null");
         Assert.notNull(multipartFile, "multipartFile must not be null");
 
-        String filePath;
-        MessageType messageType = MessageType.FILE;
-
-        if (multipartFile.getContentType() != null && multipartFile.getContentType().startsWith("image/")) {
-            filePath = FileUtil.uploadFile(multipartFile);
-            messageType = MessageType.IMAGES;
-        } else
-            filePath = FileUtil.uploadFile("data/files", multipartFile);
+        var fileInfoDto = FileUtil.createFileForMessages(multipartFile);
 
         saveMessage(MessageDto.builder()
                 .userDto(UserDto.builder()
                         .userId(authorizedUserService.getAuthorizedUserId())
                         .build())
                 .respondedApplicationId(respondId)
-                .content(filePath)
-                .messageType(messageType)
+                .content(fileInfoDto.getFilePath())
+                .messageType(fileInfoDto.getMessageType())
                 .build());
     }
 

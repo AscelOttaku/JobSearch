@@ -48,8 +48,8 @@ public class GroupsController {
             return "groups/new_groups";
         }
 
-        groupsService.createGroups(groupsDto);
-        return "redirect:/groups_messages/group/" + groupsDto.getId();
+        var savedGroup = groupsService.createGroups(groupsDto);
+        return "redirect:/groups_messages/group/" + savedGroup.getId();
     }
 
     @GetMapping("update_groups/{groupsId}")
@@ -76,6 +76,6 @@ public class GroupsController {
     @PostMapping("delete/{groupsId}")
     public String deleteGroupsById(@PathVariable Long groupsId) {
         groupsService.deleteGroupsById(groupsId);
-        return "redirect:/groups/groups";
+        return "redirect:/groups";
     }
 }

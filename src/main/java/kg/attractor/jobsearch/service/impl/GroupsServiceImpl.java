@@ -42,6 +42,9 @@ public class GroupsServiceImpl implements GroupsService {
 
     @Override
     public GroupsDto createGroups(GroupsDto groupsDto) throws IOException {
+        long groupsQuantity = groupsRepository.count();
+        if (groupsQuantity + 1 > 5) throw new IllegalArgumentException("You can create only 5 groups");
+
         groupsDto.setAdmin(UserDto.builder()
                 .userId(authorizedUserService.getAuthorizedUserId())
                 .build());

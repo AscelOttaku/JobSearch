@@ -18,5 +18,6 @@ public interface GroupsMessagesMapper {
     @Mapping(target = "group.id", source = "groupId")
     @Mapping(target = "createdTime", qualifiedByName = "convertStringToLocalDateTime", source = "createdAt")
     @Mapping(target = "updatedTime", qualifiedByName = "convertStringToLocalDateTime", source = "updatedAt")
+    @Mapping(target = "messageType", defaultValue = "MESSAGES")
     GroupsMessages mapToEntity(GroupsMessagesDto groupsMessagesDto);
 }

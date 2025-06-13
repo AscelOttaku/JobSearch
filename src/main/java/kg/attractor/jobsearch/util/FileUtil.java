@@ -1,5 +1,7 @@
 package kg.attractor.jobsearch.util;
 
+import kg.attractor.jobsearch.dto.FIleInfoDto;
+import kg.attractor.jobsearch.enums.MessageType;
 import lombok.SneakyThrows;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -92,5 +94,25 @@ public class FileUtil {
     public static void deleteFile(String filePath) {
         Assert.notNull(filePath, "filePath must not be null");
         Files.delete(Path.of(filePath));
+    }
+
+    @SneakyThrows
+    public static FIleInfoDto createFileForMessages(MultipartFile multipartFile) {
+        String filePath;
+        MessageType messageType = MessageType.FILE;
+
+        if (multipartFile.isEmpty())
+            throw new IllegalArgumentException("File must not be empty");
+
+        if (multipartFile.getContentType() != null && multipartFile.getContentType().startsWith("image/")) {
+            filePath = FileUtil.uploadFile(multipartFile);
+            messageType = MessageType.IMAGES;
+        } else
+            filePath = FileUtil.uploadFile("data/files", multipartFile);
+
+        return FIleInfoDto.builder()
+                .filePath(filePath)
+                .messageType(messageType)
+                .build();
     }
 }

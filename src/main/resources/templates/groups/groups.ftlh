@@ -58,7 +58,7 @@
                                                    title="Join Group">
                                                     <i class="bi bi-plus-circle me-1"></i> Join
                                                 </a>
-                                            <#else>
+                                            <#elseif (authorizedUser.userId != group.admin.userId)>
                                                 <form method="post"
                                                       action="/groups_users/leave_group/${group.id}/${authorizedUser.userId}"
                                                       class="d-inline mb-0">

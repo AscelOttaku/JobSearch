@@ -2,6 +2,7 @@ package kg.attractor.jobsearch.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import kg.attractor.jobsearch.enums.MessageType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +18,7 @@ public class GroupsMessagesDto {
     @NotBlank(message = "Message cannot be blank")
     @Size(min = 2, max = 500, message = "Message must be between 2 and 500 characters")
     private String message;
+    private MessageType messageType;
     private String createdAt;
     private String updatedAt;
 }
