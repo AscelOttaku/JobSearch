@@ -1,5 +1,6 @@
 package kg.attractor.jobsearch.service.impl;
 
+import kg.attractor.jobsearch.dto.GroupsDto;
 import kg.attractor.jobsearch.dto.GroupsUsersDto;
 import kg.attractor.jobsearch.dto.mapper.impl.GroupsUserMapper;
 import kg.attractor.jobsearch.dto.mapper.impl.UserMapper;
@@ -58,6 +59,10 @@ public class GroupsUsersServiceImpl implements GroupsUsersService {
 
     @Override
     public GroupsUsersDto joinGroupByLink(Long groupId, String token) {
+        GroupsDto groupsById = groupsService.findGroupsById(groupId);
+        if (groupsById.getAdmin().getUserId().equals(userService.getAuthUserId()))
+            throw new IllegalArgumentException("You are the admin of this group, you cannot join it using a link");
+
         String storedToken = temporalStorage.getOptionalTemporalData("groupToken_" + groupId, String.class)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid or expired token"));
         temporalStorage.removeTemporalData("groupToken_" + groupId);

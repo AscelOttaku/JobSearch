@@ -1,5 +1,8 @@
 package kg.attractor.jobsearch.service.impl;
 
+import kg.attractor.jobsearch.service.AuthorityService;
+import kg.attractor.jobsearch.service.AuthorizedUserService;
+import kg.attractor.jobsearch.service.GroupsService;
 import kg.attractor.jobsearch.service.TokenGeneratorService;
 import kg.attractor.jobsearch.storage.TemporalStorage;
 import kg.attractor.jobsearch.util.Util;
@@ -15,11 +18,20 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TokenGeneratorServiceImpl implements TokenGeneratorService {
     private final TemporalStorage temporalStorage;
+    private final GroupsService groupsService;
+    private final AuthorizedUserService authorizedUserService;
 
     @Override
     public String generateTokenForGroup(Long groupId, String uri) {
         Assert.isTrue(groupId != null && groupId > 0, "Group ID must be a positive number");
         Assert.notNull(uri, "URI must not be null");
+
+        long groupAdminId = groupsService.findGroupsById(groupId)
+                .getAdmin()
+                .getUserId();
+
+        if (!authorizedUserService.getAuthorizedUserId().equals(groupAdminId))
+            throw new IllegalArgumentException("You are not the admin of this group");
 
         Optional<String> storedToken = temporalStorage.getOptionalTemporalData("groupToken_" + groupId, String.class);
 
@@ -27,7 +39,7 @@ public class TokenGeneratorServiceImpl implements TokenGeneratorService {
             LocalDateTime createdTime = temporalStorage.getTemporalData("groupToken_" + groupId + "_created", LocalDateTime.class);
             Duration duration = Duration.between(createdTime, LocalDateTime.now());
 
-            if (duration.toMinutes() <= 60)
+            if (duration.toMinutes() < 60)
                 return storedToken.get();
         }
 
