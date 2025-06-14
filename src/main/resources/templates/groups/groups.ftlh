@@ -77,6 +77,12 @@
                                         </#if>
 
                                         <#if authorizedUser?? && (authorizedUser.userId == group.admin.userId)>
+                                            <a href="/groups/generate/link/${group.id}"
+                                               class="btn btn-sm btn-outline-success px-2"
+                                               title="Пригласить в группу">
+                                                <i class="fas fa-link action-icon"></i>
+                                            </a>
+
                                             <a href="/groups/update_groups/${group.id}"
                                                class="btn btn-sm btn-outline-warning px-2"
                                                title="Редактировать">

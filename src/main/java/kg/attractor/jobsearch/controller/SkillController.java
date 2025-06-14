@@ -3,7 +3,6 @@ package kg.attractor.jobsearch.controller;
 import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.dto.SkillDto;
 import kg.attractor.jobsearch.dto.VacancyDto;
-import kg.attractor.jobsearch.service.AuthorizedUserService;
 import kg.attractor.jobsearch.service.SkillService;
 import kg.attractor.jobsearch.storage.TemporalStorage;
 import kg.attractor.jobsearch.util.Util;

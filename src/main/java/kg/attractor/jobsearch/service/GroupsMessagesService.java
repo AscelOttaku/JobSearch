@@ -11,4 +11,8 @@ public interface GroupsMessagesService {
     void createMessage(GroupsMessagesDto groupsMessagesDto);
 
     void createMessageFile(Long groupId, MultipartFile multipartFile);
+
+    void deleteMessageById(Long messageId);
+
+    void deleteAllMessagesByGroupId(Long groupId);
 }

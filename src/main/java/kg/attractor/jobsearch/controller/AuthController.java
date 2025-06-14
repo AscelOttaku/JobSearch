@@ -8,7 +8,6 @@ import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,15 +20,14 @@ public class AuthController {
     private final UserService userService;
 
     @GetMapping("login")
-    public String login(@RequestParam(required = false) Boolean error, Model model) {
-        if (error != null && error) {
-            model.addAttribute("status", HttpStatus.NOT_ACCEPTABLE.value());
-            model.addAttribute("reason", HttpStatus.NOT_ACCEPTABLE.getReasonPhrase());
-            model.addAttribute("message", "Login error password or email is incorrect");
-            return "errors/error";
-        }
-
+    public String login(Model model) {
         model.addAttribute("user", new UserDto());
+        return "auth/login";
+    }
+
+    @GetMapping("login/error")
+    public String loginError(Model model) {
+        model.addAttribute("error", "Invalid username or password.");
         return "auth/login";
     }
 

@@ -61,4 +61,6 @@ public interface UserService {
     UserDto findUserByRespondId(Long respondId);
 
     void isUserExistById(Long userId);
+
+    UserDto findGroupsAdminByGroupId(Long groupId);
 }

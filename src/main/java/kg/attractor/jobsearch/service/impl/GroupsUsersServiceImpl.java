@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -65,16 +66,16 @@ public class GroupsUsersServiceImpl implements GroupsUsersService {
 
         String storedToken = temporalStorage.getOptionalTemporalData("groupToken_" + groupId, String.class)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid or expired token"));
-        temporalStorage.removeTemporalData("groupToken_" + groupId);
 
-        if (!token.equals(storedToken)) throw new IllegalArgumentException("Invalid or expired token");
+        if (!storedToken.endsWith("/token/".concat(token))) throw new IllegalArgumentException("Invalid or expired token");
 
         LocalDateTime createdTime = temporalStorage.getTemporalData("groupToken_" + groupId + "_created", LocalDateTime.class);
-        temporalStorage.removeTemporalData("groupToken_" + groupId + "_created");
 
-        if (createdTime.isBefore(LocalDateTime.now().minusHours(1)))
+        if (createdTime.isBefore(LocalDateTime.now().minusHours(1))) {
+            temporalStorage.removeTemporalData("groupToken_" + groupId);
+            temporalStorage.removeTemporalData("groupToken_" + groupId + "_created");
             throw new IllegalArgumentException("Token expired");
-
+        }
         return joinGroup(groupId, userService.getAuthUserId());
     }
 
@@ -96,6 +97,14 @@ public class GroupsUsersServiceImpl implements GroupsUsersService {
         userService.isUserExistById(userId);
 
         groupsUsersRepository.deleteByGroupIdAndUserId(groupId, userId);
+    }
+
+    @Override
+    public List<GroupsUsersDto> findAllMembersByGroupId(Long groupId) {
+        return groupsUsersRepository.findAllGroupsUsersByGroupId(groupId)
+                .stream()
+                .map(groupsUserMapper::mapToDto)
+                .toList();
     }
 
     @Autowired

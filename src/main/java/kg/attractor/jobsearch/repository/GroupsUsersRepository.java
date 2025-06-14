@@ -7,6 +7,11 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.nio.channels.FileChannel;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
 @Repository
 public interface GroupsUsersRepository extends JpaRepository<GroupsUsers, Long> {
 
@@ -23,4 +28,8 @@ public interface GroupsUsersRepository extends JpaRepository<GroupsUsers, Long> 
     void deleteByGroupIdAndUserId(Long groupId, Long userId);
 
     Long user(User user);
+
+    List<GroupsUsers> findAllGroupsUsersByGroupId(Long groupId);
+
+    Optional<GroupsUsers> findGroupsAdminByGroupId(Long groupId);
 }

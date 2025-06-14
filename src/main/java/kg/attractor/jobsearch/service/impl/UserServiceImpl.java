@@ -70,6 +70,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Long getAuthUserId() {
+        log.info("security context: {}", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         UserDetails userDetails = getAutentificatedUserDetails();
         return userRepository.findUserByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new UserNotFoundException("User not found by email: " + userDetails.getUsername()))
@@ -334,5 +335,14 @@ public class UserServiceImpl implements UserService {
 
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found by id: " + userId));
+    }
+
+    @Override
+    public UserDto findGroupsAdminByGroupId(Long groupId) {
+        Assert.notNull(groupId, "groupId cannot be null");
+
+        return userRepository.findGroupsAdminByGroupId(groupId)
+                .map(userMapper::mapToDto)
+                .orElseThrow(() -> new NoSuchElementException("User not found by group id: " + groupId));
     }
 }

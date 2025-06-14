@@ -39,12 +39,22 @@
                     <div class="error" id="passwordError"></div>
                 </div>
 
+                <#if error??>
+                    <div class="alert alert-danger d-flex align-items-center mt-2" role="alert" style="border-radius: 8px; font-size: 1rem; gap: 0.5rem;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-exclamation-triangle-fill text-danger" viewBox="0 0 16 16">
+                            <path d="M8.982 1.566a1.13 1.13 0 0 0-1.964 0L.165 13.233c-.457.778.091 1.767.982 1.767h13.707c.89 0 1.438-.99.982-1.767L8.982 1.566zm-.982 4.905a.905.905 0 1 1 1.81 0l-.35 3.507a.552.552 0 0 1-1.11 0L8 6.47zm.002 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+                        </svg>
+                        <span>${error}</span>
+                    </div>
+                </#if>
+
                 <div class="remember-forgot">
                     <div class="remember-me">
                         <input type="checkbox" id="remember">
                         <label for="remember"><@spring.message "login.remember"/></label>
                     </div>
-                    <a href="/auth/forgot_password" class="forgot-password"><@spring.message "login.forgot_password"/></a>
+                    <a href="/auth/forgot_password"
+                       class="forgot-password"><@spring.message "login.forgot_password"/></a>
                 </div>
 
                 <button type="submit" class="custom-btn-primary" id="loginButton">
@@ -73,7 +83,8 @@
             </div>
 
             <div class="signup-link">
-                <p><@spring.message "login.no_account"/> <a href="/auth/registration"><@spring.message "login.sign_up"/></a></p>
+                <p><@spring.message "login.no_account"/> <a
+                            href="/auth/registration"><@spring.message "login.sign_up"/></a></p>
             </div>
 
             <div class="text-center mt-3">
@@ -83,7 +94,8 @@
             </div>
 
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="dropdownMenuButton1" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <a class="nav-link dropdown-toggle" href="#" id="dropdownMenuButton1" role="button"
+                   data-bs-toggle="dropdown" aria-expanded="false">
                     🌐 Language
                 </a>
                 <ul class="dropdown-menu z-3" aria-labelledby="dropdownMenuButton1">
