@@ -5,7 +5,6 @@ import jakarta.validation.Valid;
 import kg.attractor.jobsearch.dto.GroupsDto;
 import kg.attractor.jobsearch.service.GroupsService;
 import kg.attractor.jobsearch.service.TokenGeneratorService;
-import kg.attractor.jobsearch.storage.TemporalStorage;
 import kg.attractor.jobsearch.util.Util;
 import kg.attractor.jobsearch.util.marks.CreateOn;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +25,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GroupsController {
     private final GroupsService groupsService;
-    private final TemporalStorage temporalStorage;
     private final TokenGeneratorService tokenGeneratorService;
 
     @GetMapping
@@ -39,10 +37,14 @@ public class GroupsController {
 
     @GetMapping("link/{groupId}")
     public String generateLinkForGroup(@PathVariable Long groupId, Model model, HttpServletRequest request) {
-        String token = Util.generateUniqueValue();
-        temporalStorage.addData("groupToken_" + groupId, token);
         model.addAttribute("link", tokenGeneratorService.generateTokenForGroup(groupId, Util.getSiteUrl(request)));
-        return "groups/token";
+        return "groups/link";
+    }
+
+    @GetMapping("/generate/link/{groupId}")
+    public String generateLinkPage(@PathVariable Long groupId, Model model) {
+        model.addAttribute("groupId", groupId);
+        return "groups/link";
     }
 
     @GetMapping("new_groups")

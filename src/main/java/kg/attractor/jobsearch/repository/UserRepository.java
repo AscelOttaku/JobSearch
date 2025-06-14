@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.nio.channels.FileChannel;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,4 +60,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "left join RespondedApplication ra on ra.resume.id = r.id " +
             "where ra.id = :respondId")
     Optional<User> findUserByRespondId(Long respondId);
+
+    @Query("select u from User u " +
+            "left join Groups g on g.admin.userId = u.userId " +
+            "where g.id = :groupId")
+    Optional<User> findGroupsAdminByGroupId(Long groupId);
 }

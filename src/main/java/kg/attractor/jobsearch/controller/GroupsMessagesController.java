@@ -1,5 +1,6 @@
 package kg.attractor.jobsearch.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import kg.attractor.jobsearch.dto.GroupsMessagesDto;
 import kg.attractor.jobsearch.service.GroupsMessagesService;
@@ -52,6 +53,18 @@ public class GroupsMessagesController {
             MultipartFile multipartFile
     ) {
         groupsMessagesService.createMessageFile(groupId, multipartFile);
+        return "redirect:/groups_messages/group/" + groupId;
+    }
+
+    @PostMapping("delete/{messageId}")
+    public String deleteMessage(@PathVariable Long messageId, HttpServletRequest request) {
+        groupsMessagesService.deleteMessageById(messageId);
+        return "redirect:" + request.getHeader("referer");
+    }
+
+    @PostMapping("delete_all/messages/{groupId}")
+    public String deleteAllMessages(@PathVariable Long groupId) {
+        groupsMessagesService.deleteAllMessagesByGroupId(groupId);
         return "redirect:/groups_messages/group/" + groupId;
     }
 }

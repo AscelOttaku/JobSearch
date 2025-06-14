@@ -70,10 +70,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Long getAuthUserId() {
+        log.info("security context: {}", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         UserDetails userDetails = getAutentificatedUserDetails();
         return userRepository.findUserByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new UserNotFoundException("User not found by email: " + userDetails.getUsername()))
                 .getUserId();
+    }
+
+    private String getAuthorizedUserEmail() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 
     @Override
@@ -226,13 +231,10 @@ public class UserServiceImpl implements UserService {
         return optionalUser.isPresent() && optionalUser.get().getAccountType().equalsIgnoreCase("jobSeeker");
     }
 
-    private UserDto getAuthorizedUser() {
-        UserDetails userDetails = getAutentificatedUserDetails();
-        return findUserByEmail(userDetails.getUsername());
-    }
-
-    private String getAuthorizedUserEmail() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
+    @Override
+    public UserDto getAuthorizedUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return findUserByEmail(username);
     }
 
     public UserDetails getAutentificatedUserDetails() {
@@ -334,5 +336,14 @@ public class UserServiceImpl implements UserService {
 
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found by id: " + userId));
+    }
+
+    @Override
+    public UserDto findGroupsAdminByGroupId(Long groupId) {
+        Assert.notNull(groupId, "groupId cannot be null");
+
+        return userRepository.findGroupsAdminByGroupId(groupId)
+                .map(userMapper::mapToDto)
+                .orElseThrow(() -> new NoSuchElementException("User not found by group id: " + groupId));
     }
 }

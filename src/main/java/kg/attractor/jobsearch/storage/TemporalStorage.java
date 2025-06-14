@@ -42,6 +42,9 @@ public class TemporalStorage {
             return Optional.empty();
 
         Object value = temporalData.get(key);
+
+        if (value == null) return Optional.empty();
+
         if (type == null || !type.isInstance(value))
             throw new ClassCastException("value is null or cannot be cast to given type");
 

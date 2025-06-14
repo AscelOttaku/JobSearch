@@ -40,6 +40,8 @@ public interface UserService {
 
     boolean checkIfJobSeekerExistById(Long jobSeekerId);
 
+    UserDto getAuthorizedUser();
+
     UserDto findUserById(Long userId);
 
     UserDto findUserByEmail(String email);
@@ -61,4 +63,6 @@ public interface UserService {
     UserDto findUserByRespondId(Long respondId);
 
     void isUserExistById(Long userId);
+
+    UserDto findGroupsAdminByGroupId(Long groupId);
 }

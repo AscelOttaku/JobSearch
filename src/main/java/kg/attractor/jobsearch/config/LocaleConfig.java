@@ -12,8 +12,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class LocaleConfig implements WebMvcConfigurer {
 
-    @Bean
-    public LocaleResolver localeResolver(UsersLocaleRepository usersLocaleRepository) {
-        return new CustomLocaleResolver(usersLocaleRepository);
-    }
+//    @Bean
+//    public LocaleResolver localeResolver(UsersLocaleRepository usersLocaleRepository) {
+//        return new CustomLocaleResolver(usersLocaleRepository);
+//    }
 }

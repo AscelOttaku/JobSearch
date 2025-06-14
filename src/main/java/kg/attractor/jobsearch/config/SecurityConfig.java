@@ -46,9 +46,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .formLogin(form -> form
                         .loginPage("/auth/login")
-                        .loginProcessingUrl("/auth/login")
                         .successHandler(authenticationSuccessHandler())
-                        .failureUrl("/auth/login?error=true")
+                        .failureUrl("/auth/login/error")
                         .permitAll())
 
                 .logout(logout -> logout
@@ -124,6 +123,11 @@ public class SecurityConfig {
                                 .requestMatchers(POST, "/groups/new_groups").authenticated()
                                 .requestMatchers("/groups/update_groups").authenticated()
                                 .requestMatchers("/groups/delete").authenticated()
+
+                                //Link
+
+                                .requestMatchers("/groups/generate/link/*").authenticated()
+                                .requestMatchers("/groups/link/*").authenticated()
 
                                 //All Other Endpoints
 

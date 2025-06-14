@@ -61,6 +61,11 @@ public class Util {
         return siteUrl.replace(request.getRequestURI(), "");
     }
 
+    public static boolean isMessageLink(String message) {
+        return message != null && !message.isBlank() && (message.startsWith("http://")
+                || message.startsWith("https://"));
+    }
+
     public static String generateUniqueValue() {
         return UUID.randomUUID().toString();
     }
