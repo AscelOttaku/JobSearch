@@ -52,4 +52,6 @@ public interface VacancyService {
     PageHolder<VacancyDto> findAllUserRespondedVacanciesByResumeId(Long resumeId, int page, int size);
 
     Long findAuthUserCreatedVacanciesQuantity();
+
+    PageHolder<VacancyDto> findVacanciesBySearchCriteria(String searchCriteria, int page, int size);
 }

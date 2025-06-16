@@ -15,8 +15,10 @@ import kg.attractor.jobsearch.model.Vacancy;
 import kg.attractor.jobsearch.provider.UserLastCreatedVacancyProvider;
 import kg.attractor.jobsearch.repository.VacancyRepository;
 import kg.attractor.jobsearch.service.*;
+import kg.attractor.jobsearch.specification.builder.VacancySpecificationBuilder;
 import kg.attractor.jobsearch.strategy.vacancies.UserVacancyFilterStrategy;
 import kg.attractor.jobsearch.strategy.vacancies.VacancyFilterStrategy;
+import kg.attractor.jobsearch.util.Util;
 import kg.attractor.jobsearch.validators.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,11 +26,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import java.util.*;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -338,5 +346,42 @@ public class VacancyServiceImpl implements VacancyService, UserLastCreatedVacanc
 
         return vacancyRepository.findUserCreatedLastVacancy(authorizedUserService.getAuthorizedUserId())
                 .map(vacancyMapper::mapToDto);
+    }
+
+    @Override
+    public PageHolder<VacancyDto> findVacanciesBySearchCriteria(String searchCriteria, int page, int size) {
+        Assert.notNull(searchCriteria, "Search criteria cannot be null");
+
+        VacancySpecificationBuilder vacancySpecificationBuilder = new VacancySpecificationBuilder();
+        Pattern pattern = Pattern.compile("(\\w+?)([:<>])([^,]+),");
+        Matcher matcher = pattern.matcher(searchCriteria + ",");
+        while (matcher.find()) {
+            String value = matcher.group(3);
+            String prefix = Util.findPrefix(value)
+                    .orElse(null);
+            String suffix = Util.findSuffix(value)
+                    .orElse(null);
+
+            value = value.replaceAll("[*]", "").trim();
+
+            String fieldName = matcher.group(1);
+            if (fieldName.startsWith("OR_")) {
+                String newFieldName = fieldName.replace("OR_", "");
+                vacancySpecificationBuilder.with(
+                        "or", newFieldName, matcher.group(2), value,
+                        prefix, suffix
+                );
+            } else {
+                vacancySpecificationBuilder.with(
+                        fieldName, matcher.group(2), value,
+                        prefix, suffix
+                );
+            }
+        }
+
+        Specification<Vacancy> spec = vacancySpecificationBuilder.build();
+        var vacancies = vacancyRepository.findAll(spec, PageRequest.of(page, size))
+                .map(vacancyMapper::mapToDto);
+        return pageHolderWrapper.wrapPageHolder(vacancies);
     }
 }

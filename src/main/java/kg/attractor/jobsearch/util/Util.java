@@ -4,13 +4,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.text.CaseUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.Assert;
 
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -97,5 +96,65 @@ public class Util {
 
         return matcher.find() ? Optional.of(Integer.parseInt(matcher.group(1))) :
                 Optional.empty();
+    }
+
+    public static Optional<String> findPrefix(String arg) {
+        if (arg.startsWith("*"))
+            return Optional.of(arg.substring(0, 1));
+
+        return Optional.empty();
+    }
+
+    public static Optional<String> findSuffix(String arg) {
+        if (arg.endsWith("*"))
+            return Optional.of(arg.substring(arg.length() - 1));
+
+        return Optional.empty();
+    }
+
+    public static boolean isDouble(Object arg) {
+        switch (arg) {
+            case null -> {
+                return false;
+            }
+            case Double ignored -> {
+                return true;
+            }
+            case String str -> {
+                try {
+                    Double.parseDouble(str);
+                    return true;
+                } catch (NumberFormatException e) {
+                    return false;
+                }
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + arg);
+        }
+    }
+
+    public static boolean isString(Object arg) {
+        return arg instanceof String;
+    }
+
+    public String replaceFirstOR_(String arg) {
+        if (arg == null || arg.isBlank()) {
+            return arg;
+        }
+        return arg.replaceFirst("OR_", "");
+    }
+
+    public <T> List<String> getAllFieldsNamesOfClass(T arg) {
+        Assert.notNull(arg, "arg must not be null");
+
+        Class<?> currentClass = arg.getClass();
+
+        if (currentClass == Object.class)
+            return List.of();
+
+        return Arrays.stream(currentClass.getDeclaredFields())
+                .map(Field::getName)
+                .filter(name -> Character.isLowerCase(name.charAt(0)))
+                .filter(name -> !name.equals("serialVersionUID") && !name.equals("id") && !name.equals("respondedApplications"))
+                .toList();
     }
 }

@@ -1,12 +1,16 @@
 package kg.attractor.jobsearch.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.enums.FilterType;
+import kg.attractor.jobsearch.model.Vacancy;
 import kg.attractor.jobsearch.service.*;
 import kg.attractor.jobsearch.storage.TemporalStorage;
+import kg.attractor.jobsearch.util.Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -15,9 +19,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.security.SecureRandom;
+import java.util.List;
 
 @Controller("vacancyController")
 @RequestMapping("/vacancies")
@@ -199,5 +202,23 @@ public class VacancyController {
         PageHolder<VacancyDto> allUserRespondedVacanciesByResumeId = vacancyService.findAllUserRespondedVacanciesByResumeId(resumeId, page, size);
         temporalStorage.addData("respondedVacancies", allUserRespondedVacanciesByResumeId);
         return "redirect:/resumes/" + resumeId;
+    }
+
+    @GetMapping("search/dynamic")
+    public String findVacanciesByCriteria(
+            @RequestParam(defaultValue = "0", required = false) Integer page,
+            @RequestParam(defaultValue = "10", required = false) Integer size,
+            @RequestParam String criteria,
+            Model model
+    ) {
+        model.addAttribute("vacancies", vacancyService.findVacanciesBySearchCriteria(criteria, page, size));
+        return "vacancies/vacancies";
+    }
+
+    @GetMapping("search/vacancies/dynamic/page")
+    public String findVacanciesBySearchCriteria(Model model) {
+        List<String> fields = Util.getAllFieldsNamesOfClass(new Vacancy());
+        model.addAttribute("fields", fields);
+        return "search/search_vacancies_dynamic";
     }
 }

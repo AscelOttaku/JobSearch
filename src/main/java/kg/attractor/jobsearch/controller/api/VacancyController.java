@@ -83,4 +83,14 @@ public class VacancyController {
     public List<VacancyDto> search(@RequestParam String query) {
         return vacancyService.searchVacancies(query);
     }
+
+    @GetMapping("search/criteria")
+    @ResponseStatus(HttpStatus.OK)
+    public PageHolder<VacancyDto> searchByCriteria(
+            @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+            @RequestParam(value = "size", defaultValue = "10", required = false) Integer size,
+            @RequestParam String criteria
+    ) {
+        return vacancyService.findVacanciesBySearchCriteria(criteria, page, size);
+    }
 }
