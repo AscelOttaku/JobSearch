@@ -208,11 +208,13 @@ public class VacancyController {
     public String findVacanciesByCriteria(
             @RequestParam(defaultValue = "0", required = false) Integer page,
             @RequestParam(defaultValue = "10", required = false) Integer size,
-            @RequestParam String criteria,
+            @RequestParam String searchCriteria,
             Model model
     ) {
-        model.addAttribute("vacancies", vacancyService.findVacanciesBySearchCriteria(criteria, page, size));
-        return "vacancies/vacancies";
+        model.addAttribute("vacancies", vacancyService.findVacanciesBySearchCriteria(searchCriteria, page, size));
+        model.addAttribute("fields", Util.getAllFieldsNamesOfClass(new Vacancy()));
+        model.addAttribute("searchCriteria", searchCriteria);
+        return "search/search_vacancies_dynamic";
     }
 
     @GetMapping("search/vacancies/dynamic/page")

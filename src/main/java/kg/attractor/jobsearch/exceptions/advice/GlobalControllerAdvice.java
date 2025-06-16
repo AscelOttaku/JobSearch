@@ -41,7 +41,7 @@ public class GlobalControllerAdvice {
         return errorService.handleValidationException(ex, request);
     }
 
-    @ExceptionHandler({NoSuchElementException.class, UsernameNotFoundException.class})
+    @ExceptionHandler({NoSuchElementException.class, UsernameNotFoundException.class, ClassCastException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleNoSuchElementException(
             Model model, RuntimeException ex, HttpServletRequest request
