@@ -1,17 +1,25 @@
 package kg.attractor.jobsearch.util;
 
 import jakarta.servlet.http.HttpServletRequest;
+import kg.attractor.jobsearch.model.*;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.text.CaseUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.Assert;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @UtilityClass
 public class Util {
@@ -144,17 +152,83 @@ public class Util {
     }
 
     public <T> List<String> getAllFieldsNamesOfClass(T arg) {
-        Assert.notNull(arg, "arg must not be null");
-
         Class<?> currentClass = arg.getClass();
 
         if (currentClass == Object.class)
             return List.of();
 
-        return Arrays.stream(currentClass.getDeclaredFields())
+        var objectsFields = Arrays.stream(currentClass.getDeclaredFields())
+                .filter(field -> !isPrimitiveOrWrapper(field.getType()) && !getSKillClasses().contains(field.getType()) && !isDateType(field.getType()))
+                .flatMap(field -> {
+                    if (field.getType() == List.class) {
+                        var fields = getTypeOfGenericList(field)
+                                .map(Class::getDeclaredFields)
+                                .orElseThrow(() -> new IllegalArgumentException("Field type is not a List or is empty"));
+
+                        return Arrays.stream(fields)
+                                .map(name -> field.getName() + "." + name.getName());
+                    }
+                    var fieldValue = getFieldValue(field, arg);
+                    return Arrays.stream(fieldValue.getClass().getDeclaredFields())
+                            .map(name -> field.getName() + "." + name);
+                })
+                .toList();
+
+        var allPrimitiveFieldsNames = Arrays.stream(currentClass.getDeclaredFields())
+                .filter(field -> isPrimitiveOrWrapper(field.getType()) || isDateType(field.getType()) || field.getType() == Category.class)
                 .map(Field::getName)
                 .filter(name -> Character.isLowerCase(name.charAt(0)))
                 .filter(name -> !name.equals("serialVersionUID") && !name.equals("id") && !name.equals("respondedApplications"))
+                .collect(Collectors.toList());
+
+        allPrimitiveFieldsNames.addAll(objectsFields);
+        return allPrimitiveFieldsNames;
+    }
+
+    @SuppressWarnings("unchecked")
+    @SneakyThrows
+    public static <T> T getFieldValue(Field field, T arg) {
+        Assert.notNull(field, "field must not be null");
+        Assert.notNull(arg, "arg must not be null");
+
+        Class<?> fieldType = field.getType();
+        Constructor<?> constructor = fieldType.getDeclaredConstructor();
+        constructor.setAccessible(true);
+        return (T) constructor.newInstance();
+    }
+
+    public boolean isPrimitiveOrWrapper(Class<?> clazz) {
+        return clazz.isPrimitive() ||
+                clazz == Boolean.class ||
+                clazz == Byte.class ||
+                clazz == Character.class ||
+                clazz == Short.class ||
+                clazz == Integer.class ||
+                clazz == Long.class ||
+                clazz == Float.class ||
+                clazz == Double.class ||
+                clazz == String.class;
+    }
+
+    public boolean isDateType(Class<?> clazz) {
+        return clazz == LocalDateTime.class || clazz == Date.class || clazz == LocalDate.class;
+    }
+
+    @SneakyThrows
+    public Optional<Class<?>> getTypeOfGenericList(Field field) {
+        Type type = field.getGenericType();
+        if (type instanceof ParameterizedType parameterizedType) {
+            Type elementType = parameterizedType.getActualTypeArguments()[0];
+            if (elementType instanceof Class<?> elementClass) {
+                return Optional.of(elementClass);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public List<Class<?>> getSKillClasses() {
+        return Stream.of(Category.class, Role.class, User.class, RespondedApplication.class)
                 .toList();
     }
 }
+

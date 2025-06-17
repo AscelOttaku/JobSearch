@@ -353,7 +353,7 @@ public class VacancyServiceImpl implements VacancyService, UserLastCreatedVacanc
         Assert.notNull(searchCriteria, "Search criteria cannot be null");
 
         VacancySpecificationBuilder vacancySpecificationBuilder = new VacancySpecificationBuilder();
-        Pattern pattern = Pattern.compile("(\\w+?)([:<>])([^,]+),");
+        Pattern pattern = Pattern.compile("([\\w.]+?)([:<>])([^,]+),");
         Matcher matcher = pattern.matcher(searchCriteria + ",");
         while (matcher.find()) {
             String value = matcher.group(3);
@@ -382,6 +382,12 @@ public class VacancyServiceImpl implements VacancyService, UserLastCreatedVacanc
         Specification<Vacancy> spec = vacancySpecificationBuilder.build();
         var vacancies = vacancyRepository.findAll(spec, PageRequest.of(page, size))
                 .map(vacancyMapper::mapToDto);
-        return pageHolderWrapper.wrapPageHolder(vacancies);
+        PageHolder<VacancyDto> vacancyDtoPageHolder = pageHolderWrapper.wrapPageHolder(vacancies);
+        vacancyDtoPageHolder.getContent().forEach(
+                vacancyDto -> vacancyDto.setSkillCorrespondence(
+                        skillCorrespondenceService.calculateAccordingToSKillsUsersCorrespondenceToVacancy(vacancyDto.getSkills())
+                )
+        );
+        return vacancyDtoPageHolder;
     }
 }

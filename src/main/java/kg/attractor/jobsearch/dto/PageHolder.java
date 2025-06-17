@@ -15,6 +15,7 @@ public class PageHolder<T> {
     private Integer page;
     private Integer size;
     private Integer totalPages;
+    private Long totalElements;
     private Boolean hasNextPage;
     private Boolean hasPreviousPage;
     private FilterType filterType;

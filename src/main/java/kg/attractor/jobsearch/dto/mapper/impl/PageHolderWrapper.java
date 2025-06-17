@@ -36,6 +36,7 @@ public class PageHolderWrapper {
                 .page(content.getNumber())
                 .size(content.getSize())
                 .totalPages(content.getTotalPages())
+                .totalElements(content.getTotalElements())
                 .hasNextPage(content.hasNext())
                 .hasPreviousPage(content.hasPrevious())
                 .filterType(null)

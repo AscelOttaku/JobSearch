@@ -8,7 +8,6 @@ import kg.attractor.jobsearch.model.Groups;
 import kg.attractor.jobsearch.model.GroupsUsers;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.repository.GroupsUsersRepository;
-import kg.attractor.jobsearch.service.AuthorizedUserService;
 import kg.attractor.jobsearch.service.GroupsService;
 import kg.attractor.jobsearch.service.GroupsUsersService;
 import kg.attractor.jobsearch.service.UserService;
@@ -32,7 +31,7 @@ public class GroupsUsersServiceImpl implements GroupsUsersService {
     private GroupsService groupsService;
     private final UserService userService;
     private final UserMapper userMapper;
-    private TemporalStorage temporalStorage;
+    private final TemporalStorage temporalStorage;
 
     @Autowired
     public void setGroupsService(@Lazy GroupsService groupsService) {
@@ -123,10 +122,5 @@ public class GroupsUsersServiceImpl implements GroupsUsersService {
             throw new IllegalArgumentException("User is not a member of the group");
 
         groupsUsersRepository.deleteByGroupIdAndUserId(groupId, userId);
-    }
-
-    @Autowired
-    public void setTemporalStorage(TemporalStorage temporalStorage) {
-        this.temporalStorage = temporalStorage;
     }
 }

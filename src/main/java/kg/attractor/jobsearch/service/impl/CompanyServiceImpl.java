@@ -69,6 +69,6 @@ public class CompanyServiceImpl implements CompanyService {
     public CompanyDto findCompanyById(Long companyId) {
         return userRepository.findById(companyId)
                 .map(companyMapper::mapToDto)
-                .orElseThrow(() -> new NoSuchElementException("COmpany not found by id " + companyId));
+                .orElseThrow(() -> new NoSuchElementException("Company not found by id " + companyId));
     }
 }

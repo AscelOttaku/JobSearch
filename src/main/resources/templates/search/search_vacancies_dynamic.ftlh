@@ -13,7 +13,7 @@
 
     <body>
     <div class="container mt-4">
-        <div class="row mb-4">1
+        <div class="row mb-4">
             <div class="col-12">
                 <h1 class="text-center mb-4">Поиск вакансий</h1>
                 <div class="card shadow-sm">
@@ -40,8 +40,8 @@
         <#if vacancies??>
             <div class="row">
                 <div class="col-12">
-                    <#if vacancies.content?? && vacancies.content?size gt 0>
-                        <h2 class="mb-4">Найдено вакансий: ${vacancies.content?size}</h2>
+                    <#if vacancies.totalElements?? && vacancies.totalElements gt 0>
+                        <h2 class="mb-4">Найдено вакансий: ${vacancies.totalElements}</h2>
                     <#else>
                         <h2 class="mb-4">Вакансии не найдены</h2>
                     </#if>
@@ -74,6 +74,17 @@
                                 <div class="vacancy-description">
                                     ${vacancy.description!''}
                                 </div>
+
+                                <#if vacancy.skills?? && vacancy.skills?size gt 0>
+                                    <div class="skills-section mb-4 mt-4">
+                                        <h5 class="section-title"><i class="bi bi-tools"></i> <@spring.message "skills.label"/></h5>
+                                        <div class="skills-container">
+                                            <#list vacancy.skills as skill>
+                                                <span class="skill-tag">${skill.skillName!''}</span>
+                                            </#list>
+                                        </div>
+                                    </div>
+                                </#if>
 
                                 <div class="vacancy-footer">
                                     <div class="vacancy-date">

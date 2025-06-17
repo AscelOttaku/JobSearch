@@ -8,7 +8,6 @@ import kg.attractor.jobsearch.enums.Roles;
 import kg.attractor.jobsearch.exceptions.ResumeNotFoundException;
 import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.Resume;
-import kg.attractor.jobsearch.provider.UserLastCreatedVacancyProvider;
 import kg.attractor.jobsearch.provider.UserLastRespondedResumeProvider;
 import kg.attractor.jobsearch.repository.ResumeRepository;
 import kg.attractor.jobsearch.service.AuthorizedUserService;
