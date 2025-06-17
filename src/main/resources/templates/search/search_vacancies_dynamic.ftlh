@@ -77,7 +77,8 @@
 
                                 <#if vacancy.skills?? && vacancy.skills?size gt 0>
                                     <div class="skills-section mb-4 mt-4">
-                                        <h5 class="section-title"><i class="bi bi-tools"></i> <@spring.message "skills.label"/></h5>
+                                        <h5 class="section-title"><i
+                                                    class="bi bi-tools"></i> <@spring.message "skills.label"/></h5>
                                         <div class="skills-container">
                                             <#list vacancy.skills as skill>
                                                 <span class="skill-tag">${skill.skillName!''}</span>
