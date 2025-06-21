@@ -3,13 +3,13 @@ package kg.attractor.jobsearch.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import kg.attractor.jobsearch.enums.MessageType;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class GroupsMessagesDto {
     private Long id;
     private UserDto owner;

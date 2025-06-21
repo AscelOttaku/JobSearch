@@ -7,7 +7,7 @@ import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.EducationInfo;
 import kg.attractor.jobsearch.repository.EducationInfoRepository;
 import kg.attractor.jobsearch.service.EducationInfoService;
-import kg.attractor.jobsearch.validators.ValidatorUtil;
+import kg.attractor.jobsearch.annotations.validators.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

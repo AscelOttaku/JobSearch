@@ -2,7 +2,7 @@ package kg.attractor.jobsearch.annotations;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-import kg.attractor.jobsearch.validators.IsCategoryNameExistsValidator;
+import kg.attractor.jobsearch.annotations.validators.IsCategoryNameExistsValidator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

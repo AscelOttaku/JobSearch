@@ -96,4 +96,13 @@ public class GroupsServiceImpl implements GroupsService {
         if (!groupsRepository.existsById(id))
             throw new NoSuchElementException("Group not found by id: " + id);
     }
+
+    @Override
+    public GroupsDto findGroupsByMessageId(Long messageId) {
+        Assert.notNull(messageId, "Message ID must not be null");
+
+        return groupsRepository.findGroupsDtoByMessageId(messageId)
+                .map(groupsMapper::mapToDto)
+                .orElseThrow(() -> new NoSuchElementException("Group not found for message id: " + messageId));
+    }
 }

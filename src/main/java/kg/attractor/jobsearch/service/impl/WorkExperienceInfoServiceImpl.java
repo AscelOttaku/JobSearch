@@ -7,7 +7,7 @@ import kg.attractor.jobsearch.exceptions.body.CustomBindingResult;
 import kg.attractor.jobsearch.model.WorkExperienceInfo;
 import kg.attractor.jobsearch.repository.WorkExperienceRepository;
 import kg.attractor.jobsearch.service.WorkExperienceInfoService;
-import kg.attractor.jobsearch.validators.ValidatorUtil;
+import kg.attractor.jobsearch.annotations.validators.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,5 +1,5 @@
 package kg.attractor.jobsearch.enums;
 
 public enum MessageType {
-    MESSAGES, FILE, IMAGES, LINK
+    MESSAGES, FILE, IMAGES, LINK, VIDEO
 }

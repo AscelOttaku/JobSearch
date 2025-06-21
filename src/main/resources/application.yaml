@@ -5,6 +5,10 @@ server:
 spring:
   application:
     name: JobSearch
+  servlet:
+    multipart:
+      max-file-size: 1000MB
+      max-request-size: 1000MB
 
   jpa:
     hibernate:

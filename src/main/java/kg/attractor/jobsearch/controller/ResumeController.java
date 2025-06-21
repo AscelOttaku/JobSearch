@@ -4,7 +4,7 @@ import kg.attractor.jobsearch.dto.PageHolder;
 import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.service.*;
 import kg.attractor.jobsearch.storage.TemporalStorage;
-import kg.attractor.jobsearch.validators.ResumeValidator;
+import kg.attractor.jobsearch.annotations.validators.ResumeValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;

@@ -30,7 +30,7 @@ public class VacancySpecification implements Specification<Vacancy> {
                 return criteriaBuilder.like(
                         criteriaBuilder.lower(path.as(String.class)), "%" + searchCriteria.getValue().toString().toLowerCase() + "%");
             } else {
-                return criteriaBuilder.equal(defineType(path), searchCriteria.getValue());
+                return criteriaBuilder.equal(defineType(path), castValueByPathType(path, searchCriteria.getValue()));
             }
         } else if (searchCriteria.getOperation().equals(SearchOperation.STARTS_WITH)) {
             return criteriaBuilder.like(
@@ -67,6 +67,20 @@ public class VacancySpecification implements Specification<Vacancy> {
             return (Path<T>) path.as(Long.class);
         } else if (path.getJavaType() == Double.class) {
             return (Path<T>) path.as(Double.class);
+        }
+
+        throw new IllegalArgumentException("Unsupported type: " + path.getJavaType());
+    }
+
+    private <T> T castValueByPathType(Path<T> path, Object object) {
+        if (path.getJavaType() == String.class) {
+            return path.getJavaType().cast(object.toString());
+        } else if (path.getJavaType() == Integer.class) {
+            return path.getJavaType().cast(Integer.parseInt(object.toString()));
+        } else if (path.getJavaType() == Long.class) {
+            return path.getJavaType().cast(Long.parseLong(object.toString()));
+        } else if (path.getJavaType() == Double.class) {
+            return path.getJavaType().cast(Double.parseDouble(object.toString()));
         }
 
         throw new IllegalArgumentException("Unsupported type: " + path.getJavaType());

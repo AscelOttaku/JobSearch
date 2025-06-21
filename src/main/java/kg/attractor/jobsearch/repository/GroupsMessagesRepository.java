@@ -13,6 +13,8 @@ import java.util.List;
 
 @Repository
 public interface GroupsMessagesRepository extends JpaRepository<GroupsMessages, Long> {
+
+    @Query("select g from GroupsMessages g where g.group.id = :groupId order by g.createdTime asc")
     List<GroupsMessages> findAllByGroupId(Long groupId);
 
     @Transactional(isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)

@@ -2,7 +2,7 @@ package kg.attractor.jobsearch.annotations;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-import kg.attractor.jobsearch.validators.ValidateExpFromExpTo;
+import kg.attractor.jobsearch.annotations.validators.ValidateExpFromExpTo;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

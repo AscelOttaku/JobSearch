@@ -3,7 +3,7 @@ package kg.attractor.jobsearch.annotations;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 import kg.attractor.jobsearch.enums.EntityType;
-import kg.attractor.jobsearch.validators.EntityExistByIdValidator;
+import kg.attractor.jobsearch.annotations.validators.EntityExistByIdValidator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

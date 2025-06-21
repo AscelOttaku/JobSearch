@@ -17,7 +17,6 @@ public class GroupsMessagesController {
     @GetMapping("group/row/{groupId}")
     @ResponseStatus(HttpStatus.OK)
     public List<GroupsMessagesDto> findAllGroupsMessageByGroupId(@PathVariable Long groupId) {
-        List<GroupsMessagesDto> aLlGroupsMessageByGroupId = groupsMessagesService.findALlGroupsMessageByGroupId(groupId);
-        return aLlGroupsMessageByGroupId;
+        return groupsMessagesService.findALlGroupsMessageByGroupId(groupId);
     }
 }

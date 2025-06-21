@@ -2,6 +2,7 @@ package kg.attractor.jobsearch.storage;
 
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+import org.springframework.core.ParameterizedTypeReference;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,6 +50,23 @@ public class TemporalStorage {
             throw new ClassCastException("value is null or cannot be cast to given type");
 
         return Optional.of(type.cast(value));
+    }
+
+    public <T> T getTemporalData(String key, ParameterizedTypeReference<T> type) {
+        if (key == null || key.isBlank())
+            throw new IllegalArgumentException("key is null or blank");
+
+        Object value = temporalData.get(key);
+
+        if (value == null)
+            throw new NoSuchElementException("value do not exists by key " + key);
+
+        String typeName = type.getType().getTypeName();
+        String valueTypeName = value.getClass().getTypeName();
+        if (!typeName.startsWith(valueTypeName))
+            throw new ClassCastException("value is null or cannot be cast to given type");
+
+        return (T) value;
     }
 
     public void removeTemporalData(String key) {
