@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 52_add_column_like_state
+      author: Kanybek
+      changes:
+        - addColumn:
+            tableName: likes
+            columns:
+              - column:
+                  name: is_like
+                  type: boolean
+                  constraints:
+                    nullable: false

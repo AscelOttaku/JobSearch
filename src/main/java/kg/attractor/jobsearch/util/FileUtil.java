@@ -101,6 +101,17 @@ public class FileUtil {
         return MediaType.parseMediaType(fileType);
     }
 
+    public static MediaType defineFileTypeVideo(String filePath) {
+        Assert.notNull(filePath, "filePath must not be null");
+
+        try {
+            String fileType = Files.probeContentType(Paths.get(filePath));
+            return MediaType.parseMediaType(fileType);
+        } catch (IOException e) {
+            return MediaType.parseMediaType("video/*");
+        }
+    }
+
     @SneakyThrows
     public static void deleteFile(String filePath) {
         Assert.notNull(filePath, "filePath must not be null");

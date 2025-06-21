@@ -25,7 +25,12 @@ public class FileController {
     }
 
     @GetMapping("video/{filePath:.+}")
-    public ResponseEntity<InputStreamResource> downloadVideo(@PathVariable String filePath) throws IOException {
+    public ResponseEntity<InputStreamResource> downloadVide(@PathVariable String filePath) throws IOException {
+        return FileUtil.getResponseEntityForFile(filePath, FileUtil.defineFileTypeVideo(filePath));
+    }
+
+    @GetMapping("/message/video/{filePath:.+}")
+    public ResponseEntity<InputStreamResource> downloadVideoInMessages(@PathVariable String filePath) throws IOException {
         if (temporalStorage.isDataExist(filePath)) {
             ParameterizedTypeReference<ResponseEntity<InputStreamResource>> parameterizedTypeReference = new ParameterizedTypeReference<>() {};
             return temporalStorage.getTemporalData(filePath, parameterizedTypeReference);

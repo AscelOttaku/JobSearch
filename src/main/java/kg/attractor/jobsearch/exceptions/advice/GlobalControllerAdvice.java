@@ -15,10 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.io.IOException;
@@ -33,12 +30,20 @@ public class GlobalControllerAdvice {
     private final ErrorService errorService;
     private final AuthorizedUserService authorizedUserService;
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ValidationExceptionBody handleValidationException(
+    private ValidationExceptionBody handleValidationException(
             MethodArgumentNotValidException ex, HttpServletRequest request
     ) {
         return errorService.handleValidationException(ex, request);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleValidationException(
+            MethodArgumentNotValidException ex, HttpServletRequest request, Model model
+    ) {
+        var exception = handleValidationException(ex, request);
+        model.addAttribute("exception", exception);
+        return "errors/validation_error";
     }
 
     @ExceptionHandler({NoSuchElementException.class, UsernameNotFoundException.class, ClassCastException.class})

@@ -129,6 +129,14 @@ public class SecurityConfig {
                                 .requestMatchers("/groups/generate/link/*").authenticated()
                                 .requestMatchers("/groups/link/*").authenticated()
 
+                                //Channel
+
+                                .requestMatchers("/channel/new_channel").authenticated()
+                                .requestMatchers("/channel/update_channel/*").authenticated()
+                                .requestMatchers("/channel/create").authenticated()
+                                .requestMatchers("/channel/update").authenticated()
+                                .requestMatchers("/channel").authenticated()
+
                                 //All Other Endpoints
 
                                 .requestMatchers("/static/css/*").permitAll()

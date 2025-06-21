@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 050_add_column_video_img_url
+      author: Kanybek
+      changes:
+        - addColumn:
+            tableName: videos
+            columns:
+              - column:
+                  name: video_img_url
+                  type: varchar(255)
+                  constraints:
+                    nullable: false

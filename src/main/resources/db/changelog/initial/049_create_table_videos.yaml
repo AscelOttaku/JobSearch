@@ -1,0 +1,49 @@
+databaseChangeLog:
+  - changeSet:
+      id: 049_create_table_videos
+      author: Kanybek
+      changes:
+        - createTable:
+            tableName: videos
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: channel_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+              - column:
+                  name: video_url
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+        - addForeignKeyConstraint:
+            baseTableName: videos
+            baseColumnNames: channel_id
+            constraintName: fk_videos_channel_id
+            referencedTableName: channel
+            referencedColumnNames: id
+            onDelete: CASCADE
+            onUpdate: CASCADE
