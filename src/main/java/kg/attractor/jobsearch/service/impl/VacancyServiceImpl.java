@@ -19,7 +19,7 @@ import kg.attractor.jobsearch.specification.builder.VacancySpecificationBuilder;
 import kg.attractor.jobsearch.strategy.vacancies.UserVacancyFilterStrategy;
 import kg.attractor.jobsearch.strategy.vacancies.VacancyFilterStrategy;
 import kg.attractor.jobsearch.util.Util;
-import kg.attractor.jobsearch.validators.ValidatorUtil;
+import kg.attractor.jobsearch.annotations.validators.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

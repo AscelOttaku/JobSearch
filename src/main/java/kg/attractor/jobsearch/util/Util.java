@@ -162,10 +162,12 @@ public class Util {
                 .flatMap(field -> {
                     if (field.getType() == List.class) {
                         var fields = getTypeOfGenericList(field)
+                                .filter(type -> type != RespondedApplication.class)
                                 .map(Class::getDeclaredFields)
-                                .orElseThrow(() -> new IllegalArgumentException("Field type is not a List or is empty"));
+                                .orElseGet(() -> new Field[0]);
 
                         return Arrays.stream(fields)
+                                .filter(name -> Character.isLowerCase(name.getName().charAt(0)) && !name.getName().equals("id"))
                                 .map(name -> field.getName() + "." + name.getName());
                     }
                     var fieldValue = getFieldValue(field, arg);

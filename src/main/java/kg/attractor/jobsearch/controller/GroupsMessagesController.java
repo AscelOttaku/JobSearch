@@ -2,6 +2,7 @@ package kg.attractor.jobsearch.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import kg.attractor.jobsearch.dto.GroupsDto;
 import kg.attractor.jobsearch.dto.GroupsMessagesDto;
 import kg.attractor.jobsearch.service.GroupsMessagesService;
 import kg.attractor.jobsearch.service.GroupsService;
@@ -26,6 +27,7 @@ public class GroupsMessagesController {
         model.addAttribute("group", groupsService.findGroupsById(groupId));
         model.addAttribute("membersCount", groupsUsersService.findMembersCountByGroupId(groupId));
         model.addAttribute("groupsMessagesDto", groupsMessagesService.findALlGroupsMessageByGroupId(groupId));
+        model.addAttribute("groupsMessageDto", new GroupsMessagesDto());
         return "groups/groups_messages";
     }
 
@@ -36,15 +38,20 @@ public class GroupsMessagesController {
             Model model
     ) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("groupsMessagesDto", groupsMessagesService.findALlGroupsMessageByGroupId(groupsMessagesDto.getGroupId()));
-            model.addAttribute("group", groupsService.findGroupsById(groupsMessagesDto.getGroupId()));
-            model.addAttribute("membersCount", groupsUsersService.findMembersCountByGroupId(groupsMessagesDto.getGroupId()));
-            model.addAttribute("bindingResult", bindingResult);
-            return "groups/groups_messages";
+            model.addAttribute("groupsMessageDto", new GroupsMessagesDto());
+            return getGroupMessagesPage(groupsMessagesDto, bindingResult, model);
         }
 
         groupsMessagesService.createMessage(groupsMessagesDto);
         return "redirect:/groups_messages/group/" + groupsMessagesDto.getGroupId();
+    }
+
+    private String getGroupMessagesPage(GroupsMessagesDto groupsMessagesDto, BindingResult bindingResult, Model model) {
+        model.addAttribute("groupsMessagesDto", groupsMessagesService.findALlGroupsMessageByGroupId(groupsMessagesDto.getGroupId()));
+        model.addAttribute("group", groupsService.findGroupsById(groupsMessagesDto.getGroupId()));
+        model.addAttribute("membersCount", groupsUsersService.findMembersCountByGroupId(groupsMessagesDto.getGroupId()));
+        model.addAttribute("bindingResult", bindingResult);
+        return "groups/groups_messages";
     }
 
     @PostMapping("message_file")
@@ -54,6 +61,34 @@ public class GroupsMessagesController {
     ) {
         groupsMessagesService.createMessageFile(groupId, multipartFile);
         return "redirect:/groups_messages/group/" + groupId;
+    }
+
+    @GetMapping("update/message/{messageId}")
+    public String updateMessage(
+            @PathVariable Long messageId,
+            Model model
+    ) {
+        GroupsDto groupsByMessageId = groupsService.findGroupsByMessageId(messageId);
+        model.addAttribute("group", groupsByMessageId);
+        model.addAttribute("membersCount", groupsUsersService.findMembersCountByGroupId(groupsByMessageId.getId()));
+        model.addAttribute("groupsMessagesDto", groupsMessagesService.findALlGroupsMessageByGroupId(groupsByMessageId.getId()));
+        model.addAttribute("groupsMessageDto", groupsMessagesService.findGroupsMessageById(messageId));
+        return "groups/update_groups_message";
+    }
+
+    @PostMapping("update/message")
+    public String updateMessage(
+            @Valid GroupsMessagesDto groupsMessagesDto,
+            BindingResult bindingResult,
+            Model model
+    ) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("groupsMessageDto", groupsMessagesDto);
+            return getGroupMessagesPage(groupsMessagesDto, bindingResult, model);
+        }
+
+        groupsMessagesService.updateMessage(groupsMessagesDto);
+        return "redirect:/groups_messages/group/" + groupsMessagesDto.getGroupId();
     }
 
     @PostMapping("delete/{messageId}")

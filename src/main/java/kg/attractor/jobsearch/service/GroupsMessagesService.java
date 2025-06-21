@@ -15,4 +15,8 @@ public interface GroupsMessagesService {
     void deleteMessageById(Long messageId);
 
     void deleteAllMessagesByGroupId(Long groupId);
+
+    void updateMessage(GroupsMessagesDto groupsMessagesDto);
+
+    GroupsMessagesDto findGroupsMessageById(Long messageId);
 }

@@ -13,6 +13,7 @@ import kg.attractor.jobsearch.util.FileUtil;
 import kg.attractor.jobsearch.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -82,5 +83,28 @@ public class GroupsMessagesServiceImpl implements GroupsMessagesService {
             throw new IllegalArgumentException("You can delete messages only in groups you administer");
 
         groupsMessagesRepository.deleteAllMessagesByGroupId(groupId);
+    }
+
+    @Transactional
+    @Override
+    public void updateMessage(GroupsMessagesDto groupsMessagesDto) {
+        if (groupsMessagesDto.getId() == null)
+            throw new IllegalArgumentException("Message ID or owner must not be null");
+
+        GroupsMessages groupsMessages = groupsMessagesRepository.findById(
+                        groupsMessagesDto.getId()
+                )
+                .orElseThrow(() -> new NoSuchElementException("Message not found by id: " + groupsMessagesDto.getId()));
+
+        groupsMessages.setMessage(groupsMessagesDto.getMessage());
+        if (Util.isMessageLink(groupsMessagesDto.getMessage())) groupsMessages.setMessageType(MessageType.LINK);
+        else groupsMessages.setMessageType(MessageType.MESSAGES);
+    }
+
+    @Override
+    public GroupsMessagesDto findGroupsMessageById(Long messageId) {
+        return groupsMessagesRepository.findById(messageId)
+                .map(groupsMessagesMapper::mapToDto)
+                .orElseThrow(() -> new NoSuchElementException("Message not found by id: " + messageId));
     }
 }

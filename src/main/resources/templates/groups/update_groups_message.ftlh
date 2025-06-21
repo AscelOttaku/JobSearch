@@ -149,12 +149,10 @@
                                                         <i class="bi bi-trash me-2"></i>Удалить
                                                     </button>
                                                 </form>
-                                                <#if msg.messageType == 'MESSAGES' || msg.messageType == 'LINK'>
-                                                    <a href="/groups_messages/update/message/${msg.id}"
-                                                       class="dropdown-item">
-                                                        <i class="bi bi-pencil-square me-2"></i>Редактировать
-                                                    </a>
-                                                </#if>
+                                                <a href="/groups_messages/update/message/${msg.id}"
+                                                   class="dropdown-item">
+                                                    <i class="bi bi-pencil-square me-2"></i>Редактировать
+                                                </a>
                                             </li>
                                         </ul>
                                     </div>
@@ -168,7 +166,7 @@
 
         <div class="card">
             <div class="card-body">
-                <form id="message-form" action="/groups_messages/message" method="post">
+                <form id="message-form" action="/groups_messages/update/message" method="post">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                     <input type="hidden" name="groupId" value="${group.id!0}"/>
                     <#if groupsMessageDto.id??>
@@ -193,67 +191,9 @@
                     </#if>
                 </form>
             </div>
-
-            <form method="post" action="/groups_messages/message_file" enctype="multipart/form-data" class="mt-3">
-                <#if _csrf??>
-                    <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
-                           value="${(_csrf.token)!'csrf-token'}"/>
-                </#if>
-
-                <div class="position-relative d-inline-block">
-                    <input type="file" name="multipartFile" id="fileInput" class="visually-hidden">
-                    <input type="hidden" name="groupId" value="${group.id!0}">
-                    <label for="fileInput" class="btn btn-link p-2" style="font-size: 1.5rem; color: #6c757d;"
-                           title="<@spring.message 'upload'/>">
-                        <i class="bi bi-paperclip"></i>
-                    </label>
-                </div>
-
-                <button type="submit" class="btn btn-primary rounded-circle p-2" style="width: 40px; height: 40px;"
-                        title="<@spring.message 'send'/>">
-                    <i class="bi bi-send-fill"></i>
-                </button>
-            </form>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        function fetchGroupMessages() {
-            const groupId = '${group.id}';
-            if (!groupId) return;
-
-            fetch('/groups_messages/group/' + groupId)
-                .then(response => {
-                    if (!response.ok) throw new Error("Ошибка загрузки сообщений");
-                    return response.text();
-                })
-                .then(messagesHtml => {
-                    const tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = messagesHtml;
-
-                    const updatedChatBox = tempDiv.querySelector('.chat-box');
-                    const currentChatBox = document.querySelector('.chat-box');
-
-                    if (updatedChatBox && currentChatBox) {
-                        currentChatBox.innerHTML = updatedChatBox.innerHTML;
-                        currentChatBox.scrollTop = currentChatBox.scrollHeight;
-                    }
-                })
-                .catch(error => {
-                    console.error("Ошибка при обновлении сообщений:", error);
-                });
-        }
-
-        fetchGroupMessages();
-        setInterval(fetchGroupMessages, 7000);
-
-        window.addEventListener('load', () => {
-            const chatBox = document.querySelector('.chat-box');
-            if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
-        });
-    </script>
-
     </body>
 </@layout.layout>

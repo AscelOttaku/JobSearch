@@ -13,7 +13,7 @@ import kg.attractor.jobsearch.repository.ResumeRepository;
 import kg.attractor.jobsearch.service.AuthorizedUserService;
 import kg.attractor.jobsearch.service.ContactTypeService;
 import kg.attractor.jobsearch.service.ResumeService;
-import kg.attractor.jobsearch.validators.ValidatorUtil;
+import kg.attractor.jobsearch.annotations.validators.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

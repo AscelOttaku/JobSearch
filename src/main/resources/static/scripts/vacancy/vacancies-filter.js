@@ -25,6 +25,7 @@ function sendUri(event) {
             return window.location.href = url;
         else {
             url = url.replace('actives', 'filtered');
+            if (window.currentUser.role === 'ROLE_ADMIN')
             return window.location.href = url + "?filterType=" + filterArg
         }
     }
