@@ -107,6 +107,11 @@
                             <i class="bi bi-search me-1"></i> <@spring.message "layout.navbar.search_fun"/>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/channel">
+                            <i class="bi bi-youtube me-1" style="color:#414d5b;"></i><@spring.message "channel"/>
+                        </a>
+                    </li>
                 </ul>
 
                 <#if user??>
